@@ -12,6 +12,7 @@ import pl.lodz.p.edu.dataaccess.model.Account;
 import pl.lodz.p.edu.dataaccess.model.Address;
 import pl.lodz.p.edu.dataaccess.model.Person;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
+import pl.lodz.p.edu.dataaccess.model.sub.AccountState;
 import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.exception.ExceptionFactory;
 import pl.lodz.p.edu.logic.model.NewPersonalInformation;
@@ -68,17 +69,41 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account block(Long id) {
-        return null;
+        Account account = accountRepository.findById(id)
+            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+
+        if (!account.getAccountState().equals(AccountState.ACTIVE)) {
+            throw ExceptionFactory.createAccountNotActiveException();
+        }
+
+        account.setAccountState(AccountState.BLOCKED);
+        return save(account);
     }
 
     @Override
     public Account unblock(Long id) {
-        return null;
+        Account account = accountRepository.findById(id)
+            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+
+        if (!account.getAccountState().equals(AccountState.BLOCKED)) {
+            throw ExceptionFactory.createAccountNotBlockedException();
+        }
+
+        account.setAccountState(AccountState.ACTIVE);
+        return save(account);
     }
 
     @Override
     public Account archive(Long id) {
-        return null;
+        Account account = accountRepository.findById(id)
+            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+
+        if (account.getAccountState().equals(AccountState.ARCHIVAL)) {
+            throw ExceptionFactory.createAccountAlreadyArchivalException();
+        }
+
+        account.setAccountState(AccountState.ARCHIVAL);
+        return save(account);
     }
 
     @Override

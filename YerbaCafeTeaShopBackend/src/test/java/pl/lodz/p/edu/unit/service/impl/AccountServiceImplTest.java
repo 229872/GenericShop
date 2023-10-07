@@ -13,11 +13,9 @@ import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.dataaccess.model.Account;
 import pl.lodz.p.edu.dataaccess.model.Address;
 import pl.lodz.p.edu.dataaccess.model.Person;
+import pl.lodz.p.edu.dataaccess.model.sub.AccountState;
 import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
-import pl.lodz.p.edu.exception.AccountEmailConflictException;
-import pl.lodz.p.edu.exception.AccountLoginConflictException;
-import pl.lodz.p.edu.exception.AccountNotFoundException;
-import pl.lodz.p.edu.exception.ExceptionMessage;
+import pl.lodz.p.edu.exception.*;
 import pl.lodz.p.edu.logic.model.NewPersonalInformation;
 import pl.lodz.p.edu.logic.service.impl.AccountServiceImpl;
 
@@ -296,18 +294,276 @@ class AccountServiceImplTest {
     }
 
     @Test
-    @Disabled
-    void block() {
+    @DisplayName("Should block active account")
+    void block_should_block_active_account() {
+        //given
+        Account account = Account.builder().accountState(AccountState.ACTIVE).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+        given(accountRepository.save(account)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
+        //when
+        Account result = underTest.block(givenId);
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(account);
+
+        assertEquals(AccountState.BLOCKED, result.getAccountState());
     }
 
     @Test
-    @Disabled
-    void unblock() {
+    @DisplayName("Should throw AccountNotFoundException when account is not found")
+    void block_should_throw_AccountNotfoundException() {
+        //given
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
+
+        //when
+        Exception exception = catchException(() -> underTest.block(givenId));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountNotFoundException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
     }
 
     @Test
-    @Disabled
-    void archive() {
+    @DisplayName("Should throw AccountNotActiveException when account is blocked")
+    void block_should_throw_AccountNotActiveException_when_account_is_blocked() {
+        //given
+        Account account = Account.builder().accountState(AccountState.BLOCKED).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.block(givenId));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountNotActiveException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_ACTIVE);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotActiveException when account is archival")
+    void block_should_throw_AccountNotActiveException_when_account_is_archival() {
+        //given
+        Account account = Account.builder().accountState(AccountState.ARCHIVAL).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.block(givenId));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountNotActiveException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_ACTIVE);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotActiveException when account is not verified")
+    void block_should_throw_AccountNotActiveException_when_account_is_not_verified() {
+        //given
+        Account account = Account.builder().accountState(AccountState.NOT_VERIFIED).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.block(givenId));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountNotActiveException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_ACTIVE);
+    }
+
+    @Test
+    @DisplayName("Should unblock blocked account")
+    void unblock_should_unblock_blocked_account() {
+        //given
+        Account account = Account.builder().accountState(AccountState.BLOCKED).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Account result = underTest.unblock(givenId);
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(account);
+
+        assertEquals(AccountState.ACTIVE, result.getAccountState());
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotFoundException when account can't be found")
+    void unblock_should_throw_AccountNotFoundException() {
+        //given
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
+
+        //when
+        Exception exception = catchException(() -> underTest.unblock(givenId));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountNotFoundException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotBlockedException when account is active")
+    void unblock_should_throw_AccountNotBlockedException_when_account_is_active() {
+        //given
+        Account account = Account.builder().accountState(AccountState.ACTIVE).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.unblock(givenId));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountNotBlockedException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_BLOCKED);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotBlockedException when account is archival")
+    void unblock_should_throw_AccountNotBlockedException_when_account_is_archival() {
+        //given
+        Account account = Account.builder().accountState(AccountState.ARCHIVAL).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.unblock(givenId));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountNotBlockedException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_BLOCKED);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotBlockedException when account is not verified")
+    void unblock_should_throw_AccountNotBlockedException_when_account_is_not_verified() {
+        //given
+        Account account = Account.builder().accountState(AccountState.NOT_VERIFIED).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.unblock(givenId));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountNotBlockedException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_BLOCKED);
+    }
+
+    @Test
+    @DisplayName("Should archive active account")
+    void archive_should_archive_active_account() {
+        //given
+        Account account = Account.builder().accountState(AccountState.ACTIVE).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+        given(accountRepository.save(account)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
+        //when
+        Account result = underTest.archive(givenId);
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(account);
+
+        assertEquals(AccountState.ARCHIVAL, result.getAccountState());
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotFoundException when account can't be found during archive")
+    void archive_should_throw_AccountNotFoundException() {
+        //given
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
+
+        //when
+        Exception exception = catchException(() -> underTest.archive(givenId));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountNotFoundException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountAlreadyArchivalException when account is already archival")
+    void archive_should_throw_AccountAlreadyArchivalException() {
+        //given
+        Account account = Account.builder().accountState(AccountState.ARCHIVAL).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.archive(givenId));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountAlreadyArchivalException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ALREADY_ARCHIVAL);
     }
 
     @Test
