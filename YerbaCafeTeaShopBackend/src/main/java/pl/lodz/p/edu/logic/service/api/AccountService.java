@@ -3,8 +3,10 @@ package pl.lodz.p.edu.logic.service.api;
 import org.springframework.data.domain.Pageable;
 import pl.lodz.p.edu.dataaccess.model.Account;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
+import pl.lodz.p.edu.logic.model.NewPersonalInformation;
 
 import java.util.List;
+import java.util.Locale;
 
 public interface AccountService {
 
@@ -18,7 +20,7 @@ public interface AccountService {
 
     Account create(Account account);
 
-    Account update(Long id, Account account);
+    Account updatePersonalInformation(Long id, NewPersonalInformation newPersonalInformation);
 
     Account block(Long id);
 
@@ -31,4 +33,6 @@ public interface AccountService {
     Account removeRole(Long id, AccountRole roleForRemoval);
 
     Account changeRole(Long id, AccountRole oldRole, AccountRole newRole);
+
+    Account updateLocale(Locale locale);
 }

@@ -2,6 +2,7 @@ package pl.lodz.p.edu.dataaccess.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Delegate;
 import lombok.experimental.SuperBuilder;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -12,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true)
 
 @Entity
-@Table(name = "persons")
+@Table(name = "people")
 public class Person extends AbstractEntity {
 
     @Column(nullable = false, name = "first_name")
@@ -21,6 +22,7 @@ public class Person extends AbstractEntity {
     @Column(nullable = false, name = "last_name")
     private String lastName;
 
+    @Delegate
     @OneToOne
     @JoinColumn(unique = true)
     private Address address;
