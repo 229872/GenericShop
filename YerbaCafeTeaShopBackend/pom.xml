@@ -77,10 +77,51 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>3.0.0-M9</version>
+			</plugin>
+
+			<plugin>
+				<groupId>com.dkanejs.maven.plugins</groupId>
+				<artifactId>docker-compose-maven-plugin</artifactId>
+				<version>4.0.0</version>
+				<executions>
+					<execution>
+						<id>pull</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>pull</goal>
+						</goals>
+						<configuration>
+							<composeFile>${project.basedir}/Docker/docker-compose.test.yml</composeFile>
+							<ignorePullFailures>true</ignorePullFailures>
+						</configuration>
+					</execution>
+					<execution>
+						<id>up</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>up</goal>
+						</goals>
+						<configuration>
+							<composeFile>${project.basedir}/Docker/docker-compose.test.yml</composeFile>
+							<detachedMode>true</detachedMode>
+						</configuration>
+					</execution>
+					<execution>
+						<id>down</id>
+						<phase>post-integration-test</phase>
+						<goals>
+							<goal>down</goal>
+						</goals>
+						<configuration>
+							<composeFile>${project.basedir}/Docker/docker-compose.test.yml</composeFile>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
