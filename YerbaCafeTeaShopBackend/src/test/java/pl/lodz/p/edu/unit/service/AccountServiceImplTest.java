@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.unit.service.impl;
+package pl.lodz.p.edu.unit.service;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Disabled;
