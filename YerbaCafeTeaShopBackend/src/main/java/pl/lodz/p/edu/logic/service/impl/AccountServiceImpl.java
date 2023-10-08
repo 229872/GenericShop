@@ -122,7 +122,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account updateLocale(Locale locale) {
+    public Account updateLocale(Long id, Locale locale) {
         return null;
     }
 
@@ -158,7 +158,6 @@ public class AccountServiceImpl implements AccountService {
         Optional.ofNullable(personalInformation.city()).ifPresent(address::setCity);
         Optional.ofNullable(personalInformation.street()).ifPresent(address::setStreet);
         Optional.ofNullable(personalInformation.houseNumber()).ifPresent(address::setHouseNumber);
-
     }
 
 }

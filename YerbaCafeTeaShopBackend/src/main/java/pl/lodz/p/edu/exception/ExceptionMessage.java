@@ -17,4 +17,5 @@ public final class ExceptionMessage {
     public static final String ACCOUNT_LAST_ROLE = "exception.account.role.last.role";
     public static final String ACCOUNT_ROLE_ALREADY_EXISTS = "exception.account.role.already.exists";
     public static final String ACCOUNT_ROLE_CONFLICT = "exception.account.role.conflict";
+    public static final String ACCOUNT_ROLE_NOT_FOUND = "exception.account.role.not.found";
 }

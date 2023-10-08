@@ -53,4 +53,8 @@ public final class ExceptionFactory {
     public static ResponseStatusException createAccountRoleConflictException() {
         return new AccountRoleConflictException(CONFLICT, ACCOUNT_ROLE_CONFLICT);
     }
+
+    public static ResponseStatusException createAccountRoleNotFoundException() {
+        return new AccountRoleNotFoundException(BAD_REQUEST, ACCOUNT_ROLE_NOT_FOUND);
+    }
 }
