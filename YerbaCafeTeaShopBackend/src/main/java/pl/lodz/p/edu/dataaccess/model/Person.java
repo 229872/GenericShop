@@ -23,7 +23,7 @@ public class Person extends AbstractEntity {
     private String lastName;
 
     @Delegate
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(unique = true)
     private Address address;
 

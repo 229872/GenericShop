@@ -13,13 +13,14 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SuperBuilder
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @ToString(callSuper = true)
 
 @Entity
 @Table(name = "accounts")
 public class Account extends AbstractEntity {
 
+    @EqualsAndHashCode.Include
     @Column(nullable = false, updatable = false, unique = true)
     private String login;
 
@@ -40,6 +41,7 @@ public class Account extends AbstractEntity {
     @Column(nullable = false, name = "state")
     private AccountState accountState;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "roles")
     private Set<AccountRole> accountRoles = new HashSet<>();
