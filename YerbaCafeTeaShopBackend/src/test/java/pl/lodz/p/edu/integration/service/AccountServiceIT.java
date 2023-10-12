@@ -1,11 +1,9 @@
 package pl.lodz.p.edu.integration.service;
 
 import jakarta.persistence.EntityManager;
-import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -27,7 +25,8 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static pl.lodz.p.edu.integration.service.AccountServiceIT.TestData.*;
+import static pl.lodz.p.edu.integration.service.AccountServiceIT.TestData.buildDefaultAccount;
+import static pl.lodz.p.edu.integration.service.AccountServiceIT.TestData.counter;
 
 @SpringBootTest
 @ActiveProfiles("it")
@@ -98,12 +97,16 @@ class AccountServiceIT {
 
 
     @Test
-    @Disabled
     @DisplayName("Should return account if account with id is found")
     void findById_should_return_account() {
         //given
-        Long givenId = 1L;
-        Account account = Account.builder().id(givenId).login("login").build();
+        Account account = buildDefaultAccount();
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+
+        Long givenId = account.getId();
 
         //when
         Account result = underTest.findById(givenId);
@@ -114,7 +117,6 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountNotFoundException if account with id is not found")
     void findById_should_throw_AccountNotFoundException() {
         //given
@@ -132,12 +134,15 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should return account if account with login is found")
     void findByLogin_should_return_account() {
         //given
-        String givenLogin = "login";
-        Account account = Account.builder().login(givenLogin).build();
+        Account account = buildDefaultAccount();
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        String givenLogin = account.getLogin();
 
         //when
         Account result = underTest.findByLogin(givenLogin);
@@ -148,7 +153,6 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountNotFoundException if account with login is not found")
     void findByLogin_should_throw_AccountNotFoundException() {
         //given
@@ -166,11 +170,10 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should create account")
     void create_should_create_account() {
         //given
-        Account account = Account.builder().login("login").build();
+        Account account = buildDefaultAccount();
 
         //when
         Account result = underTest.create(account);
@@ -178,19 +181,32 @@ class AccountServiceIT {
         //then
         assertThat(result)
             .isEqualTo(account);
+
+        txTemplate.execute(status -> {
+            List<Account> databaseAccounts = em.createQuery("from Account ", Account.class).getResultList();
+
+            assertThat(databaseAccounts)
+                .hasSize(1)
+                .containsExactly(account);
+            return status;
+        });
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountLoginConflictException when new Account has same login")
     void create_should_throw_account_login_conflict_exception() {
         //given
-        Account account = Account.builder().login("login").build();
-        var cause = new ConstraintViolationException("Database violation occurred", null, "accounts_login_key");
-        var dataIntegrityViolationException = new DataIntegrityViolationException("Violation occurred", cause);
+        Account account = buildDefaultAccount();
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+
+        Account accountWithConflictLogin = buildDefaultAccount();
+        accountWithConflictLogin.setLogin(account.getLogin());
 
         //when
-        Exception exception = catchException(() -> underTest.create(account));
+        Exception exception = catchException(() -> underTest.create(accountWithConflictLogin));
 
         //then
         assertThat(exception)
@@ -200,16 +216,20 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountEmailConflictException when new Account has same email")
     void create_should_throw_account_email_conflict_exception() {
         //given
-        Account account = Account.builder().email("email@example.com").build();
-        var cause = new ConstraintViolationException("Database violation occurred", null, "accounts_email_key");
-        var dataIntegrityViolationException = new DataIntegrityViolationException("Violation occurred", cause);
+        Account account = buildDefaultAccount();
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+
+        Account accountWithConflictEmail = buildDefaultAccount();
+        accountWithConflictEmail.setEmail(account.getEmail());
 
         //when
-        Exception exception = catchException(() -> underTest.create(account));
+        Exception exception = catchException(() -> underTest.create(accountWithConflictEmail));
 
         //then
         assertThat(exception)
@@ -223,10 +243,13 @@ class AccountServiceIT {
     @DisplayName("Should update found account without one value")
     void update_should_modify_one_value() {
         //given
-//        Address address = buildFullAddress("postalCode", "country", "city", "street", 1);
-//        Person person = buildFullPerson("firstName", "lastName", address);
-//        Account account = Account.builder().person(person).build();
-        Long givenId = 1L;
+        Account account = buildDefaultAccount();
+
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
 
         String newFirstName = "newFirstName";
         NewPersonalInformation newPersonalInfo = NewPersonalInformation.builder().firstName(newFirstName).build();
@@ -238,8 +261,8 @@ class AccountServiceIT {
         assertThat(result.getPerson().getFirstName())
             .isEqualTo(newFirstName);
 
-//        assertThat(result.getPerson().getLastName())
-//            .isEqualTo(person.getLastName());
+        assertThat(result.getPerson().getLastName())
+            .isEqualTo(account.getPerson().getLastName());
     }
 
     @Test
@@ -247,10 +270,12 @@ class AccountServiceIT {
     @DisplayName("Should update found account without all values")
     void update_should_modify_all_values() {
         //given
-//        Address address = buildFullAddress("postalCode", "country", "city", "street", 1);
-//        Person person = buildFullPerson("firstName", "lastName", address);
-//        Account account = Account.builder().person(person).build();
-        Long givenId = 1L;
+        Account account = buildDefaultAccount();
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
 
         String newFirstName = "newFirstName";
         String newLastName = "newLastName";
@@ -541,60 +566,7 @@ class AccountServiceIT {
     void changeRole() {
     }
 
-    private Address buildFullAddress(String postalCode, String country, String city, String street,
-                                     Integer houseNumber, String createdBy) {
-        return Address.builder()
-            .postalCode(postalCode)
-            .country(country)
-            .city(city)
-            .street(street)
-            .houseNumber(houseNumber)
-            .createdBy(createdBy)
-            .build();
-    }
 
-    private Person buildFullPerson(String firstName, String lastName, Address address, String createdBy) {
-        return Person.builder()
-            .firstName(firstName)
-            .lastName(lastName)
-            .address(address)
-            .createdBy(createdBy)
-            .build();
-    }
-
-    private Account buildFullAccount(String login, String email, String password, String locale, Person person,
-                                     AccountState accountState, Set<AccountRole> accountRoles, String createdBy) {
-        return Account.builder()
-            .login(login)
-            .email(email)
-            .password(password)
-            .locale(locale)
-            .person(person)
-            .accountState(accountState)
-            .accountRoles(accountRoles)
-            .createdBy(createdBy)
-            .build();
-    }
-
-
-
-
-    private Address buildDefaultAddress() {
-        return buildFullAddress(defaultPostalCode, defaultCountry, defaultCity, defaultStreet, defaultHouseNumber,
-            defaultCreatedBy);
-    }
-
-    private Person buildDefaultPerson() {
-        return buildFullPerson(defaultFirstName, defaultLastName, buildDefaultAddress(), defaultCreatedBy);
-    }
-
-    private Account buildDefaultAccount() {
-        String uniqueLogin = defaultLogin + counter;
-        String uniqueEmail = defaultEmail + counter;
-        counter++;
-        return buildFullAccount(uniqueLogin, uniqueEmail, defaultPassword, defaultLocale, buildDefaultPerson(),
-            defaultAccountState, defaultAccountRoles, defaultCreatedBy);
-    }
 
 
     static class TestData {
@@ -616,5 +588,58 @@ class AccountServiceIT {
 
         static final String defaultFirstName = "firstName";
         static final String defaultLastName = "lastName";
+
+        static Address buildFullAddress(String postalCode, String country, String city, String street,
+                                         Integer houseNumber, String createdBy) {
+            return Address.builder()
+                .postalCode(postalCode)
+                .country(country)
+                .city(city)
+                .street(street)
+                .houseNumber(houseNumber)
+                .createdBy(createdBy)
+                .build();
+        }
+
+        static Person buildFullPerson(String firstName, String lastName, Address address, String createdBy) {
+            return Person.builder()
+                .firstName(firstName)
+                .lastName(lastName)
+                .address(address)
+                .createdBy(createdBy)
+                .build();
+        }
+
+        static Account buildFullAccount(String login, String email, String password, String locale, Person person,
+                                         AccountState accountState, Set<AccountRole> accountRoles, String createdBy) {
+            return Account.builder()
+                .login(login)
+                .email(email)
+                .password(password)
+                .locale(locale)
+                .person(person)
+                .accountState(accountState)
+                .accountRoles(accountRoles)
+                .createdBy(createdBy)
+                .build();
+        }
+
+
+        static Address buildDefaultAddress() {
+            return buildFullAddress(defaultPostalCode, defaultCountry, defaultCity, defaultStreet, defaultHouseNumber,
+                defaultCreatedBy);
+        }
+
+        static Person buildDefaultPerson() {
+            return buildFullPerson(defaultFirstName, defaultLastName, buildDefaultAddress(), defaultCreatedBy);
+        }
+
+        static Account buildDefaultAccount() {
+            String uniqueLogin = defaultLogin + counter;
+            String uniqueEmail = defaultEmail + counter;
+            counter++;
+            return buildFullAccount(uniqueLogin, uniqueEmail, defaultPassword, defaultLocale, buildDefaultPerson(),
+                defaultAccountState, defaultAccountRoles, defaultCreatedBy);
+        }
     }
 }
