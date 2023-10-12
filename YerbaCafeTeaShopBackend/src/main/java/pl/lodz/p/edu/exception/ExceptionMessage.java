@@ -13,7 +13,7 @@ public final class ExceptionMessage {
     public static final String ACCOUNT_CONFLICT_EMAIL = "exception.account.conflict.email";
     public static final String ACCOUNT_NOT_BLOCKED = "exception.account.state.not.blocked";
     public static final String ACCOUNT_NOT_ACTIVE = "exception.account.state.not.active";
-    public static final String ACCOUNT_ALREADY_ARCHIVAL = "exception.account.state.already.archival";
+    public static final String ACCOUNT_ARCHIVAL = "exception.account.state.archival";
     public static final String ACCOUNT_LAST_ROLE = "exception.account.role.last.role";
     public static final String ACCOUNT_ROLE_ALREADY_EXISTS = "exception.account.role.already.exists";
     public static final String ACCOUNT_ROLE_CONFLICT = "exception.account.role.conflict";

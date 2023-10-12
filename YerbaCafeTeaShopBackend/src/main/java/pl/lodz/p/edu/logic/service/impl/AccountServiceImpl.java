@@ -14,6 +14,7 @@ import pl.lodz.p.edu.dataaccess.model.Person;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountState;
 import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
+import pl.lodz.p.edu.exception.AccountStateOperation;
 import pl.lodz.p.edu.exception.ExceptionFactory;
 import pl.lodz.p.edu.logic.model.NewPersonalInformation;
 import pl.lodz.p.edu.logic.service.api.AccountService;
@@ -72,8 +73,13 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findById(id)
             .orElseThrow(ExceptionFactory::createAccountNotFoundException);
 
+        if (account.isArchival()) {
+            throw ExceptionFactory.createCantModifyArchivalAccountException();
+        }
+
         if (!account.getAccountState().equals(AccountState.ACTIVE)) {
-            throw ExceptionFactory.createAccountNotActiveException();
+            throw ExceptionFactory
+                .createOperationNotAllowedWithActualAccountStateException(AccountStateOperation.BLOCK);
         }
 
         account.setAccountState(AccountState.BLOCKED);
@@ -85,8 +91,13 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findById(id)
             .orElseThrow(ExceptionFactory::createAccountNotFoundException);
 
+        if (account.isArchival()) {
+            throw ExceptionFactory.createCantModifyArchivalAccountException();
+        }
+
         if (!account.getAccountState().equals(AccountState.BLOCKED)) {
-            throw ExceptionFactory.createAccountNotBlockedException();
+            throw ExceptionFactory
+                .createOperationNotAllowedWithActualAccountStateException(AccountStateOperation.UNBLOCK);
         }
 
         account.setAccountState(AccountState.ACTIVE);
@@ -98,11 +109,11 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findById(id)
             .orElseThrow(ExceptionFactory::createAccountNotFoundException);
 
-        if (account.getAccountState().equals(AccountState.ARCHIVAL)) {
-            throw ExceptionFactory.createAccountAlreadyArchivalException();
+        if (account.isArchival()) {
+            throw ExceptionFactory.createCantModifyArchivalAccountException();
         }
 
-        account.setAccountState(AccountState.ARCHIVAL);
+        archiveAccount(account);
         return save(account);
     }
 
@@ -158,6 +169,13 @@ public class AccountServiceImpl implements AccountService {
         Optional.ofNullable(personalInformation.city()).ifPresent(address::setCity);
         Optional.ofNullable(personalInformation.street()).ifPresent(address::setStreet);
         Optional.ofNullable(personalInformation.houseNumber()).ifPresent(address::setHouseNumber);
+    }
+
+    private void archiveAccount(Account account) {
+        Person person = account.getPerson();
+        account.setArchival(true);
+        person.setArchival(true);
+        person.getAddress().setArchival(true);
     }
 
 }

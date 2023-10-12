@@ -24,6 +24,10 @@ public abstract class AbstractEntity {
     @Version
     private Long version;
 
+    @Getter(value = AccessLevel.NONE)
+    @Column(nullable = false, name = "is_archival")
+    private Boolean isArchival;
+
     @Column(nullable = false, updatable = false, name = "created_by")
     private String createdBy;
 
@@ -38,11 +42,20 @@ public abstract class AbstractEntity {
 
     @PrePersist
     void prePersist() {
+        isArchival = false;
         cratedAt = LocalDateTime.now();
     }
 
     @PreUpdate
     void preUpdate() {
         modifiedAt = LocalDateTime.now();
+    }
+
+    public Boolean isArchival() {
+        return isArchival;
+    }
+
+    public void setArchival(Boolean archival) {
+        isArchival = archival;
     }
 }

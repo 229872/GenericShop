@@ -30,16 +30,24 @@ public final class ExceptionFactory {
         return new AccountEmailConflictException(CONFLICT, ACCOUNT_CONFLICT_EMAIL);
     }
 
-    public static ResponseStatusException createAccountNotBlockedException() {
-        return new AccountNotBlockedException(BAD_REQUEST, ACCOUNT_NOT_BLOCKED);
+    public static ResponseStatusException createOperationNotAllowedWithActualAccountStateException(AccountStateOperation operation) {
+        String message = switch (operation) {
+            case BLOCK -> ACCOUNT_NOT_ACTIVE;
+            case UNBLOCK -> ACCOUNT_NOT_BLOCKED;
+        };
+        return new OperationNotAllowedWithActualAccountStateException(BAD_REQUEST, message);
     }
 
-    public static ResponseStatusException createAccountNotActiveException() {
-        return new AccountNotActiveException(BAD_REQUEST, ACCOUNT_NOT_ACTIVE);
-    }
+//    public static ResponseStatusException createAccountNotBlockedException() {
+//        return new AccountNotBlockedException(BAD_REQUEST, ACCOUNT_NOT_BLOCKED);
+//    }
+//
+//    public static ResponseStatusException createAccountNotActiveException() {
+//        return new AccountNotActiveException(BAD_REQUEST, ACCOUNT_NOT_ACTIVE);
+//    }
 
-    public static ResponseStatusException createAccountAlreadyArchivalException() {
-        return new AccountAlreadyArchivalException(BAD_REQUEST, ACCOUNT_ALREADY_ARCHIVAL);
+    public static ResponseStatusException createCantModifyArchivalAccountException() {
+        return new CantModifyArchivalAccountException(BAD_REQUEST, ACCOUNT_ARCHIVAL);
     }
 
     public static ResponseStatusException createAccountCantRemoveLastRoleException() {

@@ -297,7 +297,7 @@ class AccountServiceImplTest {
     @DisplayName("Should block active account")
     void block_should_block_active_account() {
         //given
-        Account account = Account.builder().accountState(AccountState.ACTIVE).build();
+        Account account = Account.builder().isArchival(false).accountState(AccountState.ACTIVE).build();
         Long givenId = 1L;
         given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
         given(accountRepository.save(account)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
@@ -334,10 +334,10 @@ class AccountServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw AccountNotActiveException when account is blocked")
-    void block_should_throw_AccountNotActiveException_when_account_is_blocked() {
+    @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
+    void block_should_throw_CantModifyArchivalAccountException_when_account_is_archival() {
         //given
-        Account account = Account.builder().accountState(AccountState.BLOCKED).build();
+        Account account = Account.builder().isArchival(true).accountState(AccountState.ACTIVE).build();
         Long givenId = 1L;
         given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
 
@@ -350,16 +350,38 @@ class AccountServiceImplTest {
 
         assertThat(exception)
             .isNotNull()
-            .isExactlyInstanceOf(AccountNotActiveException.class)
+            .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ARCHIVAL);
+    }
+
+    @Test
+    @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is not verified")
+    void block_should_throw_AOperationNotAllowedWithActualAccountStateException_when_account_is_not_verified() {
+        //given
+        Account account = Account.builder().isArchival(false).accountState(AccountState.NOT_VERIFIED).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.block(givenId));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(OperationNotAllowedWithActualAccountStateException.class)
             .isInstanceOf(ResponseStatusException.class)
             .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_ACTIVE);
     }
 
     @Test
-    @DisplayName("Should throw AccountNotActiveException when account is archival")
-    void block_should_throw_AccountNotActiveException_when_account_is_archival() {
+    @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is blocked")
+    void block_should_throw_OperationNotAllowedWithActualAccountStateException_when_account_is_blocked() {
         //given
-        Account account = Account.builder().accountState(AccountState.ARCHIVAL).build();
+        Account account = Account.builder().isArchival(false).accountState(AccountState.BLOCKED).build();
         Long givenId = 1L;
         given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
 
@@ -372,29 +394,7 @@ class AccountServiceImplTest {
 
         assertThat(exception)
             .isNotNull()
-            .isExactlyInstanceOf(AccountNotActiveException.class)
-            .isInstanceOf(ResponseStatusException.class)
-            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_ACTIVE);
-    }
-
-    @Test
-    @DisplayName("Should throw AccountNotActiveException when account is not verified")
-    void block_should_throw_AccountNotActiveException_when_account_is_not_verified() {
-        //given
-        Account account = Account.builder().accountState(AccountState.NOT_VERIFIED).build();
-        Long givenId = 1L;
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
-
-        //when
-        Exception exception = catchException(() -> underTest.block(givenId));
-
-        //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
-        assertThat(exception)
-            .isNotNull()
-            .isExactlyInstanceOf(AccountNotActiveException.class)
+            .isExactlyInstanceOf(OperationNotAllowedWithActualAccountStateException.class)
             .isInstanceOf(ResponseStatusException.class)
             .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_ACTIVE);
     }
@@ -403,7 +403,7 @@ class AccountServiceImplTest {
     @DisplayName("Should unblock blocked account")
     void unblock_should_unblock_blocked_account() {
         //given
-        Account account = Account.builder().accountState(AccountState.BLOCKED).build();
+        Account account = Account.builder().isArchival(false).accountState(AccountState.BLOCKED).build();
         Long givenId = 1L;
         given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
 
@@ -439,10 +439,10 @@ class AccountServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw AccountNotBlockedException when account is active")
-    void unblock_should_throw_AccountNotBlockedException_when_account_is_active() {
+    @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
+    void unblock_should_throw_CantModifyArchivalAccountException_when_account_is_archival() {
         //given
-        Account account = Account.builder().accountState(AccountState.ACTIVE).build();
+        Account account = Account.builder().isArchival(true).build();
         Long givenId = 1L;
         given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
 
@@ -455,16 +455,38 @@ class AccountServiceImplTest {
 
         assertThat(exception)
             .isNotNull()
-            .isExactlyInstanceOf(AccountNotBlockedException.class)
+            .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ARCHIVAL);
+    }
+
+    @Test
+    @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is not verified")
+    void unblock_should_throw_OperationNotAllowedWithActualAccountStateException_when_account_is_not_verified() {
+        //given
+        Account account = Account.builder().isArchival(false).accountState(AccountState.NOT_VERIFIED).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.unblock(givenId));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(OperationNotAllowedWithActualAccountStateException.class)
             .isInstanceOf(ResponseStatusException.class)
             .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_BLOCKED);
     }
 
     @Test
-    @DisplayName("Should throw AccountNotBlockedException when account is archival")
-    void unblock_should_throw_AccountNotBlockedException_when_account_is_archival() {
+    @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is active")
+    void unblock_should_throw_OperationNotAllowedWithActualAccountStateException_when_account_is_active() {
         //given
-        Account account = Account.builder().accountState(AccountState.ARCHIVAL).build();
+        Account account = Account.builder().isArchival(false).accountState(AccountState.ACTIVE).build();
         Long givenId = 1L;
         given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
 
@@ -477,29 +499,7 @@ class AccountServiceImplTest {
 
         assertThat(exception)
             .isNotNull()
-            .isExactlyInstanceOf(AccountNotBlockedException.class)
-            .isInstanceOf(ResponseStatusException.class)
-            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_BLOCKED);
-    }
-
-    @Test
-    @DisplayName("Should throw AccountNotBlockedException when account is not verified")
-    void unblock_should_throw_AccountNotBlockedException_when_account_is_not_verified() {
-        //given
-        Account account = Account.builder().accountState(AccountState.NOT_VERIFIED).build();
-        Long givenId = 1L;
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
-
-        //when
-        Exception exception = catchException(() -> underTest.unblock(givenId));
-
-        //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
-        assertThat(exception)
-            .isNotNull()
-            .isExactlyInstanceOf(AccountNotBlockedException.class)
+            .isExactlyInstanceOf(OperationNotAllowedWithActualAccountStateException.class)
             .isInstanceOf(ResponseStatusException.class)
             .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_BLOCKED);
     }
@@ -508,7 +508,8 @@ class AccountServiceImplTest {
     @DisplayName("Should archive active account")
     void archive_should_archive_active_account() {
         //given
-        Account account = Account.builder().accountState(AccountState.ACTIVE).build();
+        Person person = Person.builder().address(Address.builder().build()).build();
+        Account account = Account.builder().isArchival(false).accountState(AccountState.ACTIVE).person(person).build();
         Long givenId = 1L;
         given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
         given(accountRepository.save(account)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
@@ -520,7 +521,7 @@ class AccountServiceImplTest {
         then(accountRepository).should().findById(givenId);
         then(accountRepository).should().save(account);
 
-        assertEquals(AccountState.ARCHIVAL, result.getAccountState());
+        assertEquals(true, result.isArchival());
     }
 
     @Test
@@ -545,10 +546,10 @@ class AccountServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw AccountAlreadyArchivalException when account is already archival")
-    void archive_should_throw_AccountAlreadyArchivalException() {
+    @DisplayName("Should throw CantModifyArchivalAccountException when account is already archival")
+    void archive_should_throw_CantModifyArchivalAccountException() {
         //given
-        Account account = Account.builder().accountState(AccountState.ARCHIVAL).build();
+        Account account = Account.builder().isArchival(true).build();
         Long givenId = 1L;
         given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
 
@@ -561,9 +562,9 @@ class AccountServiceImplTest {
 
         assertThat(exception)
             .isNotNull()
-            .isExactlyInstanceOf(AccountAlreadyArchivalException.class)
+            .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
             .isInstanceOf(ResponseStatusException.class)
-            .hasMessageContaining(ExceptionMessage.ACCOUNT_ALREADY_ARCHIVAL);
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ARCHIVAL);
     }
 
     @Test
