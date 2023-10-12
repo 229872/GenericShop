@@ -239,7 +239,6 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should update found account without one value")
     void update_should_modify_one_value() {
         //given
@@ -266,7 +265,6 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should update found account without all values")
     void update_should_modify_all_values() {
         //given
@@ -302,7 +300,6 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountNotFoundException when account can't be found during update")
     void update_should_throw_AccountNotFoundException() {
         //given
@@ -320,12 +317,16 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should block active account")
     void block_should_block_active_account() {
         //given
-        Account account = Account.builder().accountState(AccountState.ACTIVE).build();
-        Long givenId = 1L;
+        Account account = buildDefaultAccount();
+        account.setAccountState(AccountState.ACTIVE);
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
 
         //when
         Account result = underTest.block(givenId);
@@ -335,7 +336,6 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountNotFoundException when account is not found")
     void block_should_throw_AccountNotfoundException() {
         //given
@@ -353,12 +353,17 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountNotActiveException when account is blocked")
     void block_should_throw_AccountNotActiveException_when_account_is_blocked() {
         //given
-        Account account = Account.builder().accountState(AccountState.BLOCKED).build();
-        Long givenId = 1L;
+        Account account = buildDefaultAccount();
+        account.setAccountState(AccountState.BLOCKED);
+
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
@@ -372,12 +377,17 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountNotActiveException when account is archival")
     void block_should_throw_AccountNotActiveException_when_account_is_archival() {
         //given
-        Account account = Account.builder().accountState(AccountState.ARCHIVAL).build();
-        Long givenId = 1L;
+        Account account = buildDefaultAccount();
+        account.setAccountState(AccountState.ARCHIVAL);
+
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
@@ -391,12 +401,17 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountNotActiveException when account is not verified")
     void block_should_throw_AccountNotActiveException_when_account_is_not_verified() {
         //given
-        Account account = Account.builder().accountState(AccountState.NOT_VERIFIED).build();
-        Long givenId = 1L;
+        Account account = buildDefaultAccount();
+        account.setAccountState(AccountState.NOT_VERIFIED);
+
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
@@ -410,12 +425,17 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should unblock blocked account")
     void unblock_should_unblock_blocked_account() {
         //given
-        Account account = Account.builder().accountState(AccountState.BLOCKED).build();
-        Long givenId = 1L;
+        Account account = buildDefaultAccount();
+        account.setAccountState(AccountState.BLOCKED);
+
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
 
         //when
         Account result = underTest.unblock(givenId);
@@ -425,7 +445,6 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountNotFoundException when account can't be found")
     void unblock_should_throw_AccountNotFoundException() {
         //given
@@ -443,12 +462,17 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountNotBlockedException when account is active")
     void unblock_should_throw_AccountNotBlockedException_when_account_is_active() {
         //given
-        Account account = Account.builder().accountState(AccountState.ACTIVE).build();
-        Long givenId = 1L;
+        Account account = buildDefaultAccount();
+        account.setAccountState(AccountState.ACTIVE);
+
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
@@ -462,12 +486,17 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountNotBlockedException when account is archival")
     void unblock_should_throw_AccountNotBlockedException_when_account_is_archival() {
         //given
-        Account account = Account.builder().accountState(AccountState.ARCHIVAL).build();
-        Long givenId = 1L;
+        Account account = buildDefaultAccount();
+        account.setAccountState(AccountState.ARCHIVAL);
+
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
@@ -481,12 +510,17 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountNotBlockedException when account is not verified")
     void unblock_should_throw_AccountNotBlockedException_when_account_is_not_verified() {
         //given
-        Account account = Account.builder().accountState(AccountState.NOT_VERIFIED).build();
-        Long givenId = 1L;
+        Account account = buildDefaultAccount();
+        account.setAccountState(AccountState.NOT_VERIFIED);
+
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
@@ -500,12 +534,17 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should archive active account")
     void archive_should_archive_active_account() {
         //given
-        Account account = Account.builder().accountState(AccountState.ACTIVE).build();
-        Long givenId = 1L;
+        Account account = buildDefaultAccount();
+        account.setAccountState(AccountState.ACTIVE);
+
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
 
         //when
         Account result = underTest.archive(givenId);
@@ -515,7 +554,6 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountNotFoundException when account can't be found during archive")
     void archive_should_throw_AccountNotFoundException() {
         //given
@@ -533,12 +571,17 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
     @DisplayName("Should throw AccountAlreadyArchivalException when account is already archival")
     void archive_should_throw_AccountAlreadyArchivalException() {
         //given
-        Account account = Account.builder().accountState(AccountState.ARCHIVAL).build();
-        Long givenId = 1L;
+        Account account = buildDefaultAccount();
+        account.setAccountState(AccountState.ARCHIVAL);
+
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
 
         //when
         Exception exception = catchException(() -> underTest.archive(givenId));
