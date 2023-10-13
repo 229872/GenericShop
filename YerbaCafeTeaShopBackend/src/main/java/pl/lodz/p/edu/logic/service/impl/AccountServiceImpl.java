@@ -22,6 +22,7 @@ import pl.lodz.p.edu.logic.service.api.AccountService;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
 @RequiredArgsConstructor
 
@@ -124,7 +125,24 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account removeRole(Long id, AccountRole roleForRemoval) {
-        return null;
+        Account account = accountRepository.findById(id)
+            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+        Set<AccountRole> roles = account.getAccountRoles();
+
+        if (account.isArchival()) {
+            throw ExceptionFactory.createCantModifyArchivalAccountException();
+        }
+
+        if (!roles.contains(roleForRemoval)) {
+            throw ExceptionFactory.createAccountRoleNotFoundException();
+        }
+
+        if (roles.size() == 1) {
+            throw ExceptionFactory.createCantRemoveLastRoleException();
+        }
+
+        roles.remove(roleForRemoval);
+        return save(account);
     }
 
     @Override

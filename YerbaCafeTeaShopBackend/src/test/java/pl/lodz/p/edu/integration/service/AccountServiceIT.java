@@ -602,8 +602,111 @@ class AccountServiceIT {
     }
 
     @Test
-    @Disabled
-    void removeRole() {
+    @DisplayName("Should remove role assigned to account")
+    void removeRole_should_remove_role() {
+        //given
+        Account account = buildDefaultAccount();
+        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)));
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
+
+        //when
+        Account result = underTest.removeRole(givenId, AccountRole.CLIENT);
+
+        //then
+        assertThat(result.getAccountRoles())
+            .hasSize(1)
+            .containsExactly(AccountRole.EMPLOYEE);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotFoundException when account with provided id can't be found")
+    void removeRole_should_throw_AccountNotFoundException() {
+        //given
+        Long givenId = 1L;
+
+        //when
+        Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
+
+        //then
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountNotFoundException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Should throw CantModifyArchivalAccountException when found account is archival")
+    void removeRole_should_throw_CantModifyArchivalAccountException() {
+        //given
+        Account account = buildDefaultAccount();
+        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)));
+        txTemplate.execute(status -> {
+            em.persist(account);
+            account.setArchival(true);
+            return status;
+        });
+        Long givenId = account.getId();
+
+        //when
+        Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
+
+        //then
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ARCHIVAL);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountRoleNotFoundException when account doesn't have role we want to remove")
+    void removeRole_should_throw_AccountRoleNotFoundException() {
+        //given
+        Account account = buildDefaultAccount();
+        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)));
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
+
+        //when
+        Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.ADMIN));
+
+        //then
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountRoleNotFoundException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Should throw CantRemoveLastRoleException when account has last role")
+    void removeRole_should_throw_CantRemoveLastRoleException() {
+        //given
+        Account account = buildDefaultAccount();
+        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+        Long givenId = account.getId();
+
+        //when
+        Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
+
+        //then
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantRemoveLastRoleException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_LAST_ROLE);
     }
 
     @Test

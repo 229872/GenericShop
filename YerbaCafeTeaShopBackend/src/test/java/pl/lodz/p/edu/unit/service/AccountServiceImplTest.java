@@ -13,16 +13,14 @@ import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.dataaccess.model.Account;
 import pl.lodz.p.edu.dataaccess.model.Address;
 import pl.lodz.p.edu.dataaccess.model.Person;
+import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountState;
 import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.exception.*;
 import pl.lodz.p.edu.logic.model.NewPersonalInformation;
 import pl.lodz.p.edu.logic.service.impl.AccountServiceImpl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
@@ -573,8 +571,123 @@ class AccountServiceImplTest {
     }
 
     @Test
-    @Disabled
-    void removeRole() {
+    @DisplayName("Should remove role assigned to account")
+    void removeRole_should_remove_role() {
+        //given
+        Account account = Account.builder()
+            .isArchival(false)
+            .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)))
+            .build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+        given(accountRepository.save(account)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
+        //when
+        Account result = underTest.removeRole(givenId, AccountRole.CLIENT);
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(account);
+
+        assertThat(result.getAccountRoles())
+            .hasSize(1)
+            .containsExactly(AccountRole.EMPLOYEE);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotFoundException when account with provided id can't be found")
+    void removeRole_should_throw_AccountNotFoundException() {
+        //given
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
+
+        //when
+        Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountNotFoundException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Should throw CantModifyArchivalAccountException when found account is archival")
+    void removeRole_should_throw_CantModifyArchivalAccountException() {
+        //given
+        Account account = Account.builder()
+            .isArchival(true)
+            .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)))
+            .build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ARCHIVAL);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountRoleNotFoundException when account doesn't have role we want to remove")
+    void removeRole_should_throw_AccountRoleNotFoundException() {
+        //given
+        Account account = Account.builder()
+            .isArchival(false)
+            .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)))
+            .build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.ADMIN));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountRoleNotFoundException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Should throw CantRemoveLastRoleException when account has last role")
+    void removeRole_should_throw_CantRemoveLastRoleException() {
+        //given
+        Account account = Account.builder()
+            .isArchival(false)
+            .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)))
+            .build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantRemoveLastRoleException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_LAST_ROLE);
     }
 
     @Test

@@ -50,8 +50,8 @@ public final class ExceptionFactory {
         return new CantModifyArchivalAccountException(BAD_REQUEST, ACCOUNT_ARCHIVAL);
     }
 
-    public static ResponseStatusException createAccountCantRemoveLastRoleException() {
-        return new AccountCantRemoveLastRoleException(BAD_REQUEST, ACCOUNT_LAST_ROLE);
+    public static ResponseStatusException createCantRemoveLastRoleException() {
+        return new CantRemoveLastRoleException(BAD_REQUEST, ACCOUNT_LAST_ROLE);
     }
 
     public static ResponseStatusException createAccountRoleAlreadyAssignedException() {
