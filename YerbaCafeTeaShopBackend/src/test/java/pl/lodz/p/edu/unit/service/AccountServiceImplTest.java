@@ -691,8 +691,142 @@ class AccountServiceImplTest {
     }
 
     @Test
-    @Disabled
-    void changeRole() {
+    @DisplayName("Should change role")
+    void changeRole_should_change_role() {
+        //given
+        Account account = Account.builder().isArchival(false).accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT))).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+        given(accountRepository.save(account)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
+        //when
+        Account result = underTest.changeRole(givenId, AccountRole.EMPLOYEE);
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(account);
+
+        assertThat(result.getAccountRoles())
+            .hasSize(1)
+            .containsExactly(AccountRole.EMPLOYEE);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotFoundException when account with provided id can't be found")
+    void changeRole_should_throw_AccountNotFoundException() {
+        //given
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
+
+        //when
+        Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountNotFoundException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Should throw CantModifyArchivalAccountException when found account is archival")
+    void changeRole_should_throw_CantModifyArchivalAccountException() {
+        //given
+        Long givenId = 1L;
+        Account account = Account.builder().isArchival(true).accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT))).build();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ARCHIVAL);
+    }
+
+    @Test
+    @DisplayName("Should throw CantChangeRoleIfMoreThanOneAlreadyAssignedException when account has more than one role")
+    void changeRole_should_throw_CantChangeRoleIfMoreThanOneAlreadyAssignedException() {
+        //given
+        Long givenId = 1L;
+        Account account = Account.builder()
+            .isArchival(false)
+            .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)))
+            .build();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantChangeRoleIfMoreThanOneAlreadyAssignedException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_MORE_THAN_ONE);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountRoleAlreadyAssignedException when account has new role already assigned")
+    void changeRole_should_throw_AccountRoleAlreadyAssignedException() {
+        //given
+        Long givenId = 1L;
+        Account account = Account.builder()
+            .isArchival(false)
+            .accountRoles(new HashSet<>(Set.of(AccountRole.EMPLOYEE)))
+            .build();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountRoleAlreadyAssignedException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_ALREADY_EXISTS);
+    }
+
+    @Test
+    @DisplayName("Should throw CantAssignGuestRoleException when account has new role already assigned")
+    void changeRole_should_throw_CantAssignGuestRoleException() {
+        //given
+        Long givenId = 1L;
+        Account account = Account.builder()
+            .isArchival(false)
+            .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)))
+            .build();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.GUEST));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantAssignGuestRoleException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_ASSIGN_GUEST);
     }
 
     private Address buildFullAddress(String postalCode, String country, String city, String street,

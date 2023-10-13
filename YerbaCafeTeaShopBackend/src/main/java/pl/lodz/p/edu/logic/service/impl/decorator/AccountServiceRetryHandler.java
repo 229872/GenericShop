@@ -86,8 +86,8 @@ public class AccountServiceRetryHandler extends AbstractRetryHandler implements 
     }
 
     @Override
-    public Account changeRole(Long id, AccountRole oldRole, AccountRole newRole) {
-        return repeatTransactionWhenTimeoutOccurred(() -> accountService.changeRole(id, oldRole, newRole));
+    public Account changeRole(Long id, AccountRole newRole) {
+        return repeatTransactionWhenTimeoutOccurred(() -> accountService.changeRole(id, newRole));
     }
 
     @Override

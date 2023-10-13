@@ -38,14 +38,6 @@ public final class ExceptionFactory {
         return new OperationNotAllowedWithActualAccountStateException(BAD_REQUEST, message);
     }
 
-//    public static ResponseStatusException createAccountNotBlockedException() {
-//        return new AccountNotBlockedException(BAD_REQUEST, ACCOUNT_NOT_BLOCKED);
-//    }
-//
-//    public static ResponseStatusException createAccountNotActiveException() {
-//        return new AccountNotActiveException(BAD_REQUEST, ACCOUNT_NOT_ACTIVE);
-//    }
-
     public static ResponseStatusException createCantModifyArchivalAccountException() {
         return new CantModifyArchivalAccountException(BAD_REQUEST, ACCOUNT_ARCHIVAL);
     }
@@ -55,7 +47,7 @@ public final class ExceptionFactory {
     }
 
     public static ResponseStatusException createAccountRoleAlreadyAssignedException() {
-        return new AccountRoleAlreadyAssigned(BAD_REQUEST, ACCOUNT_ROLE_ALREADY_EXISTS);
+        return new AccountRoleAlreadyAssignedException(BAD_REQUEST, ACCOUNT_ROLE_ALREADY_EXISTS);
     }
 
     public static ResponseStatusException createAccountRoleConflictException() {
@@ -64,5 +56,13 @@ public final class ExceptionFactory {
 
     public static ResponseStatusException createAccountRoleNotFoundException() {
         return new AccountRoleNotFoundException(BAD_REQUEST, ACCOUNT_ROLE_NOT_FOUND);
+    }
+
+    public static ResponseStatusException createCantChangeRoleIfMoreThanOneAlreadyAssignedException() {
+        return new CantChangeRoleIfMoreThanOneAlreadyAssignedException(BAD_REQUEST, ACCOUNT_ROLE_MORE_THAN_ONE);
+    }
+
+    public static ResponseStatusException createCantAssignGuestRoleException() {
+        return new CantAssignGuestRoleException(BAD_REQUEST, ACCOUNT_ROLE_ASSIGN_GUEST);
     }
 }

@@ -3,8 +3,8 @@ package pl.lodz.p.edu.exception;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ResponseStatusException;
 
-public class AccountRoleAlreadyAssigned extends ResponseStatusException {
-    AccountRoleAlreadyAssigned(HttpStatusCode status, String reason) {
+public class CantAssignGuestRoleException extends ResponseStatusException {
+    CantAssignGuestRoleException(HttpStatusCode status, String reason) {
         super(status, reason);
     }
 }

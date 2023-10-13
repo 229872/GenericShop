@@ -19,10 +19,7 @@ import pl.lodz.p.edu.exception.ExceptionFactory;
 import pl.lodz.p.edu.logic.model.NewPersonalInformation;
 import pl.lodz.p.edu.logic.service.api.AccountService;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @RequiredArgsConstructor
 
@@ -146,8 +143,31 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account changeRole(Long id, AccountRole oldRole, AccountRole newRole) {
-        return null;
+    public Account changeRole(Long id, AccountRole newRole) {
+        Account account = accountRepository.findById(id)
+            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+        Set<AccountRole> roles = account.getAccountRoles();
+
+        if (account.isArchival()) {
+            throw ExceptionFactory.createCantModifyArchivalAccountException();
+        }
+
+        if (roles.size() > 1) {
+            throw ExceptionFactory.createCantChangeRoleIfMoreThanOneAlreadyAssignedException();
+        }
+
+        if (roles.contains(newRole)) {
+            throw ExceptionFactory.createAccountRoleAlreadyAssignedException();
+        }
+
+        if (newRole.equals(AccountRole.GUEST)) {
+            throw ExceptionFactory.createCantAssignGuestRoleException();
+        }
+
+        roles.remove(roles.iterator().next());
+        roles.add(newRole);
+
+        return save(account);
     }
 
     @Override

@@ -32,7 +32,7 @@ public interface AccountService {
 
     Account removeRole(Long id, AccountRole roleForRemoval);
 
-    Account changeRole(Long id, AccountRole oldRole, AccountRole newRole);
+    Account changeRole(Long id, AccountRole newRole);
 
     Account updateLocale(Long id, Locale locale);
 }

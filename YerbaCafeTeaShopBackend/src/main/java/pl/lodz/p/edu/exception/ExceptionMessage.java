@@ -18,4 +18,6 @@ public final class ExceptionMessage {
     public static final String ACCOUNT_ROLE_ALREADY_EXISTS = "exception.account.role.already.exists";
     public static final String ACCOUNT_ROLE_CONFLICT = "exception.account.role.conflict";
     public static final String ACCOUNT_ROLE_NOT_FOUND = "exception.account.role.not.found";
+    public static final String ACCOUNT_ROLE_MORE_THAN_ONE = "exception.account.role.more.than.one.assigned";
+    public static final String ACCOUNT_ROLE_ASSIGN_GUEST = "exception.account.role.cant.assign.guest";
 }
