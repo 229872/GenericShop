@@ -47,11 +47,11 @@ public final class ExceptionFactory {
     }
 
     public static ResponseStatusException createAccountRoleAlreadyAssignedException() {
-        return new AccountRoleAlreadyAssignedException(BAD_REQUEST, ACCOUNT_ROLE_ALREADY_EXISTS);
+        return new AccountRoleAlreadyAssignedException(BAD_REQUEST, ACCOUNT_ROLE_ALREADY_ASSIGNED);
     }
 
-    public static ResponseStatusException createAccountRoleConflictException() {
-        return new AccountRoleConflictException(CONFLICT, ACCOUNT_ROLE_CONFLICT);
+    public static ResponseStatusException createAccountWithAdministratorRoleCantHaveMoreRolesException() {
+        return new AccountWithAdministratorRoleCantHaveMoreRolesException(BAD_REQUEST, ACCOUNT_ROLE_ADMIN_MANY_ROLES);
     }
 
     public static ResponseStatusException createAccountRoleNotFoundException() {
@@ -63,6 +63,6 @@ public final class ExceptionFactory {
     }
 
     public static ResponseStatusException createCantAssignGuestRoleException() {
-        return new CantAssignGuestRoleException(BAD_REQUEST, ACCOUNT_ROLE_ASSIGN_GUEST);
+        return new CantAssignGuestRoleException(BAD_REQUEST, ACCOUNT_ROLE_CANT_ASSIGN_GUEST);
     }
 }

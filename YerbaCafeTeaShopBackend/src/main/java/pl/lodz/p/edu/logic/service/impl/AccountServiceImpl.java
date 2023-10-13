@@ -117,7 +117,28 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account addRole(Long id, AccountRole newRole) {
-        return null;
+        Account account = accountRepository.findById(id)
+            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+        Set<AccountRole> roles = account.getAccountRoles();
+
+        if (account.isArchival()) {
+            throw ExceptionFactory.createCantModifyArchivalAccountException();
+        }
+
+        if (roles.contains(newRole)) {
+            throw ExceptionFactory.createAccountRoleAlreadyAssignedException();
+        }
+
+        if (newRole.equals(AccountRole.GUEST)) {
+            throw ExceptionFactory.createCantAssignGuestRoleException();
+        }
+
+        if (newRole.equals(AccountRole.ADMIN) || roles.contains(AccountRole.ADMIN)) {
+            throw ExceptionFactory.createAccountWithAdministratorRoleCantHaveMoreRolesException();
+        }
+
+        roles.add(newRole);
+        return save(account);
     }
 
     @Override

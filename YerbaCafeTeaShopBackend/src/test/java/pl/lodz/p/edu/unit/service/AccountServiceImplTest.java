@@ -1,7 +1,6 @@
 package pl.lodz.p.edu.unit.service;
 
 import org.hibernate.exception.ConstraintViolationException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -566,8 +565,155 @@ class AccountServiceImplTest {
     }
 
     @Test
-    @Disabled
-    void addRole() {
+    @DisplayName("Should add role when account with provided id is found")
+    void addRole_should_add_new_role() {
+        //given
+        Account account = Account.builder().isArchival(false).accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT))).build();
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+        given(accountRepository.save(account)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
+        //when
+        Account result = underTest.addRole(givenId, AccountRole.EMPLOYEE);
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(account);
+
+        assertThat(result.getAccountRoles())
+            .hasSize(2)
+            .contains(AccountRole.CLIENT, AccountRole.EMPLOYEE);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotFoundException when account can't be found")
+    void addRole_should_throw_AccountNotFoundException() {
+        //given
+        Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
+
+        //when
+        Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.EMPLOYEE));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountNotFoundException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
+    void addRole_should_throw_CantModifyArchivalAccountException() {
+        //given
+        Long givenId = 1L;
+        Account account = Account.builder().isArchival(true).accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT))).build();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.EMPLOYEE));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ARCHIVAL);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountRoleAlreadyAssignedException when account already has new role")
+    void addRole_should_throw_AccountRoleAlreadyAssignedException() {
+        //given
+        Long givenId = 1L;
+        Account account = Account.builder().isArchival(false).accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT))).build();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.CLIENT));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountRoleAlreadyAssignedException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_ALREADY_ASSIGNED);
+    }
+
+    @Test
+    @DisplayName("Should throw CantAssignGuestRoleException when new role is Guest")
+    void addRole_should_throw_CantAssignGuestRoleException() {
+        //given
+        Long givenId = 1L;
+        Account account = Account.builder().isArchival(false).accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT))).build();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.GUEST));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantAssignGuestRoleException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_CANT_ASSIGN_GUEST);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountWithAdministratorRoleCantHaveMoreRolesException when account has Administrator role and there is try to add another one")
+    void addRole_should_throw_AccountWithAdministratorRoleCantHaveMoreRolesException_when_Admin_is_already_assigned() {
+        //given
+        Long givenId = 1L;
+        Account account = Account.builder().isArchival(false).accountRoles(new HashSet<>(Set.of(AccountRole.ADMIN))).build();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.CLIENT));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountWithAdministratorRoleCantHaveMoreRolesException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_ADMIN_MANY_ROLES);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountWithAdministratorRoleCantHaveMoreRolesException when account hasn't got Administrator role and there is try to add Administrator role to an account")
+    void addRole_should_throw_AccountWithAdministratorRoleCantHaveMoreRolesException_when_there_is_try_to_add_Admin_role() {
+        //given
+        Long givenId = 1L;
+        Account account = Account.builder().isArchival(false).accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT))).build();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.ADMIN));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(AccountWithAdministratorRoleCantHaveMoreRolesException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_ADMIN_MANY_ROLES);
     }
 
     @Test
@@ -801,7 +947,7 @@ class AccountServiceImplTest {
             .isNotNull()
             .isExactlyInstanceOf(AccountRoleAlreadyAssignedException.class)
             .isInstanceOf(ResponseStatusException.class)
-            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_ALREADY_EXISTS);
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_ALREADY_ASSIGNED);
     }
 
     @Test
@@ -826,7 +972,7 @@ class AccountServiceImplTest {
             .isNotNull()
             .isExactlyInstanceOf(CantAssignGuestRoleException.class)
             .isInstanceOf(ResponseStatusException.class)
-            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_ASSIGN_GUEST);
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_CANT_ASSIGN_GUEST);
     }
 
     private Address buildFullAddress(String postalCode, String country, String city, String street,
