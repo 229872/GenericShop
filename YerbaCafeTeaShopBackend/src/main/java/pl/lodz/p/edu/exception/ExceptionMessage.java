@@ -20,4 +20,10 @@ public final class ExceptionMessage {
     public static final String ACCOUNT_ROLE_NOT_FOUND = "exception.account.role.not.found";
     public static final String ACCOUNT_ROLE_MORE_THAN_ONE = "exception.account.role.more.than.one.assigned";
     public static final String ACCOUNT_ROLE_CANT_ASSIGN_GUEST = "exception.account.role.cant.assign.guest";
+
+
+    public static class Validation {
+        public static final String ACCOUNT_EMAIL_WRONG = "exception.validation.account.email.wrong";
+        public static final String ACCOUNT_EMAIL_BLANK = "exception.validation.account.email.blank";
+    }
 }

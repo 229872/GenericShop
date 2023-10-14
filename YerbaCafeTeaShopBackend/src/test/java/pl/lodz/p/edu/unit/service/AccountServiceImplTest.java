@@ -207,7 +207,7 @@ class AccountServiceImplTest {
         //given
         Address address = buildFullAddress("postalCode", "country", "city", "street", 1);
         Person person = buildFullPerson("firstName", "lastName", address);
-        Account account = Account.builder().person(person).build();
+        Account account = Account.builder().person(person).isArchival(false).build();
         Long givenId = 1L;
 
         String newFirstName = "newFirstName";
@@ -236,7 +236,7 @@ class AccountServiceImplTest {
         //given
         Address address = buildFullAddress("postalCode", "country", "city", "street", 1);
         Person person = buildFullPerson("firstName", "lastName", address);
-        Account account = Account.builder().person(person).build();
+        Account account = Account.builder().person(person).isArchival(false).build();
         Long givenId = 1L;
 
         String newFirstName = "newFirstName";
@@ -288,6 +288,30 @@ class AccountServiceImplTest {
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
             .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
+    void update_should_throw_CantModifyArchivalAccountException() {
+        //given
+        Long givenId = 1L;
+        Address address = buildFullAddress("postalCode", "country", "city", "street", 1);
+        Person person = buildFullPerson("firstName", "lastName", address);
+        Account account = Account.builder().person(person).isArchival(true).build();
+        NewPersonalInformation newInfo = NewPersonalInformation.builder().firstName("newFirstName").build();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
+
+        //when
+        Exception exception = catchException(() -> underTest.updatePersonalInformation(givenId, newInfo));
+
+        //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ARCHIVAL);
     }
 
     @Test

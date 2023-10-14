@@ -62,6 +62,10 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findById(id)
             .orElseThrow(ExceptionFactory::createAccountNotFoundException);
 
+        if (account.isArchival()) {
+            throw ExceptionFactory.createCantModifyArchivalAccountException();
+        }
+
         updatePersonalInformation(account, newPersonalInformation);
         return save(account);
     }

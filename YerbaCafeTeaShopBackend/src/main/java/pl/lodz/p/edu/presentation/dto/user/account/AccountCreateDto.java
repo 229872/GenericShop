@@ -1,10 +1,10 @@
 package pl.lodz.p.edu.presentation.dto.user.account;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import pl.lodz.p.edu.presentation.dto.user.address.AddressCreateDto;
+import pl.lodz.p.edu.presentation.validation.annotation.Email;
 
 @Builder
 public record AccountCreateDto(

@@ -320,6 +320,29 @@ class AccountServiceIT {
     }
 
     @Test
+    @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
+    void update_should_throw_CantModifyArchivalAccountException() {
+        //given
+        Account account = buildDefaultAccount();
+        txTemplate.execute(status -> {
+            em.persist(account);
+            account.setArchival(true);
+            return status;
+        });
+        Long givenId = account.getId();
+        NewPersonalInformation newInfo = NewPersonalInformation.builder().firstName("newFirstName").build();
+
+        //when
+        Exception exception = catchException(() -> underTest.updatePersonalInformation(givenId, newInfo));
+
+        //then
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ARCHIVAL);
+    }
+
+    @Test
     @DisplayName("Should block active account")
     void block_should_block_active_account() {
         //given
