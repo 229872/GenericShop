@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+@DisplayName("Unit tests for AccountService")
 @ExtendWith(MockitoExtension.class)
 class AccountServiceImplTest {
 
