@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import pl.lodz.p.edu.presentation.dto.user.address.AddressCreateDto;
 import pl.lodz.p.edu.presentation.validation.annotation.AccountRole;
+import pl.lodz.p.edu.presentation.validation.annotation.AccountState;
 import pl.lodz.p.edu.presentation.validation.annotation.Email;
 import pl.lodz.p.edu.presentation.validation.annotation.Locale;
 
@@ -24,7 +25,7 @@ public record AccountCreateDto(
     String lastName,
     @Valid
     AddressCreateDto address,
-    @NotBlank
+    @AccountState
     String accountState,
     @AccountRole
     String role
