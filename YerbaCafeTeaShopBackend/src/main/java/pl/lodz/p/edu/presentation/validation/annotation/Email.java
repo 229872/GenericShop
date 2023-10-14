@@ -5,11 +5,9 @@ import jakarta.validation.Payload;
 import jakarta.validation.constraints.NotBlank;
 import pl.lodz.p.edu.exception.ExceptionMessage;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
+@Documented
 @jakarta.validation.constraints.Email(message = ExceptionMessage.Validation.ACCOUNT_EMAIL_WRONG)
 @NotBlank(message = ExceptionMessage.Validation.ACCOUNT_EMAIL_BLANK)
 @Constraint(validatedBy = {})

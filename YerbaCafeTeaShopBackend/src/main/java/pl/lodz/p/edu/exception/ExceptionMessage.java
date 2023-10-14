@@ -20,10 +20,16 @@ public final class ExceptionMessage {
     public static final String ACCOUNT_ROLE_NOT_FOUND = "exception.account.role.not.found";
     public static final String ACCOUNT_ROLE_MORE_THAN_ONE = "exception.account.role.more.than.one.assigned";
     public static final String ACCOUNT_ROLE_CANT_ASSIGN_GUEST = "exception.account.role.cant.assign.guest";
+    public static final String ACCOUNT_CREATE_MANY_ROLES = "exception.account.create.role.many";
+    public static final String ACCOUNT_CREATE_CANT_ASSIGN_NOT_VERIFIED = "exception.account.create.not_verified";
 
 
     public static class Validation {
         public static final String ACCOUNT_EMAIL_WRONG = "exception.validation.account.email.wrong";
         public static final String ACCOUNT_EMAIL_BLANK = "exception.validation.account.email.blank";
+        public static final String ACCOUNT_LOCALE_NOT_SUPPORTED = "exception.validation.account.locale.not.supported";
+        public static final String ACCOUNT_LOCALE_BLANK = "exception.validation.account.locale.blank";
+        public static final String ACCOUNT_ROLE_NOT_SUPPORTED = "exception.validation.account.role.not.supported";
+        public static final String ACCOUNT_ROLE_BLANK = "exception.validation.account.role.blank";
     }
 }

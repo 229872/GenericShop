@@ -149,7 +149,11 @@ class AccountServiceImplTest {
     @DisplayName("Should create account")
     void create_should_create_account() {
         //given
-        Account account = Account.builder().login("login").build();
+        Account account = Account.builder()
+            .login("login")
+            .accountState(AccountState.ACTIVE)
+            .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)))
+            .build();
         given(accountRepository.save(account)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         //when
@@ -162,10 +166,83 @@ class AccountServiceImplTest {
     }
 
     @Test
+    @DisplayName("Should throw CantCreateAccountWithManyRolesException when account has more than one role")
+    void create_should_throw_CantCreateAccountWithManyRolesException() {
+        //given
+        Account account = Account.builder()
+            .login("login")
+            .accountState(AccountState.ACTIVE)
+            .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)))
+            .build();
+
+        //when
+        Exception exception = catchException(() -> underTest.create(account));
+
+        //then
+        then(accountRepository).shouldHaveNoInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantCreateAccountWithManyRolesException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_CREATE_MANY_ROLES);
+    }
+
+    @Test
+    @DisplayName("Should throw CantAssignGuestRoleException when account has guest role")
+    void create_should_throw_CantAssignGuestRoleException() {
+        //given
+        Account account = Account.builder()
+            .login("login")
+            .accountState(AccountState.ACTIVE)
+            .accountRoles(new HashSet<>(Set.of(AccountRole.GUEST)))
+            .build();
+
+        //when
+        Exception exception = catchException(() -> underTest.create(account));
+
+        //then
+        then(accountRepository).shouldHaveNoInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantAssignGuestRoleException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_CANT_ASSIGN_GUEST);
+    }
+
+    @Test
+    @DisplayName("Should throw CantCreateAccountWithNotVerifiedStatusException when account is not verified")
+    void create_should_throw_CantCreateAccountWithNotVerifiedStatusException() {
+        //given
+        Account account = Account.builder()
+            .login("login")
+            .accountState(AccountState.NOT_VERIFIED)
+            .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)))
+            .build();
+
+        //when
+        Exception exception = catchException(() -> underTest.create(account));
+
+        //then
+        then(accountRepository).shouldHaveNoInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantCreateAccountWithNotVerifiedStatusException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_CREATE_CANT_ASSIGN_NOT_VERIFIED);
+    }
+
+    @Test
     @DisplayName("Should throw AccountLoginConflictException when new Account has same login")
     void create_should_throw_account_login_conflict_exception() {
         //given
-        Account account = Account.builder().login("login").build();
+        Account account = Account.builder()
+            .login("login")
+            .accountState(AccountState.ACTIVE)
+            .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)))
+            .build();
         var cause = new ConstraintViolationException("Database violation occurred", null, "accounts_login_key");
         var dataIntegrityViolationException = new DataIntegrityViolationException("Violation occurred", cause);
         given(accountRepository.save(account)).willThrow(dataIntegrityViolationException);
@@ -185,7 +262,11 @@ class AccountServiceImplTest {
     @DisplayName("Should throw AccountEmailConflictException when new Account has same email")
     void create_should_throw_account_email_conflict_exception() {
         //given
-        Account account = Account.builder().email("email@example.com").build();
+        Account account = Account.builder()
+            .email("email@example.com")
+            .accountState(AccountState.ACTIVE)
+            .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)))
+            .build();
         var cause = new ConstraintViolationException("Database violation occurred", null, "accounts_email_key");
         var dataIntegrityViolationException = new DataIntegrityViolationException("Violation occurred", cause);
         given(accountRepository.save(account)).willThrow(dataIntegrityViolationException);

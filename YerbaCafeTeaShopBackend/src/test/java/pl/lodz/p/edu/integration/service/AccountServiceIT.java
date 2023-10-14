@@ -196,6 +196,64 @@ class AccountServiceIT {
     }
 
     @Test
+    @DisplayName("Should throw CantCreateAccountWithManyRolesException when account has more than one role")
+    void create_should_throw_CantCreateAccountWithManyRolesException() {
+        //given
+        Account account = buildDefaultAccount();
+        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)));
+        txTemplate.execute(status -> {
+            em.persist(account);
+            return status;
+        });
+
+        //when
+        Exception exception = catchException(() -> underTest.create(account));
+
+        //then
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantCreateAccountWithManyRolesException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_CREATE_MANY_ROLES);
+    }
+
+    @Test
+    @DisplayName("Should throw CantAssignGuestRoleException when account has guest role")
+    void create_should_throw_CantAssignGuestRoleException() {
+        //given
+        Account account = buildDefaultAccount();
+        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.GUEST)));
+
+        //when
+        Exception exception = catchException(() -> underTest.create(account));
+
+        //then
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantAssignGuestRoleException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_ROLE_CANT_ASSIGN_GUEST);
+    }
+
+    @Test
+    @DisplayName("Should throw CantCreateAccountWithNotVerifiedStatusException when account is not verified")
+    void create_should_throw_CantCreateAccountWithNotVerifiedStatusException() {
+        //given
+        Account account = buildDefaultAccount();
+        account.setAccountState(AccountState.NOT_VERIFIED);
+
+        //when
+        Exception exception = catchException(() -> underTest.create(account));
+
+        //then
+        assertThat(exception)
+            .isNotNull()
+            .isExactlyInstanceOf(CantCreateAccountWithNotVerifiedStatusException.class)
+            .isInstanceOf(ResponseStatusException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_CREATE_CANT_ASSIGN_NOT_VERIFIED);
+    }
+
+    @Test
     @DisplayName("Should throw AccountLoginConflictException when new Account has same login")
     void create_should_throw_account_login_conflict_exception() {
         //given

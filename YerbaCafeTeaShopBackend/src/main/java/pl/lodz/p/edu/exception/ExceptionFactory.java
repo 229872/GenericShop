@@ -65,4 +65,12 @@ public final class ExceptionFactory {
     public static ResponseStatusException createCantAssignGuestRoleException() {
         return new CantAssignGuestRoleException(BAD_REQUEST, ACCOUNT_ROLE_CANT_ASSIGN_GUEST);
     }
+
+    public static ResponseStatusException createCantCreateAccountWithManyRolesException() {
+        return new CantCreateAccountWithManyRolesException(BAD_REQUEST, ACCOUNT_CREATE_MANY_ROLES);
+    }
+
+    public static ResponseStatusException createCantCreateAccountWithNotVerifiedStatusException() {
+        return new CantCreateAccountWithNotVerifiedStatusException(BAD_REQUEST, ACCOUNT_CREATE_CANT_ASSIGN_NOT_VERIFIED);
+    }
 }

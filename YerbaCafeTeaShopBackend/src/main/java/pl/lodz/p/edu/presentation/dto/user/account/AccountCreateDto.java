@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import pl.lodz.p.edu.presentation.dto.user.address.AddressCreateDto;
+import pl.lodz.p.edu.presentation.validation.annotation.AccountRole;
 import pl.lodz.p.edu.presentation.validation.annotation.Email;
+import pl.lodz.p.edu.presentation.validation.annotation.Locale;
 
 @Builder
 public record AccountCreateDto(
@@ -14,7 +16,7 @@ public record AccountCreateDto(
     String email,
     @NotBlank
     String password,
-    @NotBlank
+    @Locale
     String locale,
     @NotBlank
     String firstName,
@@ -24,7 +26,7 @@ public record AccountCreateDto(
     AddressCreateDto address,
     @NotBlank
     String accountState,
-    @NotBlank
+    @AccountRole
     String role
 ) {
 }

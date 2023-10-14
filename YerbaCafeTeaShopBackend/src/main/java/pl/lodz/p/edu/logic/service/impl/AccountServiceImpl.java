@@ -54,6 +54,20 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Account create(Account account) {
+        Set<AccountRole> roles = account.getAccountRoles();
+
+        if (roles.size() > 1) {
+            throw ExceptionFactory.createCantCreateAccountWithManyRolesException();
+        }
+
+        if (roles.contains(AccountRole.GUEST)) {
+            throw ExceptionFactory.createCantAssignGuestRoleException();
+        }
+
+        if (account.getAccountState().equals(AccountState.NOT_VERIFIED)) {
+            throw ExceptionFactory.createCantCreateAccountWithNotVerifiedStatusException();
+        }
+
         return save(account);
     }
 
