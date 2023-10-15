@@ -9,7 +9,7 @@ import pl.lodz.p.edu.presentation.validation.validator.AccountStateValidator;
 import java.lang.annotation.*;
 
 @Documented
-@NotBlank(message = ExceptionMessage.Validation.FIELD_BLANK)
+@NotBlank(message = ExceptionMessage.Validation.BLANK)
 @Constraint(validatedBy = AccountStateValidator.class)
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

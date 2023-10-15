@@ -14,7 +14,7 @@ import java.util.Set;
 public class TestData {
     static int counter = 1;
 
-    static final String defaultPostalCode = "postalCode";
+    static final String defaultPostalCode = "11-111";
     static final String defaultCountry = "Country";
     static final String defaultCity = "City";
     static final String defaultStreet = "Street";
@@ -86,17 +86,20 @@ public class TestData {
     }
 
     public static AddressCreateDto buildDefaultAddressCreateDto() {
+        return getDefaultAddressCreateDtoBuilder().build();
+    }
+
+    public static AccountCreateDto buildDefaultAccountCreateDto() {
+        return getDefaultAccountCreateDtoBuilder().build();
+    }
+
+    public static AddressCreateDto.AddressCreateDtoBuilder getDefaultAddressCreateDtoBuilder() {
         return AddressCreateDto.builder()
             .postalCode(defaultPostalCode)
             .country(defaultCountry)
             .city(defaultCity)
             .street(defaultStreet)
-            .houseNumber(defaultHouseNumber)
-            .build();
-    }
-
-    public static AccountCreateDto buildDefaultAccountCreateDto() {
-        return getDefaultAccountCreateDtoBuilder().build();
+            .houseNumber(defaultHouseNumber);
     }
 
     public static AccountCreateDto.AccountCreateDtoBuilder getDefaultAccountCreateDtoBuilder() {

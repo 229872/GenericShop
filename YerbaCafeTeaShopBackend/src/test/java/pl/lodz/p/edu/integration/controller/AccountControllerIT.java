@@ -226,11 +226,11 @@ public class AccountControllerIT {
                         .andExpect(status().isBadRequest())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.messages.length()", is(1)))
-                        .andExpect(jsonPath("$.messages.login", hasItem(ExceptionMessage.Validation.FIELD_NOT_NULL)));
+                        .andExpect(jsonPath("$.messages.login", hasItem(ExceptionMessage.Validation.NOT_NULL)));
                 }
 
                 @ParameterizedTest
-                @ValueSource(strings = {" ", "login", "1login"})
+                @ValueSource(strings = {" ", "log-in", "1login"})
                 @DisplayName("Should return response with status 400 and body with exception message when provided login is not capitalized")
                 void createAccount_should_return_status_bad_request_when_login_is_not_capitalized(String givenLogin) throws Exception {
                     //given
@@ -250,7 +250,7 @@ public class AccountControllerIT {
                         .andExpect(status().isBadRequest())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.messages.length()", is(1)))
-                        .andExpect(jsonPath("$.messages.login", hasItem(ExceptionMessage.Validation.FIELD_CAPITALIZED)));
+                        .andExpect(jsonPath("$.messages.login", hasItem(ExceptionMessage.Validation.LOGIN_WRONG)));
                 }
 
                 @ParameterizedTest
@@ -274,7 +274,7 @@ public class AccountControllerIT {
                         .andExpect(status().isBadRequest())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.messages.length()", is(1)))
-                        .andExpect(jsonPath("$.messages.login", hasItem(ExceptionMessage.Validation.FIELD_CAPITALIZED_SIZE)));
+                        .andExpect(jsonPath("$.messages.login", hasItem(ExceptionMessage.Validation.SIZE)));
                 }
             }
 
@@ -303,7 +303,7 @@ public class AccountControllerIT {
                         .andExpect(status().isBadRequest())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.messages.length()", is(1)))
-                        .andExpect(jsonPath("$.messages.email", hasItem(ExceptionMessage.Validation.FIELD_NOT_NULL)));
+                        .andExpect(jsonPath("$.messages.email", hasItem(ExceptionMessage.Validation.NOT_NULL)));
                 }
 
                 @ParameterizedTest
@@ -327,7 +327,7 @@ public class AccountControllerIT {
                         .andExpect(status().isBadRequest())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.messages.length()", is(1)))
-                        .andExpect(jsonPath("$.messages.email", hasItem(ExceptionMessage.Validation.EMAIL_WRONG)));
+                        .andExpect(jsonPath("$.messages.email", hasItem(ExceptionMessage.Validation.EMAIL)));
                 }
             }
 
@@ -356,7 +356,7 @@ public class AccountControllerIT {
                         .andExpect(status().isBadRequest())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.messages.length()", is(1)))
-                        .andExpect(jsonPath("$.messages.password", hasItem(ExceptionMessage.Validation.FIELD_NOT_NULL)));
+                        .andExpect(jsonPath("$.messages.password", hasItem(ExceptionMessage.Validation.NOT_NULL)));
                 }
 
                 @ParameterizedTest
@@ -434,7 +434,7 @@ public class AccountControllerIT {
                         .andExpect(status().isBadRequest())
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.messages.length()", is(1)))
-                        .andExpect(jsonPath("$.messages.locale", hasItem(ExceptionMessage.Validation.FIELD_BLANK)));
+                        .andExpect(jsonPath("$.messages.locale", hasItem(ExceptionMessage.Validation.BLANK)));
                 }
 
                 @ParameterizedTest
@@ -459,6 +459,513 @@ public class AccountControllerIT {
                         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                         .andExpect(jsonPath("$.messages.length()", is(1)))
                         .andExpect(jsonPath("$.messages.locale", hasItem(ExceptionMessage.Validation.ACCOUNT_LOCALE_NOT_SUPPORTED)));
+                }
+            }
+
+            @Nested
+            @DisplayName("First name field")
+            class FirstName {
+
+                @ParameterizedTest
+                @NullSource
+                @DisplayName("Should return response with status 400 and body with exception message when provided firstName is null")
+                void createAccount_should_return_status_bad_request_when_firstName_is_null(String givenFirstName) throws Exception {
+                    //given
+                    AccountCreateDto accountWithNullFirstName = TestData.getDefaultAccountCreateDtoBuilder()
+                        .firstName(givenFirstName)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithNullFirstName);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.firstName", hasItem(ExceptionMessage.Validation.NOT_NULL)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {" ", "john", "1john", "John1"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided firstName is not capitalized")
+                void createAccount_should_return_status_bad_request_when_firstName_is_not_capitalized(String givenFirstName) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenFirstName = TestData.getDefaultAccountCreateDtoBuilder()
+                        .firstName(givenFirstName)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenFirstName);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.firstName", hasItem(ExceptionMessage.Validation.CAPITALIZED)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {"", "TooLongNameForName123"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided firstName is too short or too long")
+                void createAccount_should_return_status_bad_request_when_firstName_has_wrong_size(String givenFirstName) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenFirstName = TestData.getDefaultAccountCreateDtoBuilder()
+                        .firstName(givenFirstName)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenFirstName);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.firstName", hasItem(ExceptionMessage.Validation.SIZE)));
+                }
+            }
+
+            @Nested
+            @DisplayName("Last name field")
+            class LastName {
+
+                @ParameterizedTest
+                @NullSource
+                @DisplayName("Should return response with status 400 and body with exception message when provided lastName is null")
+                void createAccount_should_return_status_bad_request_when_lastName_is_null(String givenLastName) throws Exception {
+                    //given
+                    AccountCreateDto accountWithNullLastName = TestData.getDefaultAccountCreateDtoBuilder()
+                        .lastName(givenLastName)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithNullLastName);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.lastName", hasItem(ExceptionMessage.Validation.NOT_NULL)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {" ", "doe", "1doe", "Doe1"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided lastName is not capitalized")
+                void createAccount_should_return_status_bad_request_when_lastName_is_not_capitalized(String givenLastName) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenLastName = TestData.getDefaultAccountCreateDtoBuilder()
+                        .lastName(givenLastName)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLastName);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.lastName", hasItem(ExceptionMessage.Validation.CAPITALIZED)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {"", "TooLongNameForSurname"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided lastName is too short or too long")
+                void createAccount_should_return_status_bad_request_when_lastName_has_wrong_size(String givenLastName) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenLastName = TestData.getDefaultAccountCreateDtoBuilder()
+                        .lastName(givenLastName)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLastName);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.lastName", hasItem(ExceptionMessage.Validation.SIZE)));
+                }
+            }
+
+            @Nested
+            @DisplayName("Address field")
+            class Address {
+
+                @ParameterizedTest
+                @NullSource
+                @DisplayName("Should return response with status 400 and body with exception message when provided postalCode is null")
+                void createAccount_should_return_status_bad_request_when_postalCode_is_null(String givenPostalCode) throws Exception {
+                    //given
+                    AccountCreateDto accountWithNullPostalCode = TestData.getDefaultAccountCreateDtoBuilder()
+                        .address(TestData.getDefaultAddressCreateDtoBuilder().postalCode(givenPostalCode).build())
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithNullPostalCode);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages['address.postalCode']", hasItem(ExceptionMessage.Validation.NOT_NULL)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {" ", "333-22", "aa-200", "200-aa"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided postalCode is not in format dd-ddd")
+                void createAccount_should_return_status_bad_request_when_postalCode_is_not_in_format(String givenPostalCode) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenPostalCode = TestData.getDefaultAccountCreateDtoBuilder()
+                        .address(TestData.getDefaultAddressCreateDtoBuilder().postalCode(givenPostalCode).build())
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenPostalCode);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages['address.postalCode']", hasItem(ExceptionMessage.Validation.ACCOUNT_POSTAL_CODE_WRONG)));
+                }
+
+                @ParameterizedTest
+                @NullSource
+                @DisplayName("Should return response with status 400 and body with exception message when provided country is null")
+                void createAccount_should_return_status_bad_request_when_country_is_null(String givenCountry) throws Exception {
+                    //given
+                    AccountCreateDto accountWithNullCountry = TestData.getDefaultAccountCreateDtoBuilder()
+                        .address(TestData.getDefaultAddressCreateDtoBuilder().country(givenCountry).build())
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithNullCountry);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages['address.country']", hasItem(ExceptionMessage.Validation.NOT_NULL)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {" ", "poland", "Poland100", "Poland_"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided country is not capitalized")
+                void createAccount_should_return_status_bad_request_when_country_is_not_capitalized(String givenCountry) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenCountry = TestData.getDefaultAccountCreateDtoBuilder()
+                        .address(TestData.getDefaultAddressCreateDtoBuilder().country(givenCountry).build())
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenCountry);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages['address.country']", hasItem(ExceptionMessage.Validation.CAPITALIZED)));
+                }
+
+                @ParameterizedTest
+                @NullSource
+                @DisplayName("Should return response with status 400 and body with exception message when provided city is null")
+                void createAccount_should_return_status_bad_request_when_city_is_null(String givenCity) throws Exception {
+                    //given
+                    AccountCreateDto accountWithNullCity = TestData.getDefaultAccountCreateDtoBuilder()
+                        .address(TestData.getDefaultAddressCreateDtoBuilder().city(givenCity).build())
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithNullCity);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages['address.city']", hasItem(ExceptionMessage.Validation.NOT_NULL)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {" ", "london", "London200", "London_"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided city is not capitalized")
+                void createAccount_should_return_status_bad_request_when_city_is_not_capitalized(String givenCity) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenCity = TestData.getDefaultAccountCreateDtoBuilder()
+                        .address(TestData.getDefaultAddressCreateDtoBuilder().city(givenCity).build())
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenCity);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages['address.city']", hasItem(ExceptionMessage.Validation.CAPITALIZED)));
+                }
+
+                @ParameterizedTest
+                @NullSource
+                @DisplayName("Should return response with status 400 and body with exception message when provided street is null")
+                void createAccount_should_return_status_bad_request_when_street_is_null(String givenStreet) throws Exception {
+                    //given
+                    AccountCreateDto accountWithNullStreet = TestData.getDefaultAccountCreateDtoBuilder()
+                        .address(TestData.getDefaultAddressCreateDtoBuilder().street(givenStreet).build())
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithNullStreet);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages['address.street']", hasItem(ExceptionMessage.Validation.NOT_NULL)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {" ", "road", "Road1", "Road_"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided street is not capitalized")
+                void createAccount_should_return_status_bad_request_when_street_is_not_capitalized(String givenStreet) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenStreet = TestData.getDefaultAccountCreateDtoBuilder()
+                        .address(TestData.getDefaultAddressCreateDtoBuilder().street(givenStreet).build())
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenStreet);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages['address.street']", hasItem(ExceptionMessage.Validation.CAPITALIZED)));
+                }
+
+                @ParameterizedTest
+                @NullSource
+                @DisplayName("Should return response with status 400 and body with exception message when provided houseNumber is null")
+                void createAccount_should_return_status_bad_request_when_houseNumber_is_null(Integer givenHouseNumber) throws Exception {
+                    //given
+                    AccountCreateDto accountWithNullHouseNumber = TestData.getDefaultAccountCreateDtoBuilder()
+                        .address(TestData.getDefaultAddressCreateDtoBuilder().houseNumber(givenHouseNumber).build())
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithNullHouseNumber);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages['address.houseNumber']", hasItem(ExceptionMessage.Validation.NOT_NULL)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(ints = {-1, 0})
+                @DisplayName("Should return response with status 400 and body with exception message when provided houseNumber is not positive")
+                void createAccount_should_return_status_bad_request_when_street_is_not_capitalized(Integer givenHouseNumber) throws Exception {
+                    //given
+                    AccountCreateDto accountWithNotPositiveHouseNumber = TestData.getDefaultAccountCreateDtoBuilder()
+                        .address(TestData.getDefaultAddressCreateDtoBuilder().houseNumber(givenHouseNumber).build())
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithNotPositiveHouseNumber);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages['address.houseNumber']", hasItem(ExceptionMessage.Validation.POSITIVE)));
+                }
+            }
+
+            @Nested
+            @DisplayName("Account state")
+            class AccountState {
+
+                @ParameterizedTest
+                @ValueSource(strings = " ")
+                @NullSource
+                @DisplayName("Should return response with status 400 and body with exception message when provided accountState is blank")
+                void createAccount_should_return_status_bad_request_when_accountState_is_blank(String givenAccountState) throws Exception {
+                    //given
+                    AccountCreateDto accountWithBlankAccountState = TestData.getDefaultAccountCreateDtoBuilder()
+                        .accountState(givenAccountState)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithBlankAccountState);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.accountState", hasItem(ExceptionMessage.Validation.BLANK)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {"adsfdasf"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided accountState is not supported")
+                void createAccount_should_return_status_bad_request_when_accountState_is_not_supported(String givenAccountState) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenAccountState = TestData.getDefaultAccountCreateDtoBuilder()
+                        .accountState(givenAccountState)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenAccountState);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.accountState", hasItem(ExceptionMessage.Validation.ACCOUNT_STATE_NOT_SUPPORTED)));
+                }
+            }
+
+            @Nested
+            @DisplayName("Account role")
+            class AccountRole {
+
+                @ParameterizedTest
+                @ValueSource(strings = " ")
+                @NullSource
+                @DisplayName("Should return response with status 400 and body with exception message when provided accountRole is blank")
+                void createAccount_should_return_status_bad_request_when_accountRole_is_blank(String givenAccountRole) throws Exception {
+                    //given
+                    AccountCreateDto accountWithBlankAccountRole = TestData.getDefaultAccountCreateDtoBuilder()
+                        .role(givenAccountRole)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithBlankAccountRole);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.role", hasItem(ExceptionMessage.Validation.BLANK)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {"adsfdasf", "123", "!!", "fr"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided accountRole is not supported")
+                void createAccount_should_return_status_bad_request_when_accountRole_is_not_supported(String givenAccountRole) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenAccountRole = TestData.getDefaultAccountCreateDtoBuilder()
+                        .role(givenAccountRole)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenAccountRole);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.role", hasItem(ExceptionMessage.Validation.ACCOUNT_ROLE_NOT_SUPPORTED)));
                 }
             }
         }

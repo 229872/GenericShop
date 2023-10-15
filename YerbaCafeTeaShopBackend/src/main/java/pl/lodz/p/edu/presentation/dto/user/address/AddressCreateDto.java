@@ -1,20 +1,24 @@
 package pl.lodz.p.edu.presentation.dto.user.address;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Builder;
+import pl.lodz.p.edu.exception.ExceptionMessage;
+import pl.lodz.p.edu.presentation.validation.annotation.Capitalized;
+import pl.lodz.p.edu.presentation.validation.annotation.PostalCode;
 
 @Builder
 public record AddressCreateDto(
-    @NotBlank
+    @PostalCode
     String postalCode,
-    @NotBlank
+    @Capitalized
     String country,
-    @NotBlank
+    @Capitalized
     String city,
-    @NotBlank
+    @Capitalized
     String street,
-    @NotNull
+    @NotNull(message = ExceptionMessage.Validation.NOT_NULL)
+    @Positive(message = ExceptionMessage.Validation.POSITIVE)
     Integer houseNumber
 ) {
 }

@@ -10,7 +10,7 @@ import pl.lodz.p.edu.exception.ExceptionMessage;
 import java.lang.annotation.*;
 
 @Documented
-@NotNull(message = ExceptionMessage.Validation.FIELD_NOT_NULL)
+@NotNull(message = ExceptionMessage.Validation.NOT_NULL)
 @Pattern(regexp = "^(?=.*[A-Z])(?=.*[!@#$%^&+=]).*$",
     message = ExceptionMessage.Validation.PASSWORD_WRONG)
 @Size(min = 8, max = 30, message = ExceptionMessage.Validation.PASSWORD_WRONG_SIZE)
