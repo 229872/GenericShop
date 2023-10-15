@@ -3,11 +3,12 @@ package pl.lodz.p.edu.presentation.dto.exception;
 import lombok.Builder;
 
 import java.util.List;
+import java.util.Map;
 
 @Builder
 public record ValidationExceptionResponseDto(
     int status,
     String error,
-    List<String> messages
+    Map<String, List<String>> messages
 ) {
 }

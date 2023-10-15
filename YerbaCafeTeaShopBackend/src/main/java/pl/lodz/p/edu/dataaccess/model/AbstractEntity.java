@@ -44,6 +44,8 @@ public abstract class AbstractEntity {
     void prePersist() {
         isArchival = false;
         cratedAt = LocalDateTime.now();
+        //fixme After adding security implement mechanism
+        createdBy = "test";
     }
 
     @PreUpdate

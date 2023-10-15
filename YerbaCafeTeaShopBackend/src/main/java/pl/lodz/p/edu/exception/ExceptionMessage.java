@@ -25,13 +25,13 @@ public final class ExceptionMessage {
 
 
     public static class Validation {
+        public static final String FIELD_NOT_NULL = "exception.validation.field.not.null";
+        public static final String FIELD_BLANK = "exception.validation.field.blank";
+        public static final String FIELD_CAPITALIZED = "exception.validation.field.capitalized";
+        public static final String FIELD_CAPITALIZED_SIZE = "exception.validation.field.capitalized.size";
         public static final String ACCOUNT_EMAIL_WRONG = "exception.validation.account.email.wrong";
-        public static final String ACCOUNT_EMAIL_BLANK = "exception.validation.account.email.blank";
         public static final String ACCOUNT_LOCALE_NOT_SUPPORTED = "exception.validation.account.locale.not.supported";
-        public static final String ACCOUNT_LOCALE_BLANK = "exception.validation.account.locale.blank";
         public static final String ACCOUNT_ROLE_NOT_SUPPORTED = "exception.validation.account.role.not.supported";
-        public static final String ACCOUNT_ROLE_BLANK = "exception.validation.account.role.blank";
         public static final String ACCOUNT_STATE_NOT_SUPPORTED = "exception.validation.account.state.not.supported";
-        public static final String ACCOUNT_STATE_BLANK = "exception.validation.account.state.blank";
     }
 }

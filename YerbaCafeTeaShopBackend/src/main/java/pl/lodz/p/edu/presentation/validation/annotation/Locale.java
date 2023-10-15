@@ -9,7 +9,7 @@ import pl.lodz.p.edu.presentation.validation.validator.LocaleValidator;
 import java.lang.annotation.*;
 
 @Documented
-@NotBlank(message = ExceptionMessage.Validation.ACCOUNT_LOCALE_BLANK)
+@NotBlank(message = ExceptionMessage.Validation.FIELD_BLANK)
 @Constraint(validatedBy = LocaleValidator.class)
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)

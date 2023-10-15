@@ -37,7 +37,7 @@ public class AccountMapper {
             .login(createDto.login())
             .password(createDto.password())
             .email(createDto.email())
-            .login(createDto.locale())
+            .locale(createDto.locale())
             .accountState(AccountState.valueOf(createDto.accountState().toUpperCase()))
             .accountRoles(new HashSet<>(Set.of(AccountRole.valueOf(createDto.role().toUpperCase()))))
             .person(person)

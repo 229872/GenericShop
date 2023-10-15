@@ -9,14 +9,14 @@ import pl.lodz.p.edu.presentation.validation.validator.AccountStateValidator;
 import java.lang.annotation.*;
 
 @Documented
-@NotBlank(message = ExceptionMessage.Validation.ACCOUNT_STATE_BLANK)
+@NotBlank(message = ExceptionMessage.Validation.FIELD_BLANK)
 @Constraint(validatedBy = AccountStateValidator.class)
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AccountState {
     String message() default ExceptionMessage.Validation.ACCOUNT_STATE_NOT_SUPPORTED;
 
-    Class<?>[] group() default {};
+    Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 }

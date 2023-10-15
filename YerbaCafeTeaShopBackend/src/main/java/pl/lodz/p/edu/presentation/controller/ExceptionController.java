@@ -5,6 +5,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -15,6 +16,9 @@ import pl.lodz.p.edu.presentation.dto.exception.ValidationExceptionResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.*;
 
 @RestControllerAdvice
 @Slf4j
@@ -50,14 +54,16 @@ public class ExceptionController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<?> handleValidationException(MethodArgumentNotValidException ex) {
         log.info("Validation exception occurred: ", ex);
-        List<String> violationMessages = ex.getFieldErrors().stream()
-            .map(DefaultMessageSourceResolvable::getDefaultMessage)
-            .toList();
+
+        Map<String, List<String>> fieldErrors = ex.getFieldErrors().stream()
+            .collect(groupingBy(FieldError::getField,
+                mapping(DefaultMessageSourceResolvable::getDefaultMessage, toList())));
+
 
         ValidationExceptionResponseDto response = ValidationExceptionResponseDto.builder()
             .status(HttpStatus.BAD_REQUEST.value())
             .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-            .messages(violationMessages)
+            .messages(fieldErrors)
             .build();
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

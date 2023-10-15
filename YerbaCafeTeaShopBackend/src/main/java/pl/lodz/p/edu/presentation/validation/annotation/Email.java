@@ -9,14 +9,14 @@ import java.lang.annotation.*;
 
 @Documented
 @jakarta.validation.constraints.Email(message = ExceptionMessage.Validation.ACCOUNT_EMAIL_WRONG)
-@NotBlank(message = ExceptionMessage.Validation.ACCOUNT_EMAIL_BLANK)
+@NotBlank(message = ExceptionMessage.Validation.FIELD_BLANK)
 @Constraint(validatedBy = {})
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Email {
     String message() default ExceptionMessage.Validation.ACCOUNT_EMAIL_WRONG;
 
-    Class<?>[] group() default {};
+    Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 }

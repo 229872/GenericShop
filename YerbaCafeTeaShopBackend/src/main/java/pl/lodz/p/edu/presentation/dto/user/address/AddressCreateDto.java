@@ -1,6 +1,7 @@
 package pl.lodz.p.edu.presentation.dto.user.address;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
@@ -13,7 +14,7 @@ public record AddressCreateDto(
     String city,
     @NotBlank
     String street,
-    @NotBlank
+    @NotNull
     Integer houseNumber
 ) {
 }

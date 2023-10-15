@@ -5,6 +5,8 @@ import pl.lodz.p.edu.dataaccess.model.Address;
 import pl.lodz.p.edu.dataaccess.model.Person;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountState;
+import pl.lodz.p.edu.presentation.dto.user.account.AccountCreateDto;
+import pl.lodz.p.edu.presentation.dto.user.address.AddressCreateDto;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,21 +15,22 @@ public class TestData {
     static int counter = 1;
 
     static final String defaultPostalCode = "postalCode";
-    static final String defaultCountry = "country";
-    static final String defaultCity = "city";
-    static final String defaultStreet = "street";
+    static final String defaultCountry = "Country";
+    static final String defaultCity = "City";
+    static final String defaultStreet = "Street";
     static final Integer defaultHouseNumber = 30;
 
-    static final String defaultLogin = "login";
-    static final String defaultEmail = "email";
+    static final String defaultLogin = "Login";
+    static final String defaultEmail = "example@example.com";
     static final String defaultPassword = "password";
-    static final String defaultLocale = "locale";
+    static final String defaultLocale = "en";
     static final AccountState defaultAccountState = AccountState.ACTIVE;
-    static final Set<AccountRole> defaultAccountRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+    static final AccountRole defaultRole = AccountRole.CLIENT;
+    static final Set<AccountRole> defaultAccountRoles = new HashSet<>(Set.of(defaultRole));
     static final String defaultCreatedBy = "testUser";
 
-    static final String defaultFirstName = "firstName";
-    static final String defaultLastName = "lastName";
+    static final String defaultFirstName = "FirstName";
+    static final String defaultLastName = "LastName";
 
     public static Address buildFullAddress(String postalCode, String country, String city, String street,
                                     Integer houseNumber, String createdBy) {
@@ -80,6 +83,33 @@ public class TestData {
         counter++;
         return buildFullAccount(uniqueLogin, uniqueEmail, defaultPassword, defaultLocale, buildDefaultPerson(),
             defaultAccountState, defaultAccountRoles, defaultCreatedBy);
+    }
+
+    public static AddressCreateDto buildDefaultAddressCreateDto() {
+        return AddressCreateDto.builder()
+            .postalCode(defaultPostalCode)
+            .country(defaultCountry)
+            .city(defaultCity)
+            .street(defaultStreet)
+            .houseNumber(defaultHouseNumber)
+            .build();
+    }
+
+    public static AccountCreateDto buildDefaultAccountCreateDto() {
+        return getDefaultAccountCreateDtoBuilder().build();
+    }
+
+    public static AccountCreateDto.AccountCreateDtoBuilder getDefaultAccountCreateDtoBuilder() {
+        return AccountCreateDto.builder()
+            .login(defaultLogin)
+            .email(defaultEmail)
+            .password(defaultPassword)
+            .locale(defaultLocale)
+            .firstName(defaultFirstName)
+            .lastName(defaultLastName)
+            .address(buildDefaultAddressCreateDto())
+            .accountState(defaultAccountState.name())
+            .role(defaultRole.name());
     }
 
     public static void resetCounter() {
