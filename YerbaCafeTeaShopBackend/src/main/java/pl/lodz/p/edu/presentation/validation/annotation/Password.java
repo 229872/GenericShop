@@ -11,18 +11,17 @@ import java.lang.annotation.*;
 
 @Documented
 @NotNull(message = ExceptionMessage.Validation.FIELD_NOT_NULL)
-@Pattern(regexp = "^[\\p{Lu}][\\p{L}\\p{M}*\\s-\\d]*$",
-    message = ExceptionMessage.Validation.FIELD_CAPITALIZED)
-@Size(min = 1, max = 20, message = ExceptionMessage.Validation.FIELD_CAPITALIZED_SIZE)
+@Pattern(regexp = "^(?=.*[A-Z])(?=.*[!@#$%^&+=]).*$",
+    message = ExceptionMessage.Validation.PASSWORD_WRONG)
+@Size(min = 8, max = 30, message = ExceptionMessage.Validation.PASSWORD_WRONG_SIZE)
 @Constraint(validatedBy = {})
-@Target({ElementType.FIELD})
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Capitalized {
+public @interface Password {
 
-    String message() default ExceptionMessage.Validation.FIELD_CAPITALIZED;
+    String message() default ExceptionMessage.Validation.PASSWORD_WRONG;
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 }
-

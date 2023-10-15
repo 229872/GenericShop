@@ -3,10 +3,10 @@ package pl.lodz.p.edu.integration.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,7 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -193,86 +193,334 @@ public class AccountControllerIT {
 
     }
 
-    @Test
-    @DisplayName("Should return response with status 400 and body with exception message when provided login is null")
-    void createAccount_should_return_status_bad_request_when_login_is_null() throws Exception {
-        //given
-        AccountCreateDto accountWithDuplicateLogin = TestData.getDefaultAccountCreateDtoBuilder()
-            .login(null)
-            .build();
-        String givenRequestBody = objectMapper.writeValueAsString(accountWithDuplicateLogin);
+    @Nested
+    @DisplayName("Negative cases of createAccount method")
+    class CreateAccountNegative {
 
-        //when
-        MockHttpServletRequestBuilder postRequest = post("/account")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(givenRequestBody);
-        ResultActions resultActions = mockMvc.perform(postRequest);
+        @Nested
+        @DisplayName("Validation tests")
+        class Validation {
 
-        //then
-        resultActions.andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.messages.length()", is(1)))
-            .andExpect(jsonPath("$.messages.login[0]", is(ExceptionMessage.Validation.FIELD_NOT_NULL)));
-    }
+            @Nested
+            @DisplayName("Login field")
+            class Login {
 
-    @Test
-    @DisplayName("Should return response with status 409 and body with exception message when there is already account with given login")
-    void createAccount_should_return_status_conflict_with_exception_message_containing_duplicate_login_message() throws Exception {
-        //given
-        Account account = TestData.buildDefaultAccount();
-        String givenLogin = "Login";
-        account.setLogin(givenLogin);
-        txTemplate.execute(status -> {
-            em.persist(account);
-            return status;
-        });
+                @ParameterizedTest
+                @NullSource
+                @DisplayName("Should return response with status 400 and body with exception message when provided login is null")
+                void createAccount_should_return_status_bad_request_when_login_is_null(String givenLogin) throws Exception {
+                    //given
+                    AccountCreateDto accountWithNullLogin = TestData.getDefaultAccountCreateDtoBuilder()
+                        .login(givenLogin)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithNullLogin);
 
-        AccountCreateDto accountWithDuplicateLogin = TestData.getDefaultAccountCreateDtoBuilder()
-            .login(givenLogin)
-            .build();
-        String givenRequestBody = objectMapper.writeValueAsString(accountWithDuplicateLogin);
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
 
-        //when
-        MockHttpServletRequestBuilder postRequest = post("/account")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(givenRequestBody);
-        ResultActions resultActions = mockMvc.perform(postRequest);
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.login", hasItem(ExceptionMessage.Validation.FIELD_NOT_NULL)));
+                }
 
-        //then
-        resultActions.andDo(print())
-            .andExpect(status().isConflict())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.message", is(ExceptionMessage.ACCOUNT_CONFLICT_LOGIN)));
-    }
+                @ParameterizedTest
+                @ValueSource(strings = {" ", "login", "1login"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided login is not capitalized")
+                void createAccount_should_return_status_bad_request_when_login_is_not_capitalized(String givenLogin) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenLogin = TestData.getDefaultAccountCreateDtoBuilder()
+                        .login(givenLogin)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLogin);
 
-    @Test
-    @DisplayName("Should return response with status 409 and body with exception message when there is already account with given email")
-    void createAccount_should_return_status_conflict_with_exception_message_containing_duplicate_email_message() throws Exception {
-        //given
-        Account account = TestData.buildDefaultAccount();
-        String givenEmail = "example@example.com";
-        account.setEmail(givenEmail);
-        txTemplate.execute(status -> {
-            em.persist(account);
-            return status;
-        });
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
 
-        AccountCreateDto accountWithDuplicateLogin = TestData.getDefaultAccountCreateDtoBuilder()
-            .email(givenEmail)
-            .build();
-        String givenRequestBody = objectMapper.writeValueAsString(accountWithDuplicateLogin);
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.login", hasItem(ExceptionMessage.Validation.FIELD_CAPITALIZED)));
+                }
 
-        //when
-        MockHttpServletRequestBuilder postRequest = post("/account")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(givenRequestBody);
-        ResultActions resultActions = mockMvc.perform(postRequest);
+                @ParameterizedTest
+                @ValueSource(strings = {"", "TooLongNameForLogin12"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided login is too short or too long")
+                void createAccount_should_return_status_bad_request_when_login_has_wrong_size(String givenLogin) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenLogin = TestData.getDefaultAccountCreateDtoBuilder()
+                        .login(givenLogin)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLogin);
 
-        //then
-        resultActions.andDo(print())
-            .andExpect(status().isConflict())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.message", is(ExceptionMessage.ACCOUNT_CONFLICT_EMAIL)));
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.login", hasItem(ExceptionMessage.Validation.FIELD_CAPITALIZED_SIZE)));
+                }
+            }
+
+            @Nested
+            @DisplayName("Email field")
+            class Email {
+
+                @ParameterizedTest
+                @NullSource
+                @DisplayName("Should return response with status 400 and body with exception message when provided email is null")
+                void createAccount_should_return_status_bad_request_when_email_is_null(String givenEmail) throws Exception {
+                    //given
+                    AccountCreateDto accountWithNullEmail = TestData.getDefaultAccountCreateDtoBuilder()
+                        .email(givenEmail)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithNullEmail);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.email", hasItem(ExceptionMessage.Validation.FIELD_NOT_NULL)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {" ", "email", "email@"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided email is not valid")
+                void createAccount_should_return_status_bad_request_when_email_is_not_valid(String givenEmail) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenEmail = TestData.getDefaultAccountCreateDtoBuilder()
+                        .email(givenEmail)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenEmail);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.email", hasItem(ExceptionMessage.Validation.EMAIL_WRONG)));
+                }
+            }
+
+            @Nested
+            @DisplayName("Password field")
+            class Password {
+
+                @ParameterizedTest
+                @NullSource
+                @DisplayName("Should return response with status 400 and body with exception message when provided password is null")
+                void createAccount_should_return_status_bad_request_when_password_is_null(String givenPassword) throws Exception {
+                    //given
+                    AccountCreateDto accountWithNullPassword = TestData.getDefaultAccountCreateDtoBuilder()
+                        .password(givenPassword)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithNullPassword);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.password", hasItem(ExceptionMessage.Validation.FIELD_NOT_NULL)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {" ", "password", "Password", "password!", "!password"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided password is not valid password")
+                void createAccount_should_return_status_bad_request_when_password_is_not_valid(String givenPassword) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenPassword = TestData.getDefaultAccountCreateDtoBuilder()
+                        .password(givenPassword)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenPassword);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.password", hasItem(ExceptionMessage.Validation.PASSWORD_WRONG)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {"", "Passwd!", "LongPassword!WithMaxLength12345"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided password is too short or too long")
+                void createAccount_should_return_status_bad_request_when_password_has_wrong_size(String givenPassword) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenPassword = TestData.getDefaultAccountCreateDtoBuilder()
+                        .password(givenPassword)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenPassword);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.password", hasItem(ExceptionMessage.Validation.PASSWORD_WRONG_SIZE)));
+                }
+            }
+
+            @Nested
+            @DisplayName("Locale field")
+            class Locale {
+
+                @ParameterizedTest
+                @ValueSource(strings = " ")
+                @NullSource
+                @DisplayName("Should return response with status 400 and body with exception message when provided locale is blank")
+                void createAccount_should_return_status_bad_request_when_locale_is_blank(String givenLocale) throws Exception {
+                    //given
+                    AccountCreateDto accountWithNullLocale = TestData.getDefaultAccountCreateDtoBuilder()
+                        .locale(givenLocale)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithNullLocale);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.locale", hasItem(ExceptionMessage.Validation.FIELD_BLANK)));
+                }
+
+                @ParameterizedTest
+                @ValueSource(strings = {"adsfdasf", "123", "!!", "fr"})
+                @DisplayName("Should return response with status 400 and body with exception message when provided locale is not supported")
+                void createAccount_should_return_status_bad_request_when_locale_is_not_supported(String givenLocale) throws Exception {
+                    //given
+                    AccountCreateDto accountWithGivenLocale = TestData.getDefaultAccountCreateDtoBuilder()
+                        .locale(givenLocale)
+                        .build();
+                    String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLocale);
+
+                    //when
+                    MockHttpServletRequestBuilder postRequest = post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenRequestBody);
+                    ResultActions resultActions = mockMvc.perform(postRequest);
+
+                    //then
+                    resultActions.andDo(print())
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(jsonPath("$.messages.length()", is(1)))
+                        .andExpect(jsonPath("$.messages.locale", hasItem(ExceptionMessage.Validation.ACCOUNT_LOCALE_NOT_SUPPORTED)));
+                }
+            }
+        }
+
+        @Test
+        @DisplayName("Should return response with status 409 and body with exception message when there is already account with given login")
+        void createAccount_should_return_status_conflict_with_exception_message_containing_duplicate_login_message() throws Exception {
+            //given
+            Account account = TestData.buildDefaultAccount();
+            String givenLogin = "Login";
+            account.setLogin(givenLogin);
+            txTemplate.execute(status -> {
+                em.persist(account);
+                return status;
+            });
+
+            AccountCreateDto accountWithDuplicateLogin = TestData.getDefaultAccountCreateDtoBuilder()
+                .login(givenLogin)
+                .build();
+            String givenRequestBody = objectMapper.writeValueAsString(accountWithDuplicateLogin);
+
+            //when
+            MockHttpServletRequestBuilder postRequest = post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(givenRequestBody);
+            ResultActions resultActions = mockMvc.perform(postRequest);
+
+            //then
+            resultActions.andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", is(ExceptionMessage.ACCOUNT_CONFLICT_LOGIN)));
+        }
+
+        @Test
+        @DisplayName("Should return response with status 409 and body with exception message when there is already account with given email")
+        void createAccount_should_return_status_conflict_with_exception_message_containing_duplicate_email_message() throws Exception {
+            //given
+            Account account = TestData.buildDefaultAccount();
+            String givenEmail = "example@example.com";
+            account.setEmail(givenEmail);
+            txTemplate.execute(status -> {
+                em.persist(account);
+                return status;
+            });
+
+            AccountCreateDto accountWithDuplicateLogin = TestData.getDefaultAccountCreateDtoBuilder()
+                .email(givenEmail)
+                .build();
+            String givenRequestBody = objectMapper.writeValueAsString(accountWithDuplicateLogin);
+
+            //when
+            MockHttpServletRequestBuilder postRequest = post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(givenRequestBody);
+            ResultActions resultActions = mockMvc.perform(postRequest);
+
+            //then
+            resultActions.andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", is(ExceptionMessage.ACCOUNT_CONFLICT_EMAIL)));
+        }
     }
 }

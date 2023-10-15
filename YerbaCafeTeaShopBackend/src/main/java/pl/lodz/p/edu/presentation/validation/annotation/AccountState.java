@@ -14,6 +14,7 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AccountState {
+
     String message() default ExceptionMessage.Validation.ACCOUNT_STATE_NOT_SUPPORTED;
 
     Class<?>[] groups() default {};

@@ -14,6 +14,7 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Locale {
+
     String message() default ExceptionMessage.Validation.ACCOUNT_LOCALE_NOT_SUPPORTED;
 
     Class<?>[] groups() default {};

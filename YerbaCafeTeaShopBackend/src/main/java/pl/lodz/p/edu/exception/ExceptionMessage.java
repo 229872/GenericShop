@@ -29,7 +29,9 @@ public final class ExceptionMessage {
         public static final String FIELD_BLANK = "exception.validation.field.blank";
         public static final String FIELD_CAPITALIZED = "exception.validation.field.capitalized";
         public static final String FIELD_CAPITALIZED_SIZE = "exception.validation.field.capitalized.size";
-        public static final String ACCOUNT_EMAIL_WRONG = "exception.validation.account.email.wrong";
+        public static final String EMAIL_WRONG = "exception.validation.email.wrong";
+        public static final String PASSWORD_WRONG_SIZE = "exception.validation.password.size";
+        public static final String PASSWORD_WRONG = "exception.validation.password.wrong";
         public static final String ACCOUNT_LOCALE_NOT_SUPPORTED = "exception.validation.account.locale.not.supported";
         public static final String ACCOUNT_ROLE_NOT_SUPPORTED = "exception.validation.account.role.not.supported";
         public static final String ACCOUNT_STATE_NOT_SUPPORTED = "exception.validation.account.state.not.supported";

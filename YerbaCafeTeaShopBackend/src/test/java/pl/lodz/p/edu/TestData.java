@@ -22,7 +22,7 @@ public class TestData {
 
     static final String defaultLogin = "Login";
     static final String defaultEmail = "example@example.com";
-    static final String defaultPassword = "password";
+    static final String defaultPassword = "DefaultPassword!";
     static final String defaultLocale = "en";
     static final AccountState defaultAccountState = AccountState.ACTIVE;
     static final AccountRole defaultRole = AccountRole.CLIENT;

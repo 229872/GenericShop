@@ -14,6 +14,7 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AccountRole {
+
     String message() default ExceptionMessage.Validation.ACCOUNT_ROLE_NOT_SUPPORTED;
 
     Class<?>[] groups() default {};
