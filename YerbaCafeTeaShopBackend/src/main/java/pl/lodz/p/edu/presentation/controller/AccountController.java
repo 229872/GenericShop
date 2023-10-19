@@ -48,4 +48,28 @@ public class AccountController {
 
         return ResponseEntity.created(URI.create("/id/%d".formatted(result.id()))).body(result);
     }
+
+    @PutMapping("/id/{id}/block")
+    ResponseEntity<AccountOutputDto> blockAccount(@PathVariable Long id) {
+        Account account = accountService.block(id);
+        AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/id/{id}/unblock")
+    ResponseEntity<AccountOutputDto> unblockAccount(@PathVariable Long id) {
+        Account account = accountService.unblock(id);
+        AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/id/{id}/archive")
+    ResponseEntity<AccountOutputDto> archiveAccount(@PathVariable Long id) {
+        Account account = accountService.archive(id);
+        AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
+
+        return ResponseEntity.ok(result);
+    }
 }

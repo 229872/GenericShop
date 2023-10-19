@@ -57,6 +57,7 @@ public class AccountMapper {
 
         return AccountOutputDto.builder()
             .id(account.getId())
+            .archival(account.isArchival())
             .login(account.getLogin())
             .email(account.getEmail())
             .locale(account.getLocale())
