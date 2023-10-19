@@ -30,7 +30,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -156,41 +157,46 @@ public class AccountControllerIT {
             .andExpect(jsonPath("$.message", is(expectedExceptionCode)));
     }
 
-    @Test
-    @DisplayName("Should return response with status 201 and body with created account")
-    void createAccount_should_return_status_created_with_created_account() throws Exception {
-        //given
-        AccountCreateDto accountCreateDto = TestData.buildDefaultAccountCreateDto();
-        String inputData = objectMapper.writeValueAsString(accountCreateDto);
 
-        //when
-        MockHttpServletRequestBuilder postRequest = post("/account")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(inputData);
+    @Nested
+    @DisplayName("Positive cases of createAccount method")
+    class CreateAccountPositive {
 
-        ResultActions resultActions = mockMvc.perform(postRequest);
+        @Test
+        @DisplayName("Should return response with status 201 and body with created account")
+        void createAccount_should_return_status_created_with_created_account() throws Exception {
+            //given
+            AccountCreateDto accountCreateDto = TestData.buildDefaultAccountCreateDto();
+            String inputData = objectMapper.writeValueAsString(accountCreateDto);
 
-        //then
-        String location = resultActions.andReturn().getResponse().getHeader("Location");
-        Pattern pattern = Pattern.compile("/id/(\\d+)");
+            //when
+            MockHttpServletRequestBuilder postRequest = post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(inputData);
 
-        assertThat(location)
-            .isNotBlank()
-            .matches(pattern);
+            ResultActions resultActions = mockMvc.perform(postRequest);
 
-        Matcher matcher = pattern.matcher(location);
-        assertThat(matcher.find()).isTrue();
-        Long accountId = Long.parseLong(matcher.group(1));
+            //then
+            String location = resultActions.andReturn().getResponse().getHeader("Location");
+            Pattern pattern = Pattern.compile("/id/(\\d+)");
 
-        Account account = em.find(Account.class, accountId);
-        AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDto(account);
-        String expectedResult = objectMapper.writeValueAsString(accountOutputDto);
+            assertThat(location)
+                .isNotBlank()
+                .matches(pattern);
 
-        resultActions.andDo(print())
-            .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().json(expectedResult));
+            Matcher matcher = pattern.matcher(location);
+            assertThat(matcher.find()).isTrue();
+            Long accountId = Long.parseLong(matcher.group(1));
 
+            Account account = em.find(Account.class, accountId);
+            AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDto(account);
+            String expectedResult = objectMapper.writeValueAsString(accountOutputDto);
+
+            resultActions.andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(expectedResult));
+        }
     }
 
     @Nested
@@ -968,6 +974,54 @@ public class AccountControllerIT {
                         .andExpect(jsonPath("$.messages.role", hasItem(ExceptionMessage.Validation.ACCOUNT_ROLE_NOT_SUPPORTED)));
                 }
             }
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"guest", "GUEST", "Guest"})
+        @DisplayName("Should return response with status 400 and body with exception message when given role is GUEST")
+        void createAccount_should_return_status_bad_request_when_given_role_is_GUEST(String role) throws Exception {
+            //given
+            AccountCreateDto accountCreateDto = TestData.getDefaultAccountCreateDtoBuilder()
+                .role(role)
+                .build();
+            String inputData = objectMapper.writeValueAsString(accountCreateDto);
+
+            //when
+            MockHttpServletRequestBuilder postRequest = post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(inputData);
+
+            ResultActions resultActions = mockMvc.perform(postRequest);
+
+            //then
+            resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", is(ExceptionMessage.ACCOUNT_ROLE_CANT_ASSIGN_GUEST)));
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"not_verified", "NOT_VERIFIED", "Not_verified", "Not_VERIFIED"})
+        @DisplayName("Should return response with status 400 and body with exception message when given account state is NOT_VERIFIED")
+        void createAccount_should_return_bad_request_when_given_state_is_NOT_VERIFIED(String status) throws Exception {
+            //given
+            AccountCreateDto accountWithNotVerifiedStatus = TestData.getDefaultAccountCreateDtoBuilder()
+                .accountState(status)
+                .build();
+            String inputData = objectMapper.writeValueAsString(accountWithNotVerifiedStatus);
+
+            //when
+            MockHttpServletRequestBuilder postRequest = post("/account")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(inputData);
+
+            ResultActions resultActions = mockMvc.perform(postRequest);
+
+            //then
+            resultActions.andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message", is(ExceptionMessage.ACCOUNT_CREATE_CANT_ASSIGN_NOT_VERIFIED)));
         }
 
         @Test
