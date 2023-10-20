@@ -1,10 +1,10 @@
-package pl.lodz.p.edu.exception;
+package pl.lodz.p.edu.exception.other;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ResponseStatusException;
 
 public class UnknownException extends ResponseStatusException {
-    UnknownException(HttpStatusCode status, String reason) {
+    public UnknownException(HttpStatusCode status, String reason) {
         super(status, reason);
     }
 }

@@ -16,6 +16,7 @@ import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountState;
 import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.exception.*;
+import pl.lodz.p.edu.exception.account.*;
 import pl.lodz.p.edu.logic.model.NewPersonalInformation;
 import pl.lodz.p.edu.logic.service.impl.AccountServiceImpl;
 

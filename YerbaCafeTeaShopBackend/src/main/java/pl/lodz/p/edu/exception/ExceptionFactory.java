@@ -3,6 +3,11 @@ package pl.lodz.p.edu.exception;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.web.server.ResponseStatusException;
+import pl.lodz.p.edu.exception.account.*;
+import pl.lodz.p.edu.exception.account.helper.AccountStateOperation;
+import pl.lodz.p.edu.exception.auth.InvalidCredentialsException;
+import pl.lodz.p.edu.exception.other.UnknownException;
+import pl.lodz.p.edu.exception.transaction.TransactionTimeoutException;
 
 import static org.springframework.http.HttpStatus.*;
 import static pl.lodz.p.edu.exception.ExceptionMessage.*;
@@ -72,5 +77,10 @@ public final class ExceptionFactory {
 
     public static ResponseStatusException createCantCreateAccountWithNotVerifiedStatusException() {
         return new CantCreateAccountWithNotVerifiedStatusException(BAD_REQUEST, ACCOUNT_CREATE_CANT_ASSIGN_NOT_VERIFIED);
+    }
+
+
+    public static ResponseStatusException createInvalidCredentialsException() {
+        return new InvalidCredentialsException(UNAUTHORIZED, INVALID_CREDENTIALS);
     }
 }

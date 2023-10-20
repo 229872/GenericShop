@@ -61,6 +61,8 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
 
     private ObjectMapper objectMapper;
 
+    private final String BASE_API = "/api/account";
+
     @BeforeEach
     void setUp() {
         txTemplate = new TransactionTemplate(txManager);
@@ -95,7 +97,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 String expectedResult = objectMapper.writeValueAsString(new ArrayList<>());
 
                 //when
-                ResultActions resultActions = mockMvc.perform(get("/account"));
+                ResultActions resultActions = mockMvc.perform(get(BASE_API));
 
                 //then
                 resultActions.andDo(print())
@@ -118,7 +120,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 String expectedResult = objectMapper.writeValueAsString(Collections.singletonList(accountOutputDto));
 
                 //when
-                ResultActions resultActions = mockMvc.perform(get("/account"));
+                ResultActions resultActions = mockMvc.perform(get(BASE_API));
 
                 //then
                 resultActions.andDo(print())
@@ -157,7 +159,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 String expectedResult = objectMapper.writeValueAsString(accountOutputDto);
 
                 //when
-                ResultActions resultActions = mockMvc.perform(get("/account/id/%d".formatted(account.getId())));
+                ResultActions resultActions = mockMvc.perform(get("%s/id/%d".formatted(BASE_API, account.getId())));
 
                 //then
                 resultActions.andDo(print())
@@ -179,7 +181,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 Long givenId = 1L;
 
                 //when
-                ResultActions resultActions = mockMvc.perform(get("/account/id/%d".formatted(givenId)));
+                ResultActions resultActions = mockMvc.perform(get("%s/id/%d".formatted(BASE_API, givenId)));
 
                 //then
                 resultActions.andDo(print())
@@ -206,7 +208,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 String inputData = objectMapper.writeValueAsString(accountCreateDto);
 
                 //when
-                MockHttpServletRequestBuilder postRequest = post("/account")
+                MockHttpServletRequestBuilder postRequest = post(BASE_API)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(inputData);
 
@@ -258,7 +260,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullLogin);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -282,7 +284,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLogin);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -306,7 +308,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLogin);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -335,7 +337,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullEmail);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -359,7 +361,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenEmail);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -388,7 +390,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullPassword);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -412,7 +414,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenPassword);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -436,7 +438,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenPassword);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -466,7 +468,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullLocale);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -490,7 +492,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLocale);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -519,7 +521,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullFirstName);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -543,7 +545,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenFirstName);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -567,7 +569,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenFirstName);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -596,7 +598,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullLastName);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -620,7 +622,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLastName);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -644,7 +646,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLastName);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -673,7 +675,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullPostalCode);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -697,7 +699,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenPostalCode);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -721,7 +723,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullCountry);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -745,7 +747,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenCountry);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -769,7 +771,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullCity);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -793,7 +795,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenCity);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -817,7 +819,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullStreet);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -841,7 +843,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenStreet);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -865,7 +867,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullHouseNumber);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -889,7 +891,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNotPositiveHouseNumber);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -919,7 +921,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithBlankAccountState);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -943,7 +945,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenAccountState);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -973,7 +975,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithBlankAccountRole);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -997,7 +999,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenAccountRole);
 
                         //when
-                        MockHttpServletRequestBuilder postRequest = post("/account")
+                        MockHttpServletRequestBuilder postRequest = post(BASE_API)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(givenRequestBody);
                         ResultActions resultActions = mockMvc.perform(postRequest);
@@ -1023,7 +1025,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 String inputData = objectMapper.writeValueAsString(accountCreateDto);
 
                 //when
-                MockHttpServletRequestBuilder postRequest = post("/account")
+                MockHttpServletRequestBuilder postRequest = post(BASE_API)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(inputData);
 
@@ -1047,7 +1049,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 String inputData = objectMapper.writeValueAsString(accountWithNotVerifiedStatus);
 
                 //when
-                MockHttpServletRequestBuilder postRequest = post("/account")
+                MockHttpServletRequestBuilder postRequest = post(BASE_API)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(inputData);
 
@@ -1078,7 +1080,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 String givenRequestBody = objectMapper.writeValueAsString(accountWithDuplicateLogin);
 
                 //when
-                MockHttpServletRequestBuilder postRequest = post("/account")
+                MockHttpServletRequestBuilder postRequest = post(BASE_API)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(givenRequestBody);
                 ResultActions resultActions = mockMvc.perform(postRequest);
@@ -1108,7 +1110,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 String givenRequestBody = objectMapper.writeValueAsString(accountWithDuplicateLogin);
 
                 //when
-                MockHttpServletRequestBuilder postRequest = post("/account")
+                MockHttpServletRequestBuilder postRequest = post(BASE_API)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(givenRequestBody);
                 ResultActions resultActions = mockMvc.perform(postRequest);
@@ -1143,7 +1145,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 });
 
                 //when
-                ResultActions resultActions = mockMvc.perform(put("/account/id/%d/block".formatted(account.getId())));
+                ResultActions resultActions = mockMvc.perform(put("%s/id/%d/block".formatted(BASE_API, account.getId())));
 
                 //then
                 resultActions.andDo(print())
@@ -1163,7 +1165,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 //given
 
                 //when
-                ResultActions resultActions = mockMvc.perform(put("/account/id/%d/block".formatted(1L)));
+                ResultActions resultActions = mockMvc.perform(put("%s/id/%d/block".formatted(BASE_API, 1L)));
 
                 //then
                 resultActions.andDo(print())
@@ -1186,7 +1188,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 });
 
                 //when
-                ResultActions resultActions = mockMvc.perform(put("/account/id/%d/block".formatted(account.getId())));
+                ResultActions resultActions = mockMvc.perform(put("%s/id/%d/block".formatted(BASE_API, account.getId())));
 
                 //then
                 resultActions.andDo(print())
@@ -1209,7 +1211,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 });
 
                 //when
-                ResultActions resultActions = mockMvc.perform(put("/account/id/%d/block".formatted(account.getId())));
+                ResultActions resultActions = mockMvc.perform(put("%s/id/%d/block".formatted(BASE_API, account.getId())));
 
                 //then
                 resultActions.andDo(print())
@@ -1241,7 +1243,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 });
 
                 //when
-                ResultActions resultActions = mockMvc.perform(put("/account/id/%d/unblock".formatted(account.getId())));
+                ResultActions resultActions = mockMvc.perform(put("%s/id/%d/unblock".formatted(BASE_API, account.getId())));
 
                 //then
                 resultActions.andDo(print())
@@ -1261,7 +1263,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 //given
 
                 //when
-                ResultActions resultActions = mockMvc.perform(put("/account/id/%d/unblock".formatted(1L)));
+                ResultActions resultActions = mockMvc.perform(put("%s/id/%d/unblock".formatted(BASE_API, 1L)));
 
                 //then
                 resultActions.andDo(print())
@@ -1284,7 +1286,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 });
 
                 //when
-                ResultActions resultActions = mockMvc.perform(put("/account/id/%d/unblock".formatted(account.getId())));
+                ResultActions resultActions = mockMvc.perform(put("%s/id/%d/unblock".formatted(BASE_API, account.getId())));
 
                 //then
                 resultActions.andDo(print())
@@ -1307,7 +1309,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 });
 
                 //when
-                ResultActions resultActions = mockMvc.perform(put("/account/id/%d/unblock".formatted(account.getId())));
+                ResultActions resultActions = mockMvc.perform(put("%s/id/%d/unblock".formatted(BASE_API, account.getId())));
 
                 //then
                 resultActions.andDo(print())
@@ -1340,7 +1342,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 });
 
                 //when
-                ResultActions resultActions = mockMvc.perform(put("/account/id/%d/archive".formatted(account.getId())));
+                ResultActions resultActions = mockMvc.perform(put("%s/id/%d/archive".formatted(BASE_API, account.getId())));
 
                 //then
                 resultActions.andDo(print())
@@ -1360,7 +1362,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 //given
 
                 //when
-                ResultActions resultActions = mockMvc.perform(put("/account/id/%d/archive".formatted(1L)));
+                ResultActions resultActions = mockMvc.perform(put("%s/id/%d/archive".formatted(BASE_API, 1L)));
 
                 //then
                 resultActions.andDo(print())
@@ -1382,7 +1384,7 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 });
 
                 //when
-                ResultActions resultActions = mockMvc.perform(put("/account/id/%d/archive".formatted(account.getId())));
+                ResultActions resultActions = mockMvc.perform(put("%s/id/%d/archive".formatted(BASE_API, account.getId())));
 
                 //then
                 resultActions.andDo(print())

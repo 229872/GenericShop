@@ -23,6 +23,8 @@ public final class ExceptionMessage {
     public static final String ACCOUNT_CREATE_MANY_ROLES = "exception.account.create.role.many";
     public static final String ACCOUNT_CREATE_CANT_ASSIGN_NOT_VERIFIED = "exception.account.create.not_verified";
 
+    public static final String INVALID_CREDENTIALS = "exception.auth.credentials";
+
 
     public static class Validation {
         public static final String NOT_NULL = "exception.validation.field.not_null";

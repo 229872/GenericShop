@@ -1,5 +1,6 @@
 package pl.lodz.p.edu.presentation.controller;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,13 @@ import pl.lodz.p.edu.presentation.mapper.AccountMapper;
 import java.net.URI;
 import java.util.List;
 
+import static pl.lodz.p.edu.config.RoleName.GUEST;
+
 @RequiredArgsConstructor
 
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/api/account")
+@RolesAllowed({GUEST})
 public class AccountController {
 
     private final AccountService accountService;

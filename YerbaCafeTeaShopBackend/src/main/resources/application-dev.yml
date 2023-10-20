@@ -11,3 +11,8 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+
+security:
+  token:
+    timeout_in_minutes: 10
+    key:
