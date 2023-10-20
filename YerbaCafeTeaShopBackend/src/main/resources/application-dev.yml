@@ -11,8 +11,14 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
+
 
 security:
   token:
     timeout_in_minutes: 10
-    key:
+    key: "r7sHH+ErDOdwvIWmE6OxD/PRXcJmicWSRnX1seiFV61wuV62CSR/L/HYPlED8GlC6e559dQv7a/jUmD6oC/FbwhmHeqqX9IvFv0WsWygpKA="

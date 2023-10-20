@@ -1,8 +1,8 @@
 package pl.lodz.p.edu.logic.service.api;
 
-import java.util.List;
+import pl.lodz.p.edu.logic.model.JwtTokens;
 
 public interface AuthenticationService {
 
-    List<String> authenticate(String login, String password);
+    JwtTokens authenticate(String login, String password);
 }

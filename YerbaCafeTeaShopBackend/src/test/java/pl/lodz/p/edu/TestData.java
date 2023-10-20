@@ -22,12 +22,13 @@ public class TestData {
 
     static final String defaultLogin = "Login";
     static final String defaultEmail = "example@example.com";
-    static final String defaultPassword = "DefaultPassword!";
+    static final String defaultEncryptedPassword = "$2a$12$JhPWlsiSf3S9I32figUWX.SG9toKfm6biTgGCC1m6vqqlxtU1ripq!";
     static final String defaultLocale = "en";
     static final AccountState defaultAccountState = AccountState.ACTIVE;
     static final AccountRole defaultRole = AccountRole.CLIENT;
     static final Set<AccountRole> defaultAccountRoles = new HashSet<>(Set.of(defaultRole));
     static final String defaultCreatedBy = "testUser";
+    static final String defaultPassword = "Student123!";
 
     static final String defaultFirstName = "FirstName";
     static final String defaultLastName = "LastName";
@@ -81,7 +82,7 @@ public class TestData {
         String uniqueLogin = defaultLogin + counter;
         String uniqueEmail = defaultEmail + counter;
         counter++;
-        return buildFullAccount(uniqueLogin, uniqueEmail, defaultPassword, defaultLocale, buildDefaultPerson(),
+        return buildFullAccount(uniqueLogin, uniqueEmail, defaultEncryptedPassword, defaultLocale, buildDefaultPerson(),
             defaultAccountState, defaultAccountRoles, defaultCreatedBy);
     }
 

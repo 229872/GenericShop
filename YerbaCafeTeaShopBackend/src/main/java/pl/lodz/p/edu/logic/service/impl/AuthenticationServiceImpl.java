@@ -7,11 +7,9 @@ import org.springframework.stereotype.Service;
 import pl.lodz.p.edu.dataaccess.model.Account;
 import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.exception.ExceptionFactory;
+import pl.lodz.p.edu.logic.model.JwtTokens;
 import pl.lodz.p.edu.logic.service.api.AuthenticationService;
-import pl.lodz.p.edu.util.security.JwtUtils;
-
-import java.util.ArrayList;
-import java.util.List;
+import pl.lodz.p.edu.logic.service.api.JwtService;
 
 @RequiredArgsConstructor
 
@@ -21,10 +19,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtUtils jwtUtils;
+    private final JwtService jwtService;
 
     @Override
-    public List<String> authenticate(String login, String password) {
+    public JwtTokens authenticate(String login, String password) {
         Account account = accountRepository.findByLogin(login)
             .orElseThrow(ExceptionFactory::createInvalidCredentialsException);
 
@@ -32,7 +30,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw ExceptionFactory.createInvalidCredentialsException();
         }
 
-        String jwtToken = jwtUtils.generateToken(login, account.getAccountRoles());
-        return new ArrayList<>(List.of(jwtToken));
+        String jwtToken = jwtService.generateToken(login, account.getAccountRoles());
+        return JwtTokens.builder().token(jwtToken).build();
     }
 }

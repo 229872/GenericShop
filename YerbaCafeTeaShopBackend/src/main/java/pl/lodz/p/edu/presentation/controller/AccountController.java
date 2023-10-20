@@ -1,5 +1,6 @@
 package pl.lodz.p.edu.presentation.controller;
 
+import jakarta.annotation.security.DenyAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +15,13 @@ import pl.lodz.p.edu.presentation.mapper.AccountMapper;
 import java.net.URI;
 import java.util.List;
 
-import static pl.lodz.p.edu.config.RoleName.GUEST;
+import static pl.lodz.p.edu.config.RoleName.ADMIN;
 
 @RequiredArgsConstructor
 
 @RestController
 @RequestMapping("/api/account")
-@RolesAllowed({GUEST})
+@DenyAll
 public class AccountController {
 
     private final AccountService accountService;
@@ -28,6 +29,7 @@ public class AccountController {
 
 
     @GetMapping
+    @RolesAllowed(ADMIN)
     ResponseEntity<List<AccountOutputDto>> getAll() {
         List<AccountOutputDto> result = accountService.findAll().stream()
             .map(accountMapper::mapToAccountOutputDto)
@@ -37,6 +39,7 @@ public class AccountController {
     }
 
     @GetMapping("/id/{id}")
+    @RolesAllowed(ADMIN)
     ResponseEntity<AccountOutputDto> getById(@PathVariable Long id) {
         Account account = accountService.findById(id);
         AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
@@ -45,6 +48,7 @@ public class AccountController {
     }
 
     @PostMapping
+    @RolesAllowed(ADMIN)
     ResponseEntity<AccountOutputDto> createAccount(@RequestBody @Valid AccountCreateDto createDto) {
         Account account = accountMapper.mapToAccount(createDto);
         Account createdAccount = accountService.create(account);
@@ -54,6 +58,7 @@ public class AccountController {
     }
 
     @PutMapping("/id/{id}/block")
+    @RolesAllowed(ADMIN)
     ResponseEntity<AccountOutputDto> blockAccount(@PathVariable Long id) {
         Account account = accountService.block(id);
         AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
@@ -62,6 +67,7 @@ public class AccountController {
     }
 
     @PutMapping("/id/{id}/unblock")
+    @RolesAllowed(ADMIN)
     ResponseEntity<AccountOutputDto> unblockAccount(@PathVariable Long id) {
         Account account = accountService.unblock(id);
         AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
@@ -70,6 +76,7 @@ public class AccountController {
     }
 
     @PutMapping("/id/{id}/archive")
+    @RolesAllowed(ADMIN)
     ResponseEntity<AccountOutputDto> archiveAccount(@PathVariable Long id) {
         Account account = accountService.archive(id);
         AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
