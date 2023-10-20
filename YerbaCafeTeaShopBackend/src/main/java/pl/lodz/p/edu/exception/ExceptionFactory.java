@@ -5,6 +5,9 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.exception.account.*;
 import pl.lodz.p.edu.exception.account.helper.AccountStateOperation;
+import pl.lodz.p.edu.exception.auth.CantAccessArchivalAccountException;
+import pl.lodz.p.edu.exception.auth.CantAccessBlockedAccountException;
+import pl.lodz.p.edu.exception.auth.CantAccessNotVerifiedAccountException;
 import pl.lodz.p.edu.exception.auth.InvalidCredentialsException;
 import pl.lodz.p.edu.exception.other.UnknownException;
 import pl.lodz.p.edu.exception.transaction.TransactionTimeoutException;
@@ -82,5 +85,17 @@ public final class ExceptionFactory {
 
     public static ResponseStatusException createInvalidCredentialsException() {
         return new InvalidCredentialsException(UNAUTHORIZED, INVALID_CREDENTIALS);
+    }
+
+    public static ResponseStatusException createCantAccessArchivalAccountException() {
+        return new CantAccessArchivalAccountException(UNAUTHORIZED, AUTH_ACCOUNT_ARCHIVAL);
+    }
+
+    public static ResponseStatusException createCantAccessBlockedAccountException() {
+        return new CantAccessBlockedAccountException(UNAUTHORIZED, AUTH_ACCOUNT_BLOCKED);
+    }
+
+    public static ResponseStatusException createCantAccessNotVerifiedAccountException() {
+        return new CantAccessNotVerifiedAccountException(UNAUTHORIZED, AUTH_ACCOUNT_NOT_VERIFIED);
     }
 }

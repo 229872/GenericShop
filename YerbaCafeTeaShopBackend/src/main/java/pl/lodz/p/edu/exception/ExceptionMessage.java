@@ -24,6 +24,9 @@ public final class ExceptionMessage {
     public static final String ACCOUNT_CREATE_CANT_ASSIGN_NOT_VERIFIED = "exception.account.create.not_verified";
 
     public static final String INVALID_CREDENTIALS = "exception.auth.credentials";
+    public static final String AUTH_ACCOUNT_ARCHIVAL = "exception.auth.archival";
+    public static final String AUTH_ACCOUNT_NOT_VERIFIED = "exception.auth.state.not_verified";
+    public static final String AUTH_ACCOUNT_BLOCKED = "exception.auth.state.blocked";
 
 
     public static class Validation {

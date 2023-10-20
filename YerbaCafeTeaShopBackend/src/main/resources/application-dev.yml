@@ -18,6 +18,11 @@ spring:
       mode: always
 
 
+app:
+  auth:
+    unsuccessful_attempts: 3
+    blockade_time_in_minutes: 5
+
 security:
   token:
     timeout_in_minutes: 10

@@ -1,7 +1,10 @@
 package pl.lodz.p.edu;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import pl.lodz.p.edu.dataaccess.model.Account;
 import pl.lodz.p.edu.dataaccess.model.Address;
+import pl.lodz.p.edu.dataaccess.model.AuthLogs;
 import pl.lodz.p.edu.dataaccess.model.Person;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountState;
@@ -11,27 +14,29 @@ import pl.lodz.p.edu.presentation.dto.user.address.AddressCreateDto;
 import java.util.HashSet;
 import java.util.Set;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TestData {
     static int counter = 1;
 
-    static final String defaultPostalCode = "11-111";
-    static final String defaultCountry = "Country";
-    static final String defaultCity = "City";
-    static final String defaultStreet = "Street";
-    static final Integer defaultHouseNumber = 30;
+    public static final String defaultPostalCode = "11-111";
+    public static final String defaultCountry = "Country";
+    public static final String defaultCity = "City";
+    public static final String defaultStreet = "Street";
+    public static final Integer defaultHouseNumber = 30;
 
-    static final String defaultLogin = "Login";
-    static final String defaultEmail = "example@example.com";
-    static final String defaultEncryptedPassword = "$2a$12$JhPWlsiSf3S9I32figUWX.SG9toKfm6biTgGCC1m6vqqlxtU1ripq!";
-    static final String defaultLocale = "en";
-    static final AccountState defaultAccountState = AccountState.ACTIVE;
-    static final AccountRole defaultRole = AccountRole.CLIENT;
-    static final Set<AccountRole> defaultAccountRoles = new HashSet<>(Set.of(defaultRole));
-    static final String defaultCreatedBy = "testUser";
-    static final String defaultPassword = "Student123!";
+    public static final String defaultLogin = "Login";
+    public static final String defaultEmail = "example@example.com";
+    public static final String defaultEncryptedPassword = "$2a$12$peey4Pc/Dn7PJsvBWOTLvOsNuOypGlKAYd7UG3E1kBmZkl/x65boG";
+    public static final String defaultLocale = "en";
+    public static final AccountState defaultAccountState = AccountState.ACTIVE;
+    public static final AccountRole defaultRole = AccountRole.CLIENT;
+    public static final Set<AccountRole> defaultAccountRoles = new HashSet<>(Set.of(defaultRole));
+    public static final AuthLogs defaultAuthLogs = AuthLogs.builder().unsuccessfulAuthCounter(0).build();
+    public static final String defaultCreatedBy = "testUser";
+    public static final String defaultPassword = "Student123!";
 
-    static final String defaultFirstName = "FirstName";
-    static final String defaultLastName = "LastName";
+    public static final String defaultFirstName = "FirstName";
+    public static final String defaultLastName = "LastName";
 
     public static Address buildFullAddress(String postalCode, String country, String city, String street,
                                     Integer houseNumber, String createdBy) {
@@ -55,7 +60,8 @@ public class TestData {
     }
 
     public static Account buildFullAccount(String login, String email, String password, String locale, Person person,
-                                    AccountState accountState, Set<AccountRole> accountRoles, String createdBy) {
+                                    AccountState accountState, Set<AccountRole> accountRoles, String createdBy,
+                                           AuthLogs authLogs) {
         return Account.builder()
             .login(login)
             .email(email)
@@ -65,6 +71,7 @@ public class TestData {
             .accountState(accountState)
             .accountRoles(accountRoles)
             .createdBy(createdBy)
+            .authLogs(authLogs)
             .build();
     }
 
@@ -83,7 +90,7 @@ public class TestData {
         String uniqueEmail = defaultEmail + counter;
         counter++;
         return buildFullAccount(uniqueLogin, uniqueEmail, defaultEncryptedPassword, defaultLocale, buildDefaultPerson(),
-            defaultAccountState, defaultAccountRoles, defaultCreatedBy);
+            defaultAccountState, defaultAccountRoles, defaultCreatedBy, defaultAuthLogs);
     }
 
     public static AddressCreateDto buildDefaultAddressCreateDto() {

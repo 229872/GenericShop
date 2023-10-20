@@ -5,6 +5,8 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.dataaccess.model.Account;
 import pl.lodz.p.edu.logic.service.api.AccountService;
@@ -15,7 +17,7 @@ import pl.lodz.p.edu.presentation.mapper.AccountMapper;
 import java.net.URI;
 import java.util.List;
 
-import static pl.lodz.p.edu.config.RoleName.ADMIN;
+import static pl.lodz.p.edu.config.RoleName.*;
 
 @RequiredArgsConstructor
 
@@ -25,8 +27,8 @@ import static pl.lodz.p.edu.config.RoleName.ADMIN;
 public class AccountController {
 
     private final AccountService accountService;
-    private final AccountMapper accountMapper;
 
+    private final AccountMapper accountMapper;
 
     @GetMapping
     @RolesAllowed(ADMIN)
@@ -46,6 +48,17 @@ public class AccountController {
 
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/self")
+    @RolesAllowed({CLIENT, EMPLOYEE, ADMIN})
+    ResponseEntity<AccountOutputDto> getOwnAccountInformation() {
+        String login = getLoginFromSecurityContext();
+        Account account = accountService.findByLogin(login);
+        AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
+
+        return ResponseEntity.ok(result);
+    }
+
 
     @PostMapping
     @RolesAllowed(ADMIN)
@@ -82,5 +95,10 @@ public class AccountController {
         AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
 
         return ResponseEntity.ok(result);
+    }
+
+    private static String getLoginFromSecurityContext() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 }
