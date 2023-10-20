@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
-import pl.lodz.p.edu.PostgresqlContainerSetup;
+import pl.lodz.p.edu.config.PostgresqlContainerSetup;
 import pl.lodz.p.edu.TestData;
 import pl.lodz.p.edu.dataaccess.model.Account;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountState;

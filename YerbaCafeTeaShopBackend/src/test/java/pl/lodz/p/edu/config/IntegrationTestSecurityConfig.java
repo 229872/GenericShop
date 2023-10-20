@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.integration.config;
+package pl.lodz.p.edu.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
