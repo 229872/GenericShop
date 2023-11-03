@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {NavigationService} from "../../service/navigation.service";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-navbar',
