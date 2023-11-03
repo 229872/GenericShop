@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {NavigationService} from "../../service/navigation.service";
 
 @Component({
   selector: 'app-navbar',
@@ -7,7 +8,17 @@ import { Component } from '@angular/core';
 })
 export class NavbarComponent {
 
-  redirectToAuthenticationPage() {
 
+  constructor(
+    private navigationService: NavigationService
+  ) {
+  }
+
+  redirectToAuthenticationPage() {
+    this.navigationService.redirectToAuthenticationPage();
+  }
+
+  redirectToHomePage(): void {
+    this.navigationService.redirectToHomePage();
   }
 }
