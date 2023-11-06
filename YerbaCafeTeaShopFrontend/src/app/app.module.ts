@@ -15,6 +15,9 @@ import { HomeComponent } from './component/home/home.component';
 import {TranslateLoader, TranslateModule} from "@ngx-translate/core";
 import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {TranslateHttpLoader} from "@ngx-translate/http-loader";
+import {ReactiveFormsModule} from "@angular/forms";
+import {MatCardModule} from "@angular/material/card";
+import {MatInputModule} from "@angular/material/input";
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
@@ -43,7 +46,10 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
-    MatMenuModule
+    MatMenuModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatInputModule
   ],
   providers: [],
   bootstrap: [AppComponent]

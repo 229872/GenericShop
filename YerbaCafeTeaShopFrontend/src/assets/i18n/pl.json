@@ -1,4 +1,21 @@
 {
+  "shop.title": "Sklep internetowy",
+  "authForm.subtitle": "Zaloguj się, żeby kontynuować",
+  "authForm.login.tip": "Maksymalnie {{loginMaxCharacters}} znaków",
+  "authForm.enterLogin": "Wprowadź swój login",
+  "authForm.password.tip": "Maksymalnie {{passwordMaxCharacters}} znaków",
+  "authForm.enterPassword": "Wprowadź swoje hasło",
+  "authForm.forgotPassword": "Zapomniałeś hasła ?",
+
+  "login.validity.patternMismatch": "Login musi rozpocząć się literą, oraz zawierać jedynie litery i cyfry",
+  "login.validity.tooShort": "Login musi zawierać conajmniej 6 znaków",
+  "password.validity.patternMismatch": "Hasło musi zawierać conajmniej jedną dużą literę, oraz jeden znak specjalny",
+  "password.validity.tooShort": "Hasło musi zawierać przynajmniej {{passwordMinCharacters}} znaków",
+  "password.visibility": "Ukryj hasło",
+  "authorization.button": "Zaloguj się",
+  "authorization.success": "Zalogowałeś się pomyślnie !",
+
+
   "navbar.home": "Strona główna",
   "navbar.login": "Zaloguj się",
   "navbar.register": "Stwórz konto"

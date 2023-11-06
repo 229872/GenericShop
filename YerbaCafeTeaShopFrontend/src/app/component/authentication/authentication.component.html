@@ -1,1 +1,53 @@
-<p>authentication works!</p>
+<div class="page-container">
+  <div class="panel">
+    <div class="form-container" [formGroup]="loginForm" (submit)="loginForm.valid">
+      <mat-card class="profile-card">
+        <p class="form-title">{{'shop.title' | translate}}</p>
+        <p class="form-description">{{'authForm.subtitle' | translate}}</p>
+        <div class="form">
+
+          <div class="login-container">
+            <mat-form-field hintLabel="{{'authForm.login.tip' | translate: { loginMaxCharacters: loginMaxLength } }}" appearance="fill" class="input">
+              <mat-label>{{'authForm.enterLogin' | translate}}</mat-label>
+              <input matInput #login placeholder="login" type="text" formControlName="login" required
+              pattern="{{loginPattern}}" minlength="{{loginMinLength}}" maxlength="{{loginMaxLength}}">
+
+              <mat-error *ngIf="login.validity.patternMismatch">{{'login.validity.patternMismatch' | translate}}</mat-error>
+              <mat-error *ngIf="login.validity.tooShort">{{'login.validity.tooShort' | translate: {loginMinCharacters: loginMinLength} }}</mat-error>
+              <mat-hint align="end">{{login.value.length}}/{{loginMaxLength}}</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <div class="password-container">
+            <mat-form-field hintLabel="{{'authForm.password.tip' | translate: {passwordMaxCharacters: passwordMaxLength} }}" appearance="fill" class="input">
+              <mat-label>{{'authForm.enterPassword' | translate}}</mat-label>
+              <input #password matInput placeholder="password" [type]="hide ? 'password' : 'text'" formControlName="password"
+                     required pattern="{{passwordPattern}}" minlength="{{passwordMinLength}}" maxlength="{{passwordMaxLength}}">
+
+              <mat-error *ngIf="password.validity.patternMismatch">{{'password.validity.patternMismatch' | translate}}</mat-error>
+              <mat-error *ngIf="password.validity.tooShort">{{'password.validity.tooShort' | translate: {passwordMinCharacters: passwordMinLength} }}</mat-error>
+              <mat-hint align="end">{{password.value.length}}/{{passwordMaxLength}}</mat-hint>
+
+              <button mat-icon-button matSuffix type="button" (click)="hide = !hide"
+                      [attr.aria-label]="'password.visibility' | translate" [attr.aria-pressed]="hide">
+                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+
+            </mat-form-field>
+
+            <div class="forgot-password">
+              <a routerLink="/forgot-password" class="forgot-password-link" >{{'authForm.forgotPassword' | translate}}</a>
+            </div>
+          </div>
+
+          <div class="button-container">
+            <button mat-button color="primary" class="login-button" (click)="onLoginClicked()" [disabled]="!loginForm.valid">
+              {{'authorization.button' | translate}}
+            </button>
+          </div>
+
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

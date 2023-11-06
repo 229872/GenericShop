@@ -16,7 +16,7 @@ export class TokenService {
     localStorage.setItem(environment.jwtToken, token);
   }
 
-  public getToken(): string {
+  public getToken(): string | null {
     return localStorage.getItem(environment.jwtToken);
   }
 }

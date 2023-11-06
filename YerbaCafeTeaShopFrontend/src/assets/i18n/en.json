@@ -1,4 +1,20 @@
 {
+  "shop.title": "Internet shop",
+  "authForm.subtitle": "Login to continue",
+  "authForm.login.tip": "Max {{loginMaxCharacters}} characters",
+  "authForm.enterLogin": "Enter your login",
+  "authForm.password.tip": "Max {{passwordMaxCharacters}} characters",
+  "authForm.enterPassword": "Enter your password",
+  "authForm.forgotPassword": "Forgot password ?",
+
+  "login.validity.patternMismatch": "Login must start with a letter and contain only letters and digits",
+  "login.validity.tooShort": "Login must contain at least {{loginMinCharacters}} characters",
+  "password.validity.patternMismatch": "Password must contain at least one capital letter and one special character",
+  "password.validity.tooShort": "Password must contain at least {{passwordMinCharacters}} characters",
+  "password.visibility": "Hide password",
+  "authorization.button": "Login",
+  "authorization.success": "You have successfully logged in !",
+
   "navbar.home": "Home",
   "navbar.login": "Login",
   "navbar.register": "Create account"
