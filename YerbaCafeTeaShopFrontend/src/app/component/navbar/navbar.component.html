@@ -4,10 +4,10 @@
   <button mat-button color="secondary" (click)="redirectToHomePage()">
     {{"navbar.home" | translate}}
   </button>
-  <button mat-button color="secondary" (click)="redirectToAuthenticationPage()">
+  <button *ngIf="!isUserLoggedIn()" mat-button color="secondary" (click)="redirectToAuthenticationPage()">
     {{"navbar.login" | translate}}
   </button>
-  <button mat-button color="secondary" (click)="redirectToAuthenticationPage()">
+  <button *ngIf="!isUserLoggedIn()" mat-button color="secondary" (click)="redirectToAuthenticationPage()">
     {{"navbar.register" | translate}}
   </button>
 </mat-toolbar>

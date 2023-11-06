@@ -25,4 +25,8 @@ export class AuthenticationService {
   public logout(): void {
     this.tokenService.logout();
   }
+
+  public isUserLoggedIn(): boolean {
+    return !this.tokenService.isTokenExpired();
+  }
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {NavigationService} from "../../service/navigation.service";
-import {TranslateService} from "@ngx-translate/core";
+import {AuthenticationService} from "../../service/authentication.service";
 
 @Component({
   selector: 'app-navbar',
@@ -11,7 +11,8 @@ export class NavbarComponent {
 
 
   constructor(
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
+    private authenticationService: AuthenticationService
   ) {
   }
 
@@ -21,5 +22,9 @@ export class NavbarComponent {
 
   redirectToHomePage(): void {
     this.navigationService.redirectToHomePage();
+  }
+
+  isUserLoggedIn(): boolean {
+    return this.authenticationService.isUserLoggedIn();
   }
 }
