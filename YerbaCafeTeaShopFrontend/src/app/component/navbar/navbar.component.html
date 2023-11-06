@@ -23,10 +23,29 @@
       <span>{{"navbar.account" | translate}}</span>
     </button>
     <mat-divider></mat-divider>
-    <button mat-menu-item [matMenuTriggerFor]="changeLocaleMenu" routerLink="#" >
+    <button mat-menu-item routerLink="#" (click)="showLocaleOptions(); $event.stopPropagation();" >
       <mat-icon>language</mat-icon>
-      <span>{{"navbar.changeLocale" | translate}}</span>
+      <span class="menu-text">{{"navbar.changeLocale" | translate}}</span>
+      <mat-icon class="down-arrow" [style.visibility]="canUpdateLocale ? 'visible' : 'hidden'">keyboard_arrow_down</mat-icon>
     </button>
+
+    <ng-container *ngIf="canUpdateLocale">
+      <button mat-menu-item [disabled]="getCurrentLocale() === 'en'" (click)="changeLocaleToEnglish()">
+        <mat-icon *ngIf="getCurrentLocale() === 'en'; else radioUnchecked">radio_button_checked</mat-icon>
+        <ng-template #radioUnchecked>
+          <mat-icon>radio_button_unchecked</mat-icon>
+        </ng-template>
+        <span>{{"navbar.change.locale.english" | translate}}</span>
+      </button>
+
+      <button mat-menu-item [disabled]="getCurrentLocale() === 'pl'" (click)="changeLocaleToPolish()">
+        <mat-icon *ngIf="getCurrentLocale() === 'pl'; else radioUnchecked">radio_button_checked</mat-icon>
+        <ng-template #radioUnchecked>
+          <mat-icon>radio_button_unchecked</mat-icon>
+        </ng-template>
+        <span>{{ "navbar.change.locale.polish" | translate }}</span>
+      </button>
+    </ng-container>
 
     <mat-divider></mat-divider>
     <button mat-menu-item routerLink="#" (click)="logout()">
@@ -35,22 +54,8 @@
     </button>
   </mat-menu>
 
-  <mat-menu #changeLocaleMenu [overlapTrigger]="false" yPosition="below">
-    <button mat-menu-item [disabled]="getCurrentLocale() === 'en'" (click)="changeLocaleToEnglish()">
-      <mat-icon *ngIf="getCurrentLocale() === 'en'; else radioUnchecked">radio_button_checked</mat-icon>
-      <ng-template #radioUnchecked>
-        <mat-icon>radio_button_unchecked</mat-icon>
-      </ng-template>
-      <span>{{"navbar.change.locale.english" | translate}}</span>
-    </button>
+  <mat-menu #changeLocaleMenu [overlapTrigger]="false" yPosition="below" xPosition="before">
 
-    <button mat-menu-item [disabled]="getCurrentLocale() === 'pl'" (click)="changeLocaleToPolish()">
-      <mat-icon *ngIf="getCurrentLocale() === 'pl'; else radioUnchecked">radio_button_checked</mat-icon>
-      <ng-template #radioUnchecked>
-        <mat-icon>radio_button_unchecked</mat-icon>
-      </ng-template>
-      <span>{{ "navbar.change.locale.polish" | translate }}</span>
-    </button>
   </mat-menu>
 
 </mat-toolbar>

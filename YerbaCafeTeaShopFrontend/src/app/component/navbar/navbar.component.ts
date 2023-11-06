@@ -20,6 +20,7 @@ export class NavbarComponent {
   destroy = new Subject<boolean>();
 
   private locale: string = '';
+  canUpdateLocale: boolean = false;
 
   constructor(
     private navigationService: NavigationService,
@@ -101,5 +102,9 @@ export class NavbarComponent {
             }
           })
       })
+  }
+
+  showLocaleOptions() {
+    this.canUpdateLocale = !this.canUpdateLocale;
   }
 }
