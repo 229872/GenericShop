@@ -18,6 +18,10 @@ import {TranslateHttpLoader} from "@ngx-translate/http-loader";
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatCardModule} from "@angular/material/card";
 import {MatInputModule} from "@angular/material/input";
+import {MatListModule} from "@angular/material/list";
+import { ConfirmationDialogComponent } from './component/confirmation-dialog/confirmation-dialog.component';
+import { ErrorDialogComponent } from './component/error-dialog/error-dialog.component';
+import {MatDialogModule} from "@angular/material/dialog";
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
@@ -28,7 +32,9 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     AppComponent,
     NavbarComponent,
     AuthenticationComponent,
-    HomeComponent
+    HomeComponent,
+    ConfirmationDialogComponent,
+    ErrorDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -49,7 +55,9 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     MatMenuModule,
     ReactiveFormsModule,
     MatCardModule,
-    MatInputModule
+    MatInputModule,
+    MatListModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

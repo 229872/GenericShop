@@ -34,5 +34,5 @@ public interface AccountService {
 
     Account changeRole(Long id, AccountRole newRole);
 
-    Account updateLocale(Long id, Locale locale);
+    Account updateOwnLocale(String login, Locale locale);
 }

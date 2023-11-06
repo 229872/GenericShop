@@ -10,6 +10,10 @@ export class NavigationService {
     private router: Router
   ) { }
 
+  public redirectToCurrentPage(): Promise<boolean> {
+    return this.router.navigateByUrl(this.router.url);
+  }
+
   public redirectToHomePage(): Promise<boolean> {
     return this.router.navigate(['/home']);
   }

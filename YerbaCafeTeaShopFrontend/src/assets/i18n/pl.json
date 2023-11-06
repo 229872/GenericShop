@@ -18,5 +18,19 @@
 
   "navbar.home": "Strona główna",
   "navbar.login": "Zaloguj się",
-  "navbar.register": "Stwórz konto"
+  "navbar.register": "Stwórz konto",
+  "navbar.account": "Moje konto",
+  "navbar.logout": "Wyloguj się",
+  "navbar.changeLocale": "Zmień język",
+  "navbar.change.locale.english": "Angielski",
+  "navbar.change.locale.polish": "Polski",
+
+  "account.edit.locale": "Czy na pewno chcesz zmienić język ?",
+
+  "dialog.confirmation.title": "Potwierdzenie akcji",
+  "dialog.confirmation.close": "Zamknij",
+  "dialog.confirmation.action": "Potwierdź",
+
+  "exception.occurred": "Wystąpił błąd",
+  "exception.unknown": "Nieznany błąd"
 }

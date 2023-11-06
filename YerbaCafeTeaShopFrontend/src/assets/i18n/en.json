@@ -17,5 +17,19 @@
 
   "navbar.home": "Home",
   "navbar.login": "Login",
-  "navbar.register": "Create account"
+  "navbar.register": "Create account",
+  "navbar.account": "My account",
+  "navbar.logout": "Logout",
+  "navbar.changeLocale": "Change language",
+  "navbar.change.locale.english": "English",
+  "navbar.change.locale.polish": "Polish",
+
+  "account.edit.locale": "Are you sure you want to change language ?",
+
+  "dialog.confirmation.title": "Confirm action",
+  "dialog.confirmation.close": "Close",
+  "dialog.confirmation.action": "Confirm",
+
+  "exception.occurred": "Exception occurred",
+  "exception.unknown": "Unknown error"
 }

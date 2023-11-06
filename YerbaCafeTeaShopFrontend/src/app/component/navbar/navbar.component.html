@@ -7,7 +7,50 @@
   <button *ngIf="!isUserLoggedIn()" mat-button color="secondary" (click)="redirectToAuthenticationPage()">
     {{"navbar.login" | translate}}
   </button>
-  <button *ngIf="!isUserLoggedIn()" mat-button color="secondary" (click)="redirectToAuthenticationPage()">
+  <button *ngIf="!isUserLoggedIn() else account" mat-button color="secondary" (click)="redirectToAuthenticationPage()">
     {{"navbar.register" | translate}}
   </button>
+
+  <ng-template #account>
+    <button class="account" mat-icon-button matTooltip="{{'navbar.account' | translate}}" [matMenuTriggerFor]="accountMenu">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+  </ng-template>
+
+  <mat-menu #accountMenu [overlapTrigger]="false" yPosition="below">
+    <button mat-menu-item routerLink="#" (click)="redirectToAccountPage()">
+      <mat-icon>person</mat-icon>
+      <span>{{"navbar.account" | translate}}</span>
+    </button>
+    <mat-divider></mat-divider>
+    <button mat-menu-item [matMenuTriggerFor]="changeLocaleMenu" routerLink="#" >
+      <mat-icon>language</mat-icon>
+      <span>{{"navbar.changeLocale" | translate}}</span>
+    </button>
+
+    <mat-divider></mat-divider>
+    <button mat-menu-item routerLink="#" (click)="logout()">
+      <mat-icon>exit_to_app</mat-icon>
+      <span>{{"navbar.logout" | translate}}</span>
+    </button>
+  </mat-menu>
+
+  <mat-menu #changeLocaleMenu [overlapTrigger]="false" yPosition="below">
+    <button mat-menu-item [disabled]="getCurrentLocale() === 'en'" (click)="changeLocaleToEnglish()">
+      <mat-icon *ngIf="getCurrentLocale() === 'en'; else radioUnchecked">radio_button_checked</mat-icon>
+      <ng-template #radioUnchecked>
+        <mat-icon>radio_button_unchecked</mat-icon>
+      </ng-template>
+      <span>{{"navbar.change.locale.english" | translate}}</span>
+    </button>
+
+    <button mat-menu-item [disabled]="getCurrentLocale() === 'pl'" (click)="changeLocaleToPolish()">
+      <mat-icon *ngIf="getCurrentLocale() === 'pl'; else radioUnchecked">radio_button_checked</mat-icon>
+      <ng-template #radioUnchecked>
+        <mat-icon>radio_button_unchecked</mat-icon>
+      </ng-template>
+      <span>{{ "navbar.change.locale.polish" | translate }}</span>
+    </button>
+  </mat-menu>
+
 </mat-toolbar>

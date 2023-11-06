@@ -12,10 +12,12 @@ import pl.lodz.p.edu.dataaccess.model.Account;
 import pl.lodz.p.edu.logic.service.api.AccountService;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountCreateDto;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountOutputDto;
+import pl.lodz.p.edu.presentation.dto.user.account.ChangeLanguageDto;
 import pl.lodz.p.edu.presentation.mapper.AccountMapper;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 
 import static pl.lodz.p.edu.config.RoleName.*;
 
@@ -92,6 +94,17 @@ public class AccountController {
     @RolesAllowed(ADMIN)
     ResponseEntity<AccountOutputDto> archiveAccount(@PathVariable Long id) {
         Account account = accountService.archive(id);
+        AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/self/change-locale")
+    @RolesAllowed({CLIENT, ADMIN, EMPLOYEE})
+    ResponseEntity<AccountOutputDto> changeOwnLocale(@RequestBody @Valid ChangeLanguageDto locale) {
+        Locale language = new Locale(locale.locale());
+        String login = getLoginFromSecurityContext();
+        Account account = accountService.updateOwnLocale(login, language);
         AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
 
         return ResponseEntity.ok(result);

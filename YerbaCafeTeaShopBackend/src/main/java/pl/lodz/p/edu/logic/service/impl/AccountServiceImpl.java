@@ -210,8 +210,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account updateLocale(Long id, Locale locale) {
-        return null;
+    public Account updateOwnLocale(String login, Locale locale) {
+        Account account = accountRepository.findByLogin(login)
+            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+
+        account.setLocale(locale.getLanguage());
+
+        return accountRepository.save(account);
     }
 
     private Account save(Account account) {
