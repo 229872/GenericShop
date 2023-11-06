@@ -64,7 +64,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         account.setLastSuccessfulAuthIpAddr(ipAddress);
         accountRepository.save(account);
 
-        String jwtToken = jwtService.generateToken(login, account.getAccountRoles());
+        String jwtToken = jwtService.generateToken(account);
         return JwtTokens.builder().token(jwtToken).build();
     }
 

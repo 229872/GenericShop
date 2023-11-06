@@ -8,13 +8,13 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import pl.lodz.p.edu.dataaccess.model.Account;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
 import pl.lodz.p.edu.logic.service.api.JwtService;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -32,18 +32,19 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String generateToken(String login, Set<AccountRole> accountRoles) {
+    public String generateToken(Account account) {
         long tokenTimeoutInMillis = TimeUnit.MINUTES.toMillis(tokenTimeoutInMinutes);
         long currentTimeMillis = System.currentTimeMillis();
-        List<String> roles = accountRoles.stream()
+        List<String> roles = account.getAccountRoles().stream()
             .map(AccountRole::name)
             .toList();
 
         return Jwts.builder()
-            .setSubject(login)
+            .setSubject(account.getLogin())
             .setIssuedAt(new Date(currentTimeMillis))
             .setExpiration(new Date(currentTimeMillis + tokenTimeoutInMillis))
             .claim("roles", roles)
+            .claim("lang", account.getLocale())
             .signWith(getSigningKey(), SignatureAlgorithm.HS512)
             .compact();
     }

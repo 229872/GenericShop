@@ -45,8 +45,13 @@ export class AuthenticationComponent {
       .subscribe({
         next: (tokens: Tokens) => {
           this.tokenService.saveJwtToken(tokens.token);
+          let accountLanguage: string | undefined = this.tokenService.getTokenData()?.lang;
 
-          console.log(tokens.token);
+          if (accountLanguage != undefined) {
+            this.tokenService.saveLocale(accountLanguage);
+            this.translateService.use(accountLanguage);
+          }
+
           this.translateService.get("authorization.success")
             .pipe(takeUntil(this.destroy))
             .subscribe(msg => {

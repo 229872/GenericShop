@@ -11,11 +11,16 @@ export class TokenService {
   constructor() { }
 
   public logout(): void {
-    localStorage.removeItem(environment.jwtToken)
+    localStorage.removeItem(environment.jwtToken);
+    localStorage.removeItem(environment.localeKey);
   }
 
   public saveJwtToken(token: string): void {
     localStorage.setItem(environment.jwtToken, token);
+  }
+
+  public saveLocale(lang: string): void {
+    localStorage.setItem(environment.localeKey, lang);
   }
 
   public getToken(): string | null {
@@ -59,7 +64,8 @@ export class TokenService {
       return {
         sub: decodedJwtToken.sub,
         roles: decodedJwtToken.roles,
-        exp: decodedJwtToken.exp
+        exp: decodedJwtToken.exp,
+        lang: decodedJwtToken.lang
       }
     } catch (e) {
       return null;
