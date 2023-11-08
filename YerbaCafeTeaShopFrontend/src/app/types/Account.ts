@@ -1,4 +1,5 @@
 import {Address} from "./Address";
+import {AuthLogs} from "./AuthLogs";
 
 export interface Account {
   id: number,
@@ -10,5 +11,6 @@ export interface Account {
   lastName: string,
   address: Address,
   state: string,
-  roles: string[]
+  roles: string[],
+  authLogs: AuthLogs
 }

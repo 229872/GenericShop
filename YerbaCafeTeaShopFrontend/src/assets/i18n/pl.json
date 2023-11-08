@@ -31,6 +31,14 @@
   "dialog.confirmation.close": "Zamknij",
   "dialog.confirmation.action": "Potwierdź",
 
+  "account.profile.picture": "Zdjęcie profilu",
+  "account.lastSuccessfulAuthTime": "Czas ostatniego prawidłowego uwierzytelnienia",
+  "account.lastUnsuccessfulAuthTime": "Czas ostatniego nieprawidłowego uwierzytelnienia",
+  "account.unsuccessfulAuthCounter": "Liczba nieudanych prób uwierzytelnienia",
+  "account.lastSuccessfulAuthIpAddr": "Adres ip ostatniego prawidłowego uwierzytelnienia",
+  "account.lastUnsuccessfulAuthIpAddr": "Adres ip ostatniego nieprawidłowego uwierzytelnienia",
+  "account.blockadeEndTime": "Czas końca blokady konta",
+
   "exception.occurred": "Wystąpił błąd",
   "exception.unknown": "Nieznany błąd"
 }

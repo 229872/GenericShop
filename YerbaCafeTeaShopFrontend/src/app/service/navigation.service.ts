@@ -21,4 +21,8 @@ export class NavigationService {
   public redirectToAuthenticationPage(): Promise<boolean> {
     return this.router.navigate(['/login']);
   }
+
+  public redirectToAccountPage(): Promise<boolean> {
+    return this.router.navigate(['/self']);
+  }
 }

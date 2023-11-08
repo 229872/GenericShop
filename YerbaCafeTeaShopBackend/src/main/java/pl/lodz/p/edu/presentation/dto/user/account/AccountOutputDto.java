@@ -2,6 +2,7 @@ package pl.lodz.p.edu.presentation.dto.user.account;
 
 import lombok.Builder;
 import pl.lodz.p.edu.presentation.dto.user.address.AddressOutputDto;
+import pl.lodz.p.edu.presentation.dto.user.log.AuthLogOutputDto;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public record AccountOutputDto(
     String lastName,
     AddressOutputDto address,
     String state,
-    List<String> roles
+    List<String> roles,
+    AuthLogOutputDto authLogs
 ) {
 }

@@ -30,6 +30,14 @@
   "dialog.confirmation.close": "Close",
   "dialog.confirmation.action": "Confirm",
 
+  "account.profile.picture": "Profile picture",
+  "account.lastSuccessfulAuthTime": "Last successful authentication time",
+  "account.lastUnsuccessfulAuthTime": "Last unsuccessful authentication time",
+  "account.unsuccessfulAuthCounter": "Unsuccessful authentication attempts",
+  "account.lastSuccessfulAuthIpAddr": "Last successful authentication ip address",
+  "account.lastUnsuccessfulAuthIpAddr": "Last unsuccessful authentication ip address",
+  "account.blockadeEndTime": "Account blockade end time",
+
   "exception.occurred": "Exception occurred",
   "exception.unknown": "Unknown error"
 }

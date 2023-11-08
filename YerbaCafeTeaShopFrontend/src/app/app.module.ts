@@ -22,6 +22,10 @@ import {MatListModule} from "@angular/material/list";
 import { ConfirmationDialogComponent } from './component/confirmation-dialog/confirmation-dialog.component';
 import { ErrorDialogComponent } from './component/error-dialog/error-dialog.component';
 import {MatDialogModule} from "@angular/material/dialog";
+import { AccountComponent } from './component/account/account.component';
+import {DatePipe, NgOptimizedImage} from "@angular/common";
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
@@ -34,7 +38,8 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     AuthenticationComponent,
     HomeComponent,
     ConfirmationDialogComponent,
-    ErrorDialogComponent
+    ErrorDialogComponent,
+    AccountComponent
   ],
   imports: [
     BrowserModule,
@@ -57,9 +62,13 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     MatCardModule,
     MatInputModule,
     MatListModule,
-    MatDialogModule
+    MatDialogModule,
+    NgOptimizedImage,
+    NgbModule
   ],
-  providers: [],
+  providers: [
+    DatePipe
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

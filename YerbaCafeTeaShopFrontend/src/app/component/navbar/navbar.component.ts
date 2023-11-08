@@ -44,7 +44,7 @@ export class NavbarComponent {
   }
 
   redirectToAccountPage() {
-
+    return this.navigationService.redirectToAccountPage();
   }
 
   logout() {

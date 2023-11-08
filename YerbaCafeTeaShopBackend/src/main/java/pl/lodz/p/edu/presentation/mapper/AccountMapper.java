@@ -3,12 +3,14 @@ package pl.lodz.p.edu.presentation.mapper;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.dataaccess.model.Account;
 import pl.lodz.p.edu.dataaccess.model.Address;
+import pl.lodz.p.edu.dataaccess.model.AuthLogs;
 import pl.lodz.p.edu.dataaccess.model.Person;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountState;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountCreateDto;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountOutputDto;
 import pl.lodz.p.edu.presentation.dto.user.address.AddressOutputDto;
+import pl.lodz.p.edu.presentation.dto.user.log.AuthLogOutputDto;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +48,7 @@ public class AccountMapper {
 
     public AccountOutputDto mapToAccountOutputDto(Account account) {
         Person person = account.getPerson();
+        AuthLogs authLogs = account.getAuthLogs();
 
         AddressOutputDto addressDto = AddressOutputDto.builder()
             .postalCode(person.getPostalCode())
@@ -53,6 +56,15 @@ public class AccountMapper {
             .city(person.getCity())
             .street(person.getStreet())
             .houseNumber(person.getHouseNumber())
+            .build();
+
+        AuthLogOutputDto logs = AuthLogOutputDto.builder()
+            .lastSuccessfulAuthIpAddr(authLogs.getLastSuccessfulAuthIpAddr())
+            .lastUnsuccessfulAuthIpAddr(authLogs.getLastUnsuccessfulAuthIpAddr())
+            .lastSuccessfulAuthTime(authLogs.getLastSuccessfulAuthTime())
+            .lastUnsuccessfulAuthTime(authLogs.getLastUnsuccessfulAuthTime())
+            .unsuccessfulAuthCounter(authLogs.getUnsuccessfulAuthCounter())
+            .blockadeEndTime(authLogs.getBlockadeEndTime())
             .build();
 
         return AccountOutputDto.builder()
@@ -66,6 +78,7 @@ public class AccountMapper {
             .firstName(person.getFirstName())
             .lastName(person.getLastName())
             .address(addressDto)
+            .authLogs(logs)
             .build();
     }
 }
