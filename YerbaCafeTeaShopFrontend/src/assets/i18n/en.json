@@ -1,4 +1,6 @@
 {
+  "true": "True",
+  "false": "False",
   "shop.title": "Internet shop",
   "authForm.subtitle": "Login to continue",
   "authForm.login.tip": "Max {{loginMaxCharacters}} characters",
@@ -37,6 +39,34 @@
   "account.lastSuccessfulAuthIpAddr": "Last successful authentication ip address",
   "account.lastUnsuccessfulAuthIpAddr": "Last unsuccessful authentication ip address",
   "account.blockadeEndTime": "Account blockade end time",
+  "account.firstName": "First name",
+  "account.lastName": "Last name",
+  "account.email": "Email",
+  "account.locale": "Language",
+  "account.roles": "Roles",
+  "account.accountState": "Account state",
+  "account.archival": "Archival",
+  "account.address.information": "Address information",
+  "account.country": "Country",
+  "account.city": "City",
+  "account.street": "Street",
+  "account.houseNumber": "House number",
+  "account.postalCode": "Postal code",
+  "account.state.information": "Account state information",
+  "account.state.blocked": "Blocked",
+  "account.state.active": "Active",
+  "account.state.not_verified": "Not Verified",
+
+  "role.administrator": "Administrator",
+  "role.employee": "Employee",
+  "role.sales_rep": "Sales Representative",
+  "role.client": "Client",
+  "role.guest": "Guest",
+
+
+  "edit.account.button": "Edit",
+  "edit.account.email.button": "Change email",
+  "edit.account.password.button": "Change password",
 
   "exception.occurred": "Exception occurred",
   "exception.unknown": "Unknown error"
