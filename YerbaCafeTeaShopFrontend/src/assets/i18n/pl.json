@@ -33,6 +33,7 @@
   "dialog.confirmation.close": "Zamknij",
   "dialog.confirmation.action": "Potwierdź",
 
+  "account.information": "Informacje o koncie",
   "account.profile.picture": "Zdjęcie profilu",
   "account.lastSuccessfulAuthTime": "Czas ostatniego prawidłowego uwierzytelnienia",
   "account.lastUnsuccessfulAuthTime": "Czas ostatniego nieprawidłowego uwierzytelnienia",
@@ -42,6 +43,7 @@
   "account.blockadeEndTime": "Czas końca blokady konta",
   "account.firstName": "Imię",
   "account.lastName": "Nazwisko",
+  "account.login": "Login",
   "account.email": "Email",
   "account.locale": "Język",
   "account.roles": "Role",
