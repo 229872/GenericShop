@@ -4,6 +4,7 @@ import {environment} from "../../environments/environment";
 import {Observable} from "rxjs";
 import {Account} from "../types/Account";
 import {TokenService} from "./token.service";
+import {ChangePassword} from "../types/ChangePassword";
 
 @Injectable({
   providedIn: 'root'
@@ -35,4 +36,15 @@ export class AccountService {
     });
   }
 
+  public changePassword(passwords: ChangePassword) {
+    return this.httpClient.put<Account>(`${this.accountApi}/self/change-password`,
+      passwords,
+      {
+        observe: 'response',
+        headers: {
+          Authorization: `Bearer ${ this.tokenService.getToken() }`
+        },
+      }
+    )
+  }
 }

@@ -95,7 +95,7 @@ export class AccountComponent implements OnInit {
   }
 
   openChangePasswordDialog() {
-
+    this.dialogService.openChangePasswordDialog();
   }
 
   getRoles() {

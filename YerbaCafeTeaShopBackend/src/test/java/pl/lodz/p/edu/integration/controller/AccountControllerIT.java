@@ -215,6 +215,9 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
                 ResultActions resultActions = mockMvc.perform(postRequest);
 
                 //then
+                resultActions.andDo(print())
+                    .andExpect(status().isCreated());
+
                 String location = resultActions.andReturn().getResponse().getHeader("Location");
                 Pattern pattern = Pattern.compile("/id/(\\d+)");
 

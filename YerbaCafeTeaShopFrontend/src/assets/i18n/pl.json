@@ -1,7 +1,10 @@
 {
   "true": "Tak",
   "false": "Nie",
+  "back": "Wstecz",
+  "confirm": "Potwierdź",
   "shop.title": "Sklep internetowy",
+  "field.required": "Pole jest wymagane",
   "authForm.subtitle": "Zaloguj się, żeby kontynuować",
   "authForm.login.tip": "Maksymalnie {{loginMaxCharacters}} znaków",
   "authForm.enterLogin": "Wprowadź swój login",
@@ -32,6 +35,8 @@
   "dialog.confirmation.title": "Potwierdzenie akcji",
   "dialog.confirmation.close": "Zamknij",
   "dialog.confirmation.action": "Potwierdź",
+  "dialog.change.password.message": "Czy na pewno chcesz zmienić hasło ?",
+
 
   "account.information": "Informacje o koncie",
   "account.profile.picture": "Zdjęcie profilu",
@@ -59,6 +64,15 @@
   "account.state.blocked": "Zablokowane",
   "account.state.active": "Aktywne",
   "account.state.not_verified": "Nie zweryfikowane",
+  "account.change.password": "Zmień hasło",
+  "account.change.password.current": "Obecne hasło",
+  "account.change.password.validity.matching": "Nowe hasło nie może być takie samo jak obecne",
+  "account.change.password.validity.patternMismatch": "Hasło musi zawierać conajmniej jedną dużą literę, oraz jeden znak specjalny",
+  "account.change.password.validity.tooShort": "Hasło musi zawierać przynajmniej 8 znaków",
+  "account.change.password.validity.notmatching": "Nowe hasła się różnią",
+  "account.change.password.new": "Nowe hasło",
+  "account.change.password.new.repeat": "Powtórz nowe hasło",
+
 
   "role.administrator": "Administrator",
   "role.employee": "Pracownik",
@@ -71,5 +85,6 @@
   "edit.account.password.button": "Zmień hasło",
 
   "exception.occurred": "Wystąpił błąd",
-  "exception.unknown": "Nieznany błąd"
+  "exception.unknown": "Nieznany błąd",
+  "exception.current.password.invalid": "Nie prawidłowe obecne hasło"
 }

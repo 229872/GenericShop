@@ -5,6 +5,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,9 @@ import java.util.*;
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
+
+    private final PasswordEncoder passwordEncoder;
+
 
     @Override
     public List<Account> findAll() {
@@ -217,6 +221,21 @@ public class AccountServiceImpl implements AccountService {
         account.setLocale(locale.getLanguage());
 
         return accountRepository.save(account);
+    }
+
+    @Override
+    public Account changePassword(String login, String currentPassword, String newPassword) {
+        Account account = accountRepository.findByLogin(login)
+            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+
+        if (!passwordEncoder.matches(currentPassword, account.getPassword())) {
+            throw ExceptionFactory.createInvalidCredentialsException();
+        }
+
+        String encodedNewPassword = passwordEncoder.encode(newPassword);
+        account.setPassword(encodedNewPassword);
+
+        return save(account);
     }
 
     private Account save(Account account) {

@@ -13,6 +13,7 @@ import pl.lodz.p.edu.logic.service.api.AccountService;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountCreateDto;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountOutputDto;
 import pl.lodz.p.edu.presentation.dto.user.account.ChangeLanguageDto;
+import pl.lodz.p.edu.presentation.dto.user.account.ChangePasswordDto;
 import pl.lodz.p.edu.presentation.mapper.AccountMapper;
 
 import java.net.URI;
@@ -105,6 +106,16 @@ public class AccountController {
         Locale language = new Locale(locale.locale());
         String login = getLoginFromSecurityContext();
         Account account = accountService.updateOwnLocale(login, language);
+        AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/self/change-password")
+    @RolesAllowed({CLIENT, ADMIN, EMPLOYEE})
+    ResponseEntity<AccountOutputDto> changeOwnPassword(@RequestBody @Valid ChangePasswordDto passwords) {
+        String login = getLoginFromSecurityContext();
+        Account account = accountService.changePassword(login, passwords.currentPassword(), passwords.newPassword());
         AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
 
         return ResponseEntity.ok(result);

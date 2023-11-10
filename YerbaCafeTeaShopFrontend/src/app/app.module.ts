@@ -25,6 +25,7 @@ import {MatDialogModule} from "@angular/material/dialog";
 import { AccountComponent } from './component/account/account.component';
 import {DatePipe, NgOptimizedImage} from "@angular/common";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ChangeOwnPasswordComponent } from './component/change-own-password/change-own-password.component';
 
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -39,7 +40,8 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     HomeComponent,
     ConfirmationDialogComponent,
     ErrorDialogComponent,
-    AccountComponent
+    AccountComponent,
+    ChangeOwnPasswordComponent
   ],
   imports: [
     BrowserModule,

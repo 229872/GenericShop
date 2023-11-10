@@ -35,4 +35,6 @@ public interface AccountService {
     Account changeRole(Long id, AccountRole newRole);
 
     Account updateOwnLocale(String login, Locale locale);
+
+    Account changePassword(String login, String currentPassword, String newPassword);
 }

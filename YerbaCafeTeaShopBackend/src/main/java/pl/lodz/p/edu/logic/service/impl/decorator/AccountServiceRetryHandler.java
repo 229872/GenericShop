@@ -94,4 +94,9 @@ public class AccountServiceRetryHandler extends AbstractRetryHandler implements 
     public Account updateOwnLocale(String login, Locale locale) {
         return repeatTransactionWhenTimeoutOccurred(() -> accountService.updateOwnLocale(login, locale));
     }
+
+    @Override
+    public Account changePassword(String login, String currentPassword, String newPassword) {
+        return repeatTransactionWhenTimeoutOccurred(() -> accountService.changePassword(login, currentPassword, newPassword));
+    }
 }
