@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
 import {AuthenticationService} from "../../service/authentication.service";
-import {first, Subject, takeUntil} from "rxjs";
+import {combineLatest, first, map, Subject, takeUntil} from "rxjs";
 import {TokenService} from "../../service/token.service";
 import {TranslateService} from "@ngx-translate/core";
 import {NavigationService} from "../../service/navigation.service";
 import {Tokens} from "../../types/Tokens";
 import {HttpErrorResponse} from "@angular/common/http";
 import {RefreshTokenService} from "../../service/refresh-token.service";
+import {AlertService} from "@full-fledged/alerts";
 
 @Component({
   selector: 'app-authentication',
@@ -34,7 +35,8 @@ export class AuthenticationComponent {
     private tokenService: TokenService,
     private refreshTokenService: RefreshTokenService,
     private translateService: TranslateService,
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
+    private alertService: AlertService
   ) {
   }
 
@@ -60,14 +62,25 @@ export class AuthenticationComponent {
             this.refreshTokenService.generateNewToken();
           }, this.tokenService.getRefreshTokenTime()!);
 
+          this.authenticationService.showWarningIfSessionExpired();
+
           this.translateService.get("authorization.success")
             .pipe(takeUntil(this.destroy))
             .subscribe(msg => {
+              this.alertService.success(msg);
               void this.navigationService.redirectToHomePage();
             });
         },
         error: (e: HttpErrorResponse) => {
-          console.log(e)
+          combineLatest([
+            this.translateService.get('exception.occurred'),
+            this.translateService.get(e.error.message || 'exception.unknown')
+          ]).pipe(first(), takeUntil(this.destroy), map(data => ({
+            title: data[0],
+            message: data[1]
+          }))).subscribe(data => {
+                this.alertService.warning(`${data.title}: ${data.message}`);
+              });
         }
       })
   }

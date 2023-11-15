@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
+import {AlertModule} from '@full-fledged/alerts';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -45,6 +45,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   ],
   imports: [
     BrowserModule,
+    AlertModule.forRoot({maxMessages: 8, timeout: 5000, positionX: 'right', positionY: 'top'}),
     AppRoutingModule,
     HttpClientModule,
     TranslateModule.forRoot({

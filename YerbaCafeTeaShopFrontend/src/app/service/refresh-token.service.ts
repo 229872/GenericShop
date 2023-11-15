@@ -6,6 +6,7 @@ import {NavigationService} from "./navigation.service";
 import {TranslateService} from "@ngx-translate/core";
 import {first} from "rxjs";
 import {Tokens} from "../types/Tokens";
+import {AlertService} from "@full-fledged/alerts";
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class RefreshTokenService {
     private tokenService: TokenService,
     private dialogService: DialogService,
     private navigationService: NavigationService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private alertService: AlertService
   ) { }
 
   public generateNewToken(): void {
@@ -52,6 +54,6 @@ export class RefreshTokenService {
   }
 
   private displayTokenExpiredWarning(): void {
-    console.error(this.translateService.instant('auth.token.expired'))
+    this.alertService.warning(this.translateService.instant('auth.token.expired'));
   }
 }

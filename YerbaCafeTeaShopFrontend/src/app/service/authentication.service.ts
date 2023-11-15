@@ -54,9 +54,8 @@ export class AuthenticationService {
         this.translateService.instant('session.expired.message'),
       ).afterClosed()
         .subscribe(() => {
-          void this.navigationService.redirectToHomePage();
+          void this.navigationService.redirectToAuthenticationPage();
         });
-      console.log(now);
     }, (Number(this.tokenService.getExpirationTime()) - now) * 1000);
   }
 
