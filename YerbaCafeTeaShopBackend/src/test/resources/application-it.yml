@@ -21,3 +21,6 @@ security:
   token:
     timeout_in_minutes: 10
     key: "QVPfPDLb5oWroAliIN0nvROgcqbx+c3BtqKJeacgxMQXJqSDNYqMIVobkUANxAM85o4CCfcp/E/u8pKwcmmbryJy+FRIVT8iGeTUI2uRH8c="
+  refresh_token:
+    timeout_in_minutes: 1140
+    key: "SbukNWysYjebgzpFLx0Ax21RnASrRa03JzBzZ8JRYsrOeECSUl2WkI0AxW3DkAscvslkKW6R0hk57uIoDhZ06+GZV9z880zMiypIQGgcMn0="

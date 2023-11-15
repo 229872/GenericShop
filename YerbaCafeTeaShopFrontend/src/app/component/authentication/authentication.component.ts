@@ -7,6 +7,7 @@ import {TranslateService} from "@ngx-translate/core";
 import {NavigationService} from "../../service/navigation.service";
 import {Tokens} from "../../types/Tokens";
 import {HttpErrorResponse} from "@angular/common/http";
+import {RefreshTokenService} from "../../service/refresh-token.service";
 
 @Component({
   selector: 'app-authentication',
@@ -31,6 +32,7 @@ export class AuthenticationComponent {
   constructor(
     private authenticationService: AuthenticationService,
     private tokenService: TokenService,
+    private refreshTokenService: RefreshTokenService,
     private translateService: TranslateService,
     private navigationService: NavigationService
   ) {
@@ -54,10 +56,14 @@ export class AuthenticationComponent {
             this.translateService.use(accountLanguage);
           }
 
+          this.tokenService.setTimeout(() => {
+            this.refreshTokenService.generateNewToken();
+          }, this.tokenService.getRefreshTokenTime()!);
+
           this.translateService.get("authorization.success")
             .pipe(takeUntil(this.destroy))
             .subscribe(msg => {
-              this.navigationService.redirectToHomePage();
+              void this.navigationService.redirectToHomePage();
             });
         },
         error: (e: HttpErrorResponse) => {

@@ -20,6 +20,8 @@
   "authorization.button": "Login",
   "authorization.success": "You have successfully logged in !",
 
+  "auth.token.expired": "Your token has expired",
+
   "navbar.home": "Home",
   "navbar.login": "Login",
   "navbar.register": "Create account",
@@ -35,6 +37,7 @@
   "dialog.confirmation.close": "Close",
   "dialog.confirmation.action": "Confirm",
   "dialog.change.password.message": "Are you sure you want to change password ?",
+  "dialog.refresh.token":"Your session will expire soon. Do you want to extend it?",
 
   "account.information": "Account information",
   "account.profile.picture": "Profile picture",
@@ -81,6 +84,9 @@
   "edit.account.button": "Edit",
   "edit.account.email.button": "Change email",
   "edit.account.password.button": "Change password",
+
+  "session.expired.title": "Session expired",
+  "session.expired.message": "Your session has expired, please log in again",
 
   "exception.occurred": "Exception occurred",
   "exception.unknown": "Unknown error",

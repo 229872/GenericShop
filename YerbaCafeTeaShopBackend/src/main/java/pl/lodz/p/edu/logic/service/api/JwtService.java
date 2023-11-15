@@ -8,7 +8,7 @@ public interface JwtService {
 
     String generateToken(Account account);
 
-    Jws<Claims> parseJwt(String token);
+    Jws<Claims> getTokenClaims(String token);
 
     String generateRefreshToken(Account account);
 

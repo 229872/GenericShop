@@ -22,9 +22,17 @@ public class JwtServiceImpl implements JwtService {
     private Long tokenTimeoutInMinutes;
 
     @Value("${security.token.key:3}")
-    private String secretKey;
+    private String tokenSecretKey;
 
-    private Key getSigningKey() {
+    @Value("${security.refresh_token.timeout_in_minutes:20}")
+    private Long refreshTokenTimeoutInMinutes;
+
+    @Value("${security.refresh_token.key:3}")
+    private String refreshTokenSecretKey;
+
+
+
+    private Key getSigningKey(String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
@@ -43,28 +51,28 @@ public class JwtServiceImpl implements JwtService {
             .setExpiration(new Date(currentTimeMillis + tokenTimeoutInMillis))
             .claim("roles", roles)
             .claim("lang", account.getLocale())
-            .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+            .signWith(getSigningKey(tokenSecretKey), SignatureAlgorithm.HS512)
             .compact();
     }
 
     @Override
-    public Jws<Claims> parseJwt(String token) {
+    public Jws<Claims> getTokenClaims(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(getSigningKey())
+            .setSigningKey(getSigningKey(tokenSecretKey))
             .build()
             .parseClaimsJws(token);
     }
 
     @Override
     public String generateRefreshToken(Account account) {
-        long tokenTimeoutInMillis = TimeUnit.MINUTES.toMillis(tokenTimeoutInMinutes);
+        long tokenTimeoutInMillis = TimeUnit.MINUTES.toMillis(refreshTokenTimeoutInMinutes);
         long currentTimeMillis = System.currentTimeMillis();
 
         return Jwts.builder()
             .setSubject(account.getLogin())
             .setIssuedAt(new Date(currentTimeMillis))
             .setExpiration(new Date(currentTimeMillis + tokenTimeoutInMillis))
-            .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+            .signWith(getSigningKey(refreshTokenSecretKey), SignatureAlgorithm.HS512)
             .compact();
     }
 
@@ -72,7 +80,7 @@ public class JwtServiceImpl implements JwtService {
     public void validateRefreshToken(String refreshToken) {
         try {
             JwtParser parser = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+                .setSigningKey(getSigningKey(refreshTokenSecretKey))
                 .build();
             parser.parseClaimsJws(refreshToken);
 
@@ -87,7 +95,7 @@ public class JwtServiceImpl implements JwtService {
     public String getLoginFromRefreshToken(String refreshToken) {
         try {
             JwtParser parser = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+                .setSigningKey(getSigningKey(refreshTokenSecretKey))
                 .build();
             Claims claims = parser.parseClaimsJws(refreshToken).getBody();
 

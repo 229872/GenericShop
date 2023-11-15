@@ -8,6 +8,7 @@ import {jwtDecode, JwtPayload} from "jwt-decode";
 })
 export class TokenService {
 
+  private timeoutId: any;
   constructor() { }
 
   public logout(): void {
@@ -39,7 +40,15 @@ export class TokenService {
   public getRefreshTokenTime(): number | null {
     const expirationTime = this.getExpirationTime();
     if (expirationTime !== null) {
-      return expirationTime * 1000 - Date.now() - TokenService.REFRESH_TOKEN_TIME;
+      let sessionTimeInMillis = expirationTime * 1000 - Date.now();
+
+      if (sessionTimeInMillis <= 1.5 * TokenService.REFRESH_TOKEN_TIME_IN_SECONDS * 1000) {
+        console.log("Active shorter timeout")
+        return sessionTimeInMillis - (0.3 * TokenService.REFRESH_TOKEN_TIME_IN_SECONDS * 1000);
+      }
+
+      console.log("Active normal timeout")
+      return sessionTimeInMillis - (TokenService.REFRESH_TOKEN_TIME_IN_SECONDS * 1000);
     }
     return null;
   }
@@ -87,5 +96,10 @@ export class TokenService {
       return null;
     }
   }
-  public static readonly REFRESH_TOKEN_TIME = 180000;
+
+  public setTimeout(callback: () => void, delay: number) {
+    this.timeoutId = setTimeout(callback, delay);
+  }
+
+  public static readonly REFRESH_TOKEN_TIME_IN_SECONDS = 180;
 }

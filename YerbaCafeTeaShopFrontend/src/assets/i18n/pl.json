@@ -20,6 +20,7 @@
   "authorization.button": "Zaloguj się",
   "authorization.success": "Zalogowałeś się pomyślnie !",
 
+  "auth.token.expired": "Twój token wygasł",
 
   "navbar.home": "Strona główna",
   "navbar.login": "Zaloguj się",
@@ -36,7 +37,7 @@
   "dialog.confirmation.close": "Zamknij",
   "dialog.confirmation.action": "Potwierdź",
   "dialog.change.password.message": "Czy na pewno chcesz zmienić hasło ?",
-
+  "dialog.refresh.token":"Twoja sesja wkrótce wygaśnie. Czy chcesz ją przedłużyć?",
 
   "account.information": "Informacje o koncie",
   "account.profile.picture": "Zdjęcie profilu",
@@ -83,6 +84,9 @@
   "edit.account.button": "Edytuj",
   "edit.account.email.button": "Zmień adres email",
   "edit.account.password.button": "Zmień hasło",
+
+  "session.expired.title": "Sesja wygasła",
+  "session.expired.message": "Twoja sesja wygasła, zaloguj się ponownie",
 
   "exception.occurred": "Wystąpił błąd",
   "exception.unknown": "Nieznany błąd",
