@@ -14,6 +14,9 @@ export class TokenService {
   public logout(): void {
     localStorage.removeItem(environment.jwtTokenKey);
     localStorage.removeItem(environment.localeKey);
+    localStorage.removeItem(environment.refreshTokenKey);
+    localStorage.removeItem(environment.timeoutKey);
+    clearTimeout(this.timeoutId);
   }
 
   public saveJwtToken(token: string): void {
@@ -43,11 +46,9 @@ export class TokenService {
       let sessionTimeInMillis = expirationTime * 1000 - Date.now();
 
       if (sessionTimeInMillis <= 1.5 * TokenService.REFRESH_TOKEN_TIME_IN_SECONDS * 1000) {
-        console.log("Active shorter timeout")
         return sessionTimeInMillis - (0.3 * TokenService.REFRESH_TOKEN_TIME_IN_SECONDS * 1000);
       }
 
-      console.log("Active normal timeout")
       return sessionTimeInMillis - (TokenService.REFRESH_TOKEN_TIME_IN_SECONDS * 1000);
     }
     return null;
