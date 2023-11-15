@@ -65,7 +65,34 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         accountRepository.save(account);
 
         String jwtToken = jwtService.generateToken(account);
-        return JwtTokens.builder().token(jwtToken).build();
+        String refreshToken = jwtService.generateRefreshToken(account);
+
+        return JwtTokens.builder()
+            .token(jwtToken)
+            .refreshToken(refreshToken)
+            .build();
+    }
+
+    @Override
+    public JwtTokens getAuthenticationToken(String login, String refreshToken) {
+        jwtService.validateRefreshToken(refreshToken);
+
+        String loginFromRefreshToken = jwtService.getLoginFromRefreshToken(refreshToken);
+
+        if (!login.equals(loginFromRefreshToken)) {
+            throw ExceptionFactory.createInvalidRefreshTokenException();
+        }
+
+        Account account = accountRepository.findByLogin(login)
+            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+
+        String token = jwtService.generateToken(account);
+        String newRefreshToken = jwtService.generateRefreshToken(account);
+
+        return JwtTokens.builder()
+            .token(token)
+            .refreshToken(newRefreshToken)
+            .build();
     }
 
     private void validateAccount(Account account, String password, String ipAddress) {

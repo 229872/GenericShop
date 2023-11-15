@@ -1,15 +1,13 @@
 package pl.lodz.p.edu.logic.service.impl;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pl.lodz.p.edu.dataaccess.model.Account;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
+import pl.lodz.p.edu.exception.ExceptionFactory;
 import pl.lodz.p.edu.logic.service.api.JwtService;
 
 import java.security.Key;
@@ -55,6 +53,48 @@ public class JwtServiceImpl implements JwtService {
             .setSigningKey(getSigningKey())
             .build()
             .parseClaimsJws(token);
+    }
+
+    @Override
+    public String generateRefreshToken(Account account) {
+        long tokenTimeoutInMillis = TimeUnit.MINUTES.toMillis(tokenTimeoutInMinutes);
+        long currentTimeMillis = System.currentTimeMillis();
+
+        return Jwts.builder()
+            .setSubject(account.getLogin())
+            .setIssuedAt(new Date(currentTimeMillis))
+            .setExpiration(new Date(currentTimeMillis + tokenTimeoutInMillis))
+            .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+            .compact();
+    }
+
+    @Override
+    public void validateRefreshToken(String refreshToken) {
+        try {
+            JwtParser parser = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build();
+            parser.parseClaimsJws(refreshToken);
+
+        } catch (ExpiredJwtException e) {
+            throw ExceptionFactory.createExpiredRefreshTokenException();
+        } catch (RuntimeException e) {
+            throw ExceptionFactory.createInvalidRefreshTokenException();
+        }
+    }
+
+    @Override
+    public String getLoginFromRefreshToken(String refreshToken) {
+        try {
+            JwtParser parser = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build();
+            Claims claims = parser.parseClaimsJws(refreshToken).getBody();
+
+            return claims.getSubject();
+        } catch (RuntimeException e) {
+            throw ExceptionFactory.createInvalidRefreshTokenException();
+        }
     }
 
 }

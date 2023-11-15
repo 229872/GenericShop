@@ -27,6 +27,8 @@ public final class ExceptionMessage {
     public static final String AUTH_ACCOUNT_ARCHIVAL = "exception.auth.archival";
     public static final String AUTH_ACCOUNT_NOT_VERIFIED = "exception.auth.state.not_verified";
     public static final String AUTH_ACCOUNT_BLOCKED = "exception.auth.state.blocked";
+    public static final String AUTH_TOKEN_REFRESH_EXPIRED = "exception.auth.token.refresh.expired";
+    public static final String AUTH_TOKEN_REFRESH_INVALID = "exception.auth.token.refresh.invalid";
 
 
     public static class Validation {

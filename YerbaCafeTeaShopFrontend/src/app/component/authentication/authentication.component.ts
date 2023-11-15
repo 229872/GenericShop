@@ -45,6 +45,8 @@ export class AuthenticationComponent {
       .subscribe({
         next: (tokens: Tokens) => {
           this.tokenService.saveJwtToken(tokens.token);
+          this.tokenService.saveRefreshToken(tokens.refreshToken);
+          this.tokenService.saveTimeout(this.tokenService.getRefreshTokenTime()!);
           let accountLanguage: string | undefined = this.tokenService.getTokenData()?.lang;
 
           if (accountLanguage != undefined) {

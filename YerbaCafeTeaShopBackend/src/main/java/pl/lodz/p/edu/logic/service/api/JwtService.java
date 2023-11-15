@@ -9,4 +9,10 @@ public interface JwtService {
     String generateToken(Account account);
 
     Jws<Claims> parseJwt(String token);
+
+    String generateRefreshToken(Account account);
+
+    void validateRefreshToken(String refreshToken);
+
+    String getLoginFromRefreshToken(String refreshToken);
 }

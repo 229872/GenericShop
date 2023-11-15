@@ -11,12 +11,16 @@ export class TokenService {
   constructor() { }
 
   public logout(): void {
-    localStorage.removeItem(environment.jwtToken);
+    localStorage.removeItem(environment.jwtTokenKey);
     localStorage.removeItem(environment.localeKey);
   }
 
   public saveJwtToken(token: string): void {
-    localStorage.setItem(environment.jwtToken, token);
+    localStorage.setItem(environment.jwtTokenKey, token);
+  }
+
+  public saveRefreshToken(token: string): void {
+    localStorage.setItem(environment.refreshTokenKey, token);
   }
 
   public saveLocale(lang: string): void {
@@ -24,8 +28,20 @@ export class TokenService {
   }
 
   public getToken(): string | null {
-    return localStorage.getItem(environment.jwtToken);
+    return localStorage.getItem(environment.jwtTokenKey);
 
+  }
+
+  public getRefreshToken(): string | null {
+    return localStorage.getItem(environment.refreshTokenKey);
+  }
+
+  public getRefreshTokenTime(): number | null {
+    const expirationTime = this.getExpirationTime();
+    if (expirationTime !== null) {
+      return expirationTime * 1000 - Date.now() - TokenService.REFRESH_TOKEN_TIME;
+    }
+    return null;
   }
 
   public saveTimeout(timeout: number): void {
@@ -71,4 +87,5 @@ export class TokenService {
       return null;
     }
   }
+  public static readonly REFRESH_TOKEN_TIME = 180000;
 }

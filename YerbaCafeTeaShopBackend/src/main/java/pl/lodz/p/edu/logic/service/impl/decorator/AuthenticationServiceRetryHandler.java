@@ -21,4 +21,9 @@ public class AuthenticationServiceRetryHandler extends AbstractRetryHandler impl
     public JwtTokens authenticate(String login, String password) {
         return repeatTransactionWhenTimeoutOccurred(() -> authenticationService.authenticate(login, password));
     }
+
+    @Override
+    public JwtTokens getAuthenticationToken(String login, String refreshToken) {
+        return repeatTransactionWhenTimeoutOccurred(() -> authenticationService.getAuthenticationToken(login, refreshToken));
+    }
 }
