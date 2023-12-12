@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static pl.lodz.p.edu.config.RoleName.*;
+import static pl.lodz.p.edu.config.security.RoleName.*;
 
 @SpringBootApplication
 @DeclareRoles({GUEST, ADMIN, CLIENT, EMPLOYEE})

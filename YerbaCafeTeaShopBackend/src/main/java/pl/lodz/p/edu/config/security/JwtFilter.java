@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.config;
+package pl.lodz.p.edu.config.security;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -18,7 +18,7 @@ import pl.lodz.p.edu.logic.service.api.JwtService;
 import java.io.IOException;
 import java.util.List;
 
-import static pl.lodz.p.edu.config.RoleName.GUEST;
+import static pl.lodz.p.edu.config.security.RoleName.GUEST;
 
 @RequiredArgsConstructor
 

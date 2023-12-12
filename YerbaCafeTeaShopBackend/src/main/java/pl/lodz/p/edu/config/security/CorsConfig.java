@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.config;
+package pl.lodz.p.edu.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

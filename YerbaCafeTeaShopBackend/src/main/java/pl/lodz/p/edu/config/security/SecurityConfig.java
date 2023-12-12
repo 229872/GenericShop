@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.config;
+package pl.lodz.p.edu.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
