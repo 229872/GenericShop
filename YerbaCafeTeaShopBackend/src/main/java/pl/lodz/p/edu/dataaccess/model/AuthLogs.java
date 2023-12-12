@@ -30,8 +30,8 @@ public class AuthLogs {
     @Column(name = "last_unsuccessful_auth_time")
     private LocalDateTime lastUnsuccessfulAuthTime;
 
-    @Column(name = "unsuccessful_auth_counter")
-    private Integer unsuccessfulAuthCounter;
+    @Column(name = "unsuccessful_auth_counter", nullable = false, columnDefinition = "integer default 0")
+    private Integer unsuccessfulAuthCounter = 0;
 
     @Column(name = "blockade_end_time")
     private LocalDateTime blockadeEndTime;

@@ -47,9 +47,10 @@ public class Account extends AbstractEntity {
     @Column(nullable = false, name = "roles")
     private Set<AccountRole> accountRoles = new HashSet<>();
 
+    @Builder.Default
     @Delegate
     @Embedded
-    private AuthLogs authLogs;
+    private AuthLogs authLogs = new AuthLogs();
 
     public Long getSumOfVersions() {
         return getVersion() + person.getVersion() + person.getAddress().getVersion();
