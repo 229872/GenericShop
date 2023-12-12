@@ -8,6 +8,7 @@ import pl.lodz.p.edu.exception.account.helper.AccountStateOperation;
 import pl.lodz.p.edu.exception.auth.*;
 import pl.lodz.p.edu.exception.other.UnknownException;
 import pl.lodz.p.edu.exception.transaction.TransactionTimeoutException;
+import pl.lodz.p.edu.exception.transaction.UnknownConflictException;
 
 import static org.springframework.http.HttpStatus.*;
 import static pl.lodz.p.edu.exception.ExceptionMessage.*;
@@ -17,6 +18,10 @@ public final class ExceptionFactory {
 
     public static ResponseStatusException createUnknownException() {
         return new UnknownException(INTERNAL_SERVER_ERROR, UNKNOWN);
+    }
+
+    public static ResponseStatusException createUnknownConflictException() {
+        return new UnknownConflictException(CONFLICT, UNKNOWN_CONFLICT);
     }
 
     public static ResponseStatusException createTransactionTimeoutException() {

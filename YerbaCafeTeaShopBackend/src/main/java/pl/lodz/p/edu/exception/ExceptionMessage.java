@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 public final class ExceptionMessage {
 
     public static final String UNKNOWN = "exception.unknown";
+    public static final String UNKNOWN_CONFLICT = "exception.unknown.conflict";
     public static final String TRANSACTION_TIMEOUT = "exception.transaction.timeout";
     public static final String ACCOUNT_NOT_FOUND = "exception.account.not_found";
     public static final String ACCOUNT_CONFLICT_LOGIN = "exception.account.conflict.login";

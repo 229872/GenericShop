@@ -13,7 +13,8 @@ public abstract class PostgresqlContainerSetup {
         .withDatabaseName("shop")
         .withUsername("shop_admin")
         .withPassword("test")
-        .withReuse(true);
+        .withReuse(true)
+        .withInitScript("script/init-users.sql");
 
     @BeforeAll
     static void beforeAll() {
@@ -22,9 +23,10 @@ public abstract class PostgresqlContainerSetup {
 
     @DynamicPropertySource
     private static void testPropertiesForPostgresql(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", database::getJdbcUrl);
-        registry.add("spring.datasource.username", database::getUsername);
-        registry.add("spring.datasource.password", database::getPassword);
+        registry.add("db.datasource.init-module.url", database::getJdbcUrl);
+        registry.add("db.datasource.init-module.username", database::getUsername);
+        registry.add("db.datasource.init-module.password", database::getPassword);
+        registry.add("db.datasource.accounts-module.url", database::getJdbcUrl);
     }
 
 }

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -40,9 +41,11 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     private AccountService underTest;
 
     @Autowired
+    @Qualifier("accountsModTxManager")
     private PlatformTransactionManager txManager;
 
     @Autowired
+    @Qualifier("accountsModEmFactory")
     private EntityManager em;
 
     private TransactionTemplate txTemplate;

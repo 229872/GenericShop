@@ -14,7 +14,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>YerbaCafeTeaShopBackend</name>
 
-	<description>An online store with yerba mate, coffee and tea with a product recommendation mechanism based on its features.</description>
+	<description>An online store with dynamic product data model with a product recommendation mechanism based on its features.</description>
 
 	<developers>
 		<developer>

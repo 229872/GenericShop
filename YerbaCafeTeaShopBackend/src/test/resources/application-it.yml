@@ -1,12 +1,18 @@
-spring:
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
+db:
+  datasource:
+    init-module:
+      persistence-unit-name: initPU
+      jpa:
+        database-action: drop_and_create
+      sql:
+        enable: true
+        data-locations:
+          - script/permissions.sql
+
+    accounts-module:
+      persistence-unit-name: accountsPU
+      username: shop_accounts
+      password: dbaccounts
 
 testcontainers:
   reuse:

@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 
 @Service
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+@Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.REQUIRES_NEW)
 @Qualifier("AuthenticationServiceImpl")
 public class AuthenticationServiceImpl implements AuthenticationService {
 
@@ -48,7 +48,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final HttpServletRequest request;
 
     @Override
-    @Transactional(noRollbackFor = ResponseStatusException.class)
+    @Transactional(transactionManager = "accountsModTxManager", noRollbackFor = ResponseStatusException.class)
     public JwtTokens authenticate(String login, String password) {
         Account account = accountRepository.findByLogin(login)
             .orElseThrow(ExceptionFactory::createInvalidCredentialsException);

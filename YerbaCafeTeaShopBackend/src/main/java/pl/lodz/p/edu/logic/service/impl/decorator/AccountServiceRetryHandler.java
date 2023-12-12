@@ -19,9 +19,9 @@ import java.util.Locale;
 
 @Service
 @RequestScope
-@Transactional(propagation = Propagation.NEVER)
 @Qualifier("AccountServiceRetryHandler")
 @Primary
+@Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.NEVER)
 public class AccountServiceRetryHandler extends AbstractRetryHandler implements AccountService {
 
     private final AccountService accountService;
@@ -100,3 +100,4 @@ public class AccountServiceRetryHandler extends AbstractRetryHandler implements 
         return repeatTransactionWhenTimeoutOccurred(() -> accountService.changePassword(login, currentPassword, newPassword));
     }
 }
+

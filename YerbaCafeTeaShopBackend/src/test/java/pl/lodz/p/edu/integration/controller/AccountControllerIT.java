@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -52,9 +53,11 @@ public class AccountControllerIT extends PostgresqlContainerSetup {
     private AccountMapper accountMapper;
 
     @Autowired
+    @Qualifier("accountsModTxManager")
     private PlatformTransactionManager txManager;
 
     @Autowired
+    @Qualifier("accountsModEmFactory")
     private EntityManager em;
 
     private TransactionTemplate txTemplate;

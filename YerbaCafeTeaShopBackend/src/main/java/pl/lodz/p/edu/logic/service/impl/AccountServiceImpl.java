@@ -3,7 +3,7 @@ package pl.lodz.p.edu.logic.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,17 +15,20 @@ import pl.lodz.p.edu.dataaccess.model.Person;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.sub.AccountState;
 import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
-import pl.lodz.p.edu.exception.account.helper.AccountStateOperation;
 import pl.lodz.p.edu.exception.ExceptionFactory;
+import pl.lodz.p.edu.exception.account.helper.AccountStateOperation;
 import pl.lodz.p.edu.logic.model.NewPersonalInformation;
 import pl.lodz.p.edu.logic.service.api.AccountService;
 
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.Set;
 
 @RequiredArgsConstructor
 
 @Service
-@Transactional(propagation = Propagation.REQUIRES_NEW)
+@Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.REQUIRES_NEW)
 @Qualifier("AccountServiceImpl")
 public class AccountServiceImpl implements AccountService {
 
@@ -243,20 +246,38 @@ public class AccountServiceImpl implements AccountService {
             accountRepository.save(account);
             accountRepository.flush();
             return account;
-        } catch (DataIntegrityViolationException e) {
-            return handleDataIntegrityViolationException(e);
+
+        } catch (DataAccessException e) {
+            ConstraintViolationException violationException = findCause(e, ConstraintViolationException.class);
+
+            if (violationException != null) {
+                return handleDataIntegrityViolationException(violationException);
+            }
+
+            throw ExceptionFactory.createUnknownException();
         }
     }
 
-    private Account handleDataIntegrityViolationException(DataIntegrityViolationException e) {
-        Throwable cause = e.getCause();
-        if (cause instanceof ConstraintViolationException ex) {
-            switch (ex.getConstraintName()) {
-                case "accounts_login_key" -> throw ExceptionFactory.createAccountLoginConflictException();
-                case "accounts_email_key" -> throw ExceptionFactory.createAccountEmailConflictException();
+    private static <T extends Throwable> T findCause(Throwable throwable, Class<T> causeType) {
+        Throwable currentThrowable = throwable;
+
+        while (currentThrowable != null) {
+            if (causeType.isAssignableFrom(currentThrowable.getClass())) {
+                // Cast to the desired type and return
+                return (T) currentThrowable;
             }
+            currentThrowable = currentThrowable.getCause();
         }
-        throw ExceptionFactory.createUnknownException();
+
+        return null;
+    }
+
+    private Account handleDataIntegrityViolationException(ConstraintViolationException e) {
+        switch (e.getConstraintName()) {
+            case "accounts_login_key" -> throw ExceptionFactory.createAccountLoginConflictException();
+            case "accounts_email_key" -> throw ExceptionFactory.createAccountEmailConflictException();
+        }
+        throw ExceptionFactory.createUnknownConflictException();
     }
 
     private void updatePersonalInformation(Account account, NewPersonalInformation personalInformation) {
