@@ -19,11 +19,13 @@ import pl.lodz.p.edu.exception.ExceptionFactory;
 import pl.lodz.p.edu.exception.account.helper.AccountStateOperation;
 import pl.lodz.p.edu.logic.model.NewPersonalInformation;
 import pl.lodz.p.edu.logic.service.api.AccountService;
+import pl.lodz.p.edu.util.ExceptionUtil;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+
 
 @RequiredArgsConstructor
 
@@ -248,7 +250,7 @@ public class AccountServiceImpl implements AccountService {
             return account;
 
         } catch (DataAccessException e) {
-            ConstraintViolationException violationException = findCause(e, ConstraintViolationException.class);
+            var violationException = ExceptionUtil.findCause(e, ConstraintViolationException.class);
 
             if (violationException != null) {
                 return handleDataIntegrityViolationException(violationException);
@@ -256,20 +258,6 @@ public class AccountServiceImpl implements AccountService {
 
             throw ExceptionFactory.createUnknownException();
         }
-    }
-
-    private static <T extends Throwable> T findCause(Throwable throwable, Class<T> causeType) {
-        Throwable currentThrowable = throwable;
-
-        while (currentThrowable != null) {
-            if (causeType.isAssignableFrom(currentThrowable.getClass())) {
-                // Cast to the desired type and return
-                return (T) currentThrowable;
-            }
-            currentThrowable = currentThrowable.getCause();
-        }
-
-        return null;
     }
 
     private Account handleDataIntegrityViolationException(ConstraintViolationException e) {
