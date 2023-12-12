@@ -9,3 +9,5 @@ services:
       POSTGRES_DB: "shop"
       POSTGRES_USER: "shop_admin"
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./script/init-users.sql:/docker-entrypoint-initdb.d/init-users.sql:ro
