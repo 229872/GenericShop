@@ -22,6 +22,7 @@ import pl.lodz.p.edu.TestData;
 import pl.lodz.p.edu.exception.account.*;
 import pl.lodz.p.edu.logic.model.NewContactData;
 import pl.lodz.p.edu.logic.service.api.AccountService;
+import pl.lodz.p.edu.logic.service.api.OwnAccountService;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -39,6 +40,9 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Autowired
     private AccountService underTest;
+
+    @Autowired
+    private OwnAccountService underTest2;
 
     @Autowired
     @Qualifier("accountsModTxManager")
@@ -152,7 +156,7 @@ class AccountServiceIT extends PostgresqlContainerSetup {
         String givenLogin = account.getLogin();
 
         //when
-        Account result = underTest.findByLogin(givenLogin);
+        Account result = underTest2.findByLogin(givenLogin);
 
         //then
         assertThat(result)
@@ -166,7 +170,7 @@ class AccountServiceIT extends PostgresqlContainerSetup {
         String givenLogin = "login";
 
         //when
-        Exception exception = catchException(() -> underTest.findByLogin(givenLogin));
+        Exception exception = catchException(() -> underTest2.findByLogin(givenLogin));
 
         //then
         assertThat(exception)

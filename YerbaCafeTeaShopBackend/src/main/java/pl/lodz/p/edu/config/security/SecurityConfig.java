@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
 
@@ -35,7 +35,7 @@ public class SecurityConfig {
         httpSecurity = httpSecurity
             .csrf().disable()
             .authorizeHttpRequests(a -> a.anyRequest().authenticated())
-            .addFilterBefore(jwtFilter, FilterSecurityInterceptor.class);
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }

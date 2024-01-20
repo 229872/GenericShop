@@ -2,10 +2,7 @@ package pl.lodz.p.edu.dataaccess.model.embeddable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
@@ -30,6 +27,7 @@ public class AuthLogs {
     @Column(name = "last_unsuccessful_auth_time")
     private LocalDateTime lastUnsuccessfulAuthTime;
 
+    @Builder.Default
     @Column(name = "unsuccessful_auth_counter", nullable = false, columnDefinition = "integer default 0")
     private Integer unsuccessfulAuthCounter = 0;
 

@@ -6,7 +6,6 @@ import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.logic.model.NewContactData;
 
 import java.util.List;
-import java.util.Locale;
 
 public interface AccountService {
 
@@ -15,8 +14,6 @@ public interface AccountService {
     List<Account> findAll(Pageable pageable);
 
     Account findById(Long id);
-
-    Account findByLogin(String login);
 
     Account create(Account account);
 
@@ -34,7 +31,5 @@ public interface AccountService {
 
     Account changeRole(Long id, AccountRole newRole);
 
-    Account updateOwnLocale(String login, Locale locale);
 
-    Account changePassword(String login, String currentPassword, String newPassword);
 }

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
-import pl.lodz.p.edu.dataaccess.model.entity.Address;
 import pl.lodz.p.edu.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
@@ -20,9 +19,15 @@ import pl.lodz.p.edu.exception.SystemExceptionFactory;
 import pl.lodz.p.edu.exception.account.helper.AccountStateOperation;
 import pl.lodz.p.edu.logic.model.NewContactData;
 import pl.lodz.p.edu.logic.service.api.AccountService;
+import pl.lodz.p.edu.logic.service.api.OwnAccountService;
 import pl.lodz.p.edu.util.ExceptionUtil;
 
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Set;
+
+import static pl.lodz.p.edu.util.UpdatableUtil.setNullableValue;
 
 
 @RequiredArgsConstructor
@@ -30,7 +35,7 @@ import java.util.*;
 @Service
 @Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.REQUIRES_NEW)
 @Qualifier("AccountServiceImpl")
-public class AccountServiceImpl implements AccountService {
+public class AccountServiceImpl implements AccountService, OwnAccountService {
 
     private final AccountRepository accountRepository;
 
@@ -268,15 +273,14 @@ public class AccountServiceImpl implements AccountService {
 
     private void updatePersonalInformation(Account account, NewContactData personalInformation) {
         Contact contact = account.getContact();
-        Address address = contact.getAddress();
 
-        Optional.ofNullable(personalInformation.firstName()).ifPresent(contact::setFirstName);
-        Optional.ofNullable(personalInformation.lastName()).ifPresent(contact::setLastName);
-        Optional.ofNullable(personalInformation.postalCode()).ifPresent(address::setPostalCode);
-        Optional.ofNullable(personalInformation.country()).ifPresent(address::setCountry);
-        Optional.ofNullable(personalInformation.city()).ifPresent(address::setCity);
-        Optional.ofNullable(personalInformation.street()).ifPresent(address::setStreet);
-        Optional.ofNullable(personalInformation.houseNumber()).ifPresent(address::setHouseNumber);
+        setNullableValue(personalInformation.firstName(), contact::setFirstName);
+        setNullableValue(personalInformation.lastName(), contact::setLastName);
+        setNullableValue(personalInformation.postalCode(), contact::setPostalCode);
+        setNullableValue(personalInformation.country(), contact::setCountry);
+        setNullableValue(personalInformation.city(), contact::setCity);
+        setNullableValue(personalInformation.street(), contact::setStreet);
+        setNullableValue(personalInformation.houseNumber(), contact::setHouseNumber);
     }
 
     private void archiveAccount(Account account) {

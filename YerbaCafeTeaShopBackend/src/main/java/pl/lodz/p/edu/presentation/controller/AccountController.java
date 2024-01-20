@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.logic.service.api.AccountService;
+import pl.lodz.p.edu.logic.service.api.OwnAccountService;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountCreateDto;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountOutputDto;
 import pl.lodz.p.edu.presentation.dto.user.account.ChangeLanguageDto;
@@ -29,6 +30,7 @@ import static pl.lodz.p.edu.util.SecurityUtil.getLoginFromSecurityContext;
 public class AccountController {
 
     private final AccountService accountService;
+    private final OwnAccountService ownAccountService;
 
     private final AccountMapper accountMapper;
 
@@ -55,7 +57,7 @@ public class AccountController {
     @RolesAllowed({CLIENT, EMPLOYEE, ADMIN})
     ResponseEntity<AccountOutputDto> getOwnAccountInformation() {
         String login = getLoginFromSecurityContext();
-        Account account = accountService.findByLogin(login);
+        Account account = ownAccountService.findByLogin(login);
         AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
 
         return ResponseEntity.ok(result);
@@ -104,7 +106,7 @@ public class AccountController {
     ResponseEntity<AccountOutputDto> changeOwnLocale(@RequestBody @Valid ChangeLanguageDto locale) {
         Locale language = new Locale(locale.locale());
         String login = getLoginFromSecurityContext();
-        Account account = accountService.updateOwnLocale(login, language);
+        Account account = ownAccountService.updateOwnLocale(login, language);
         AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
 
         return ResponseEntity.ok(result);
@@ -114,7 +116,7 @@ public class AccountController {
     @RolesAllowed({CLIENT, ADMIN, EMPLOYEE})
     ResponseEntity<AccountOutputDto> changeOwnPassword(@RequestBody @Valid ChangePasswordDto passwords) {
         String login = getLoginFromSecurityContext();
-        Account account = accountService.changePassword(login, passwords.currentPassword(), passwords.newPassword());
+        Account account = ownAccountService.changePassword(login, passwords.currentPassword(), passwords.newPassword());
         AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
 
         return ResponseEntity.ok(result);

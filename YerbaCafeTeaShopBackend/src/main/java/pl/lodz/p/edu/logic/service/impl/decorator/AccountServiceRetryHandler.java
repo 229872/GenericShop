@@ -11,22 +11,25 @@ import pl.lodz.p.edu.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.logic.model.NewContactData;
 import pl.lodz.p.edu.logic.service.api.AccountService;
+import pl.lodz.p.edu.logic.service.api.OwnAccountService;
 
 import java.util.List;
 import java.util.Locale;
 
-
 @Service
 @RequestScope
-@Qualifier("AccountServiceRetryHandler")
 @Primary
+@Qualifier("AccountServiceRetryHandler")
 @Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.NEVER)
-public class AccountServiceRetryHandler extends AbstractRetryHandler implements AccountService {
+public class AccountServiceRetryHandler extends AbstractRetryHandler implements AccountService, OwnAccountService {
 
     private final AccountService accountService;
+    private final OwnAccountService ownAccountService;
 
-    public AccountServiceRetryHandler(@Qualifier("AccountServiceImpl") AccountService accountService) {
+    public AccountServiceRetryHandler(@Qualifier("AccountServiceImpl") AccountService accountService,
+                                      @Qualifier("AccountServiceImpl") OwnAccountService ownAccountService) {
         this.accountService = accountService;
+        this.ownAccountService = ownAccountService;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class AccountServiceRetryHandler extends AbstractRetryHandler implements 
 
     @Override
     public Account findByLogin(String login) {
-        return repeatTransactionWhenTimeoutOccurred(() -> accountService.findByLogin(login));
+        return repeatTransactionWhenTimeoutOccurred(() -> ownAccountService.findByLogin(login));
     }
 
     @Override
@@ -91,12 +94,13 @@ public class AccountServiceRetryHandler extends AbstractRetryHandler implements 
 
     @Override
     public Account updateOwnLocale(String login, Locale locale) {
-        return repeatTransactionWhenTimeoutOccurred(() -> accountService.updateOwnLocale(login, locale));
+        return repeatTransactionWhenTimeoutOccurred(() -> ownAccountService.updateOwnLocale(login, locale));
     }
 
     @Override
     public Account changePassword(String login, String currentPassword, String newPassword) {
-        return repeatTransactionWhenTimeoutOccurred(() -> accountService.changePassword(login, currentPassword, newPassword));
+        return repeatTransactionWhenTimeoutOccurred(() -> ownAccountService.changePassword(login, currentPassword, newPassword));
     }
 }
+
 

@@ -5,7 +5,9 @@ import org.hibernate.TransactionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.jpa.JpaSystemException;
 import pl.lodz.p.edu.exception.ApplicationExceptionFactory;
+import pl.lodz.p.edu.util.ExceptionUtil;
 
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
@@ -29,7 +31,8 @@ public abstract class AbstractRetryHandler {
                 log.info("Transaction number {} with TXid={} ends with status: COMMIT", retryCounter, transactionId);
                 return result;
             } catch (JpaSystemException e) {
-                if (e.getCause() instanceof TransactionException ex && ex.getMessage().contains("timeout")) {
+                TransactionException cause = ExceptionUtil.findCause(e, TransactionException.class);
+                if (Objects.nonNull(cause) && cause.getMessage().contains("timeout")) {
                     log.warn("Transaction number {} with TXid={} ends with status: ROLLBACK", retryCounter, transactionId);
                     retryCounter++;
                 } else {

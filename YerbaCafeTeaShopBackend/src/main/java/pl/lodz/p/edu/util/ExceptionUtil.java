@@ -1,13 +1,17 @@
 package pl.lodz.p.edu.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExceptionUtil {
+
     public static <T extends Throwable> T findCause(Throwable throwable, Class<T> causeType) {
         Throwable currentThrowable = throwable;
 
         while (currentThrowable != null) {
-            if (causeType.isAssignableFrom(currentThrowable.getClass())) {
-                // Cast to the desired type and return
-                return (T) currentThrowable;
+            if (causeType.isInstance(currentThrowable)) {
+                return causeType.cast(currentThrowable);
             }
             currentThrowable = currentThrowable.getCause();
         }
