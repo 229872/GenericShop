@@ -14,13 +14,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.config.PostgresqlContainerSetup;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
-import pl.lodz.p.edu.dataaccess.model.entity.Person;
+import pl.lodz.p.edu.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.exception.*;
 import pl.lodz.p.edu.TestData;
 import pl.lodz.p.edu.exception.account.*;
-import pl.lodz.p.edu.logic.model.NewPersonalInformation;
+import pl.lodz.p.edu.logic.model.NewContactData;
 import pl.lodz.p.edu.logic.service.api.AccountService;
 
 import java.util.Arrays;
@@ -59,7 +59,7 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     void tearDown() {
         txTemplate.execute(status -> {
             em.createQuery("DELETE FROM Account ").executeUpdate();
-            em.createQuery("DELETE FROM Person ").executeUpdate();
+            em.createQuery("DELETE FROM Contact ").executeUpdate();
             em.createQuery("DELETE FROM Address ").executeUpdate();
             return status;
         });
@@ -316,17 +316,17 @@ class AccountServiceIT extends PostgresqlContainerSetup {
         Long givenId = account.getId();
 
         String newFirstName = "newFirstName";
-        NewPersonalInformation newPersonalInfo = NewPersonalInformation.builder().firstName(newFirstName).build();
+        NewContactData newPersonalInfo = NewContactData.builder().firstName(newFirstName).build();
 
         //when
-        Account result = underTest.updatePersonalInformation(givenId, newPersonalInfo);
+        Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
 
         //then
-        assertThat(result.getPerson().getFirstName())
+        assertThat(result.getContact().getFirstName())
             .isEqualTo(newFirstName);
 
-        assertThat(result.getPerson().getLastName())
-            .isEqualTo(account.getPerson().getLastName());
+        assertThat(result.getContact().getLastName())
+            .isEqualTo(account.getContact().getLastName());
     }
 
     @Test
@@ -347,21 +347,21 @@ class AccountServiceIT extends PostgresqlContainerSetup {
         String newCity = "newCity";
         String newStreet = "newStreet";
         Integer newHouseNumber = 2;
-        NewPersonalInformation newPersonalInfo = new NewPersonalInformation(newFirstName, newLastName, newPostalCode,
+        NewContactData newPersonalInfo = new NewContactData(newFirstName, newLastName, newPostalCode,
             newCountry, newCity, newStreet, newHouseNumber);
 
         //when
-        Account result = underTest.updatePersonalInformation(givenId, newPersonalInfo);
+        Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
 
         //then
-        Person resultPerson = result.getPerson();
-        assertEquals(newFirstName, resultPerson.getFirstName());
-        assertEquals(newLastName, resultPerson.getLastName());
-        assertEquals(newPostalCode, resultPerson.getPostalCode());
-        assertEquals(newCountry, resultPerson.getCountry());
-        assertEquals(newCity, resultPerson.getCity());
-        assertEquals(newStreet, resultPerson.getStreet());
-        assertEquals(newHouseNumber, resultPerson.getHouseNumber());
+        Contact resultContact = result.getContact();
+        assertEquals(newFirstName, resultContact.getFirstName());
+        assertEquals(newLastName, resultContact.getLastName());
+        assertEquals(newPostalCode, resultContact.getPostalCode());
+        assertEquals(newCountry, resultContact.getCountry());
+        assertEquals(newCity, resultContact.getCity());
+        assertEquals(newStreet, resultContact.getStreet());
+        assertEquals(newHouseNumber, resultContact.getHouseNumber());
     }
 
     @Test
@@ -369,10 +369,10 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     void update_should_throw_AccountNotFoundException() {
         //given
         Long givenId = 1L;
-        NewPersonalInformation newInfo = NewPersonalInformation.builder().firstName("newFirstName").build();
+        NewContactData newInfo = NewContactData.builder().firstName("newFirstName").build();
 
         //when
-        Exception exception = catchException(() -> underTest.updatePersonalInformation(givenId, newInfo));
+        Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
 
         //then
         assertThat(exception)
@@ -392,10 +392,10 @@ class AccountServiceIT extends PostgresqlContainerSetup {
             return status;
         });
         Long givenId = account.getId();
-        NewPersonalInformation newInfo = NewPersonalInformation.builder().firstName("newFirstName").build();
+        NewContactData newInfo = NewContactData.builder().firstName("newFirstName").build();
 
         //when
-        Exception exception = catchException(() -> underTest.updatePersonalInformation(givenId, newInfo));
+        Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
 
         //then
         assertThat(exception)

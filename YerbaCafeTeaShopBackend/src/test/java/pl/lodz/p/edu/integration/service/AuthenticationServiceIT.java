@@ -64,7 +64,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
     void tearDown() {
         txTemplate.execute(status -> {
             em.createQuery("DELETE FROM Account ").executeUpdate();
-            em.createQuery("DELETE FROM Person ").executeUpdate();
+            em.createQuery("DELETE FROM Contact ").executeUpdate();
             em.createQuery("DELETE FROM Address ").executeUpdate();
             return status;
         });

@@ -38,7 +38,7 @@ public class Account extends AbstractEntity {
 
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(unique = true)
-    private Person person;
+    private Contact contact;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "state")
@@ -55,6 +55,6 @@ public class Account extends AbstractEntity {
     private AuthLogs authLogs = new AuthLogs();
 
     public Long getSumOfVersions() {
-        return getVersion() + person.getVersion() + person.getAddress().getVersion();
+        return getVersion() + contact.getVersion() + contact.getAddress().getVersion();
     }
 }

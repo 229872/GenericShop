@@ -11,13 +11,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.dataaccess.model.entity.Address;
-import pl.lodz.p.edu.dataaccess.model.entity.Person;
+import pl.lodz.p.edu.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.exception.*;
 import pl.lodz.p.edu.exception.account.*;
-import pl.lodz.p.edu.logic.model.NewPersonalInformation;
+import pl.lodz.p.edu.logic.model.NewContactData;
 import pl.lodz.p.edu.logic.service.impl.AccountServiceImpl;
 
 import java.util.*;
@@ -289,28 +289,28 @@ class AccountServiceImplTest {
     void update_should_modify_one_value() {
         //given
         Address address = buildFullAddress("postalCode", "country", "city", "street", 1);
-        Person person = buildFullPerson("firstName", "lastName", address);
-        Account account = Account.builder().person(person).isArchival(false).build();
+        Contact contact = buildFullContact("firstName", "lastName", address);
+        Account account = Account.builder().contact(contact).isArchival(false).build();
         Long givenId = 1L;
 
         String newFirstName = "newFirstName";
-        NewPersonalInformation newPersonalInfo = NewPersonalInformation.builder().firstName(newFirstName).build();
+        NewContactData newPersonalInfo = NewContactData.builder().firstName(newFirstName).build();
 
         given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
         given(accountRepository.save(account)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         //when
-        Account result = underTest.updatePersonalInformation(givenId, newPersonalInfo);
+        Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
 
         //then
         then(accountRepository).should().findById(givenId);
         then(accountRepository).should().save(account);
 
-        assertThat(result.getPerson().getFirstName())
+        assertThat(result.getContact().getFirstName())
             .isEqualTo(newFirstName);
 
-        assertThat(result.getPerson().getLastName())
-            .isEqualTo(person.getLastName());
+        assertThat(result.getContact().getLastName())
+            .isEqualTo(contact.getLastName());
     }
 
     @Test
@@ -318,8 +318,8 @@ class AccountServiceImplTest {
     void update_should_modify_all_values() {
         //given
         Address address = buildFullAddress("postalCode", "country", "city", "street", 1);
-        Person person = buildFullPerson("firstName", "lastName", address);
-        Account account = Account.builder().person(person).isArchival(false).build();
+        Contact contact = buildFullContact("firstName", "lastName", address);
+        Account account = Account.builder().contact(contact).isArchival(false).build();
         Long givenId = 1L;
 
         String newFirstName = "newFirstName";
@@ -329,27 +329,27 @@ class AccountServiceImplTest {
         String newCity = "newCity";
         String newStreet = "newStreet";
         Integer newHouseNumber = 2;
-        NewPersonalInformation newPersonalInfo = new NewPersonalInformation(newFirstName, newLastName, newPostalCode,
+        NewContactData newPersonalInfo = new NewContactData(newFirstName, newLastName, newPostalCode,
             newCountry, newCity, newStreet, newHouseNumber);
 
         given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
         given(accountRepository.save(account)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         //when
-        Account result = underTest.updatePersonalInformation(givenId, newPersonalInfo);
+        Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
 
         //then
         then(accountRepository).should().findById(givenId);
         then(accountRepository).should().save(account);
 
-        Person resultPerson = result.getPerson();
-        assertEquals(newFirstName, resultPerson.getFirstName());
-        assertEquals(newLastName, resultPerson.getLastName());
-        assertEquals(newPostalCode, resultPerson.getPostalCode());
-        assertEquals(newCountry, resultPerson.getCountry());
-        assertEquals(newCity, resultPerson.getCity());
-        assertEquals(newStreet, resultPerson.getStreet());
-        assertEquals(newHouseNumber, resultPerson.getHouseNumber());
+        Contact resultContact = result.getContact();
+        assertEquals(newFirstName, resultContact.getFirstName());
+        assertEquals(newLastName, resultContact.getLastName());
+        assertEquals(newPostalCode, resultContact.getPostalCode());
+        assertEquals(newCountry, resultContact.getCountry());
+        assertEquals(newCity, resultContact.getCity());
+        assertEquals(newStreet, resultContact.getStreet());
+        assertEquals(newHouseNumber, resultContact.getHouseNumber());
     }
 
     @Test
@@ -357,11 +357,11 @@ class AccountServiceImplTest {
     void update_should_throw_AccountNotFoundException() {
         //given
         Long givenId = 1L;
-        NewPersonalInformation newInfo = NewPersonalInformation.builder().firstName("newFirstName").build();
+        NewContactData newInfo = NewContactData.builder().firstName("newFirstName").build();
         given(accountRepository.findById(givenId)).willReturn(Optional.empty());
 
         //when
-        Exception exception = catchException(() -> underTest.updatePersonalInformation(givenId, newInfo));
+        Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
 
         //then
         then(accountRepository).should().findById(givenId);
@@ -379,13 +379,13 @@ class AccountServiceImplTest {
         //given
         Long givenId = 1L;
         Address address = buildFullAddress("postalCode", "country", "city", "street", 1);
-        Person person = buildFullPerson("firstName", "lastName", address);
-        Account account = Account.builder().person(person).isArchival(true).build();
-        NewPersonalInformation newInfo = NewPersonalInformation.builder().firstName("newFirstName").build();
+        Contact contact = buildFullContact("firstName", "lastName", address);
+        Account account = Account.builder().contact(contact).isArchival(true).build();
+        NewContactData newInfo = NewContactData.builder().firstName("newFirstName").build();
         given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
 
         //when
-        Exception exception = catchException(() -> underTest.updatePersonalInformation(givenId, newInfo));
+        Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
 
         //then
         then(accountRepository).should().findById(givenId);
@@ -612,8 +612,8 @@ class AccountServiceImplTest {
     @DisplayName("Should archive active account")
     void archive_should_archive_active_account() {
         //given
-        Person person = Person.builder().address(Address.builder().build()).build();
-        Account account = Account.builder().isArchival(false).accountState(AccountState.ACTIVE).person(person).build();
+        Contact contact = Contact.builder().address(Address.builder().build()).build();
+        Account account = Account.builder().isArchival(false).accountState(AccountState.ACTIVE).contact(contact).build();
         Long givenId = 1L;
         given(accountRepository.findById(givenId)).willReturn(Optional.of(account));
         given(accountRepository.save(account)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
@@ -1093,8 +1093,8 @@ class AccountServiceImplTest {
             .build();
     }
 
-    private Person buildFullPerson(String firstName, String lastName, Address address) {
-        return Person.builder()
+    private Contact buildFullContact(String firstName, String lastName, Address address) {
+        return Contact.builder()
             .firstName(firstName)
             .lastName(lastName)
             .address(address)

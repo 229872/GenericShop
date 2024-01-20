@@ -3,7 +3,7 @@ package pl.lodz.p.edu.logic.service.api;
 import org.springframework.data.domain.Pageable;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
-import pl.lodz.p.edu.logic.model.NewPersonalInformation;
+import pl.lodz.p.edu.logic.model.NewContactData;
 
 import java.util.List;
 import java.util.Locale;
@@ -20,7 +20,7 @@ public interface AccountService {
 
     Account create(Account account);
 
-    Account updatePersonalInformation(Long id, NewPersonalInformation newPersonalInformation);
+    Account updateContactInformation(Long id, NewContactData newContactData);
 
     Account block(Long id);
 

@@ -3,7 +3,7 @@ package pl.lodz.p.edu.logic.model;
 import lombok.Builder;
 
 @Builder
-public record NewPersonalInformation(
+public record NewContactData(
     String firstName,
     String lastName,
     String postalCode,

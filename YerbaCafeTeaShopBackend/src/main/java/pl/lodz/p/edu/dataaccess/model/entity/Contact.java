@@ -14,8 +14,8 @@ import pl.lodz.p.edu.dataaccess.model.superclass.AbstractEntity;
 @ToString(callSuper = true)
 
 @Entity
-@Table(name = "people")
-public class Person extends AbstractEntity {
+@Table(name = "contacts")
+public class Contact extends AbstractEntity {
 
     @Column(nullable = false, name = "first_name")
     private String firstName;

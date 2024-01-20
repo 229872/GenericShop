@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.dataaccess.model.entity.Address;
 import pl.lodz.p.edu.dataaccess.model.embeddable.AuthLogs;
-import pl.lodz.p.edu.dataaccess.model.entity.Person;
+import pl.lodz.p.edu.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountCreateDto;
@@ -29,7 +29,7 @@ public class AccountMapper {
             .houseNumber(addressDto.houseNumber())
             .build();
 
-        Person person = Person.builder()
+        Contact contact = Contact.builder()
             .firstName(createDto.firstName())
             .lastName(createDto.lastName())
             .address(address)
@@ -42,20 +42,20 @@ public class AccountMapper {
             .locale(createDto.locale())
             .accountState(AccountState.valueOf(createDto.accountState().toUpperCase()))
             .accountRoles(new HashSet<>(Set.of(AccountRole.valueOf(createDto.role().toUpperCase()))))
-            .person(person)
+            .contact(contact)
             .build();
     }
 
     public AccountOutputDto mapToAccountOutputDto(Account account) {
-        Person person = account.getPerson();
+        Contact contact = account.getContact();
         AuthLogs authLogs = account.getAuthLogs();
 
         AddressOutputDto addressDto = AddressOutputDto.builder()
-            .postalCode(person.getPostalCode())
-            .country(person.getCountry())
-            .city(person.getCity())
-            .street(person.getStreet())
-            .houseNumber(person.getHouseNumber())
+            .postalCode(contact.getPostalCode())
+            .country(contact.getCountry())
+            .city(contact.getCity())
+            .street(contact.getStreet())
+            .houseNumber(contact.getHouseNumber())
             .build();
 
         AuthLogOutputDto logs = AuthLogOutputDto.builder()
@@ -75,8 +75,8 @@ public class AccountMapper {
             .locale(account.getLocale())
             .state(account.getAccountState().name())
             .roles(account.getAccountRoles().stream().map(AccountRole::name).toList())
-            .firstName(person.getFirstName())
-            .lastName(person.getLastName())
+            .firstName(contact.getFirstName())
+            .lastName(contact.getLastName())
             .address(addressDto)
             .authLogs(logs)
             .build();

@@ -11,14 +11,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.dataaccess.model.entity.Address;
-import pl.lodz.p.edu.dataaccess.model.entity.Person;
+import pl.lodz.p.edu.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.exception.ApplicationExceptionFactory;
 import pl.lodz.p.edu.exception.SystemExceptionFactory;
 import pl.lodz.p.edu.exception.account.helper.AccountStateOperation;
-import pl.lodz.p.edu.logic.model.NewPersonalInformation;
+import pl.lodz.p.edu.logic.model.NewContactData;
 import pl.lodz.p.edu.logic.service.api.AccountService;
 import pl.lodz.p.edu.util.ExceptionUtil;
 
@@ -79,7 +79,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account updatePersonalInformation(Long id, NewPersonalInformation newPersonalInformation) {
+    public Account updateContactInformation(Long id, NewContactData newContactData) {
         Account account = accountRepository.findById(id)
             .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
 
@@ -87,7 +87,7 @@ public class AccountServiceImpl implements AccountService {
             throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
         }
 
-        updatePersonalInformation(account, newPersonalInformation);
+        updatePersonalInformation(account, newContactData);
         return save(account);
     }
 
@@ -266,12 +266,12 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
-    private void updatePersonalInformation(Account account, NewPersonalInformation personalInformation) {
-        Person person = account.getPerson();
-        Address address = person.getAddress();
+    private void updatePersonalInformation(Account account, NewContactData personalInformation) {
+        Contact contact = account.getContact();
+        Address address = contact.getAddress();
 
-        Optional.ofNullable(personalInformation.firstName()).ifPresent(person::setFirstName);
-        Optional.ofNullable(personalInformation.lastName()).ifPresent(person::setLastName);
+        Optional.ofNullable(personalInformation.firstName()).ifPresent(contact::setFirstName);
+        Optional.ofNullable(personalInformation.lastName()).ifPresent(contact::setLastName);
         Optional.ofNullable(personalInformation.postalCode()).ifPresent(address::setPostalCode);
         Optional.ofNullable(personalInformation.country()).ifPresent(address::setCountry);
         Optional.ofNullable(personalInformation.city()).ifPresent(address::setCity);
@@ -280,10 +280,10 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private void archiveAccount(Account account) {
-        Person person = account.getPerson();
+        Contact contact = account.getContact();
         account.setArchival(true);
-        person.setArchival(true);
-        person.getAddress().setArchival(true);
+        contact.setArchival(true);
+        contact.getAddress().setArchival(true);
     }
 
 }

@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.dataaccess.model.entity.Address;
 import pl.lodz.p.edu.dataaccess.model.embeddable.AuthLogs;
-import pl.lodz.p.edu.dataaccess.model.entity.Person;
+import pl.lodz.p.edu.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountCreateDto;
@@ -50,8 +50,8 @@ public class TestData {
             .build();
     }
 
-    public static Person buildFullPerson(String firstName, String lastName, Address address, String createdBy) {
-        return Person.builder()
+    public static Contact buildFullContact(String firstName, String lastName, Address address, String createdBy) {
+        return Contact.builder()
             .firstName(firstName)
             .lastName(lastName)
             .address(address)
@@ -59,7 +59,7 @@ public class TestData {
             .build();
     }
 
-    public static Account buildFullAccount(String login, String email, String password, String locale, Person person,
+    public static Account buildFullAccount(String login, String email, String password, String locale, Contact contact,
                                     AccountState accountState, Set<AccountRole> accountRoles, String createdBy,
                                            AuthLogs authLogs) {
         return Account.builder()
@@ -67,7 +67,7 @@ public class TestData {
             .email(email)
             .password(password)
             .locale(locale)
-            .person(person)
+            .contact(contact)
             .accountState(accountState)
             .accountRoles(accountRoles)
             .createdBy(createdBy)
@@ -81,15 +81,15 @@ public class TestData {
             defaultCreatedBy);
     }
 
-    public static Person buildDefaultPerson() {
-        return buildFullPerson(defaultFirstName, defaultLastName, buildDefaultAddress(), defaultCreatedBy);
+    public static Contact buildDefaultContact() {
+        return buildFullContact(defaultFirstName, defaultLastName, buildDefaultAddress(), defaultCreatedBy);
     }
 
     public static Account buildDefaultAccount() {
         String uniqueLogin = defaultLogin + counter;
         String uniqueEmail = defaultEmail + counter;
         counter++;
-        return buildFullAccount(uniqueLogin, uniqueEmail, defaultEncryptedPassword, defaultLocale, buildDefaultPerson(),
+        return buildFullAccount(uniqueLogin, uniqueEmail, defaultEncryptedPassword, defaultLocale, buildDefaultContact(),
             defaultAccountState, defaultAccountRoles, defaultCreatedBy, defaultAuthLogs);
     }
 

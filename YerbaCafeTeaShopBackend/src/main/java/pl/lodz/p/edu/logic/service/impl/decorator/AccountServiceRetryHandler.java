@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.RequestScope;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
-import pl.lodz.p.edu.logic.model.NewPersonalInformation;
+import pl.lodz.p.edu.logic.model.NewContactData;
 import pl.lodz.p.edu.logic.service.api.AccountService;
 
 import java.util.List;
@@ -55,8 +55,8 @@ public class AccountServiceRetryHandler extends AbstractRetryHandler implements 
     }
 
     @Override
-    public Account updatePersonalInformation(Long id, NewPersonalInformation newPersonalInformation) {
-        return repeatTransactionWhenTimeoutOccurred(() -> accountService.updatePersonalInformation(id, newPersonalInformation));
+    public Account updateContactInformation(Long id, NewContactData newContactData) {
+        return repeatTransactionWhenTimeoutOccurred(() -> accountService.updateContactInformation(id, newContactData));
     }
 
     @Override
