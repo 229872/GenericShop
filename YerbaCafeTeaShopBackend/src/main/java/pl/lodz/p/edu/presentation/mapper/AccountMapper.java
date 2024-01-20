@@ -1,12 +1,12 @@
 package pl.lodz.p.edu.presentation.mapper;
 
 import org.springframework.stereotype.Component;
-import pl.lodz.p.edu.dataaccess.model.Account;
-import pl.lodz.p.edu.dataaccess.model.Address;
-import pl.lodz.p.edu.dataaccess.model.AuthLogs;
-import pl.lodz.p.edu.dataaccess.model.Person;
-import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
-import pl.lodz.p.edu.dataaccess.model.sub.AccountState;
+import pl.lodz.p.edu.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.dataaccess.model.entity.Address;
+import pl.lodz.p.edu.dataaccess.model.embeddable.AuthLogs;
+import pl.lodz.p.edu.dataaccess.model.entity.Person;
+import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
+import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountCreateDto;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountOutputDto;
 import pl.lodz.p.edu.presentation.dto.user.address.AddressOutputDto;

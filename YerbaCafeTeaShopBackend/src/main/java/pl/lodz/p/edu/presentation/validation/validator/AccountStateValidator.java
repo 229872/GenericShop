@@ -9,7 +9,7 @@ import java.util.Arrays;
 public class AccountStateValidator implements ConstraintValidator<AccountState, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return Arrays.stream(pl.lodz.p.edu.dataaccess.model.sub.AccountState.values())
+        return Arrays.stream(pl.lodz.p.edu.dataaccess.model.enumerated.AccountState.values())
             .map(Enum::name)
             .anyMatch(state -> state.equalsIgnoreCase(value));
     }

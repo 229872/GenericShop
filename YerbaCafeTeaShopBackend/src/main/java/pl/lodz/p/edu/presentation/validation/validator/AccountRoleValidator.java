@@ -10,7 +10,7 @@ public class AccountRoleValidator implements ConstraintValidator<AccountRole, St
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return Arrays.stream(pl.lodz.p.edu.dataaccess.model.sub.AccountRole.values())
+        return Arrays.stream(pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole.values())
             .map(Enum::name)
             .anyMatch(roleName -> roleName.equalsIgnoreCase(value));
     }

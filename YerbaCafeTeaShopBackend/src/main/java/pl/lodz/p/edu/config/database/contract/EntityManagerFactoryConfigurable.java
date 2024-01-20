@@ -3,7 +3,6 @@ package pl.lodz.p.edu.config.database.contract;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import pl.lodz.p.edu.config.database.property.DataSourceProperties;
-import pl.lodz.p.edu.dataaccess.model.AbstractEntity;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -21,7 +20,7 @@ public interface EntityManagerFactoryConfigurable {
         emFactory.setDataSource(dataSource);
         emFactory.setPersistenceProvider(new HibernatePersistenceProvider());
         emFactory.setJpaProperties(getJpaProperties(properties.getJpa()));
-        emFactory.setPackagesToScan(AbstractEntity.class.getPackageName());
+        emFactory.setPackagesToScan("pl.lodz.p.edu.dataaccess.model");
 
         return emFactory;
     }

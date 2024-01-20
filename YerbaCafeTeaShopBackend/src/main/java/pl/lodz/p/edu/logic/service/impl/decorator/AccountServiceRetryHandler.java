@@ -7,10 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.RequestScope;
-import pl.lodz.p.edu.dataaccess.model.Account;
-import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
+import pl.lodz.p.edu.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.logic.model.NewPersonalInformation;
-import pl.lodz.p.edu.logic.service.AbstractRetryHandler;
 import pl.lodz.p.edu.logic.service.api.AccountService;
 
 import java.util.List;

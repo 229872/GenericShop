@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.edu.logic.model.JwtTokens;
-import pl.lodz.p.edu.logic.service.AbstractRetryHandler;
 import pl.lodz.p.edu.logic.service.api.AuthenticationService;
 
 @Service

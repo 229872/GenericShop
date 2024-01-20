@@ -1,11 +1,13 @@
-package pl.lodz.p.edu.dataaccess.model;
+package pl.lodz.p.edu.dataaccess.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Delegate;
 import lombok.experimental.SuperBuilder;
-import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
-import pl.lodz.p.edu.dataaccess.model.sub.AccountState;
+import pl.lodz.p.edu.dataaccess.model.embeddable.AuthLogs;
+import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
+import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
+import pl.lodz.p.edu.dataaccess.model.superclass.AbstractEntity;
 
 import java.util.HashSet;
 import java.util.Set;

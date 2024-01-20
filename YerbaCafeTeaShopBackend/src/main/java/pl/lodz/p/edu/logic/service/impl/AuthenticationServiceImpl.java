@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import pl.lodz.p.edu.dataaccess.model.Account;
-import pl.lodz.p.edu.dataaccess.model.sub.AccountState;
+import pl.lodz.p.edu.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
-import pl.lodz.p.edu.exception.ExceptionFactory;
+import pl.lodz.p.edu.exception.ApplicationExceptionFactory;
 import pl.lodz.p.edu.logic.model.JwtTokens;
 import pl.lodz.p.edu.logic.service.api.AuthenticationService;
 import pl.lodz.p.edu.logic.service.api.JwtService;
@@ -51,7 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Transactional(transactionManager = "accountsModTxManager", noRollbackFor = ResponseStatusException.class)
     public JwtTokens authenticate(String login, String password) {
         Account account = accountRepository.findByLogin(login)
-            .orElseThrow(ExceptionFactory::createInvalidCredentialsException);
+            .orElseThrow(ApplicationExceptionFactory::createInvalidCredentialsException);
 
         String ipAddress = Optional.ofNullable(request.getHeader("X-Forwarded-For")).orElse(request.getRemoteAddr());
         validateAccount(account, password, ipAddress);
@@ -80,11 +80,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String loginFromRefreshToken = jwtService.getLoginFromRefreshToken(refreshToken);
 
         if (!login.equals(loginFromRefreshToken)) {
-            throw ExceptionFactory.createInvalidRefreshTokenException();
+            throw ApplicationExceptionFactory.createInvalidRefreshTokenException();
         }
 
         Account account = accountRepository.findByLogin(login)
-            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
 
         String token = jwtService.generateToken(account);
         String newRefreshToken = jwtService.generateRefreshToken(account);
@@ -99,19 +99,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         try {
             if (!passwordEncoder.matches(password, account.getPassword())) {
                 auditUnsuccessfulAuthenticationWhenCredentialsAreInvalid(account, ipAddress);
-                throw ExceptionFactory.createInvalidCredentialsException();
+                throw ApplicationExceptionFactory.createInvalidCredentialsException();
             }
 
             if (account.isArchival()) {
-                throw ExceptionFactory.createCantAccessArchivalAccountException();
+                throw ApplicationExceptionFactory.createCantAccessArchivalAccountException();
             }
 
             if (account.getAccountState().equals(AccountState.NOT_VERIFIED)) {
-                throw ExceptionFactory.createCantAccessNotVerifiedAccountException();
+                throw ApplicationExceptionFactory.createCantAccessNotVerifiedAccountException();
             }
 
             if (account.getAccountState().equals(AccountState.BLOCKED)) {
-                throw ExceptionFactory.createCantAccessBlockedAccountException();
+                throw ApplicationExceptionFactory.createCantAccessBlockedAccountException();
             }
 
         } catch (ResponseStatusException e) {

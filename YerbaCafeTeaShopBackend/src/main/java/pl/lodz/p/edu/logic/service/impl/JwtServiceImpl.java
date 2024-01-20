@@ -5,9 +5,9 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pl.lodz.p.edu.dataaccess.model.Account;
-import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
-import pl.lodz.p.edu.exception.ExceptionFactory;
+import pl.lodz.p.edu.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
+import pl.lodz.p.edu.exception.ApplicationExceptionFactory;
 import pl.lodz.p.edu.logic.service.api.JwtService;
 
 import java.security.Key;
@@ -85,9 +85,9 @@ public class JwtServiceImpl implements JwtService {
             parser.parseClaimsJws(refreshToken);
 
         } catch (ExpiredJwtException e) {
-            throw ExceptionFactory.createExpiredRefreshTokenException();
+            throw ApplicationExceptionFactory.createExpiredRefreshTokenException();
         } catch (RuntimeException e) {
-            throw ExceptionFactory.createInvalidRefreshTokenException();
+            throw ApplicationExceptionFactory.createInvalidRefreshTokenException();
         }
     }
 
@@ -101,7 +101,7 @@ public class JwtServiceImpl implements JwtService {
 
             return claims.getSubject();
         } catch (RuntimeException e) {
-            throw ExceptionFactory.createInvalidRefreshTokenException();
+            throw ApplicationExceptionFactory.createInvalidRefreshTokenException();
         }
     }
 

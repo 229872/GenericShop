@@ -1,10 +1,10 @@
-package pl.lodz.p.edu.logic.service;
+package pl.lodz.p.edu.logic.service.impl.decorator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.TransactionException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.orm.jpa.JpaSystemException;
-import pl.lodz.p.edu.exception.ExceptionFactory;
+import pl.lodz.p.edu.exception.ApplicationExceptionFactory;
 
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
@@ -38,6 +38,6 @@ public abstract class AbstractRetryHandler {
             }
         }
 
-        throw ExceptionFactory.createTransactionTimeoutException();
+        throw ApplicationExceptionFactory.createTransactionTimeoutException();
     }
 }

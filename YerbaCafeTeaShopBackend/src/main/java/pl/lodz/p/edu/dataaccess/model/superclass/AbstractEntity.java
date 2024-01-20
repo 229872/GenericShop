@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.dataaccess.model;
+package pl.lodz.p.edu.dataaccess.model.superclass;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -9,22 +9,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import pl.lodz.p.edu.dataaccess.model.Account;
-import pl.lodz.p.edu.dataaccess.model.Address;
-import pl.lodz.p.edu.dataaccess.model.Person;
-import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
-import pl.lodz.p.edu.dataaccess.model.sub.AccountState;
+import pl.lodz.p.edu.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.dataaccess.model.entity.Address;
+import pl.lodz.p.edu.dataaccess.model.entity.Person;
+import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
+import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
-import pl.lodz.p.edu.exception.ExceptionFactory;
+import pl.lodz.p.edu.exception.ApplicationExceptionFactory;
+import pl.lodz.p.edu.exception.SystemExceptionFactory;
 import pl.lodz.p.edu.exception.account.helper.AccountStateOperation;
 import pl.lodz.p.edu.logic.model.NewPersonalInformation;
 import pl.lodz.p.edu.logic.service.api.AccountService;
 import pl.lodz.p.edu.util.ExceptionUtil;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 @RequiredArgsConstructor
@@ -52,13 +50,13 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account findById(Long id) {
         return accountRepository.findById(id)
-            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
     }
 
     @Override
     public Account findByLogin(String login) {
         return accountRepository.findByLogin(login)
-            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
     }
 
     @Override
@@ -66,15 +64,15 @@ public class AccountServiceImpl implements AccountService {
         Set<AccountRole> roles = account.getAccountRoles();
 
         if (roles.size() > 1) {
-            throw ExceptionFactory.createCantCreateAccountWithManyRolesException();
+            throw ApplicationExceptionFactory.createCantCreateAccountWithManyRolesException();
         }
 
         if (roles.contains(AccountRole.GUEST)) {
-            throw ExceptionFactory.createCantAssignGuestRoleException();
+            throw ApplicationExceptionFactory.createCantAssignGuestRoleException();
         }
 
         if (account.getAccountState().equals(AccountState.NOT_VERIFIED)) {
-            throw ExceptionFactory.createCantCreateAccountWithNotVerifiedStatusException();
+            throw ApplicationExceptionFactory.createCantCreateAccountWithNotVerifiedStatusException();
         }
 
         return save(account);
@@ -83,10 +81,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account updatePersonalInformation(Long id, NewPersonalInformation newPersonalInformation) {
         Account account = accountRepository.findById(id)
-            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
 
         if (account.isArchival()) {
-            throw ExceptionFactory.createCantModifyArchivalAccountException();
+            throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
         }
 
         updatePersonalInformation(account, newPersonalInformation);
@@ -96,14 +94,14 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account block(Long id) {
         Account account = accountRepository.findById(id)
-            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
 
         if (account.isArchival()) {
-            throw ExceptionFactory.createCantModifyArchivalAccountException();
+            throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
         }
 
         if (!account.getAccountState().equals(AccountState.ACTIVE)) {
-            throw ExceptionFactory
+            throw ApplicationExceptionFactory
                 .createOperationNotAllowedWithActualAccountStateException(AccountStateOperation.BLOCK);
         }
 
@@ -114,14 +112,14 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account unblock(Long id) {
         Account account = accountRepository.findById(id)
-            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
 
         if (account.isArchival()) {
-            throw ExceptionFactory.createCantModifyArchivalAccountException();
+            throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
         }
 
         if (!account.getAccountState().equals(AccountState.BLOCKED)) {
-            throw ExceptionFactory
+            throw ApplicationExceptionFactory
                 .createOperationNotAllowedWithActualAccountStateException(AccountStateOperation.UNBLOCK);
         }
 
@@ -132,10 +130,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account archive(Long id) {
         Account account = accountRepository.findById(id)
-            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
 
         if (account.isArchival()) {
-            throw ExceptionFactory.createCantModifyArchivalAccountException();
+            throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
         }
 
         archiveAccount(account);
@@ -145,23 +143,23 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account addRole(Long id, AccountRole newRole) {
         Account account = accountRepository.findById(id)
-            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
         Set<AccountRole> roles = account.getAccountRoles();
 
         if (account.isArchival()) {
-            throw ExceptionFactory.createCantModifyArchivalAccountException();
+            throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
         }
 
         if (roles.contains(newRole)) {
-            throw ExceptionFactory.createAccountRoleAlreadyAssignedException();
+            throw ApplicationExceptionFactory.createAccountRoleAlreadyAssignedException();
         }
 
         if (newRole.equals(AccountRole.GUEST)) {
-            throw ExceptionFactory.createCantAssignGuestRoleException();
+            throw ApplicationExceptionFactory.createCantAssignGuestRoleException();
         }
 
         if (newRole.equals(AccountRole.ADMIN) || roles.contains(AccountRole.ADMIN)) {
-            throw ExceptionFactory.createAccountWithAdministratorRoleCantHaveMoreRolesException();
+            throw ApplicationExceptionFactory.createAccountWithAdministratorRoleCantHaveMoreRolesException();
         }
 
         roles.add(newRole);
@@ -171,19 +169,19 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account removeRole(Long id, AccountRole roleForRemoval) {
         Account account = accountRepository.findById(id)
-            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
         Set<AccountRole> roles = account.getAccountRoles();
 
         if (account.isArchival()) {
-            throw ExceptionFactory.createCantModifyArchivalAccountException();
+            throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
         }
 
         if (!roles.contains(roleForRemoval)) {
-            throw ExceptionFactory.createAccountRoleNotFoundException();
+            throw ApplicationExceptionFactory.createAccountRoleNotFoundException();
         }
 
         if (roles.size() == 1) {
-            throw ExceptionFactory.createCantRemoveLastRoleException();
+            throw ApplicationExceptionFactory.createCantRemoveLastRoleException();
         }
 
         roles.remove(roleForRemoval);
@@ -193,23 +191,23 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account changeRole(Long id, AccountRole newRole) {
         Account account = accountRepository.findById(id)
-            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
         Set<AccountRole> roles = account.getAccountRoles();
 
         if (account.isArchival()) {
-            throw ExceptionFactory.createCantModifyArchivalAccountException();
+            throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
         }
 
         if (roles.size() > 1) {
-            throw ExceptionFactory.createCantChangeRoleIfMoreThanOneAlreadyAssignedException();
+            throw ApplicationExceptionFactory.createCantChangeRoleIfMoreThanOneAlreadyAssignedException();
         }
 
         if (roles.contains(newRole)) {
-            throw ExceptionFactory.createAccountRoleAlreadyAssignedException();
+            throw ApplicationExceptionFactory.createAccountRoleAlreadyAssignedException();
         }
 
         if (newRole.equals(AccountRole.GUEST)) {
-            throw ExceptionFactory.createCantAssignGuestRoleException();
+            throw ApplicationExceptionFactory.createCantAssignGuestRoleException();
         }
 
         roles.remove(roles.iterator().next());
@@ -221,7 +219,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account updateOwnLocale(String login, Locale locale) {
         Account account = accountRepository.findByLogin(login)
-            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
 
         account.setLocale(locale.getLanguage());
 
@@ -231,10 +229,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Account changePassword(String login, String currentPassword, String newPassword) {
         Account account = accountRepository.findByLogin(login)
-            .orElseThrow(ExceptionFactory::createAccountNotFoundException);
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
 
         if (!passwordEncoder.matches(currentPassword, account.getPassword())) {
-            throw ExceptionFactory.createInvalidCredentialsException();
+            throw ApplicationExceptionFactory.createInvalidCredentialsException();
         }
 
         String encodedNewPassword = passwordEncoder.encode(newPassword);
@@ -252,20 +250,20 @@ public class AccountServiceImpl implements AccountService {
         } catch (DataAccessException e) {
             var violationException = ExceptionUtil.findCause(e, ConstraintViolationException.class);
 
-            if (violationException != null) {
-                return handleDataIntegrityViolationException(violationException);
+            if (Objects.nonNull(violationException) && Objects.nonNull(violationException.getConstraintName())) {
+                return handleConstraintViolationException(violationException);
             }
 
-            throw ExceptionFactory.createUnknownException();
+            throw ApplicationExceptionFactory.createUnknownException();
         }
     }
 
-    private Account handleDataIntegrityViolationException(ConstraintViolationException e) {
+    private Account handleConstraintViolationException(ConstraintViolationException e) {
         switch (e.getConstraintName()) {
-            case "accounts_login_key" -> throw ExceptionFactory.createAccountLoginConflictException();
-            case "accounts_email_key" -> throw ExceptionFactory.createAccountEmailConflictException();
+            case "accounts_login_key" -> throw ApplicationExceptionFactory.createAccountLoginConflictException();
+            case "accounts_email_key" -> throw ApplicationExceptionFactory.createAccountEmailConflictException();
+            default -> throw SystemExceptionFactory.createDbConstraintViolationException(e);
         }
-        throw ExceptionFactory.createUnknownConflictException();
     }
 
     private void updatePersonalInformation(Account account, NewPersonalInformation personalInformation) {

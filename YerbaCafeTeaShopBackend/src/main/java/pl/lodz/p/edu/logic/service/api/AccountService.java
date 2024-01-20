@@ -1,8 +1,8 @@
 package pl.lodz.p.edu.logic.service.api;
 
 import org.springframework.data.domain.Pageable;
-import pl.lodz.p.edu.dataaccess.model.Account;
-import pl.lodz.p.edu.dataaccess.model.sub.AccountRole;
+import pl.lodz.p.edu.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.logic.model.NewPersonalInformation;
 
 import java.util.List;

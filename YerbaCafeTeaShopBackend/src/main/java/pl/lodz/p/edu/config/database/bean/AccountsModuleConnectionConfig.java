@@ -17,7 +17,7 @@ import javax.sql.DataSource;
 @EnableJpaRepositories(
     entityManagerFactoryRef = "accountsModEmFactory",
     transactionManagerRef = "accountsModTxManager",
-    basePackages = "pl.lodz.p.edu.dataaccess.repository.module.account"
+    basePackages = {"pl.lodz.p.edu.dataaccess.repository.module.account"}
 )
 public class AccountsModuleConnectionConfig implements JpaConfigurable {
 

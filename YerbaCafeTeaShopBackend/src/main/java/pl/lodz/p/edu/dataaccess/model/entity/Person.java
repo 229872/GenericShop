@@ -1,9 +1,10 @@
-package pl.lodz.p.edu.dataaccess.model;
+package pl.lodz.p.edu.dataaccess.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Delegate;
 import lombok.experimental.SuperBuilder;
+import pl.lodz.p.edu.dataaccess.model.superclass.AbstractEntity;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
