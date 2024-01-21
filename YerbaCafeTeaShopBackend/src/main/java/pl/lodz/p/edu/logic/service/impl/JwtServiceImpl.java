@@ -3,8 +3,9 @@ package pl.lodz.p.edu.logic.service.impl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import pl.lodz.p.edu.config.database.property.JwtProperties;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.exception.ApplicationExceptionFactory;
@@ -13,24 +14,19 @@ import pl.lodz.p.edu.logic.service.api.JwtService;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class JwtServiceImpl implements JwtService {
 
-    @Value("${security.token.timeout_in_minutes:3}")
-    private Long tokenTimeoutInMinutes;
+    private final JwtProperties tokenProperties;
+    private final JwtProperties refreshTokenProperties;
 
-    @Value("${security.token.key:3}")
-    private String tokenSecretKey;
-
-    @Value("${security.refresh_token.timeout_in_minutes:20}")
-    private Long refreshTokenTimeoutInMinutes;
-
-    @Value("${security.refresh_token.key:3}")
-    private String refreshTokenSecretKey;
-
-
+    public JwtServiceImpl(
+        @Qualifier("tokenProperties") JwtProperties tokenProperties,
+        @Qualifier("refreshTokenProperties") JwtProperties refreshTokenProperties) {
+        this.tokenProperties = tokenProperties;
+        this.refreshTokenProperties = refreshTokenProperties;
+    }
 
     private Key getSigningKey(String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
@@ -39,7 +35,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateToken(Account account) {
-        long tokenTimeoutInMillis = TimeUnit.MINUTES.toMillis(tokenTimeoutInMinutes);
+        long tokenTimeoutInMillis = tokenProperties.getTimeoutInMillis();
         long currentTimeMillis = System.currentTimeMillis();
         List<String> roles = account.getAccountRoles().stream()
             .map(AccountRole::name)
@@ -51,28 +47,28 @@ public class JwtServiceImpl implements JwtService {
             .setExpiration(new Date(currentTimeMillis + tokenTimeoutInMillis))
             .claim("roles", roles)
             .claim("lang", account.getLocale())
-            .signWith(getSigningKey(tokenSecretKey), SignatureAlgorithm.HS512)
+            .signWith(getSigningKey(tokenProperties.getKey()), SignatureAlgorithm.HS512)
             .compact();
     }
 
     @Override
     public Jws<Claims> getTokenClaims(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(getSigningKey(tokenSecretKey))
+            .setSigningKey(getSigningKey(tokenProperties.getKey()))
             .build()
             .parseClaimsJws(token);
     }
 
     @Override
     public String generateRefreshToken(Account account) {
-        long tokenTimeoutInMillis = TimeUnit.MINUTES.toMillis(refreshTokenTimeoutInMinutes);
+        long tokenTimeoutInMillis = refreshTokenProperties.getTimeoutInMillis();
         long currentTimeMillis = System.currentTimeMillis();
 
         return Jwts.builder()
             .setSubject(account.getLogin())
             .setIssuedAt(new Date(currentTimeMillis))
             .setExpiration(new Date(currentTimeMillis + tokenTimeoutInMillis))
-            .signWith(getSigningKey(refreshTokenSecretKey), SignatureAlgorithm.HS512)
+            .signWith(getSigningKey(refreshTokenProperties.getKey()), SignatureAlgorithm.HS512)
             .compact();
     }
 
@@ -80,7 +76,7 @@ public class JwtServiceImpl implements JwtService {
     public void validateRefreshToken(String refreshToken) {
         try {
             JwtParser parser = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey(refreshTokenSecretKey))
+                .setSigningKey(getSigningKey(refreshTokenProperties.getKey()))
                 .build();
             parser.parseClaimsJws(refreshToken);
 
@@ -95,7 +91,7 @@ public class JwtServiceImpl implements JwtService {
     public String getLoginFromRefreshToken(String refreshToken) {
         try {
             JwtParser parser = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey(refreshTokenSecretKey))
+                .setSigningKey(getSigningKey(refreshTokenProperties.getKey()))
                 .build();
             Claims claims = parser.parseClaimsJws(refreshToken).getBody();
 
