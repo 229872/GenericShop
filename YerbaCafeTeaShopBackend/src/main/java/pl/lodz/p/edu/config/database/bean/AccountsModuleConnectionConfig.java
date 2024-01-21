@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import pl.lodz.p.edu.config.database.contract.JpaConfigurable;
+import pl.lodz.p.edu.config.database.preconfig.JpaConfigurable;
 import pl.lodz.p.edu.config.database.property.DataSourceProperties;
 
 import javax.sql.DataSource;

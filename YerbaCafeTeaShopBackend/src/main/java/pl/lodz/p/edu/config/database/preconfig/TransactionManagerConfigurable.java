@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.config.database.contract;
+package pl.lodz.p.edu.config.database.preconfig;
 
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;

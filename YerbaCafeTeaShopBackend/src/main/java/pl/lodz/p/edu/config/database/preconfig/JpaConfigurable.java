@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.config.database.contract;
+package pl.lodz.p.edu.config.database.preconfig;
 
 public interface JpaConfigurable extends DataSourceConfigurable, EntityManagerFactoryConfigurable, TransactionManagerConfigurable {
 

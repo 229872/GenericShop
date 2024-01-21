@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.config.database.contract;
+package pl.lodz.p.edu.config.database.preconfig;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.boot.jdbc.DataSourceBuilder;

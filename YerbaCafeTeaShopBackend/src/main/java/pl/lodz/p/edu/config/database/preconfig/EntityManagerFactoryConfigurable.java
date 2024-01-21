@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.config.database.contract;
+package pl.lodz.p.edu.config.database.preconfig;
 
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
