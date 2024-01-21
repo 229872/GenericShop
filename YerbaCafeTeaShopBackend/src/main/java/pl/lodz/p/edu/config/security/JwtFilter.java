@@ -17,6 +17,7 @@ import pl.lodz.p.edu.logic.service.api.JwtService;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import static pl.lodz.p.edu.config.security.RoleName.GUEST;
 
@@ -31,10 +32,11 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         String BEARER = "Bearer";
-        if (header == null || !header.startsWith(BEARER)) {
+
+        if (Objects.isNull(header) || !header.startsWith(BEARER)) {
             authorizeAsGuest();
         } else {
             try {
