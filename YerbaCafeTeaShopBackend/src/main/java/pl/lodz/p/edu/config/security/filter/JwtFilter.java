@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.config.security;
+package pl.lodz.p.edu.config.security.filter;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -19,16 +19,17 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-import static pl.lodz.p.edu.config.security.RoleName.GUEST;
+import static pl.lodz.p.edu.config.security.role.RoleName.GUEST;
 
 @RequiredArgsConstructor
+@Slf4j
 
 @Component
-@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {

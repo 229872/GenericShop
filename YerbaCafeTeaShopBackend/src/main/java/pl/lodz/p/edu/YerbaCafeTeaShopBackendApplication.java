@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.jdbc.XADataSourceAutoConfiguration
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 
-import static pl.lodz.p.edu.config.security.RoleName.*;
+import static pl.lodz.p.edu.config.security.role.RoleName.*;
 
 @SpringBootApplication(exclude = {
 	DataSourceAutoConfiguration.class,

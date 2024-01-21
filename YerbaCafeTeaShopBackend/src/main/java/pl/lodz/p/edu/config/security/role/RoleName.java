@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.config.security;
+package pl.lodz.p.edu.config.security.role;
 
 public class RoleName {
     public static final String GUEST = "GUEST";

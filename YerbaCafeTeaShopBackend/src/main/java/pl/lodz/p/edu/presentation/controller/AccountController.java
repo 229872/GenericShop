@@ -19,7 +19,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Locale;
 
-import static pl.lodz.p.edu.config.security.RoleName.*;
+import static pl.lodz.p.edu.config.security.role.RoleName.*;
 import static pl.lodz.p.edu.util.SecurityUtil.getLoginFromSecurityContext;
 
 @RequiredArgsConstructor

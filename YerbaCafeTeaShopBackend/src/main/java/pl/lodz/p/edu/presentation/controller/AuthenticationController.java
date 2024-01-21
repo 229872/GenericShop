@@ -11,7 +11,7 @@ import pl.lodz.p.edu.logic.service.api.AuthenticationService;
 import pl.lodz.p.edu.presentation.dto.authentication.Credentials;
 import pl.lodz.p.edu.presentation.dto.authentication.Tokens;
 
-import static pl.lodz.p.edu.config.security.RoleName.*;
+import static pl.lodz.p.edu.config.security.role.RoleName.*;
 import static pl.lodz.p.edu.util.SecurityUtil.getLoginFromSecurityContext;
 
 @RequiredArgsConstructor
