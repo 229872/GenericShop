@@ -6,18 +6,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.lodz.p.edu.dataaccess.model.entity.Account;
-import pl.lodz.p.edu.logic.service.api.AccountService;
-import pl.lodz.p.edu.logic.service.api.OwnAccountService;
+import pl.lodz.p.edu.presentation.adapter.api.AccountServiceOperations;
+import pl.lodz.p.edu.presentation.adapter.api.OwnAccountServiceOperations;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountCreateDto;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountOutputDto;
 import pl.lodz.p.edu.presentation.dto.user.account.ChangeLanguageDto;
 import pl.lodz.p.edu.presentation.dto.user.account.ChangePasswordDto;
-import pl.lodz.p.edu.presentation.mapper.AccountMapper;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Locale;
 
 import static pl.lodz.p.edu.config.security.role.RoleName.*;
 import static pl.lodz.p.edu.util.SecurityUtil.getLoginFromSecurityContext;
@@ -29,17 +26,13 @@ import static pl.lodz.p.edu.util.SecurityUtil.getLoginFromSecurityContext;
 @DenyAll
 public class AccountController {
 
-    private final AccountService accountService;
-    private final OwnAccountService ownAccountService;
-
-    private final AccountMapper accountMapper;
+    private final AccountServiceOperations accountService;
+    private final OwnAccountServiceOperations ownAccountService;
 
     @GetMapping
     @RolesAllowed(ADMIN)
     ResponseEntity<List<AccountOutputDto>> getAll() {
-        List<AccountOutputDto> result = accountService.findAll().stream()
-            .map(accountMapper::mapToAccountOutputDto)
-            .toList();
+        List<AccountOutputDto> result = accountService.findAll();
 
         return ResponseEntity.ok(result);
     }
@@ -47,8 +40,7 @@ public class AccountController {
     @GetMapping("/id/{id}")
     @RolesAllowed(ADMIN)
     ResponseEntity<AccountOutputDto> getById(@PathVariable Long id) {
-        Account account = accountService.findById(id);
-        AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
+        AccountOutputDto result = accountService.findById(id);
 
         return ResponseEntity.ok(result);
     }
@@ -57,8 +49,7 @@ public class AccountController {
     @RolesAllowed({CLIENT, EMPLOYEE, ADMIN})
     ResponseEntity<AccountOutputDto> getOwnAccountInformation() {
         String login = getLoginFromSecurityContext();
-        Account account = ownAccountService.findByLogin(login);
-        AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
+        AccountOutputDto result = ownAccountService.findByLogin(login);
 
         return ResponseEntity.ok(result);
     }
@@ -67,9 +58,7 @@ public class AccountController {
     @PostMapping
     @RolesAllowed(ADMIN)
     ResponseEntity<AccountOutputDto> createAccount(@RequestBody @Valid AccountCreateDto createDto) {
-        Account account = accountMapper.mapToAccount(createDto);
-        Account createdAccount = accountService.create(account);
-        AccountOutputDto result = accountMapper.mapToAccountOutputDto(createdAccount);
+        AccountOutputDto result = accountService.create(createDto);
 
         return ResponseEntity.created(URI.create("/id/%d".formatted(result.id()))).body(result);
     }
@@ -77,8 +66,7 @@ public class AccountController {
     @PutMapping("/id/{id}/block")
     @RolesAllowed(ADMIN)
     ResponseEntity<AccountOutputDto> blockAccount(@PathVariable Long id) {
-        Account account = accountService.block(id);
-        AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
+        AccountOutputDto result = accountService.block(id);
 
         return ResponseEntity.ok(result);
     }
@@ -86,8 +74,7 @@ public class AccountController {
     @PutMapping("/id/{id}/unblock")
     @RolesAllowed(ADMIN)
     ResponseEntity<AccountOutputDto> unblockAccount(@PathVariable Long id) {
-        Account account = accountService.unblock(id);
-        AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
+        AccountOutputDto result = accountService.unblock(id);
 
         return ResponseEntity.ok(result);
     }
@@ -95,8 +82,7 @@ public class AccountController {
     @PutMapping("/id/{id}/archive")
     @RolesAllowed(ADMIN)
     ResponseEntity<AccountOutputDto> archiveAccount(@PathVariable Long id) {
-        Account account = accountService.archive(id);
-        AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
+        AccountOutputDto result = accountService.archive(id);
 
         return ResponseEntity.ok(result);
     }
@@ -104,10 +90,8 @@ public class AccountController {
     @PutMapping("/self/change-locale")
     @RolesAllowed({CLIENT, ADMIN, EMPLOYEE})
     ResponseEntity<AccountOutputDto> changeOwnLocale(@RequestBody @Valid ChangeLanguageDto locale) {
-        Locale language = new Locale(locale.locale());
         String login = getLoginFromSecurityContext();
-        Account account = ownAccountService.updateOwnLocale(login, language);
-        AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
+        AccountOutputDto result = ownAccountService.updateOwnLocale(login, locale);
 
         return ResponseEntity.ok(result);
     }
@@ -116,8 +100,7 @@ public class AccountController {
     @RolesAllowed({CLIENT, ADMIN, EMPLOYEE})
     ResponseEntity<AccountOutputDto> changeOwnPassword(@RequestBody @Valid ChangePasswordDto passwords) {
         String login = getLoginFromSecurityContext();
-        Account account = ownAccountService.changePassword(login, passwords.currentPassword(), passwords.newPassword());
-        AccountOutputDto result = accountMapper.mapToAccountOutputDto(account);
+        AccountOutputDto result = ownAccountService.changePassword(login, passwords);
 
         return ResponseEntity.ok(result);
     }

@@ -26,7 +26,7 @@ import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.exception.ExceptionMessage;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountCreateDto;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountOutputDto;
-import pl.lodz.p.edu.presentation.mapper.AccountMapper;
+import pl.lodz.p.edu.presentation.mapper.api.AccountMapper;
 
 import java.util.ArrayList;
 import java.util.Collections;

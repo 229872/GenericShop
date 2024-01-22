@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.presentation.mapper;
+package pl.lodz.p.edu.presentation.mapper.impl;
 
 import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
@@ -11,13 +11,15 @@ import pl.lodz.p.edu.presentation.dto.user.account.AccountCreateDto;
 import pl.lodz.p.edu.presentation.dto.user.account.AccountOutputDto;
 import pl.lodz.p.edu.presentation.dto.user.address.AddressOutputDto;
 import pl.lodz.p.edu.presentation.dto.user.log.AuthLogOutputDto;
+import pl.lodz.p.edu.presentation.mapper.api.AccountMapper;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public class AccountMapper {
+class AccountMapperImpl implements AccountMapper {
 
+    @Override
     public Account mapToAccount(AccountCreateDto createDto) {
         var addressDto = createDto.address();
 
@@ -46,6 +48,7 @@ public class AccountMapper {
             .build();
     }
 
+    @Override
     public AccountOutputDto mapToAccountOutputDto(Account account) {
         Contact contact = account.getContact();
         AuthLogs authLogs = account.getAuthLogs();
