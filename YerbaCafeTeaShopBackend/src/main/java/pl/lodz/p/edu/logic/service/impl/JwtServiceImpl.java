@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class JwtServiceImpl implements JwtService {
+class JwtServiceImpl implements JwtService {
 
     private final JwtProperties tokenProperties;
     private final JwtProperties refreshTokenProperties;

@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 @Slf4j
-public abstract class AbstractRetryHandler {
+abstract class AbstractRetryHandler {
 
     @Value("${transaction.repeat.times:3}")
     private int transactionRetries;

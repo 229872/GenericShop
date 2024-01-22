@@ -21,7 +21,7 @@ import java.util.Locale;
 @Primary
 @Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.NEVER)
 @Qualifier("AccountServiceRetryHandler")
-public class AccountServiceRetryHandler extends AbstractRetryHandler implements AccountService, OwnAccountService {
+class AccountServiceRetryHandler extends AbstractRetryHandler implements AccountService, OwnAccountService {
 
     private final AccountService accountService;
     private final OwnAccountService ownAccountService;

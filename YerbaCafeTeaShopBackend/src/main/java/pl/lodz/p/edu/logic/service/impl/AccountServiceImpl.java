@@ -41,7 +41,6 @@ public class AccountServiceImpl implements AccountService, OwnAccountService {
 
     private final PasswordEncoder passwordEncoder;
 
-
     @Override
     public List<Account> findAll() {
         return accountRepository.findAll();

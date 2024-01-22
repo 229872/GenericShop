@@ -11,7 +11,7 @@ import pl.lodz.p.edu.logic.service.api.AuthenticationService;
 @Service
 @Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.NEVER)
 @Primary
-public class AuthenticationServiceRetryHandler extends AbstractRetryHandler implements AuthenticationService {
+class AuthenticationServiceRetryHandler extends AbstractRetryHandler implements AuthenticationService {
 
     private final AuthenticationService authenticationService;
 

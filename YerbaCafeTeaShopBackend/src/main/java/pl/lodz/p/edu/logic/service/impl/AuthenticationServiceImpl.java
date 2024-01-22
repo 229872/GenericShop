@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.REQUIRES_NEW)
 @Qualifier("AuthenticationServiceImpl")
-public class AuthenticationServiceImpl implements AuthenticationService {
+class AuthenticationServiceImpl implements AuthenticationService {
 
     @Value("${app.auth.unsuccessful_attempts}")
     private Integer unsuccessfulAuthAttempts;

@@ -74,6 +74,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should return jwt token with account login in subject and roles in claims when account can be found and credentials are correct")
+    @SuppressWarnings("unchecked")
     void authenticate_should_return_jwt_token() {
         //given
         Account account = TestData.buildDefaultAccount();

@@ -15,7 +15,7 @@ import pl.lodz.p.edu.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
-import pl.lodz.p.edu.exception.*;
+import pl.lodz.p.edu.exception.ExceptionMessage;
 import pl.lodz.p.edu.exception.account.*;
 import pl.lodz.p.edu.logic.model.NewContactData;
 import pl.lodz.p.edu.logic.service.impl.AccountServiceImpl;
