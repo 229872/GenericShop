@@ -19,8 +19,8 @@ import java.util.Locale;
 @Service
 @RequestScope
 @Primary
-@Qualifier("AccountServiceRetryHandler")
 @Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.NEVER)
+@Qualifier("AccountServiceRetryHandler")
 public class AccountServiceRetryHandler extends AbstractRetryHandler implements AccountService, OwnAccountService {
 
     private final AccountService accountService;

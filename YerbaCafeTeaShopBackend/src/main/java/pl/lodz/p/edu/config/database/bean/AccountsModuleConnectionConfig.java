@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import pl.lodz.p.edu.config.database.listener.AccountsModuleTxLogsListener;
 import pl.lodz.p.edu.config.database.preconfig.JpaConfigurable;
 import pl.lodz.p.edu.config.database.property.DataSourceProperties;
 
@@ -53,6 +54,8 @@ public class AccountsModuleConnectionConfig implements JpaConfigurable {
     @Override
     @Bean("accountsModTxManager")
     public JpaTransactionManager txManagerBean(@Qualifier("accountsModEmFactory") LocalContainerEntityManagerFactoryBean emFactory) {
-        return JpaConfigurable.super.txManagerBean(emFactory);
+        JpaTransactionManager txManager = JpaConfigurable.super.txManagerBean(emFactory);
+        txManager.addListener(new AccountsModuleTxLogsListener());
+        return txManager;
     }
 }
