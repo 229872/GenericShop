@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.unit.service;
+package pl.lodz.p.edu.logic.service.impl;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +18,6 @@ import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.exception.ExceptionMessage;
 import pl.lodz.p.edu.exception.account.*;
 import pl.lodz.p.edu.logic.model.NewContactData;
-import pl.lodz.p.edu.logic.service.impl.AccountServiceImpl;
 
 import java.util.*;
 

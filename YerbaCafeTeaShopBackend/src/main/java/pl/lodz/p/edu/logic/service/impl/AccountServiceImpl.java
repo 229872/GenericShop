@@ -35,7 +35,7 @@ import static pl.lodz.p.edu.util.UpdatableUtil.setNullableValue;
 @Service
 @Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.REQUIRES_NEW)
 @Qualifier("AccountServiceImpl")
-public class AccountServiceImpl implements AccountService, OwnAccountService {
+class AccountServiceImpl implements AccountService, OwnAccountService {
 
     private final AccountRepository accountRepository;
 
@@ -263,7 +263,7 @@ public class AccountServiceImpl implements AccountService, OwnAccountService {
     }
 
     private Account handleConstraintViolationException(ConstraintViolationException e) {
-        switch (e.getConstraintName()) {
+        switch (Objects.requireNonNull(e.getConstraintName())) {
             case "accounts_login_key" -> throw ApplicationExceptionFactory.createAccountLoginConflictException();
             case "accounts_email_key" -> throw ApplicationExceptionFactory.createAccountEmailConflictException();
             default -> throw SystemExceptionFactory.createDbConstraintViolationException(e);

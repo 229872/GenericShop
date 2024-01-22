@@ -1,9 +1,11 @@
 package pl.lodz.p.edu.presentation.mapper.impl;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import pl.lodz.p.edu.dataaccess.model.embeddable.AuthLogs;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.dataaccess.model.entity.Address;
-import pl.lodz.p.edu.dataaccess.model.embeddable.AuthLogs;
 import pl.lodz.p.edu.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
@@ -16,8 +18,12 @@ import pl.lodz.p.edu.presentation.mapper.api.AccountMapper;
 import java.util.HashSet;
 import java.util.Set;
 
+@RequiredArgsConstructor
+
 @Component
 class AccountMapperImpl implements AccountMapper {
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Account mapToAccount(AccountCreateDto createDto) {
@@ -39,7 +45,7 @@ class AccountMapperImpl implements AccountMapper {
 
         return Account.builder()
             .login(createDto.login())
-            .password(createDto.password())
+            .password(passwordEncoder.encode(createDto.password()))
             .email(createDto.email())
             .locale(createDto.locale())
             .accountState(AccountState.valueOf(createDto.accountState().toUpperCase()))
