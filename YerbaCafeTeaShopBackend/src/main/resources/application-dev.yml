@@ -31,3 +31,12 @@ security:
   refresh-token:
     timeout_in_minutes: 1140
     key: "lPe/UW3XpvXCA8QZihq1Izy0Xhiz9YG7ZQkjFxgBIoWOooX8YBdHqvVFhL5CLhK/bm++L27Hyc7fzemv6vA1KQ0dFgd58c756ehFQBfg8SE="
+
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password:
+    properties:
+      mail.smtp.starttls.enable: true
