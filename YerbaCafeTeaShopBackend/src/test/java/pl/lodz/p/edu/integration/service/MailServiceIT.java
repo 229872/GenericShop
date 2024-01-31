@@ -17,8 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
+import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("Integration tests for MailService")
 @SpringBootTest
@@ -30,12 +29,9 @@ public class MailServiceIT extends PostgresqlContainerSetup {
 
     private Environment environment;
 
-    private static Environment environmentAsStaticField;
-
     @Autowired
     public void setEnvironment(Environment environment) {
         this.environment = environment;
-        environmentAsStaticField = environment;
     }
 
     @EnabledIf(value = "isMailSet")
@@ -107,6 +103,10 @@ public class MailServiceIT extends PostgresqlContainerSetup {
             .filter(value -> !value.isBlank())
             .isPresent();
 
-        return isUsernameSet && isPasswordSet;
+        boolean shouldSendMail = Optional.ofNullable(environment.getProperty("spring.mail.enable"))
+            .map(Boolean::parseBoolean)
+            .orElse(false);
+
+        return isUsernameSet && isPasswordSet && shouldSendMail;
     }
 }
