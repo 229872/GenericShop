@@ -17,7 +17,7 @@ public class I18nUtil {
     public static final String LOCALE_EN = "en";
 
     public static String getMessage(String messageKey, String locale) {
-        ResourceBundle bundle = ResourceBundle.getBundle("messages", Locale.forLanguageTag(locale));
+        ResourceBundle bundle = ResourceBundle.getBundle("lang/messages", Locale.forLanguageTag(locale));
         return bundle.getString(messageKey);
     }
 
