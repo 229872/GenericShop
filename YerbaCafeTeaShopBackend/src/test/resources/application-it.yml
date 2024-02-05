@@ -24,7 +24,7 @@ app:
     blockade_time_in_minutes: 1
 
 security:
-  token:
+  auth-token:
     timeout_in_minutes: 10
     key: "QVPfPDLb5oWroAliIN0nvROgcqbx+c3BtqKJeacgxMQXJqSDNYqMIVobkUANxAM85o4CCfcp/E/u8pKwcmmbryJy+FRIVT8iGeTUI2uRH8c="
   refresh_token:

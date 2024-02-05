@@ -6,5 +6,5 @@ public interface AuthenticationService {
 
     JwtTokens authenticate(String login, String password);
 
-    JwtTokens getAuthenticationToken(String login, String refreshToken);
+    JwtTokens extendSession(String login, String refreshToken);
 }

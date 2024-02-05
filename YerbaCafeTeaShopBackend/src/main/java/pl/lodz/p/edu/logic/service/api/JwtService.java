@@ -1,18 +1,15 @@
 package pl.lodz.p.edu.logic.service.api;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
 
 public interface JwtService {
 
-    String generateToken(Account account);
+    String generateAuthToken(Account account);
 
-    Jws<Claims> getTokenClaims(String token);
+    String generateRefreshToken(String subject);
 
-    String generateRefreshToken(Account account);
+    Claims validateAndExtractClaimsFromAuthToken(String authToken);
 
-    void validateRefreshToken(String refreshToken);
-
-    String getLoginFromRefreshToken(String refreshToken);
+    Claims validateAndExtractClaimsFromRefreshToken(String refreshToken);
 }

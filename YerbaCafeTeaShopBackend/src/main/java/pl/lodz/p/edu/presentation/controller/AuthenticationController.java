@@ -27,18 +27,18 @@ public class AuthenticationController {
     @RolesAllowed(GUEST)
     ResponseEntity<Tokens> authenticate(@RequestBody @Valid Credentials credentials) {
         JwtTokens jwtTokens = authenticationService.authenticate(credentials.login(), credentials.password());
-        Tokens tokens = new Tokens(jwtTokens.token(), jwtTokens.refreshToken());
+        Tokens responseBody = new Tokens(jwtTokens.token(), jwtTokens.refreshToken());
 
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.ok(responseBody);
     }
 
     @GetMapping("/extend/{refreshToken}")
     @RolesAllowed({CLIENT, ADMIN, EMPLOYEE})
     ResponseEntity<Tokens> extendSession(@PathVariable String refreshToken) {
         String login = getLoginFromSecurityContext();
-        JwtTokens jwtTokens = authenticationService.getAuthenticationToken(login, refreshToken);
-        Tokens tokens = new Tokens(jwtTokens.token(), jwtTokens.refreshToken());
+        JwtTokens jwtTokens = authenticationService.extendSession(login, refreshToken);
+        Tokens responseBody = new Tokens(jwtTokens.token(), jwtTokens.refreshToken());
 
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.ok(responseBody);
     }
 }

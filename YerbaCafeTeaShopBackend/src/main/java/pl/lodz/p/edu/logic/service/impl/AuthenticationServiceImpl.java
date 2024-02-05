@@ -64,8 +64,8 @@ class AuthenticationServiceImpl implements AuthenticationService {
         account.setLastSuccessfulAuthIpAddr(ipAddress);
         accountRepository.save(account);
 
-        String jwtToken = jwtService.generateToken(account);
-        String refreshToken = jwtService.generateRefreshToken(account);
+        String jwtToken = jwtService.generateAuthToken(account);
+        String refreshToken = jwtService.generateRefreshToken(account.getLogin());
 
         return JwtTokens.builder()
             .token(jwtToken)
@@ -74,10 +74,8 @@ class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public JwtTokens getAuthenticationToken(String login, String refreshToken) {
-        jwtService.validateRefreshToken(refreshToken);
-
-        String loginFromRefreshToken = jwtService.getLoginFromRefreshToken(refreshToken);
+    public JwtTokens extendSession(String login, String refreshToken) {
+        String loginFromRefreshToken = jwtService.validateAndExtractClaimsFromRefreshToken(refreshToken).getSubject();
 
         if (!login.equals(loginFromRefreshToken)) {
             throw ApplicationExceptionFactory.createInvalidRefreshTokenException();
@@ -86,14 +84,17 @@ class AuthenticationServiceImpl implements AuthenticationService {
         Account account = accountRepository.findByLogin(login)
             .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
 
-        String token = jwtService.generateToken(account);
-        String newRefreshToken = jwtService.generateRefreshToken(account);
+        String token = jwtService.generateAuthToken(account);
 
         return JwtTokens.builder()
             .token(token)
-            .refreshToken(newRefreshToken)
+            .refreshToken(refreshToken)
             .build();
     }
+
+
+
+
 
     private void validateAccount(Account account, String password, String ipAddress) {
         try {

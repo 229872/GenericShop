@@ -8,8 +8,8 @@ import pl.lodz.p.edu.config.database.property.JwtProperties;
 @Configuration
 public class JwtConfig {
 
-    @Bean(name = "tokenProperties")
-    @ConfigurationProperties("security.token")
+    @Bean(name = "authTokenProperties")
+    @ConfigurationProperties("security.auth-token")
     public JwtProperties tokenProperties() {
         return new JwtProperties();
     }

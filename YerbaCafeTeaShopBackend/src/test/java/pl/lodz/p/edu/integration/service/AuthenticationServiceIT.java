@@ -91,7 +91,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
         assertThat(result)
             .isNotNull();
 
-        Claims body = jwtService.getTokenClaims(result.token()).getBody();
+        Claims body = jwtService.validateAndExtractClaimsFromAuthToken(result.token());
         String login = body.getSubject();
         List<String> roles = body.get("roles", List.class);
 
