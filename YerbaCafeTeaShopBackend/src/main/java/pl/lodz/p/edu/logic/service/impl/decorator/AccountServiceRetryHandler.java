@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.RequestScope;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
-import pl.lodz.p.edu.logic.model.NewContactData;
 import pl.lodz.p.edu.logic.service.api.AccountService;
 import pl.lodz.p.edu.logic.service.api.OwnAccountService;
 
@@ -58,7 +58,7 @@ class AccountServiceRetryHandler extends AbstractRetryHandler implements Account
     }
 
     @Override
-    public Account updateContactInformation(Long id, NewContactData newContactData) {
+    public Account updateContactInformation(Long id, Contact newContactData) {
         return repeatTransactionWhenTimeoutOccurred(() -> accountService.updateContactInformation(id, newContactData));
     }
 

@@ -14,13 +14,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.config.PostgresqlContainerSetup;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.dataaccess.model.entity.Address;
 import pl.lodz.p.edu.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.exception.*;
 import pl.lodz.p.edu.TestData;
 import pl.lodz.p.edu.exception.account.*;
-import pl.lodz.p.edu.logic.model.NewContactData;
 import pl.lodz.p.edu.logic.service.api.AccountService;
 import pl.lodz.p.edu.logic.service.api.OwnAccountService;
 
@@ -320,7 +320,10 @@ class AccountServiceIT extends PostgresqlContainerSetup {
         Long givenId = account.getId();
 
         String newFirstName = "newFirstName";
-        NewContactData newPersonalInfo = NewContactData.builder().firstName(newFirstName).build();
+        Contact newPersonalInfo = Contact.builder()
+            .firstName(newFirstName)
+            .address(Address.builder().build())
+            .build();
 
         //when
         Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
@@ -351,8 +354,19 @@ class AccountServiceIT extends PostgresqlContainerSetup {
         String newCity = "newCity";
         String newStreet = "newStreet";
         Integer newHouseNumber = 2;
-        NewContactData newPersonalInfo = new NewContactData(newFirstName, newLastName, newPostalCode,
-            newCountry, newCity, newStreet, newHouseNumber);
+        Address newAddress = Address.builder()
+            .postalCode(newPostalCode)
+            .country(newCountry)
+            .city(newCity)
+            .street(newStreet)
+            .houseNumber(newHouseNumber)
+            .build();
+
+        Contact newPersonalInfo = Contact.builder()
+            .firstName(newFirstName)
+            .lastName(newLastName)
+            .address(newAddress)
+            .build();
 
         //when
         Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
@@ -373,7 +387,7 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     void update_should_throw_AccountNotFoundException() {
         //given
         Long givenId = 1L;
-        NewContactData newInfo = NewContactData.builder().firstName("newFirstName").build();
+        Contact newInfo = Contact.builder().firstName("newFirstName").build();
 
         //when
         Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
@@ -396,7 +410,7 @@ class AccountServiceIT extends PostgresqlContainerSetup {
             return status;
         });
         Long givenId = account.getId();
-        NewContactData newInfo = NewContactData.builder().firstName("newFirstName").build();
+        Contact newInfo = Contact.builder().firstName("newFirstName").build();
 
         //when
         Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));

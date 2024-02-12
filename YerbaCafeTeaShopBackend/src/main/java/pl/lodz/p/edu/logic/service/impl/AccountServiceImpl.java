@@ -17,7 +17,6 @@ import pl.lodz.p.edu.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.exception.ApplicationExceptionFactory;
 import pl.lodz.p.edu.exception.SystemExceptionFactory;
 import pl.lodz.p.edu.exception.account.helper.AccountStateOperation;
-import pl.lodz.p.edu.logic.model.NewContactData;
 import pl.lodz.p.edu.logic.service.api.AccountService;
 import pl.lodz.p.edu.logic.service.api.OwnAccountService;
 import pl.lodz.p.edu.util.ExceptionUtil;
@@ -83,7 +82,7 @@ class AccountServiceImpl implements AccountService, OwnAccountService {
     }
 
     @Override
-    public Account updateContactInformation(Long id, NewContactData newContactData) {
+    public Account updateContactInformation(Long id, Contact newContactData) {
         Account account = accountRepository.findById(id)
             .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
 
@@ -270,16 +269,16 @@ class AccountServiceImpl implements AccountService, OwnAccountService {
         }
     }
 
-    private void updatePersonalInformation(Account account, NewContactData personalInformation) {
+    private void updatePersonalInformation(Account account, Contact personalInformation) {
         Contact contact = account.getContact();
 
-        setNullableValue(personalInformation.firstName(), contact::setFirstName);
-        setNullableValue(personalInformation.lastName(), contact::setLastName);
-        setNullableValue(personalInformation.postalCode(), contact::setPostalCode);
-        setNullableValue(personalInformation.country(), contact::setCountry);
-        setNullableValue(personalInformation.city(), contact::setCity);
-        setNullableValue(personalInformation.street(), contact::setStreet);
-        setNullableValue(personalInformation.houseNumber(), contact::setHouseNumber);
+        setNullableValue(personalInformation.getFirstName(), contact::setFirstName);
+        setNullableValue(personalInformation.getLastName(), contact::setLastName);
+        setNullableValue(personalInformation.getPostalCode(), contact::setPostalCode);
+        setNullableValue(personalInformation.getCountry(), contact::setCountry);
+        setNullableValue(personalInformation.getCity(), contact::setCity);
+        setNullableValue(personalInformation.getStreet(), contact::setStreet);
+        setNullableValue(personalInformation.getHouseNumber(), contact::setHouseNumber);
     }
 
     private void archiveAccount(Account account) {

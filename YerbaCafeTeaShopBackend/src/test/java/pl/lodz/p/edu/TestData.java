@@ -34,63 +34,64 @@ public class TestData {
     public static final AuthLogs defaultAuthLogs = AuthLogs.builder().unsuccessfulAuthCounter(0).build();
     public static final String defaultCreatedBy = "testUser";
     public static final String defaultPassword = "Student123!";
+    public static final Boolean defaultArchival = false;
 
     public static final String defaultFirstName = "FirstName";
     public static final String defaultLastName = "LastName";
 
-    public static Address buildFullAddress(String postalCode, String country, String city, String street,
-                                    Integer houseNumber, String createdBy) {
+    public static Address.AddressBuilder<?,?> getDefaultAddressBuilder() {
         return Address.builder()
-            .postalCode(postalCode)
-            .country(country)
-            .city(city)
-            .street(street)
-            .houseNumber(houseNumber)
-            .createdBy(createdBy)
-            .build();
+            .postalCode(defaultPostalCode)
+            .country(defaultCountry)
+            .city(defaultCity)
+            .street(defaultStreet)
+            .houseNumber(defaultHouseNumber)
+            .createdBy(defaultCreatedBy)
+            .isArchival(defaultArchival);
     }
 
-    public static Contact buildFullContact(String firstName, String lastName, Address address, String createdBy) {
+    public static Contact.ContactBuilder<?,?> getDefaultContactBuilder() {
         return Contact.builder()
-            .firstName(firstName)
-            .lastName(lastName)
-            .address(address)
-            .createdBy(createdBy)
-            .build();
+            .firstName(defaultFirstName)
+            .lastName(defaultLastName)
+            .address(buildDefaultAddress())
+            .createdBy(defaultCreatedBy)
+            .isArchival(defaultArchival);
     }
 
-    public static Account buildFullAccount(String login, String email, String password, String locale, Contact contact,
-                                    AccountState accountState, Set<AccountRole> accountRoles, String createdBy,
-                                           AuthLogs authLogs) {
+    public static Account.AccountBuilder<?,?> getDefaultAccountBuilder() {
         return Account.builder()
-            .login(login)
-            .email(email)
-            .password(password)
-            .locale(locale)
-            .contact(contact)
-            .accountState(accountState)
-            .accountRoles(accountRoles)
-            .createdBy(createdBy)
-            .authLogs(authLogs)
-            .build();
+            .login(defaultLogin)
+            .email(defaultEmail)
+            .password(defaultEncryptedPassword)
+            .locale(defaultLocale)
+            .contact(buildDefaultContact())
+            .accountState(defaultAccountState)
+            .accountRoles(defaultAccountRoles)
+            .createdBy(defaultCreatedBy)
+            .authLogs(defaultAuthLogs)
+            .isArchival(defaultArchival);
     }
 
 
     public static Address buildDefaultAddress() {
-        return buildFullAddress(defaultPostalCode, defaultCountry, defaultCity, defaultStreet, defaultHouseNumber,
-            defaultCreatedBy);
+        return getDefaultAddressBuilder()
+            .build();
     }
 
     public static Contact buildDefaultContact() {
-        return buildFullContact(defaultFirstName, defaultLastName, buildDefaultAddress(), defaultCreatedBy);
+        return getDefaultContactBuilder()
+            .build();
     }
 
     public static Account buildDefaultAccount() {
         String uniqueLogin = defaultLogin + counter;
         String uniqueEmail = defaultEmail + counter;
         counter++;
-        return buildFullAccount(uniqueLogin, uniqueEmail, defaultEncryptedPassword, defaultLocale, buildDefaultContact(),
-            defaultAccountState, defaultAccountRoles, defaultCreatedBy, defaultAuthLogs);
+        return getDefaultAccountBuilder()
+            .login(uniqueLogin)
+            .email(uniqueEmail)
+            .build();
     }
 
     public static AddressCreateDto buildDefaultAddressCreateDto() {

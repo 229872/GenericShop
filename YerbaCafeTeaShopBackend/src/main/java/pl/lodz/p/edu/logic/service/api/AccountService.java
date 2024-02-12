@@ -2,8 +2,8 @@ package pl.lodz.p.edu.logic.service.api;
 
 import org.springframework.data.domain.Pageable;
 import pl.lodz.p.edu.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.dataaccess.model.enumerated.AccountRole;
-import pl.lodz.p.edu.logic.model.NewContactData;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ public interface AccountService {
 
     Account create(Account account);
 
-    Account updateContactInformation(Long id, NewContactData newContactData);
+    Account updateContactInformation(Long id, Contact newContactData);
 
     Account block(Long id);
 
