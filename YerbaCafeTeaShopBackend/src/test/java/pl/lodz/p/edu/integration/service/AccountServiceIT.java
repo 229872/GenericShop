@@ -73,7 +73,7 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should return empty list")
-    void findAll_should_return_empty_list() {
+    void findAll_positive_1() {
         //given
 
         //when
@@ -86,14 +86,14 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should return list with elements")
-    void findAll_should_return_list_with_elements() {
+    void findAll_positive_2() {
         //given
-        Account[] accounts = {
+        Account[] givenAccounts = {
             TestData.buildDefaultAccount(),
             TestData.buildDefaultAccount()
         };
         txTemplate.execute(status -> {
-            Arrays.stream(accounts).forEach(account -> em.persist(account));
+            Arrays.stream(givenAccounts).forEach(account -> em.persist(account));
             return status;
         });
 
@@ -103,38 +103,38 @@ class AccountServiceIT extends PostgresqlContainerSetup {
         //then
         assertThat(result)
             .hasSize(2)
-            .containsExactly(accounts);
+            .containsExactly(givenAccounts);
     }
 
 
     @Test
     @DisplayName("Should return account if account with id is found")
-    void findById_should_return_account() {
+    void findById_positive_1() {
         //given
-        Account account = TestData.buildDefaultAccount();
+        Account givenAccount = TestData.buildDefaultAccount();
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
 
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.findById(givenId);
 
         //then
         assertThat(result)
-            .isEqualTo(account);
+            .isEqualTo(givenAccount);
     }
 
     @Test
     @DisplayName("Should throw AccountNotFoundException if account with id is not found")
-    void findById_should_throw_AccountNotFoundException() {
+    void findById_negative_1() {
         //given
         Long givenId = 1L;
 
         //when
-        Exception exception = catchException(() -> underTest.findById(1L));
+        Exception exception = catchException(() -> underTest.findById(givenId));
 
         //then
         assertThat(exception)
@@ -146,26 +146,26 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should return account if account with login is found")
-    void findByLogin_should_return_account() {
+    void findByLogin_positive_1() {
         //given
-        Account account = TestData.buildDefaultAccount();
+        Account givenAccount = TestData.buildDefaultAccount();
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        String givenLogin = account.getLogin();
+        String givenLogin = givenAccount.getLogin();
 
         //when
         Account result = underTest2.findByLogin(givenLogin);
 
         //then
         assertThat(result)
-            .isEqualTo(account);
+            .isEqualTo(givenAccount);
     }
 
     @Test
     @DisplayName("Should throw AccountNotFoundException if account with login is not found")
-    void findByLogin_should_throw_AccountNotFoundException() {
+    void findByLogin_negative_1() {
         //given
         String givenLogin = "login";
 
@@ -182,40 +182,43 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should create account")
-    void create_should_create_account() {
+    void create_positive_1() {
         //given
-        Account account = TestData.buildDefaultAccount();
+        Account givenAccount = TestData.buildDefaultAccount();
 
         //when
-        Account result = underTest.create(account);
+        Account result = underTest.create(givenAccount);
 
         //then
         assertThat(result)
-            .isEqualTo(account);
+            .isEqualTo(givenAccount);
 
         txTemplate.execute(status -> {
             List<Account> databaseAccounts = em.createQuery("from Account ", Account.class).getResultList();
 
             assertThat(databaseAccounts)
                 .hasSize(1)
-                .containsExactly(account);
+                .containsExactly(givenAccount);
             return status;
         });
     }
 
     @Test
     @DisplayName("Should throw CantCreateAccountWithManyRolesException when account has more than one role")
-    void create_should_throw_CantCreateAccountWithManyRolesException() {
+    void create_negative_1() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+                .accountRoles(givenRoles)
+                .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
 
         //when
-        Exception exception = catchException(() -> underTest.create(account));
+        Exception exception = catchException(() -> underTest.create(givenAccount));
 
         //then
         assertThat(exception)
@@ -227,13 +230,15 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantAssignGuestRoleException when account has guest role")
-    void create_should_throw_CantAssignGuestRoleException() {
+    void create_negative_2() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.GUEST)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.GUEST));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+                .accountRoles(givenRoles)
+                .build();
 
         //when
-        Exception exception = catchException(() -> underTest.create(account));
+        Exception exception = catchException(() -> underTest.create(givenAccount));
 
         //then
         assertThat(exception)
@@ -245,13 +250,14 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantCreateAccountWithNotVerifiedStatusException when account is not verified")
-    void create_should_throw_CantCreateAccountWithNotVerifiedStatusException() {
+    void create_negative_3() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountState(AccountState.NOT_VERIFIED);
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+                .accountState(AccountState.NOT_VERIFIED)
+                    .build();
 
         //when
-        Exception exception = catchException(() -> underTest.create(account));
+        Exception exception = catchException(() -> underTest.create(givenAccount));
 
         //then
         assertThat(exception)
@@ -263,16 +269,17 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountLoginConflictException when new Account has same login")
-    void create_should_throw_account_login_conflict_exception() {
+    void create_negative_4() {
         //given
-        Account account = TestData.buildDefaultAccount();
+        Account givenAccount = TestData.buildDefaultAccount();
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
 
-        Account accountWithConflictLogin = TestData.buildDefaultAccount();
-        accountWithConflictLogin.setLogin(account.getLogin());
+        Account accountWithConflictLogin = TestData.getDefaultAccountBuilder()
+            .login(givenAccount.getLogin())
+            .build();
 
         //when
         Exception exception = catchException(() -> underTest.create(accountWithConflictLogin));
@@ -286,16 +293,17 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountEmailConflictException when new Account has same email")
-    void create_should_throw_account_email_conflict_exception() {
+    void create_negative_5() {
         //given
-        Account account = TestData.buildDefaultAccount();
+        Account givenAccount = TestData.buildDefaultAccount();
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
 
-        Account accountWithConflictEmail = TestData.buildDefaultAccount();
-        accountWithConflictEmail.setEmail(account.getEmail());
+        Account accountWithConflictEmail = TestData.getDefaultAccountBuilder()
+            .email(givenAccount.getEmail())
+            .build();
 
         //when
         Exception exception = catchException(() -> underTest.create(accountWithConflictEmail));
@@ -308,16 +316,16 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     }
 
     @Test
-    @DisplayName("Should update found account without one value")
-    void update_should_modify_one_value() {
+    @DisplayName("Should update found account with one value")
+    void update_positive_1() {
         //given
-        Account account = TestData.buildDefaultAccount();
+        Account givenAccount = TestData.buildDefaultAccount();
 
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         String newFirstName = "newFirstName";
         Contact newPersonalInfo = Contact.builder()
@@ -333,19 +341,19 @@ class AccountServiceIT extends PostgresqlContainerSetup {
             .isEqualTo(newFirstName);
 
         assertThat(result.getContact().getLastName())
-            .isEqualTo(account.getContact().getLastName());
+            .isEqualTo(givenAccount.getContact().getLastName());
     }
 
     @Test
     @DisplayName("Should update found account without all values")
-    void update_should_modify_all_values() {
+    void update_positive_2() {
         //given
-        Account account = TestData.buildDefaultAccount();
+        Account givenAccount = TestData.buildDefaultAccount();
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         String newFirstName = "newFirstName";
         String newLastName = "newLastName";
@@ -354,6 +362,7 @@ class AccountServiceIT extends PostgresqlContainerSetup {
         String newCity = "newCity";
         String newStreet = "newStreet";
         Integer newHouseNumber = 2;
+
         Address newAddress = Address.builder()
             .postalCode(newPostalCode)
             .country(newCountry)
@@ -384,10 +393,13 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountNotFoundException when account can't be found during update")
-    void update_should_throw_AccountNotFoundException() {
+    void update_negative_1() {
         //given
         Long givenId = 1L;
-        Contact newInfo = Contact.builder().firstName("newFirstName").build();
+        Contact newInfo = Contact.builder()
+            .firstName("newFirstName")
+            .address(Address.builder().build())
+            .build();
 
         //when
         Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
@@ -401,16 +413,19 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
-    void update_should_throw_CantModifyArchivalAccountException() {
+    void update_negative_2() {
         //given
-        Account account = TestData.buildDefaultAccount();
+        Account givenAccount = TestData.buildDefaultAccount();
         txTemplate.execute(status -> {
-            em.persist(account);
-            account.setArchival(true);
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
             return status;
         });
-        Long givenId = account.getId();
-        Contact newInfo = Contact.builder().firstName("newFirstName").build();
+        Long givenId = givenAccount.getId();
+        Contact newInfo = Contact.builder()
+            .firstName("newFirstName")
+            .address(Address.builder().build())
+            .build();
 
         //when
         Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
@@ -424,15 +439,17 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should block active account")
-    void block_should_block_active_account() {
+    void block_positive_1() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountState(AccountState.ACTIVE);
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountState(AccountState.ACTIVE)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.block(givenId);
@@ -443,7 +460,7 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountNotFoundException when account is not found")
-    void block_should_throw_AccountNotfoundException() {
+    void block_negative_1() {
         //given
         Long givenId = 1L;
 
@@ -460,17 +477,17 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
-    void block_should_throw_CantModifyArchivalAccountException_when_account_is_archival() {
+    void block_negative_2() {
         //given
-        Account account = TestData.buildDefaultAccount();
+        Account givenAccount = TestData.buildDefaultAccount();
 
         txTemplate.execute(status -> {
-            em.persist(account);
-            account.setArchival(true);
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
             return status;
         });
 
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
@@ -485,16 +502,17 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is not verified")
-    void block_should_throw_OperationNotAllowedWithActualAccountStateException_when_account_is_not_verified() {
+    void block_negative_3() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountState(AccountState.NOT_VERIFIED);
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountState(AccountState.NOT_VERIFIED)
+            .build();
 
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
@@ -509,16 +527,17 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is blocked")
-    void block_should_throw_OperationNotAllowedWithActualAccountStateException_when_account_is_blocked() {
+    void block_negative_4() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountState(AccountState.BLOCKED);
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountState(AccountState.BLOCKED)
+            .build();
 
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
@@ -533,16 +552,17 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should unblock blocked account")
-    void unblock_should_unblock_blocked_account() {
+    void unblock_positive_1() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountState(AccountState.BLOCKED);
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountState(AccountState.BLOCKED)
+            .build();
 
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.unblock(givenId);
@@ -553,7 +573,7 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountNotFoundException when account can't be found")
-    void unblock_should_throw_AccountNotFoundException() {
+    void unblock_negative_1() {
         //given
         Long givenId = 1L;
 
@@ -571,16 +591,16 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
-    void unblock_should_throw_CantModifyArchivalAccountException_when_account_is_archival() {
+    void unblock_negative_2() {
         //given
-        Account account = TestData.buildDefaultAccount();
+        Account givenAccount = TestData.buildDefaultAccount();
 
         txTemplate.execute(status -> {
-            em.persist(account);
-            account.setArchival(true);
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
@@ -595,16 +615,17 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is not verified")
-    void unblock_should_throw_OperationNotAllowedWithActualAccountStateException_when_account_is_not_verified() {
+    void unblock_negative_3() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountState(AccountState.NOT_VERIFIED);
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountState(AccountState.NOT_VERIFIED)
+            .build();
 
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
@@ -619,16 +640,17 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is active")
-    void unblock_should_throw_OperationNotAllowedWithActualAccountStateException_when_account_is_active() {
+    void unblock_negative_4() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountState(AccountState.ACTIVE);
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountState(AccountState.ACTIVE)
+            .build();
 
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
@@ -643,16 +665,17 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should archive active account")
-    void archive_should_archive_active_account() {
+    void archive_positive_1() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountState(AccountState.ACTIVE);
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountState(AccountState.ACTIVE)
+            .build();
 
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.archive(givenId);
@@ -663,7 +686,7 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountNotFoundException when account can't be found during archive")
-    void archive_should_throw_AccountNotFoundException() {
+    void archive_negative_1() {
         //given
         Long givenId = 1L;
 
@@ -680,16 +703,16 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantModifyArchivalAccountException when account is already archival")
-    void archive_should_throw_CantModifyArchivalAccountException() {
+    void archive_negative_2() {
         //given
-        Account account = TestData.buildDefaultAccount();
+        Account givenAccount = TestData.buildDefaultAccount();
 
         txTemplate.execute(status -> {
-            em.persist(account);
-            account.setArchival(true);
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.archive(givenId));
@@ -704,15 +727,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should add role when account with provided id is found")
-    void addRole_should_add_new_role() {
+    void addRole_positive_1() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.addRole(givenId, AccountRole.EMPLOYEE);
@@ -725,7 +751,7 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountNotFoundException when account can't be found")
-    void addRole_should_throw_AccountNotFoundException() {
+    void addRole_negative_1() {
         //given
         Long givenId = 1L;
 
@@ -742,16 +768,19 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
-    void addRole_should_throw_CantModifyArchivalAccountException() {
+    void addRole_negative_2() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
-            account.setArchival(true);
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.EMPLOYEE));
@@ -766,15 +795,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountRoleAlreadyAssignedException when account already has new role")
-    void addRole_should_throw_AccountRoleAlreadyAssignedException() {
+    void addRole_negative_3() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.CLIENT));
@@ -789,15 +821,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantAssignGuestRoleException when new role is Guest")
-    void addRole_should_throw_CantAssignGuestRoleException() {
+    void addRole_negative_4() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.GUEST));
@@ -812,15 +847,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountWithAdministratorRoleCantHaveMoreRolesException when account has Administrator role and there is try to add another one")
-    void addRole_should_throw_AccountWithAdministratorRoleCantHaveMoreRolesException_when_Admin_is_already_assigned() {
+    void addRole_negative_5() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.ADMIN)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.ADMIN));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.CLIENT));
@@ -835,15 +873,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountWithAdministratorRoleCantHaveMoreRolesException when account hasn't got Administrator role and there is try to add Administrator role to an account")
-    void addRole_should_throw_AccountWithAdministratorRoleCantHaveMoreRolesException_when_there_is_try_to_add_Admin_role() {
+    void addRole_negative_6() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.ADMIN));
@@ -858,15 +899,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should remove role assigned to account")
-    void removeRole_should_remove_role() {
+    void removeRole_positive_1() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.removeRole(givenId, AccountRole.CLIENT);
@@ -879,7 +923,7 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountNotFoundException when account with provided id can't be found")
-    void removeRole_should_throw_AccountNotFoundException() {
+    void removeRole_negative_1() {
         //given
         Long givenId = 1L;
 
@@ -896,16 +940,19 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantModifyArchivalAccountException when found account is archival")
-    void removeRole_should_throw_CantModifyArchivalAccountException() {
+    void removeRole_negative_2() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
-            account.setArchival(true);
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
@@ -920,15 +967,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountRoleNotFoundException when account doesn't have role we want to remove")
-    void removeRole_should_throw_AccountRoleNotFoundException() {
+    void removeRole_negative_3() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.ADMIN));
@@ -943,15 +993,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantRemoveLastRoleException when account has last role")
-    void removeRole_should_throw_CantRemoveLastRoleException() {
+    void removeRole_negative_4() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
@@ -966,15 +1019,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should change role")
-    void changeRole_should_change_role() {
+    void changeRole_positive_1() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.changeRole(givenId, AccountRole.EMPLOYEE);
@@ -987,7 +1043,7 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountNotFoundException when account with provided id can't be found")
-    void changeRole_should_throw_AccountNotFoundException() {
+    void changeRole_negative_1() {
         //given
         Long givenId = 1L;
 
@@ -1004,16 +1060,19 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantModifyArchivalAccountException when found account is archival")
-    void changeRole_should_throw_CantModifyArchivalAccountException() {
+    void changeRole_negative_2() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
-            account.setArchival(true);
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
@@ -1028,15 +1087,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantChangeRoleIfMoreThanOneAlreadyAssignedException when account has more than one role")
-    void changeRole_should_throw_CantChangeRoleIfMoreThanOneAlreadyAssignedException() {
+    void changeRole_negative_3() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
@@ -1051,15 +1113,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountRoleAlreadyAssignedException when account has new role already assigned")
-    void changeRole_should_throw_AccountRoleAlreadyAssignedException() {
+    void changeRole_negative_4() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.EMPLOYEE)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.EMPLOYEE));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
@@ -1074,15 +1139,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantAssignGuestRoleException when account has new role already assigned")
-    void changeRole_should_throw_CantAssignGuestRoleException() {
+    void changeRole_negative_5() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.EMPLOYEE)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.EMPLOYEE));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
-        Long givenId = account.getId();
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.GUEST));
