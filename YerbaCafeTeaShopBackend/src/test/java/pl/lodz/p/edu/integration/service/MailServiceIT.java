@@ -35,8 +35,9 @@ public class MailServiceIT extends PostgresqlContainerSetup {
     }
 
     @EnabledIf(value = "isMailSet")
+    @DisplayName("Should send simple text email message")
     @Test
-    void sendSimpleMessage() {
+    void sendSimpleMessage_positive_1() {
         //given
         String givenRecipientEmail = environment.getProperty("spring.mail.username");
         String givenSubject = "Subject";
@@ -51,8 +52,9 @@ public class MailServiceIT extends PostgresqlContainerSetup {
     }
 
     @EnabledIf(value = "isMailSet")
+    @DisplayName("Should send html email message")
     @Test
-    void sendHtmlMessage() {
+    void sendHtmlMessage_positive_2() {
         //given
         String givenRecipientEmail = environment.getProperty("spring.mail.username");
         String givenSubject = "Subject";
@@ -78,8 +80,9 @@ public class MailServiceIT extends PostgresqlContainerSetup {
     }
 
     @ParameterizedTest
+    @DisplayName("Should send html email message with verification token")
     @ValueSource(strings = {"pl", "en"})
-    void sendVerificationMail(String locale) {
+    void sendVerificationMail_positive_3(String locale) {
         Assumptions.assumeTrue(isMailSet(), "Mail properties are not set, so there is no need to test sending mails");
 
         //given
