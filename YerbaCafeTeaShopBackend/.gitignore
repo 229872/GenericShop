@@ -36,3 +36,4 @@ build/
 .env
 
 config/
+!/src/**/config
