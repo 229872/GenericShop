@@ -75,17 +75,20 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
     @Test
     @DisplayName("Should return jwt token with account login in subject and roles in claims when account can be found and credentials are correct")
     @SuppressWarnings("unchecked")
-    void authenticate_should_return_jwt_token() {
+    void authenticate_positive_1() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
 
         //when
-        JwtTokens result = underTest.authenticate(account.getLogin(), TestData.defaultPassword);
+        JwtTokens result = underTest.authenticate(givenAccount.getLogin(), TestData.defaultPassword);
 
         //then
         assertThat(result)
@@ -97,21 +100,24 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
 
         assertThat(login)
             .isNotNull()
-            .isEqualTo(account.getLogin());
+            .isEqualTo(givenAccount.getLogin());
 
         assertThat(roles)
-            .isEqualTo(account.getAccountRoles().stream().map(AccountRole::name).toList());
+            .isEqualTo(givenAccount.getAccountRoles().stream().map(AccountRole::name).toList());
     }
 
     @Test
     @DisplayName("Should throw InvalidCredentialsException when login is incorrect")
-    void authenticate_should_throw_InvalidCredentialException_when_login_is_incorrect() {
+    void authenticate_negative_1() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         String givenWrongLogin = "wrongLogin";
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
 
@@ -128,18 +134,21 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw InvalidCredentialsException when password is incorrect")
-    void authenticate_should_throw_InvalidCredentialException_when_password_is_incorrect() {
+    void authenticate_negative_2() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         String givenWrongPassword = "wrongPassword";
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
 
         //when
-        Exception exception = catchException(() -> underTest.authenticate(account.getLogin(), givenWrongPassword));
+        Exception exception = catchException(() -> underTest.authenticate(givenAccount.getLogin(), givenWrongPassword));
 
         //then
         assertThat(exception)
@@ -151,18 +160,21 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantAccessArchivalAccountException when account is archival")
-    void authenticate_should_throw_CantAccessArchivalAccountException_when_account_is_archival() {
+    void authenticate_negative_3() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .build();
+
         txTemplate.execute(status -> {
-            em.persist(account);
-            account.setArchival(true);
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
             return status;
         });
 
         //when
-        Exception exception = catchException(() -> underTest.authenticate(account.getLogin(), TestData.defaultPassword));
+        Exception exception = catchException(() -> underTest.authenticate(givenAccount.getLogin(), TestData.defaultPassword));
 
         //then
         assertThat(exception)
@@ -174,19 +186,21 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantAccessNotVerifiedAccountException when account is NOT_VERIFIED")
-    void authenticate_should_throw_CantAccessNotVerifiedAccountException_when_account_is_NOT_VERIFIED() {
+    void authenticate_negative_4() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
-        account.setAccountState(AccountState.NOT_VERIFIED);
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .accountState(AccountState.NOT_VERIFIED)
+            .build();
 
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
 
         //when
-        Exception exception = catchException(() -> underTest.authenticate(account.getLogin(), TestData.defaultPassword));
+        Exception exception = catchException(() -> underTest.authenticate(givenAccount.getLogin(), TestData.defaultPassword));
 
         //then
         assertThat(exception)
@@ -198,19 +212,21 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantAccessBlockedAccountException when account is BLOCKED")
-    void authenticate_should_throw_CantAccessBlockedAccountException_when_account_is_BLOCKED() {
+    void authenticate_negative_5() {
         //given
-        Account account = TestData.buildDefaultAccount();
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
-        account.setAccountState(AccountState.BLOCKED);
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountRoles(givenRoles)
+            .accountState(AccountState.BLOCKED)
+            .build();
 
         txTemplate.execute(status -> {
-            em.persist(account);
+            em.persist(givenAccount);
             return status;
         });
 
         //when
-        Exception exception = catchException(() -> underTest.authenticate(account.getLogin(), TestData.defaultPassword));
+        Exception exception = catchException(() -> underTest.authenticate(givenAccount.getLogin(), TestData.defaultPassword));
 
         //then
         assertThat(exception)
