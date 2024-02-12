@@ -22,7 +22,7 @@ import javax.sql.DataSource;
 )
 public class AccountsModuleConnectionConfig implements JpaConfigurable {
 
-    public static final String PROPERTIES_ROOT = "db.datasource.accounts-module";
+    public static final String PROPERTIES_ROOT = "app.db.datasource.accounts-module";
 
     @Override
     @ConfigurationProperties(PROPERTIES_ROOT)

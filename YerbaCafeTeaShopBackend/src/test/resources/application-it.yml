@@ -1,19 +1,3 @@
-db:
-  datasource:
-    init-module:
-      persistence-unit-name: initPU
-      jpa:
-        database-action: drop_and_create
-      sql:
-        enable: true
-        data-locations:
-          - script/permissions.sql
-
-    accounts-module:
-      persistence-unit-name: accountsPU
-      username: shop_accounts
-      password: dbaccounts
-
 testcontainers:
   reuse:
     enable: true
@@ -22,14 +6,29 @@ app:
   auth:
     unsuccessful_attempts: 3
     blockade_time_in_minutes: 1
+  db:
+    datasource:
+      init-module:
+        persistence-unit-name: initPU
+        jpa:
+          database-action: drop_and_create
+        sql:
+          enable: true
+          data-locations:
+            - script/permissions.sql
 
-security:
-  auth-token:
-    timeout_in_minutes: 10
-    key: "QVPfPDLb5oWroAliIN0nvROgcqbx+c3BtqKJeacgxMQXJqSDNYqMIVobkUANxAM85o4CCfcp/E/u8pKwcmmbryJy+FRIVT8iGeTUI2uRH8c="
-  refresh_token:
-    timeout_in_minutes: 1140
-    key: "SbukNWysYjebgzpFLx0Ax21RnASrRa03JzBzZ8JRYsrOeECSUl2WkI0AxW3DkAscvslkKW6R0hk57uIoDhZ06+GZV9z880zMiypIQGgcMn0="
+      accounts-module:
+        persistence-unit-name: accountsPU
+        username: shop_accounts
+        password: dbaccounts
+
+  security:
+    auth-token:
+      timeout_in_minutes: 10
+      key: "QVPfPDLb5oWroAliIN0nvROgcqbx+c3BtqKJeacgxMQXJqSDNYqMIVobkUANxAM85o4CCfcp/E/u8pKwcmmbryJy+FRIVT8iGeTUI2uRH8c="
+    refresh_token:
+      timeout_in_minutes: 1140
+      key: "SbukNWysYjebgzpFLx0Ax21RnASrRa03JzBzZ8JRYsrOeECSUl2WkI0AxW3DkAscvslkKW6R0hk57uIoDhZ06+GZV9z880zMiypIQGgcMn0="
 
 spring:
   config:
@@ -41,3 +40,14 @@ spring:
     password: #provide property locally
     properties:
       mail.smtp.starttls.enable: true
+  docker:
+    compose:
+      enabled: false
+
+server:
+  port: 8080
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: classpath:https_private_key.p12
+    key-store-password:

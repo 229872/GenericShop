@@ -23,12 +23,15 @@ public interface DataSourceConfigurable {
      * @apiNote Override this method and annotate with @Bean with unique name and use @Qualifier for parameters
      */
     default DataSource dataSourceBean(DataSourceProperties properties) {
-        return DataSourceBuilder.create()
+        HikariDataSource dataSource = DataSourceBuilder.create()
             .type(HikariDataSource.class)
             .url(properties.getUrl())
             .username(properties.getUsername())
             .password(properties.getPassword())
             .build();
+
+        dataSource.setPoolName("%s-POOL".formatted(properties.getPersistenceUnitName()));
+        return dataSource;
     }
 
     /**

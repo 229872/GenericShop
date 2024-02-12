@@ -9,13 +9,13 @@ import pl.lodz.p.edu.config.database.property.JwtProperties;
 public class JwtConfig {
 
     @Bean(name = "authTokenProperties")
-    @ConfigurationProperties("security.auth-token")
+    @ConfigurationProperties("app.security.auth-token")
     public JwtProperties tokenProperties() {
         return new JwtProperties();
     }
 
     @Bean(name = "refreshTokenProperties")
-    @ConfigurationProperties("security.refresh-token")
+    @ConfigurationProperties("app.security.refresh-token")
     public JwtProperties refreshTokenProperties() {
         return new JwtProperties();
     }

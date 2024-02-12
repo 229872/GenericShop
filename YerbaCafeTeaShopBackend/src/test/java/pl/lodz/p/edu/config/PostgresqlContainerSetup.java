@@ -23,10 +23,10 @@ public abstract class PostgresqlContainerSetup {
 
     @DynamicPropertySource
     private static void testPropertiesForPostgresql(DynamicPropertyRegistry registry) {
-        registry.add("db.datasource.init-module.url", database::getJdbcUrl);
-        registry.add("db.datasource.init-module.username", database::getUsername);
-        registry.add("db.datasource.init-module.password", database::getPassword);
-        registry.add("db.datasource.accounts-module.url", database::getJdbcUrl);
+        registry.add("app.db.datasource.init-module.url", database::getJdbcUrl);
+        registry.add("app.db.datasource.init-module.username", database::getUsername);
+        registry.add("app.db.datasource.init-module.password", database::getPassword);
+        registry.add("app.db.datasource.accounts-module.url", database::getJdbcUrl);
     }
 
 }

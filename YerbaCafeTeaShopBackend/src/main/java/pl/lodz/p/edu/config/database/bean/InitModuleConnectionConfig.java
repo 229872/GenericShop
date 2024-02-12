@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 )
 public class InitModuleConnectionConfig implements JpaConfigurable {
 
-    public static final String PROPERTIES_ROOT = "db.datasource.init-module";
+    public static final String PROPERTIES_ROOT = "app.db.datasource.init-module";
 
     @Override
     @ConfigurationProperties(PROPERTIES_ROOT)
