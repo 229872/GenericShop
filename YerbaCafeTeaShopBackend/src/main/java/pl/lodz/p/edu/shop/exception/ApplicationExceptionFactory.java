@@ -1,0 +1,104 @@
+package pl.lodz.p.edu.shop.exception;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.springframework.web.server.ResponseStatusException;
+import pl.lodz.p.edu.shop.exception.account.*;
+import pl.lodz.p.edu.shop.exception.account.helper.AccountStateOperation;
+import pl.lodz.p.edu.shop.exception.auth.*;
+import pl.lodz.p.edu.shop.exception.other.UnknownException;
+import pl.lodz.p.edu.shop.exception.transaction.TransactionTimeoutException;
+
+import static org.springframework.http.HttpStatus.*;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class ApplicationExceptionFactory {
+
+    public static ResponseStatusException createUnknownException() {
+        return new UnknownException(INTERNAL_SERVER_ERROR, ExceptionMessage.UNKNOWN);
+    }
+
+    public static ResponseStatusException createTransactionTimeoutException() {
+        return new TransactionTimeoutException(GATEWAY_TIMEOUT, ExceptionMessage.TRANSACTION_TIMEOUT);
+    }
+
+     public static ResponseStatusException createAccountNotFoundException() {
+        return new AccountNotFoundException(NOT_FOUND, ExceptionMessage.ACCOUNT_NOT_FOUND);
+    }
+
+    public static ResponseStatusException createAccountLoginConflictException() {
+        return new AccountLoginConflictException(CONFLICT, ExceptionMessage.ACCOUNT_CONFLICT_LOGIN);
+    }
+
+    public static ResponseStatusException createAccountEmailConflictException() {
+        return new AccountEmailConflictException(CONFLICT, ExceptionMessage.ACCOUNT_CONFLICT_EMAIL);
+    }
+
+    public static ResponseStatusException createOperationNotAllowedWithActualAccountStateException(AccountStateOperation operation) {
+        String message = switch (operation) {
+            case BLOCK -> ExceptionMessage.ACCOUNT_NOT_ACTIVE;
+            case UNBLOCK -> ExceptionMessage.ACCOUNT_NOT_BLOCKED;
+        };
+        return new OperationNotAllowedWithActualAccountStateException(BAD_REQUEST, message);
+    }
+
+    public static ResponseStatusException createCantModifyArchivalAccountException() {
+        return new CantModifyArchivalAccountException(BAD_REQUEST, ExceptionMessage.ACCOUNT_ARCHIVAL);
+    }
+
+    public static ResponseStatusException createCantRemoveLastRoleException() {
+        return new CantRemoveLastRoleException(BAD_REQUEST, ExceptionMessage.ACCOUNT_LAST_ROLE);
+    }
+
+    public static ResponseStatusException createAccountRoleAlreadyAssignedException() {
+        return new AccountRoleAlreadyAssignedException(BAD_REQUEST, ExceptionMessage.ACCOUNT_ROLE_ALREADY_ASSIGNED);
+    }
+
+    public static ResponseStatusException createAccountWithAdministratorRoleCantHaveMoreRolesException() {
+        return new AccountWithAdministratorRoleCantHaveMoreRolesException(BAD_REQUEST, ExceptionMessage.ACCOUNT_ROLE_ADMIN_MANY_ROLES);
+    }
+
+    public static ResponseStatusException createAccountRoleNotFoundException() {
+        return new AccountRoleNotFoundException(BAD_REQUEST, ExceptionMessage.ACCOUNT_ROLE_NOT_FOUND);
+    }
+
+    public static ResponseStatusException createCantChangeRoleIfMoreThanOneAlreadyAssignedException() {
+        return new CantChangeRoleIfMoreThanOneAlreadyAssignedException(BAD_REQUEST, ExceptionMessage.ACCOUNT_ROLE_MORE_THAN_ONE);
+    }
+
+    public static ResponseStatusException createCantAssignGuestRoleException() {
+        return new CantAssignGuestRoleException(BAD_REQUEST, ExceptionMessage.ACCOUNT_ROLE_CANT_ASSIGN_GUEST);
+    }
+
+    public static ResponseStatusException createCantCreateAccountWithManyRolesException() {
+        return new CantCreateAccountWithManyRolesException(BAD_REQUEST, ExceptionMessage.ACCOUNT_CREATE_MANY_ROLES);
+    }
+
+    public static ResponseStatusException createCantCreateAccountWithNotVerifiedStatusException() {
+        return new CantCreateAccountWithNotVerifiedStatusException(BAD_REQUEST, ExceptionMessage.ACCOUNT_CREATE_CANT_ASSIGN_NOT_VERIFIED);
+    }
+
+    public static ResponseStatusException createInvalidCredentialsException() {
+        return new InvalidCredentialsException(UNAUTHORIZED, ExceptionMessage.INVALID_CREDENTIALS);
+    }
+
+    public static ResponseStatusException createCantAccessArchivalAccountException() {
+        return new CantAccessArchivalAccountException(UNAUTHORIZED, ExceptionMessage.AUTH_ACCOUNT_ARCHIVAL);
+    }
+
+    public static ResponseStatusException createCantAccessBlockedAccountException() {
+        return new CantAccessBlockedAccountException(UNAUTHORIZED, ExceptionMessage.AUTH_ACCOUNT_BLOCKED);
+    }
+
+    public static ResponseStatusException createCantAccessNotVerifiedAccountException() {
+        return new CantAccessNotVerifiedAccountException(UNAUTHORIZED, ExceptionMessage.AUTH_ACCOUNT_NOT_VERIFIED);
+    }
+
+    public static ResponseStatusException createExpiredRefreshTokenException() {
+        return new ExpiredRefreshTokenException(UNAUTHORIZED, ExceptionMessage.AUTH_TOKEN_REFRESH_EXPIRED);
+    }
+
+    public static ResponseStatusException createInvalidRefreshTokenException() {
+        return new InvalidRefreshTokenException(UNAUTHORIZED, ExceptionMessage.AUTH_TOKEN_REFRESH_INVALID);
+    }
+}
