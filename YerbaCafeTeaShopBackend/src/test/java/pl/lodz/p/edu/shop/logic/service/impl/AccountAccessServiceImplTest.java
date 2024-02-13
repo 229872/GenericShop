@@ -7,12 +7,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.shop.TestData;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.shop.exception.ExceptionMessage;
 import pl.lodz.p.edu.shop.exception.account.AccountNotFoundException;
+import pl.lodz.p.edu.shop.exception.auth.InvalidCredentialsException;
 
 import java.util.Locale;
 import java.util.Optional;
@@ -28,6 +30,9 @@ class AccountAccessServiceImplTest {
 
     @Mock
     private AccountRepository accountRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private AccountAccessServiceImpl underTest;
@@ -113,6 +118,9 @@ class AccountAccessServiceImplTest {
         Exception exception = catchException(() -> underTest.updateOwnLocale(givenLogin, givenLocale));
 
         //then
+        then(accountRepository).should().findByLogin(givenLogin);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isInstanceOf(ResponseStatusException.class)
@@ -121,6 +129,79 @@ class AccountAccessServiceImplTest {
     }
 
     @Test
-    void changePassword() {
+    @DisplayName("Should change password if account can be found and current password matches")
+    void changePassword_positive_1() {
+        //given
+        Account givenAccount = TestData.buildDefaultAccount();
+        String givenLogin = givenAccount.getLogin();
+        String givenPassword = givenAccount.getPassword();
+        String newPassword = "newPassword123";
+
+        given(accountRepository.findByLogin(givenLogin)).willReturn(Optional.of(givenAccount));
+        given(passwordEncoder.matches(TestData.defaultPassword, givenPassword)).willReturn(true);
+        given(passwordEncoder.encode(newPassword)).willReturn(newPassword);
+        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
+        //when
+        Account result = underTest.changePassword(givenLogin, TestData.defaultPassword, newPassword);
+
+        //then
+        then(accountRepository).should().findByLogin(givenLogin);
+        then(passwordEncoder).should().matches(TestData.defaultPassword, givenPassword);
+        then(passwordEncoder).should().encode(newPassword);
+        then(accountRepository).should().save(givenAccount);
+
+        assertThat(result.getPassword())
+            .isNotEqualTo(givenPassword)
+            .isEqualTo(newPassword);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotFoundException when account can't be found")
+    void changePassword_negative_1() {
+        //given
+        String givenLogin = "login";
+
+        given(accountRepository.findByLogin(givenLogin)).willReturn(Optional.empty());
+
+        //when
+        Exception exception = catchException(() -> underTest.findByLogin(givenLogin));
+
+        //then
+        then(accountRepository).should().findByLogin(givenLogin);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isInstanceOf(ResponseStatusException.class)
+            .isExactlyInstanceOf(AccountNotFoundException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Should throw InvalidCredentialsException when credentials missmatch")
+    void changePassword_negative_2() {
+        //given
+        Account givenAccount = TestData.buildDefaultAccount();
+        String givenLogin = givenAccount.getLogin();
+        String givenPassword = givenAccount.getPassword();
+        String newPassword = "newPassword123";
+
+        given(accountRepository.findByLogin(givenLogin)).willReturn(Optional.of(givenAccount));
+        given(passwordEncoder.matches(TestData.defaultPassword, givenPassword)).willReturn(false);
+
+        //when
+        Exception exception = catchException(() -> underTest.changePassword(givenLogin, TestData.defaultPassword, newPassword));
+
+        //then
+        then(accountRepository).should().findByLogin(givenLogin);
+        then(passwordEncoder).should().matches(TestData.defaultPassword, givenPassword);
+        then(passwordEncoder).shouldHaveNoMoreInteractions();
+
+        assertThat(exception)
+            .isNotNull()
+            .isInstanceOf(ResponseStatusException.class)
+            .isExactlyInstanceOf(InvalidCredentialsException.class)
+            .hasMessageContaining(ExceptionMessage.INVALID_CREDENTIALS);
     }
 }

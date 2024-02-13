@@ -1,13 +1,11 @@
 package pl.lodz.p.edu.shop.integration.service;
 
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -17,6 +15,7 @@ import pl.lodz.p.edu.shop.config.PostgresqlContainerSetup;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.exception.ExceptionMessage;
 import pl.lodz.p.edu.shop.exception.account.AccountNotFoundException;
+import pl.lodz.p.edu.shop.exception.auth.InvalidCredentialsException;
 import pl.lodz.p.edu.shop.logic.service.api.AccountAccessService;
 
 import java.util.Locale;
@@ -31,6 +30,9 @@ public class AccountAccessServiceIT extends PostgresqlContainerSetup {
 
     @Autowired
     private AccountAccessService underTest;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     @Qualifier("accountsModTxManager")
@@ -139,6 +141,69 @@ public class AccountAccessServiceIT extends PostgresqlContainerSetup {
     }
 
     @Test
-    void changePassword() {
+    @DisplayName("Should change password if account can be found and current password matches")
+    void changePassword_positive_1() {
+        //given
+        Account givenAccount = TestData.buildDefaultAccount();
+        String givenLogin = givenAccount.getLogin();
+        String givenPassword = givenAccount.getPassword();
+        String newPassword = "newPassword123";
+
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+
+        //when
+        Account result = underTest.changePassword(givenLogin, TestData.defaultPassword, newPassword);
+
+        //then
+        assertThat(result.getPassword())
+            .isNotEqualTo(givenPassword);
+
+        Assertions.assertTrue(passwordEncoder.matches(newPassword, result.getPassword()));
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotFoundException when account can't be found")
+    void changePassword_negative_1() {
+        //given
+        String givenLogin = "login";
+        String newPassword = "newPassword123";
+
+        //when
+        Exception exception = catchException(() -> underTest.changePassword(givenLogin, TestData.defaultPassword, newPassword));
+
+        //then
+        assertThat(exception)
+            .isNotNull()
+            .isInstanceOf(ResponseStatusException.class)
+            .isExactlyInstanceOf(AccountNotFoundException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Should throw InvalidCredentialsException when credentials missmatch")
+    void changePassword_negative_2() {
+        //given
+        Account givenAccount = TestData.buildDefaultAccount();
+        String givenLogin = givenAccount.getLogin();
+        String newPassword = "newPassword123";
+        String wrongPassword = "wrongPassword";
+
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+
+        //when
+        Exception exception = catchException(() -> underTest.changePassword(givenLogin, wrongPassword, newPassword));
+
+        //then
+        assertThat(exception)
+            .isNotNull()
+            .isInstanceOf(ResponseStatusException.class)
+            .isExactlyInstanceOf(InvalidCredentialsException.class)
+            .hasMessageContaining(ExceptionMessage.INVALID_CREDENTIALS);
     }
 }
