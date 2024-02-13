@@ -19,4 +19,10 @@ public class JwtConfig {
     public JwtProperties refreshTokenProperties() {
         return new JwtProperties();
     }
+
+    @Bean(name = "verificationTokenProperties")
+    @ConfigurationProperties("app.security.verification-token")
+    public JwtProperties verificationTokenProperties() {
+        return new JwtProperties();
+    }
 }

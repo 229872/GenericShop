@@ -9,7 +9,13 @@ public interface JwtService {
 
     String generateRefreshToken(String subject);
 
+    String generateVerificationToken(String subject, String email);
+
     Claims validateAndExtractClaimsFromAuthToken(String authToken);
 
     Claims validateAndExtractClaimsFromRefreshToken(String refreshToken);
+
+    void validateVerificationToken(String verificationToken, String email);
+
+    String decodeSubjectFromJwtTokenWithoutValidation(String jwtToken);
 }

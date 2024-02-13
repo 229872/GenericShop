@@ -1,5 +1,8 @@
 package pl.lodz.p.edu.shop.logic.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -10,9 +13,11 @@ import pl.lodz.p.edu.shop.config.database.property.JwtProperties;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.exception.ApplicationExceptionFactory;
+import pl.lodz.p.edu.shop.exception.SystemExceptionFactory;
 import pl.lodz.p.edu.shop.logic.service.api.JwtService;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +32,19 @@ class JwtServiceImpl implements JwtService {
 
     private final JwtProperties authTokenProperties;
     private final JwtProperties refreshTokenProperties;
+    private final JwtProperties verificationTokenProperties;
+    private final ObjectMapper objectMapper;
 
     public JwtServiceImpl(
         @Qualifier("authTokenProperties") JwtProperties authTokenProperties,
-        @Qualifier("refreshTokenProperties") JwtProperties refreshTokenProperties) {
+        @Qualifier("refreshTokenProperties") JwtProperties refreshTokenProperties,
+        @Qualifier("verificationTokenProperties") JwtProperties verificationTokenProperties,
+        ObjectMapper objectMapper
+    ) {
         this.authTokenProperties = authTokenProperties;
         this.refreshTokenProperties = refreshTokenProperties;
+        this.verificationTokenProperties = verificationTokenProperties;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -56,6 +68,15 @@ class JwtServiceImpl implements JwtService {
     }
 
     @Override
+    public String generateVerificationToken(String subject, String email) {
+
+        Date expiration = Date.from(now().plusMillis(verificationTokenProperties.getTimeoutInMillis()));
+        Key key = getSigningKeyFromNotEncodedSecret(email);
+
+        return generateTokenWithIssuedAtNow(subject, Map.of(), expiration, key, SignatureAlgorithm.HS256);
+    }
+
+    @Override
     public Claims validateAndExtractClaimsFromAuthToken(String authToken) {
         Key key = getSigningKeyFromBase64EncodedSecret(authTokenProperties.getKey());
 
@@ -69,8 +90,27 @@ class JwtServiceImpl implements JwtService {
         return validateAndExtractClaimsFromJwtToken(refreshToken, key);
     }
 
+    @Override
+    public void validateVerificationToken(String verificationToken, String email) {
+        Key key = getSigningKeyFromNotEncodedSecret(email);
 
+        validateAndExtractClaimsFromJwtToken(verificationToken, key).getSubject();
+    }
 
+    @Override
+    public String decodeSubjectFromJwtTokenWithoutValidation(String jwtToken) {
+        String[] tokenParts = jwtToken.split("\\.");
+        String decodedPayload = new String(Base64.getDecoder().decode(tokenParts[1]));
+
+        try {
+            JsonNode jsonNode = objectMapper.readTree(decodedPayload);
+            return jsonNode.get("subject").asText();
+
+        } catch (JsonProcessingException e) {
+            log.warn("Couldn't decode subject: ", e);
+            throw SystemExceptionFactory.createMappingException(e);
+        }
+    }
 
 
     private Claims validateAndExtractClaimsFromJwtToken(String token, Key key) {

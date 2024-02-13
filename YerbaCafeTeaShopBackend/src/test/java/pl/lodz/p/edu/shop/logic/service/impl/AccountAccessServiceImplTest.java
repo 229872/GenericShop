@@ -1,26 +1,36 @@
 package pl.lodz.p.edu.shop.logic.service.impl;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.shop.TestData;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
+import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.shop.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.shop.exception.ExceptionMessage;
+import pl.lodz.p.edu.shop.exception.account.AccountEmailConflictException;
+import pl.lodz.p.edu.shop.exception.account.AccountLoginConflictException;
 import pl.lodz.p.edu.shop.exception.account.AccountNotFoundException;
 import pl.lodz.p.edu.shop.exception.auth.InvalidCredentialsException;
+import pl.lodz.p.edu.shop.logic.service.api.JwtService;
+import pl.lodz.p.edu.shop.logic.service.api.MailService;
 
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -33,6 +43,12 @@ class AccountAccessServiceImplTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private MailService mailService;
+
+    @Mock
+    private JwtService jwtService;
 
     @InjectMocks
     private AccountAccessServiceImpl underTest;
@@ -179,7 +195,7 @@ class AccountAccessServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw InvalidCredentialsException when credentials missmatch")
+    @DisplayName("Should throw InvalidCredentialsException when credentials mismatch")
     void changePassword_negative_2() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
@@ -204,4 +220,97 @@ class AccountAccessServiceImplTest {
             .isExactlyInstanceOf(InvalidCredentialsException.class)
             .hasMessageContaining(ExceptionMessage.INVALID_CREDENTIALS);
     }
+
+    @Test
+    @DisplayName("Should register new account with state NOT_VERIFIED and account role CLIENT")
+    void register_positive_1() {
+        //given
+        HashSet<AccountRole> givenAccountRoles = new HashSet<>(Set.of(AccountRole.GUEST));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .accountState(null)
+            .accountRoles(givenAccountRoles)
+            .build();
+        String givenLogin = givenAccount.getLogin();
+        String givenEmail = givenAccount.getEmail();
+        String givenToken = "token";
+
+        given(jwtService.generateVerificationToken(givenLogin, givenEmail)).willReturn(givenToken);
+        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
+        //when
+        Account result = underTest.register(givenAccount);
+
+        //then
+        then(jwtService).should().generateVerificationToken(givenLogin, givenEmail);
+        then(mailService).should().sendVerificationMail(givenEmail, givenAccount.getLocale(), givenToken);
+        then(accountRepository).should().save(givenAccount);
+
+        Assertions.assertEquals(AccountState.NOT_VERIFIED, result.getAccountState());
+        Assertions.assertEquals(Set.of(AccountRole.CLIENT), result.getAccountRoles());
+
+        assertThat(result)
+            .isNotNull()
+            .isEqualTo(givenAccount);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountLoginConflictException when creating account with already used login")
+    void register_negative_2() {
+        //given
+        Account givenAccount = TestData.buildDefaultAccount();
+        String givenLogin = givenAccount.getLogin();
+        String givenEmail = givenAccount.getEmail();
+        String givenToken = "token";
+
+        var constraintViolationEx = new ConstraintViolationException("accounts_login_key", null, "accounts_login_key");
+        var dataAccessEx = new DataIntegrityViolationException("Conflict", constraintViolationEx);
+
+        given(jwtService.generateVerificationToken(givenLogin, givenEmail)).willReturn(givenToken);
+        given(accountRepository.save(givenAccount)).willThrow(dataAccessEx);
+
+        //when
+        Exception exception = catchException(() -> underTest.register(givenAccount));
+
+        //then
+        then(jwtService).should().generateVerificationToken(givenLogin, givenEmail);
+        then(mailService).should().sendVerificationMail(givenEmail, givenAccount.getLocale(), givenToken);
+        then(accountRepository).should().save(givenAccount);
+
+        assertThat(exception)
+            .isNotNull()
+            .isInstanceOf(ResponseStatusException.class)
+            .isExactlyInstanceOf(AccountLoginConflictException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_CONFLICT_LOGIN);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountEmailConflictException when creating account with already used email")
+    void register_negative_3() {
+        //given
+        Account givenAccount = TestData.buildDefaultAccount();
+        String givenLogin = givenAccount.getLogin();
+        String givenEmail = givenAccount.getEmail();
+        String givenToken = "token";
+
+        var constraintViolationEx = new ConstraintViolationException("accounts_email_key", null, "accounts_email_key");
+        var dataAccessEx = new DataIntegrityViolationException("Conflict", constraintViolationEx);
+
+        given(jwtService.generateVerificationToken(givenLogin, givenEmail)).willReturn(givenToken);
+        given(accountRepository.save(givenAccount)).willThrow(dataAccessEx);
+
+        //when
+        Exception exception = catchException(() -> underTest.register(givenAccount));
+
+        //then
+        then(jwtService).should().generateVerificationToken(givenLogin, givenEmail);
+        then(mailService).should().sendVerificationMail(givenEmail, givenAccount.getLocale(), givenToken);
+        then(accountRepository).should().save(givenAccount);
+
+        assertThat(exception)
+            .isNotNull()
+            .isInstanceOf(ResponseStatusException.class)
+            .isExactlyInstanceOf(AccountEmailConflictException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_CONFLICT_EMAIL);
+    }
+
 }

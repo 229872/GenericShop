@@ -6,11 +6,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
+import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.shop.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.shop.exception.ApplicationExceptionFactory;
 import pl.lodz.p.edu.shop.logic.service.api.AccountAccessService;
+import pl.lodz.p.edu.shop.logic.service.api.JwtService;
+import pl.lodz.p.edu.shop.logic.service.api.MailService;
 
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 @Service
 @Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.REQUIRES_NEW)
@@ -18,13 +24,19 @@ import java.util.Locale;
 class AccountAccessServiceImpl extends AccountManagementServiceImpl implements AccountAccessService {
 
     private final AccountRepository accountRepository;
-
+    private final MailService mailService;
+    private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
-    public AccountAccessServiceImpl(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+    public AccountAccessServiceImpl(
+        AccountRepository accountRepository, PasswordEncoder passwordEncoder,
+        MailService mailService, JwtService jwtService
+    ) {
         super(accountRepository);
         this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mailService = mailService;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -54,6 +66,17 @@ class AccountAccessServiceImpl extends AccountManagementServiceImpl implements A
 
         String encodedNewPassword = passwordEncoder.encode(newPassword);
         account.setPassword(encodedNewPassword);
+
+        return save(account);
+    }
+
+    @Override
+    public Account register(Account account) {
+        String verificationToken = jwtService.generateVerificationToken(account.getLogin(), account.getEmail());
+        mailService.sendVerificationMail(account.getEmail(), account.getLocale(), verificationToken);
+
+        account.setAccountState(AccountState.NOT_VERIFIED);
+        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
 
         return save(account);
     }

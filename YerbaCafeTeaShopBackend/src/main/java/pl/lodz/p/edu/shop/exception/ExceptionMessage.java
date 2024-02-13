@@ -8,6 +8,7 @@ public final class ExceptionMessage {
 
     public static final String UNKNOWN = "exception.unknown";
     public static final String DB_CONSTRAINT_VIOLATION = "exception.db.constraint.violation";
+    public static final String MAPPING_EXCEPTION = "exception.mapping";
     public static final String TRANSACTION_TIMEOUT = "exception.transaction.timeout";
     public static final String ACCOUNT_NOT_FOUND = "exception.account.not_found";
     public static final String ACCOUNT_CONFLICT_LOGIN = "exception.account.conflict.login";

@@ -29,6 +29,8 @@ app:
     refresh_token:
       timeout_in_minutes: 1140
       key: "SbukNWysYjebgzpFLx0Ax21RnASrRa03JzBzZ8JRYsrOeECSUl2WkI0AxW3DkAscvslkKW6R0hk57uIoDhZ06+GZV9z880zMiypIQGgcMn0="
+    verification-token:
+      timeout_in_minutes: 600
 
 spring:
   config:

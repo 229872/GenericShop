@@ -40,4 +40,9 @@ class AccountAccessServiceRetryHandler extends AbstractRetryHandler implements A
     public Account changePassword(String login, String currentPassword, String newPassword) {
         return repeatTransactionWhenTimeoutOccurred(() -> accountAccessService.changePassword(login, currentPassword, newPassword));
     }
+
+    @Override
+    public Account register(Account account) {
+        return repeatTransactionWhenTimeoutOccurred(() -> accountAccessService.register(account));
+    }
 }

@@ -19,10 +19,10 @@ import static pl.lodz.p.edu.shop.config.security.role.RoleName.*;
 	UserDetailsServiceAutoConfiguration.class
 })
 @DeclareRoles({GUEST, ADMIN, CLIENT, EMPLOYEE})
-public class YerbaCafeTeaShopBackendApplication {
+public class ShopBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(YerbaCafeTeaShopBackendApplication.class, args);
+		SpringApplication.run(ShopBackendApplication.class, args);
 	}
 
 }
