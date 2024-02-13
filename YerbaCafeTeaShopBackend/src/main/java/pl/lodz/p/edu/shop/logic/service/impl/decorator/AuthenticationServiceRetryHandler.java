@@ -9,8 +9,9 @@ import pl.lodz.p.edu.shop.logic.model.JwtTokens;
 import pl.lodz.p.edu.shop.logic.service.api.AuthenticationService;
 
 @Service
-@Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.NEVER)
 @Primary
+@Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.NEVER)
+@Qualifier("AuthenticationServiceRetryHandler")
 class AuthenticationServiceRetryHandler extends AbstractRetryHandler implements AuthenticationService {
 
     private final AuthenticationService authenticationService;

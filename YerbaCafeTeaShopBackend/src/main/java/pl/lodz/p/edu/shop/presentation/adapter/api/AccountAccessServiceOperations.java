@@ -4,7 +4,7 @@ import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.ChangeLanguageDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.ChangePasswordDto;
 
-public interface OwnAccountServiceOperations {
+public interface AccountAccessServiceOperations {
 
     AccountOutputDto findByLogin(String login);
 

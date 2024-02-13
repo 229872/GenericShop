@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.lodz.p.edu.shop.presentation.adapter.api.AccountServiceOperations;
+import pl.lodz.p.edu.shop.presentation.adapter.api.AccountManagementServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountCreateDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
 
@@ -20,9 +20,9 @@ import static pl.lodz.p.edu.shop.config.security.role.RoleName.ADMIN;
 @RestController
 @RequestMapping("/api/account")
 @DenyAll
-public class AccountController {
+public class AccountManagementController {
 
-    private final AccountServiceOperations accountService;
+    private final AccountManagementServiceOperations accountService;
 
     @GetMapping
     @RolesAllowed(ADMIN)

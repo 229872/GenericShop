@@ -1,47 +1,69 @@
-package pl.lodz.p.edu.shop.logic.service.impl;
+package pl.lodz.p.edu.shop.integration.service;
 
-import org.hibernate.exception.ConstraintViolationException;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.shop.TestData;
+import pl.lodz.p.edu.shop.config.PostgresqlContainerSetup;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Address;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
-import pl.lodz.p.edu.shop.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.shop.exception.ExceptionMessage;
 import pl.lodz.p.edu.shop.exception.account.*;
+import pl.lodz.p.edu.shop.logic.service.api.AccountManagementService;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 
-@DisplayName("Unit tests for AccountServiceImpl")
-@ExtendWith(MockitoExtension.class)
-class AccountServiceImplTest {
+@DisplayName("Integration tests for AccountManagementService")
+@SpringBootTest
+@ActiveProfiles("it")
+class AccountManagementServiceIT extends PostgresqlContainerSetup {
 
-    @Mock
-    private AccountRepository accountRepository;
+    @Autowired
+    private AccountManagementService underTest;
 
-    @InjectMocks
-    private AccountServiceImpl underTest;
+    @Autowired
+    @Qualifier("accountsModTxManager")
+    private PlatformTransactionManager txManager;
+
+    @Autowired
+    @Qualifier("accountsModEmFactory")
+    private EntityManager em;
+
+    private TransactionTemplate txTemplate;
+
+    @BeforeEach
+    void setUp() {
+        txTemplate = new TransactionTemplate(txManager);
+    }
 
     @AfterEach
     void tearDown() {
+        txTemplate.execute(status -> {
+            em.createQuery("DELETE FROM Account ").executeUpdate();
+            em.createQuery("DELETE FROM Contact ").executeUpdate();
+            em.createQuery("DELETE FROM Address ").executeUpdate();
+            return status;
+        });
+
         TestData.resetCounter();
     }
 
@@ -49,13 +71,11 @@ class AccountServiceImplTest {
     @DisplayName("Should return empty list")
     void findAll_positive_1() {
         //given
-        given(accountRepository.findAll()).willReturn(new ArrayList<>());
 
         //when
         List<Account> result = underTest.findAll();
 
         //then
-        then(accountRepository).should().findAll();
         assertThat(result)
             .isEmpty();
     }
@@ -64,21 +84,22 @@ class AccountServiceImplTest {
     @DisplayName("Should return list with elements")
     void findAll_positive_2() {
         //given
-        Account[] accounts = {
+        Account[] givenAccounts = {
             TestData.buildDefaultAccount(),
             TestData.buildDefaultAccount()
         };
-
-        given(accountRepository.findAll()).willReturn(Arrays.stream(accounts).toList());
+        txTemplate.execute(status -> {
+            Arrays.stream(givenAccounts).forEach(account -> em.persist(account));
+            return status;
+        });
 
         //when
         List<Account> result = underTest.findAll();
 
         //then
-        then(accountRepository).should().findAll();
         assertThat(result)
             .hasSize(2)
-            .containsExactly(accounts);
+            .containsExactly(givenAccounts);
     }
 
 
@@ -86,15 +107,18 @@ class AccountServiceImplTest {
     @DisplayName("Should return account if account with id is found")
     void findById_positive_1() {
         //given
-        Long givenId = 1L;
         Account givenAccount = TestData.buildDefaultAccount();
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.findById(givenId);
 
         //then
-        then(accountRepository).should().findById(givenId);
         assertThat(result)
             .isEqualTo(givenAccount);
     }
@@ -104,49 +128,11 @@ class AccountServiceImplTest {
     void findById_negative_1() {
         //given
         Long givenId = 1L;
-        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
 
         //when
-        Exception exception = catchException(() -> underTest.findById(1L));
+        Exception exception = catchException(() -> underTest.findById(givenId));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        assertThat(exception)
-            .isNotNull()
-            .isExactlyInstanceOf(AccountNotFoundException.class)
-            .isInstanceOf(ResponseStatusException.class)
-            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
-    }
-
-    @Test
-    @DisplayName("Should return account if account with login is found")
-    void findByLogin_positive_1() {
-        //given
-        String givenLogin = "login";
-        Account givenAccount = TestData.buildDefaultAccount();
-        given(accountRepository.findByLogin(givenLogin)).willReturn(Optional.of(givenAccount));
-
-        //when
-        Account result = underTest.findByLogin(givenLogin);
-
-        //then
-        then(accountRepository).should().findByLogin(givenLogin);
-        assertThat(result)
-            .isEqualTo(givenAccount);
-    }
-
-    @Test
-    @DisplayName("Should throw AccountNotFoundException if account with login is not found")
-    void findByLogin_negative_1() {
-        //given
-        String givenLogin = "login";
-        given(accountRepository.findByLogin(givenLogin)).willReturn(Optional.empty());
-
-        //when
-        Exception exception = catchException(() -> underTest.findByLogin(givenLogin));
-
-        //then
-        then(accountRepository).should().findByLogin(givenLogin);
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -159,31 +145,42 @@ class AccountServiceImplTest {
     void create_positive_1() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
-        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         //when
         Account result = underTest.create(givenAccount);
 
         //then
-        then(accountRepository).should().save(givenAccount);
         assertThat(result)
             .isEqualTo(givenAccount);
+
+        txTemplate.execute(status -> {
+            List<Account> databaseAccounts = em.createQuery("from Account ", Account.class).getResultList();
+
+            assertThat(databaseAccounts)
+                .hasSize(1)
+                .containsExactly(givenAccount);
+            return status;
+        });
     }
 
     @Test
     @DisplayName("Should throw CantCreateAccountWithManyRolesException when account has more than one role")
     void create_negative_1() {
         //given
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
         Account givenAccount = TestData.getDefaultAccountBuilder()
-            .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)))
-            .build();
+                .accountRoles(givenRoles)
+                .build();
+
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
 
         //when
         Exception exception = catchException(() -> underTest.create(givenAccount));
 
         //then
-        then(accountRepository).shouldHaveNoInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantCreateAccountWithManyRolesException.class)
@@ -195,16 +192,15 @@ class AccountServiceImplTest {
     @DisplayName("Should throw CantAssignGuestRoleException when account has guest role")
     void create_negative_2() {
         //given
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.GUEST));
         Account givenAccount = TestData.getDefaultAccountBuilder()
-            .accountRoles(new HashSet<>(Set.of(AccountRole.GUEST)))
-            .build();
+                .accountRoles(givenRoles)
+                .build();
 
         //when
         Exception exception = catchException(() -> underTest.create(givenAccount));
 
         //then
-        then(accountRepository).shouldHaveNoInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantAssignGuestRoleException.class)
@@ -217,15 +213,13 @@ class AccountServiceImplTest {
     void create_negative_3() {
         //given
         Account givenAccount = TestData.getDefaultAccountBuilder()
-            .accountState(AccountState.NOT_VERIFIED)
-            .build();
+                .accountState(AccountState.NOT_VERIFIED)
+                    .build();
 
         //when
         Exception exception = catchException(() -> underTest.create(givenAccount));
 
         //then
-        then(accountRepository).shouldHaveNoInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantCreateAccountWithNotVerifiedStatusException.class)
@@ -237,18 +231,20 @@ class AccountServiceImplTest {
     @DisplayName("Should throw AccountLoginConflictException when new Account has same login")
     void create_negative_4() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
-            .login("login")
+        Account givenAccount = TestData.buildDefaultAccount();
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+
+        Account accountWithConflictLogin = TestData.getDefaultAccountBuilder()
+            .login(givenAccount.getLogin())
             .build();
-        var cause = new ConstraintViolationException("Database violation occurred", null, "accounts_login_key");
-        var dataIntegrityViolationException = new DataIntegrityViolationException("Violation occurred", cause);
-        given(accountRepository.save(givenAccount)).willThrow(dataIntegrityViolationException);
 
         //when
-        Exception exception = catchException(() -> underTest.create(givenAccount));
+        Exception exception = catchException(() -> underTest.create(accountWithConflictLogin));
 
         //then
-        then(accountRepository).should().save(givenAccount);
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountLoginConflictException.class)
@@ -259,18 +255,20 @@ class AccountServiceImplTest {
     @DisplayName("Should throw AccountEmailConflictException when new Account has same email")
     void create_negative_5() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
-            .email("email@example.com")
+        Account givenAccount = TestData.buildDefaultAccount();
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+
+        Account accountWithConflictEmail = TestData.getDefaultAccountBuilder()
+            .email(givenAccount.getEmail())
             .build();
-        var cause = new ConstraintViolationException("Database violation occurred", null, "accounts_email_key");
-        var dataIntegrityViolationException = new DataIntegrityViolationException("Violation occurred", cause);
-        given(accountRepository.save(givenAccount)).willThrow(dataIntegrityViolationException);
 
         //when
-        Exception exception = catchException(() -> underTest.create(givenAccount));
+        Exception exception = catchException(() -> underTest.create(accountWithConflictEmail));
 
         //then
-        then(accountRepository).should().save(givenAccount);
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountEmailConflictException.class)
@@ -278,11 +276,15 @@ class AccountServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should update found account with only set values")
+    @DisplayName("Should update found account with one value")
     void update_positive_1() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
-        String givenFirstName = givenAccount.getContact().getFirstName();
+
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
         Long givenId = givenAccount.getId();
 
         String newFirstName = "newFirstName";
@@ -291,43 +293,27 @@ class AccountServiceImplTest {
             .address(Address.builder().build())
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
-        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-
         //when
         Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).should().save(givenAccount);
-
         assertThat(result.getContact().getFirstName())
-            .isEqualTo(newFirstName)
-            .isNotEqualTo(givenFirstName);
+            .isEqualTo(newFirstName);
 
-        Contact updatedContact = result.getContact();
-        Assertions.assertNotNull(updatedContact.getLastName());
-        Assertions.assertNotNull(updatedContact.getPostalCode());
-        Assertions.assertNotNull(updatedContact.getCountry());
-        Assertions.assertNotNull(updatedContact.getCity());
-        Assertions.assertNotNull(updatedContact.getStreet());
-        Assertions.assertNotNull(updatedContact.getHouseNumber());
+        assertThat(result.getContact().getLastName())
+            .isEqualTo(givenAccount.getContact().getLastName());
     }
 
     @Test
-    @DisplayName("Should update found account with all values")
+    @DisplayName("Should update found account without all values")
     void update_positive_2() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
-        Contact givenContact = givenAccount.getContact();
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
         Long givenId = givenAccount.getId();
-        String givenFirstName = givenContact.getFirstName();
-        String givenLastName = givenContact.getLastName();
-        String givenPostalCode = givenContact.getPostalCode();
-        String givenCountry = givenContact.getCountry();
-        String givenCity = givenContact.getCity();
-        String givenStreet = givenContact.getStreet();
-        Integer givenHouseNumber = givenContact.getHouseNumber();
 
         String newFirstName = "newFirstName";
         String newLastName = "newLastName";
@@ -351,44 +337,18 @@ class AccountServiceImplTest {
             .address(newAddress)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
-        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-
         //when
         Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).should().save(givenAccount);
-
         Contact resultContact = result.getContact();
-        assertThat(resultContact.getFirstName())
-            .isEqualTo(newFirstName)
-            .isNotEqualTo(givenFirstName);
-
-        assertThat(resultContact.getLastName())
-            .isEqualTo(newLastName)
-            .isNotEqualTo(givenLastName);
-
-        assertThat(resultContact.getPostalCode())
-            .isEqualTo(newPostalCode)
-            .isNotEqualTo(givenPostalCode);
-
-        assertThat(resultContact.getCountry())
-            .isEqualTo(newCountry)
-            .isNotEqualTo(givenCountry);
-
-        assertThat(resultContact.getCity())
-            .isEqualTo(newCity)
-            .isNotEqualTo(givenCity);
-
-        assertThat(resultContact.getStreet())
-            .isEqualTo(newStreet)
-            .isNotEqualTo(givenStreet);
-
-        assertThat(resultContact.getHouseNumber())
-            .isEqualTo(newHouseNumber)
-            .isNotEqualTo(givenHouseNumber);
+        assertEquals(newFirstName, resultContact.getFirstName());
+        assertEquals(newLastName, resultContact.getLastName());
+        assertEquals(newPostalCode, resultContact.getPostalCode());
+        assertEquals(newCountry, resultContact.getCountry());
+        assertEquals(newCity, resultContact.getCity());
+        assertEquals(newStreet, resultContact.getStreet());
+        assertEquals(newHouseNumber, resultContact.getHouseNumber());
     }
 
     @Test
@@ -396,16 +356,15 @@ class AccountServiceImplTest {
     void update_negative_1() {
         //given
         Long givenId = 1L;
-        Contact newInfo = Contact.builder().firstName("newFirstName").build();
-        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
+        Contact newInfo = Contact.builder()
+            .firstName("newFirstName")
+            .address(Address.builder().build())
+            .build();
 
         //when
         Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -416,22 +375,22 @@ class AccountServiceImplTest {
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
     void update_negative_2() {
         //given
-        Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
-            .isArchival(true)
+        Account givenAccount = TestData.buildDefaultAccount();
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
+        Contact newInfo = Contact.builder()
+            .firstName("newFirstName")
+            .address(Address.builder().build())
             .build();
-
-        Contact newInfo = Contact.builder().firstName("newFirstName").build();
-
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -442,21 +401,20 @@ class AccountServiceImplTest {
     @DisplayName("Should block active account")
     void block_positive_1() {
         //given
-        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountState(AccountState.ACTIVE)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
-        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.block(givenId);
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).should().save(givenAccount);
-
         assertEquals(AccountState.BLOCKED, result.getAccountState());
     }
 
@@ -465,15 +423,11 @@ class AccountServiceImplTest {
     void block_negative_1() {
         //given
         Long givenId = 1L;
-        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -485,20 +439,20 @@ class AccountServiceImplTest {
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
     void block_negative_2() {
         //given
-        Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
-            .isArchival(true)
-            .build();
+        Account givenAccount = TestData.buildDefaultAccount();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
+            return status;
+        });
+
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -510,20 +464,20 @@ class AccountServiceImplTest {
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is not verified")
     void block_negative_3() {
         //given
-        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountState(AccountState.NOT_VERIFIED)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(OperationNotAllowedWithActualAccountStateException.class)
@@ -535,20 +489,20 @@ class AccountServiceImplTest {
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is blocked")
     void block_negative_4() {
         //given
-        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountState(AccountState.BLOCKED)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(OperationNotAllowedWithActualAccountStateException.class)
@@ -560,20 +514,20 @@ class AccountServiceImplTest {
     @DisplayName("Should unblock blocked account")
     void unblock_positive_1() {
         //given
-        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountState(AccountState.BLOCKED)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.unblock(givenId);
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).should().save(givenAccount);
-
         assertEquals(AccountState.ACTIVE, result.getAccountState());
     }
 
@@ -582,15 +536,11 @@ class AccountServiceImplTest {
     void unblock_negative_1() {
         //given
         Long givenId = 1L;
-        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -598,24 +548,24 @@ class AccountServiceImplTest {
             .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
     }
 
+
     @Test
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
-    void unblock_negative_3() {
+    void unblock_negative_2() {
         //given
-        Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
-            .isArchival(true)
-            .build();
+        Account givenAccount = TestData.buildDefaultAccount();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -625,22 +575,22 @@ class AccountServiceImplTest {
 
     @Test
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is not verified")
-    void unblock_negative_4() {
+    void unblock_negative_3() {
         //given
-        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountState(AccountState.NOT_VERIFIED)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(OperationNotAllowedWithActualAccountStateException.class)
@@ -650,22 +600,22 @@ class AccountServiceImplTest {
 
     @Test
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is active")
-    void unblock_negative_5() {
+    void unblock_negative_4() {
         //given
-        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountState(AccountState.ACTIVE)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(OperationNotAllowedWithActualAccountStateException.class)
@@ -677,23 +627,21 @@ class AccountServiceImplTest {
     @DisplayName("Should archive active account")
     void archive_positive_1() {
         //given
-        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
-            .isArchival(false)
             .accountState(AccountState.ACTIVE)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
-        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.archive(givenId);
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).should().save(givenAccount);
-
-        assertTrue(result.isArchival());
+        assertEquals(true, result.isArchival());
     }
 
     @Test
@@ -702,15 +650,10 @@ class AccountServiceImplTest {
         //given
         Long givenId = 1L;
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
-
         //when
         Exception exception = catchException(() -> underTest.archive(givenId));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -722,20 +665,19 @@ class AccountServiceImplTest {
     @DisplayName("Should throw CantModifyArchivalAccountException when account is already archival")
     void archive_negative_2() {
         //given
-        Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
-            .isArchival(true)
-            .build();
+        Account givenAccount = TestData.buildDefaultAccount();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.archive(givenId));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -747,22 +689,21 @@ class AccountServiceImplTest {
     @DisplayName("Should add role when account with provided id is found")
     void addRole_positive_1() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account accoungivenAccount = TestData.getDefaultAccountBuilder()
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(accoungivenAccount));
-        given(accountRepository.save(accoungivenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.addRole(givenId, AccountRole.EMPLOYEE);
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).should().save(accoungivenAccount);
-
         assertThat(result.getAccountRoles())
             .hasSize(2)
             .contains(AccountRole.CLIENT, AccountRole.EMPLOYEE);
@@ -773,15 +714,11 @@ class AccountServiceImplTest {
     void addRole_negative_1() {
         //given
         Long givenId = 1L;
-        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.EMPLOYEE));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -793,22 +730,22 @@ class AccountServiceImplTest {
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
     void addRole_negative_2() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
-            .isArchival(true)
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.EMPLOYEE));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -817,24 +754,24 @@ class AccountServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw AccountRoleAlreadyAssignedException when account already has this role assigned")
+    @DisplayName("Should throw AccountRoleAlreadyAssignedException when account already has new role")
     void addRole_negative_3() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.CLIENT));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountRoleAlreadyAssignedException.class)
@@ -846,21 +783,21 @@ class AccountServiceImplTest {
     @DisplayName("Should throw CantAssignGuestRoleException when new role is Guest")
     void addRole_negative_4() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.GUEST));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantAssignGuestRoleException.class)
@@ -872,21 +809,21 @@ class AccountServiceImplTest {
     @DisplayName("Should throw AccountWithAdministratorRoleCantHaveMoreRolesException when account has Administrator role and there is try to add another one")
     void addRole_negative_5() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.ADMIN));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.ADMIN));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.CLIENT));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountWithAdministratorRoleCantHaveMoreRolesException.class)
@@ -898,21 +835,21 @@ class AccountServiceImplTest {
     @DisplayName("Should throw AccountWithAdministratorRoleCantHaveMoreRolesException when account hasn't got Administrator role and there is try to add Administrator role to an account")
     void addRole_negative_6() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.ADMIN));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountWithAdministratorRoleCantHaveMoreRolesException.class)
@@ -924,22 +861,21 @@ class AccountServiceImplTest {
     @DisplayName("Should remove role assigned to account")
     void removeRole_positive_1() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
-        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.removeRole(givenId, AccountRole.CLIENT);
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).should().save(givenAccount);
-
         assertThat(result.getAccountRoles())
             .hasSize(1)
             .containsExactly(AccountRole.EMPLOYEE);
@@ -950,15 +886,11 @@ class AccountServiceImplTest {
     void removeRole_negative_1() {
         //given
         Long givenId = 1L;
-        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
 
         //when
         Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -970,22 +902,22 @@ class AccountServiceImplTest {
     @DisplayName("Should throw CantModifyArchivalAccountException when found account is archival")
     void removeRole_negative_2() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
         Account givenAccount = TestData.getDefaultAccountBuilder()
-            .isArchival(true)
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -997,21 +929,21 @@ class AccountServiceImplTest {
     @DisplayName("Should throw AccountRoleNotFoundException when account doesn't have role we want to remove")
     void removeRole_negative_3() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.ADMIN));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountRoleNotFoundException.class)
@@ -1023,21 +955,21 @@ class AccountServiceImplTest {
     @DisplayName("Should throw CantRemoveLastRoleException when account has last role")
     void removeRole_negative_4() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantRemoveLastRoleException.class)
@@ -1049,22 +981,21 @@ class AccountServiceImplTest {
     @DisplayName("Should change role")
     void changeRole_positive_1() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
-        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Account result = underTest.changeRole(givenId, AccountRole.EMPLOYEE);
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).should().save(givenAccount);
-
         assertThat(result.getAccountRoles())
             .hasSize(1)
             .containsExactly(AccountRole.EMPLOYEE);
@@ -1076,15 +1007,10 @@ class AccountServiceImplTest {
         //given
         Long givenId = 1L;
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
-
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -1096,22 +1022,22 @@ class AccountServiceImplTest {
     @DisplayName("Should throw CantModifyArchivalAccountException when found account is archival")
     void changeRole_negative_2() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
-            .isArchival(true)
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            givenAccount.setArchival(true);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -1123,21 +1049,21 @@ class AccountServiceImplTest {
     @DisplayName("Should throw CantChangeRoleIfMoreThanOneAlreadyAssignedException when account has more than one role")
     void changeRole_negative_3() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantChangeRoleIfMoreThanOneAlreadyAssignedException.class)
@@ -1149,21 +1075,21 @@ class AccountServiceImplTest {
     @DisplayName("Should throw AccountRoleAlreadyAssignedException when account has new role already assigned")
     void changeRole_negative_4() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.EMPLOYEE));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.EMPLOYEE));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountRoleAlreadyAssignedException.class)
@@ -1172,24 +1098,24 @@ class AccountServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw CantAssignGuestRoleException there is try to assign guest role")
+    @DisplayName("Should throw CantAssignGuestRoleException when account has new role already assigned")
     void changeRole_negative_5() {
         //given
-        Long givenId = 1L;
-        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.EMPLOYEE));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+        Long givenId = givenAccount.getId();
 
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.GUEST));
 
         //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantAssignGuestRoleException.class)

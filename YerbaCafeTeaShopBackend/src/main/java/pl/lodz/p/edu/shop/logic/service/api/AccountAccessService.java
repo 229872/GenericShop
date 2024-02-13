@@ -4,7 +4,7 @@ import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 
 import java.util.Locale;
 
-public interface OwnAccountService {
+public interface AccountAccessService {
 
     Account findByLogin(String login);
 

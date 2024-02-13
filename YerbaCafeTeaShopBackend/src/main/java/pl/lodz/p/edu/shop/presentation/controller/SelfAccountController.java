@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.lodz.p.edu.shop.presentation.adapter.api.OwnAccountServiceOperations;
+import pl.lodz.p.edu.shop.presentation.adapter.api.AccountAccessServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.ChangeLanguageDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.ChangePasswordDto;
@@ -21,7 +21,7 @@ import static pl.lodz.p.edu.shop.util.SecurityUtil.getLoginFromSecurityContext;
 @DenyAll
 public class SelfAccountController {
 
-    private final OwnAccountServiceOperations ownAccountService;
+    private final AccountAccessServiceOperations ownAccountService;
 
     @GetMapping
     @RolesAllowed({RoleName.CLIENT, RoleName.EMPLOYEE, RoleName.ADMIN})

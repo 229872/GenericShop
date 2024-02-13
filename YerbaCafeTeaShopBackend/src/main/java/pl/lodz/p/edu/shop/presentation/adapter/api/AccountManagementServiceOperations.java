@@ -7,7 +7,7 @@ import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountUpdateDto;
 
 import java.util.List;
 
-public interface AccountServiceOperations {
+public interface AccountManagementServiceOperations {
 
     List<AccountOutputDto> findAll();
 

@@ -1,73 +1,47 @@
-package pl.lodz.p.edu.shop.integration.service;
+package pl.lodz.p.edu.shop.logic.service.impl;
 
-import jakarta.persistence.EntityManager;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.shop.TestData;
-import pl.lodz.p.edu.shop.config.PostgresqlContainerSetup;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Address;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
+import pl.lodz.p.edu.shop.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.shop.exception.ExceptionMessage;
 import pl.lodz.p.edu.shop.exception.account.*;
-import pl.lodz.p.edu.shop.logic.service.api.AccountService;
-import pl.lodz.p.edu.shop.logic.service.api.OwnAccountService;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 
-@DisplayName("Integration tests for AccountService")
-@SpringBootTest
-@ActiveProfiles("it")
-class AccountServiceIT extends PostgresqlContainerSetup {
+@DisplayName("Unit tests for AccountServiceImpl")
+@ExtendWith(MockitoExtension.class)
+class AccountManagementServiceImplTest {
 
-    @Autowired
-    private AccountService underTest;
+    @Mock
+    private AccountRepository accountRepository;
 
-    @Autowired
-    private OwnAccountService underTest2;
-
-    @Autowired
-    @Qualifier("accountsModTxManager")
-    private PlatformTransactionManager txManager;
-
-    @Autowired
-    @Qualifier("accountsModEmFactory")
-    private EntityManager em;
-
-    private TransactionTemplate txTemplate;
-
-    @BeforeEach
-    void setUp() {
-        txTemplate = new TransactionTemplate(txManager);
-    }
+    @InjectMocks
+    private AccountManagementAccessServiceImpl underTest;
 
     @AfterEach
     void tearDown() {
-        txTemplate.execute(status -> {
-            em.createQuery("DELETE FROM Account ").executeUpdate();
-            em.createQuery("DELETE FROM Contact ").executeUpdate();
-            em.createQuery("DELETE FROM Address ").executeUpdate();
-            return status;
-        });
-
         TestData.resetCounter();
     }
 
@@ -75,11 +49,13 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should return empty list")
     void findAll_positive_1() {
         //given
+        given(accountRepository.findAll()).willReturn(new ArrayList<>());
 
         //when
         List<Account> result = underTest.findAll();
 
         //then
+        then(accountRepository).should().findAll();
         assertThat(result)
             .isEmpty();
     }
@@ -88,22 +64,21 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should return list with elements")
     void findAll_positive_2() {
         //given
-        Account[] givenAccounts = {
+        Account[] accounts = {
             TestData.buildDefaultAccount(),
             TestData.buildDefaultAccount()
         };
-        txTemplate.execute(status -> {
-            Arrays.stream(givenAccounts).forEach(account -> em.persist(account));
-            return status;
-        });
+
+        given(accountRepository.findAll()).willReturn(Arrays.stream(accounts).toList());
 
         //when
         List<Account> result = underTest.findAll();
 
         //then
+        then(accountRepository).should().findAll();
         assertThat(result)
             .hasSize(2)
-            .containsExactly(givenAccounts);
+            .containsExactly(accounts);
     }
 
 
@@ -111,18 +86,15 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should return account if account with id is found")
     void findById_positive_1() {
         //given
+        Long givenId = 1L;
         Account givenAccount = TestData.buildDefaultAccount();
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Account result = underTest.findById(givenId);
 
         //then
+        then(accountRepository).should().findById(givenId);
         assertThat(result)
             .isEqualTo(givenAccount);
     }
@@ -132,47 +104,13 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     void findById_negative_1() {
         //given
         Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
 
         //when
-        Exception exception = catchException(() -> underTest.findById(givenId));
+        Exception exception = catchException(() -> underTest.findById(1L));
 
         //then
-        assertThat(exception)
-            .isNotNull()
-            .isExactlyInstanceOf(AccountNotFoundException.class)
-            .isInstanceOf(ResponseStatusException.class)
-            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
-    }
-
-    @Test
-    @DisplayName("Should return account if account with login is found")
-    void findByLogin_positive_1() {
-        //given
-        Account givenAccount = TestData.buildDefaultAccount();
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        String givenLogin = givenAccount.getLogin();
-
-        //when
-        Account result = underTest2.findByLogin(givenLogin);
-
-        //then
-        assertThat(result)
-            .isEqualTo(givenAccount);
-    }
-
-    @Test
-    @DisplayName("Should throw AccountNotFoundException if account with login is not found")
-    void findByLogin_negative_1() {
-        //given
-        String givenLogin = "login";
-
-        //when
-        Exception exception = catchException(() -> underTest2.findByLogin(givenLogin));
-
-        //then
+        then(accountRepository).should().findById(givenId);
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -185,42 +123,31 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     void create_positive_1() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
+        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         //when
         Account result = underTest.create(givenAccount);
 
         //then
+        then(accountRepository).should().save(givenAccount);
         assertThat(result)
             .isEqualTo(givenAccount);
-
-        txTemplate.execute(status -> {
-            List<Account> databaseAccounts = em.createQuery("from Account ", Account.class).getResultList();
-
-            assertThat(databaseAccounts)
-                .hasSize(1)
-                .containsExactly(givenAccount);
-            return status;
-        });
     }
 
     @Test
     @DisplayName("Should throw CantCreateAccountWithManyRolesException when account has more than one role")
     void create_negative_1() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
         Account givenAccount = TestData.getDefaultAccountBuilder()
-                .accountRoles(givenRoles)
-                .build();
-
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
+            .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)))
+            .build();
 
         //when
         Exception exception = catchException(() -> underTest.create(givenAccount));
 
         //then
+        then(accountRepository).shouldHaveNoInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantCreateAccountWithManyRolesException.class)
@@ -232,15 +159,16 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantAssignGuestRoleException when account has guest role")
     void create_negative_2() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.GUEST));
         Account givenAccount = TestData.getDefaultAccountBuilder()
-                .accountRoles(givenRoles)
-                .build();
+            .accountRoles(new HashSet<>(Set.of(AccountRole.GUEST)))
+            .build();
 
         //when
         Exception exception = catchException(() -> underTest.create(givenAccount));
 
         //then
+        then(accountRepository).shouldHaveNoInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantAssignGuestRoleException.class)
@@ -253,13 +181,15 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     void create_negative_3() {
         //given
         Account givenAccount = TestData.getDefaultAccountBuilder()
-                .accountState(AccountState.NOT_VERIFIED)
-                    .build();
+            .accountState(AccountState.NOT_VERIFIED)
+            .build();
 
         //when
         Exception exception = catchException(() -> underTest.create(givenAccount));
 
         //then
+        then(accountRepository).shouldHaveNoInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantCreateAccountWithNotVerifiedStatusException.class)
@@ -271,20 +201,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw AccountLoginConflictException when new Account has same login")
     void create_negative_4() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-
-        Account accountWithConflictLogin = TestData.getDefaultAccountBuilder()
-            .login(givenAccount.getLogin())
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .login("login")
             .build();
+        var cause = new ConstraintViolationException("Database violation occurred", null, "accounts_login_key");
+        var dataIntegrityViolationException = new DataIntegrityViolationException("Violation occurred", cause);
+        given(accountRepository.save(givenAccount)).willThrow(dataIntegrityViolationException);
 
         //when
-        Exception exception = catchException(() -> underTest.create(accountWithConflictLogin));
+        Exception exception = catchException(() -> underTest.create(givenAccount));
 
         //then
+        then(accountRepository).should().save(givenAccount);
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountLoginConflictException.class)
@@ -295,20 +223,18 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw AccountEmailConflictException when new Account has same email")
     void create_negative_5() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-
-        Account accountWithConflictEmail = TestData.getDefaultAccountBuilder()
-            .email(givenAccount.getEmail())
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .email("email@example.com")
             .build();
+        var cause = new ConstraintViolationException("Database violation occurred", null, "accounts_email_key");
+        var dataIntegrityViolationException = new DataIntegrityViolationException("Violation occurred", cause);
+        given(accountRepository.save(givenAccount)).willThrow(dataIntegrityViolationException);
 
         //when
-        Exception exception = catchException(() -> underTest.create(accountWithConflictEmail));
+        Exception exception = catchException(() -> underTest.create(givenAccount));
 
         //then
+        then(accountRepository).should().save(givenAccount);
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountEmailConflictException.class)
@@ -316,15 +242,11 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     }
 
     @Test
-    @DisplayName("Should update found account with one value")
+    @DisplayName("Should update found account with only set values")
     void update_positive_1() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
-
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
+        String givenFirstName = givenAccount.getContact().getFirstName();
         Long givenId = givenAccount.getId();
 
         String newFirstName = "newFirstName";
@@ -333,27 +255,43 @@ class AccountServiceIT extends PostgresqlContainerSetup {
             .address(Address.builder().build())
             .build();
 
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
         //when
         Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
 
         //then
-        assertThat(result.getContact().getFirstName())
-            .isEqualTo(newFirstName);
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(givenAccount);
 
-        assertThat(result.getContact().getLastName())
-            .isEqualTo(givenAccount.getContact().getLastName());
+        assertThat(result.getContact().getFirstName())
+            .isEqualTo(newFirstName)
+            .isNotEqualTo(givenFirstName);
+
+        Contact updatedContact = result.getContact();
+        Assertions.assertNotNull(updatedContact.getLastName());
+        Assertions.assertNotNull(updatedContact.getPostalCode());
+        Assertions.assertNotNull(updatedContact.getCountry());
+        Assertions.assertNotNull(updatedContact.getCity());
+        Assertions.assertNotNull(updatedContact.getStreet());
+        Assertions.assertNotNull(updatedContact.getHouseNumber());
     }
 
     @Test
-    @DisplayName("Should update found account without all values")
+    @DisplayName("Should update found account with all values")
     void update_positive_2() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
+        Contact givenContact = givenAccount.getContact();
         Long givenId = givenAccount.getId();
+        String givenFirstName = givenContact.getFirstName();
+        String givenLastName = givenContact.getLastName();
+        String givenPostalCode = givenContact.getPostalCode();
+        String givenCountry = givenContact.getCountry();
+        String givenCity = givenContact.getCity();
+        String givenStreet = givenContact.getStreet();
+        Integer givenHouseNumber = givenContact.getHouseNumber();
 
         String newFirstName = "newFirstName";
         String newLastName = "newLastName";
@@ -377,18 +315,44 @@ class AccountServiceIT extends PostgresqlContainerSetup {
             .address(newAddress)
             .build();
 
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
         //when
         Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(givenAccount);
+
         Contact resultContact = result.getContact();
-        assertEquals(newFirstName, resultContact.getFirstName());
-        assertEquals(newLastName, resultContact.getLastName());
-        assertEquals(newPostalCode, resultContact.getPostalCode());
-        assertEquals(newCountry, resultContact.getCountry());
-        assertEquals(newCity, resultContact.getCity());
-        assertEquals(newStreet, resultContact.getStreet());
-        assertEquals(newHouseNumber, resultContact.getHouseNumber());
+        assertThat(resultContact.getFirstName())
+            .isEqualTo(newFirstName)
+            .isNotEqualTo(givenFirstName);
+
+        assertThat(resultContact.getLastName())
+            .isEqualTo(newLastName)
+            .isNotEqualTo(givenLastName);
+
+        assertThat(resultContact.getPostalCode())
+            .isEqualTo(newPostalCode)
+            .isNotEqualTo(givenPostalCode);
+
+        assertThat(resultContact.getCountry())
+            .isEqualTo(newCountry)
+            .isNotEqualTo(givenCountry);
+
+        assertThat(resultContact.getCity())
+            .isEqualTo(newCity)
+            .isNotEqualTo(givenCity);
+
+        assertThat(resultContact.getStreet())
+            .isEqualTo(newStreet)
+            .isNotEqualTo(givenStreet);
+
+        assertThat(resultContact.getHouseNumber())
+            .isEqualTo(newHouseNumber)
+            .isNotEqualTo(givenHouseNumber);
     }
 
     @Test
@@ -396,15 +360,16 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     void update_negative_1() {
         //given
         Long givenId = 1L;
-        Contact newInfo = Contact.builder()
-            .firstName("newFirstName")
-            .address(Address.builder().build())
-            .build();
+        Contact newInfo = Contact.builder().firstName("newFirstName").build();
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
 
         //when
         Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -415,22 +380,22 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
     void update_negative_2() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            givenAccount.setArchival(true);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
-        Contact newInfo = Contact.builder()
-            .firstName("newFirstName")
-            .address(Address.builder().build())
+        Long givenId = 1L;
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .isArchival(true)
             .build();
+
+        Contact newInfo = Contact.builder().firstName("newFirstName").build();
+
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -441,20 +406,21 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should block active account")
     void block_positive_1() {
         //given
+        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountState(AccountState.ACTIVE)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         //when
         Account result = underTest.block(givenId);
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(givenAccount);
+
         assertEquals(AccountState.BLOCKED, result.getAccountState());
     }
 
@@ -463,11 +429,15 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     void block_negative_1() {
         //given
         Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -479,20 +449,20 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
     void block_negative_2() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Long givenId = 1L;
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .isArchival(true)
+            .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            givenAccount.setArchival(true);
-            return status;
-        });
-
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -504,20 +474,20 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is not verified")
     void block_negative_3() {
         //given
+        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountState(AccountState.NOT_VERIFIED)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(OperationNotAllowedWithActualAccountStateException.class)
@@ -529,20 +499,20 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is blocked")
     void block_negative_4() {
         //given
+        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountState(AccountState.BLOCKED)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.block(givenId));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(OperationNotAllowedWithActualAccountStateException.class)
@@ -554,20 +524,20 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should unblock blocked account")
     void unblock_positive_1() {
         //given
+        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountState(AccountState.BLOCKED)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Account result = underTest.unblock(givenId);
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(givenAccount);
+
         assertEquals(AccountState.ACTIVE, result.getAccountState());
     }
 
@@ -576,11 +546,15 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     void unblock_negative_1() {
         //given
         Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -588,24 +562,24 @@ class AccountServiceIT extends PostgresqlContainerSetup {
             .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
     }
 
-
     @Test
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
-    void unblock_negative_2() {
+    void unblock_negative_3() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Long givenId = 1L;
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .isArchival(true)
+            .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            givenAccount.setArchival(true);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -615,22 +589,22 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is not verified")
-    void unblock_negative_3() {
+    void unblock_negative_4() {
         //given
+        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountState(AccountState.NOT_VERIFIED)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(OperationNotAllowedWithActualAccountStateException.class)
@@ -640,22 +614,22 @@ class AccountServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is active")
-    void unblock_negative_4() {
+    void unblock_negative_5() {
         //given
+        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountState(AccountState.ACTIVE)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.unblock(givenId));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(OperationNotAllowedWithActualAccountStateException.class)
@@ -667,21 +641,23 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should archive active account")
     void archive_positive_1() {
         //given
+        Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
+            .isArchival(false)
             .accountState(AccountState.ACTIVE)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         //when
         Account result = underTest.archive(givenId);
 
         //then
-        assertEquals(true, result.isArchival());
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(givenAccount);
+
+        assertTrue(result.isArchival());
     }
 
     @Test
@@ -690,10 +666,15 @@ class AccountServiceIT extends PostgresqlContainerSetup {
         //given
         Long givenId = 1L;
 
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
+
         //when
         Exception exception = catchException(() -> underTest.archive(givenId));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -705,19 +686,20 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantModifyArchivalAccountException when account is already archival")
     void archive_negative_2() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Long givenId = 1L;
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .isArchival(true)
+            .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            givenAccount.setArchival(true);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.archive(givenId));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -729,21 +711,22 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should add role when account with provided id is found")
     void addRole_positive_1() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Account accoungivenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(accoungivenAccount));
+        given(accountRepository.save(accoungivenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         //when
         Account result = underTest.addRole(givenId, AccountRole.EMPLOYEE);
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(accoungivenAccount);
+
         assertThat(result.getAccountRoles())
             .hasSize(2)
             .contains(AccountRole.CLIENT, AccountRole.EMPLOYEE);
@@ -754,11 +737,15 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     void addRole_negative_1() {
         //given
         Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.EMPLOYEE));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -770,22 +757,22 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
     void addRole_negative_2() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
+            .isArchival(true)
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            givenAccount.setArchival(true);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.EMPLOYEE));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -794,24 +781,24 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     }
 
     @Test
-    @DisplayName("Should throw AccountRoleAlreadyAssignedException when account already has new role")
+    @DisplayName("Should throw AccountRoleAlreadyAssignedException when account already has this role assigned")
     void addRole_negative_3() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.CLIENT));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountRoleAlreadyAssignedException.class)
@@ -823,21 +810,21 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantAssignGuestRoleException when new role is Guest")
     void addRole_negative_4() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.GUEST));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantAssignGuestRoleException.class)
@@ -849,21 +836,21 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw AccountWithAdministratorRoleCantHaveMoreRolesException when account has Administrator role and there is try to add another one")
     void addRole_negative_5() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.ADMIN));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.ADMIN));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.CLIENT));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountWithAdministratorRoleCantHaveMoreRolesException.class)
@@ -875,21 +862,21 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw AccountWithAdministratorRoleCantHaveMoreRolesException when account hasn't got Administrator role and there is try to add Administrator role to an account")
     void addRole_negative_6() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.addRole(givenId, AccountRole.ADMIN));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountWithAdministratorRoleCantHaveMoreRolesException.class)
@@ -901,21 +888,22 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should remove role assigned to account")
     void removeRole_positive_1() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         //when
         Account result = underTest.removeRole(givenId, AccountRole.CLIENT);
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(givenAccount);
+
         assertThat(result.getAccountRoles())
             .hasSize(1)
             .containsExactly(AccountRole.EMPLOYEE);
@@ -926,11 +914,15 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     void removeRole_negative_1() {
         //given
         Long givenId = 1L;
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
 
         //when
         Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -942,22 +934,22 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantModifyArchivalAccountException when found account is archival")
     void removeRole_negative_2() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
         Account givenAccount = TestData.getDefaultAccountBuilder()
+            .isArchival(true)
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            givenAccount.setArchival(true);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -969,21 +961,21 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw AccountRoleNotFoundException when account doesn't have role we want to remove")
     void removeRole_negative_3() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.ADMIN));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountRoleNotFoundException.class)
@@ -995,21 +987,21 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantRemoveLastRoleException when account has last role")
     void removeRole_negative_4() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.removeRole(givenId, AccountRole.CLIENT));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantRemoveLastRoleException.class)
@@ -1021,21 +1013,22 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should change role")
     void changeRole_positive_1() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
+        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         //when
         Account result = underTest.changeRole(givenId, AccountRole.EMPLOYEE);
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).should().save(givenAccount);
+
         assertThat(result.getAccountRoles())
             .hasSize(1)
             .containsExactly(AccountRole.EMPLOYEE);
@@ -1047,10 +1040,15 @@ class AccountServiceIT extends PostgresqlContainerSetup {
         //given
         Long givenId = 1L;
 
+        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
+
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountNotFoundException.class)
@@ -1062,22 +1060,22 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantModifyArchivalAccountException when found account is archival")
     void changeRole_negative_2() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
+            .isArchival(true)
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            givenAccount.setArchival(true);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
@@ -1089,21 +1087,21 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantChangeRoleIfMoreThanOneAlreadyAssignedException when account has more than one role")
     void changeRole_negative_3() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantChangeRoleIfMoreThanOneAlreadyAssignedException.class)
@@ -1115,21 +1113,21 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw AccountRoleAlreadyAssignedException when account has new role already assigned")
     void changeRole_negative_4() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.EMPLOYEE));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.EMPLOYEE));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.EMPLOYEE));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(AccountRoleAlreadyAssignedException.class)
@@ -1138,24 +1136,24 @@ class AccountServiceIT extends PostgresqlContainerSetup {
     }
 
     @Test
-    @DisplayName("Should throw CantAssignGuestRoleException when account has new role already assigned")
+    @DisplayName("Should throw CantAssignGuestRoleException there is try to assign guest role")
     void changeRole_negative_5() {
         //given
-        HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.EMPLOYEE));
+        Long givenId = 1L;
+        Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
         Account givenAccount = TestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
+        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
         Exception exception = catchException(() -> underTest.changeRole(givenId, AccountRole.GUEST));
 
         //then
+        then(accountRepository).should().findById(givenId);
+        then(accountRepository).shouldHaveNoMoreInteractions();
+
         assertThat(exception)
             .isNotNull()
             .isExactlyInstanceOf(CantAssignGuestRoleException.class)

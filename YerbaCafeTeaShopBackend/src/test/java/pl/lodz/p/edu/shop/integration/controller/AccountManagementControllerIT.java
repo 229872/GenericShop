@@ -40,11 +40,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@DisplayName("Integration tests for AccountController")
+@DisplayName("Integration tests for AccountManagementController")
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("it")
-public class AccountControllerIT extends PostgresqlContainerSetup {
+public class AccountManagementControllerIT extends PostgresqlContainerSetup {
 
     @Autowired
     private MockMvc mockMvc;

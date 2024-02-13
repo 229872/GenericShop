@@ -4,49 +4,47 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
-import pl.lodz.p.edu.shop.logic.service.api.AccountService;
-import pl.lodz.p.edu.shop.logic.service.api.OwnAccountService;
-import pl.lodz.p.edu.shop.presentation.adapter.api.AccountServiceOperations;
-import pl.lodz.p.edu.shop.presentation.adapter.api.OwnAccountServiceOperations;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.*;
+import pl.lodz.p.edu.shop.logic.service.api.AccountManagementService;
+import pl.lodz.p.edu.shop.presentation.adapter.api.AccountManagementServiceOperations;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountCreateDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountUpdateDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.AccountMapper;
 
 import java.util.List;
-import java.util.Locale;
 
 @RequiredArgsConstructor
 
 @Component
-class AccountServiceAdapter implements AccountServiceOperations, OwnAccountServiceOperations {
+class AccountManagementManagementServiceAdapter implements AccountManagementServiceOperations {
 
-    private final AccountService accountService;
-    private final OwnAccountService ownAccountService;
+    private final AccountManagementService accountManagementService;
     private final AccountMapper accountMapper;
 
     @Override
     public List<AccountOutputDto> findAll() {
-        return accountService.findAll().stream()
+        return accountManagementService.findAll().stream()
             .map(accountMapper::mapToAccountOutputDto)
             .toList();
     }
 
     @Override
     public List<AccountOutputDto> findAll(Pageable pageable) {
-        return accountService.findAll(pageable).stream()
+        return accountManagementService.findAll(pageable).stream()
             .map(accountMapper::mapToAccountOutputDto)
             .toList();
     }
 
     @Override
     public AccountOutputDto findById(Long id) {
-        Account account = accountService.findById(id);
+        Account account = accountManagementService.findById(id);
         return accountMapper.mapToAccountOutputDto(account);
     }
 
     @Override
     public AccountOutputDto create(AccountCreateDto account) {
         Account outputAccount = accountMapper.mapToAccount(account);
-        Account createdAccount = accountService.create(outputAccount);
+        Account createdAccount = accountManagementService.create(outputAccount);
         return accountMapper.mapToAccountOutputDto(createdAccount);
     }
 
@@ -57,19 +55,19 @@ class AccountServiceAdapter implements AccountServiceOperations, OwnAccountServi
 
     @Override
     public AccountOutputDto block(Long id) {
-        Account account = accountService.block(id);
+        Account account = accountManagementService.block(id);
         return accountMapper.mapToAccountOutputDto(account);
     }
 
     @Override
     public AccountOutputDto unblock(Long id) {
-        Account account = accountService.unblock(id);
+        Account account = accountManagementService.unblock(id);
         return accountMapper.mapToAccountOutputDto(account);
     }
 
     @Override
     public AccountOutputDto archive(Long id) {
-        Account account = accountService.archive(id);
+        Account account = accountManagementService.archive(id);
         return accountMapper.mapToAccountOutputDto(account);
     }
 
@@ -86,24 +84,5 @@ class AccountServiceAdapter implements AccountServiceOperations, OwnAccountServi
     @Override
     public AccountOutputDto changeRole(Long id, String newRole) {
         return null;
-    }
-
-    @Override
-    public AccountOutputDto findByLogin(String login) {
-        Account account = ownAccountService.findByLogin(login);
-        return accountMapper.mapToAccountOutputDto(account);
-    }
-
-    @Override
-    public AccountOutputDto updateOwnLocale(String login, ChangeLanguageDto locale) {
-        Locale language = new Locale(locale.locale());
-        Account account = ownAccountService.updateOwnLocale(login, language);
-        return accountMapper.mapToAccountOutputDto(account);
-    }
-
-    @Override
-    public AccountOutputDto changePassword(String login, ChangePasswordDto passwords) {
-        Account account = ownAccountService.changePassword(login, passwords.currentPassword(), passwords.newPassword());
-        return accountMapper.mapToAccountOutputDto(account);
     }
 }

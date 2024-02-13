@@ -7,7 +7,7 @@ import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 
 import java.util.List;
 
-public interface AccountService {
+public interface AccountManagementService {
 
     List<Account> findAll();
 
