@@ -19,6 +19,8 @@ import pl.lodz.p.edu.shop.exception.ExceptionMessage;
 import pl.lodz.p.edu.shop.exception.account.AccountNotFoundException;
 import pl.lodz.p.edu.shop.logic.service.api.AccountAccessService;
 
+import java.util.Locale;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchException;
 
@@ -91,5 +93,52 @@ public class AccountAccessServiceIT extends PostgresqlContainerSetup {
             .isExactlyInstanceOf(AccountNotFoundException.class)
             .isInstanceOf(ResponseStatusException.class)
             .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Should update locale")
+    void updateOwnLocale_positive_1() {
+        //given
+        String givenLanguage = "pl";
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .locale(givenLanguage)
+            .build();
+        String givenLogin = givenAccount.getLogin();
+        Locale givenNewLocale = Locale.forLanguageTag("en");
+
+        txTemplate.execute(status -> {
+            em.persist(givenAccount);
+            return status;
+        });
+
+        //when
+        Account result = underTest.updateOwnLocale(givenLogin, givenNewLocale);
+
+        //then
+        assertThat(result.getLocale())
+            .isEqualTo(givenNewLocale.getLanguage())
+            .isNotEqualTo(givenLanguage);
+    }
+
+    @Test
+    @DisplayName("Should throw AccountNotFoundException when account with provided login can't be found")
+    void updateOwnLocale_negative_1() {
+        //given
+        String givenLogin = "login";
+        Locale givenLocale = Locale.forLanguageTag("en");
+
+        //when
+        Exception exception = catchException(() -> underTest.updateOwnLocale(givenLogin, givenLocale));
+
+        //then
+        assertThat(exception)
+            .isNotNull()
+            .isInstanceOf(ResponseStatusException.class)
+            .isExactlyInstanceOf(AccountNotFoundException.class)
+            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
+    }
+
+    @Test
+    void changePassword() {
     }
 }

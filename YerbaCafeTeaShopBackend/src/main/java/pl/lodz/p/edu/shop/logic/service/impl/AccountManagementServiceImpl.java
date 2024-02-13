@@ -22,11 +22,11 @@ import static pl.lodz.p.edu.shop.util.UpdatableUtil.setNullableValue;
 @Service
 @Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.REQUIRES_NEW)
 @Qualifier("AccountManagementServiceImpl")
-class AccountManagementAccessServiceImpl extends AccountService implements AccountManagementService {
+class AccountManagementServiceImpl extends AccountService implements AccountManagementService {
 
     private final AccountRepository accountRepository;
 
-    public AccountManagementAccessServiceImpl(AccountRepository accountRepository) {
+    public AccountManagementServiceImpl(AccountRepository accountRepository) {
         super(accountRepository);
         this.accountRepository = accountRepository;
     }

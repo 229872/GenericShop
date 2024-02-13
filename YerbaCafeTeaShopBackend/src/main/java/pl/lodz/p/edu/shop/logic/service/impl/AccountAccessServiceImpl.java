@@ -15,7 +15,7 @@ import java.util.Locale;
 @Service
 @Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.REQUIRES_NEW)
 @Qualifier("AccountAccessServiceImpl")
-class AccountAccessServiceImpl extends AccountManagementAccessServiceImpl implements AccountAccessService {
+class AccountAccessServiceImpl extends AccountManagementServiceImpl implements AccountAccessService {
 
     private final AccountRepository accountRepository;
 
@@ -40,7 +40,7 @@ class AccountAccessServiceImpl extends AccountManagementAccessServiceImpl implem
 
         account.setLocale(locale.getLanguage());
 
-        return accountRepository.save(account);
+        return save(account);
     }
 
     @Override

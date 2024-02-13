@@ -38,7 +38,7 @@ class AccountManagementServiceImplTest {
     private AccountRepository accountRepository;
 
     @InjectMocks
-    private AccountManagementAccessServiceImpl underTest;
+    private AccountManagementServiceImpl underTest;
 
     @AfterEach
     void tearDown() {
