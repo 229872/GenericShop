@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,6 +18,8 @@ import pl.lodz.p.edu.shop.exception.SystemExceptionFactory;
 import pl.lodz.p.edu.shop.logic.service.api.JwtService;
 
 import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -166,7 +169,16 @@ class JwtServiceImpl implements JwtService {
     }
 
     private Key getSigningKeyFromNotEncodedSecret(String secret) {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        try {
+            MessageDigest instance = MessageDigest.getInstance("SHA-256");
+            byte[] digest = instance.digest(secret.getBytes());
+            String encodedDigest = Encoders.BASE64.encode(digest);
+
+            return Keys.hmacShaKeyFor(encodedDigest.getBytes());
+        } catch (NoSuchAlgorithmException e) {
+            log.warn("No algorithm provided for message digest: ", e);
+            throw new RuntimeException(e);
+        }
     }
 
 }

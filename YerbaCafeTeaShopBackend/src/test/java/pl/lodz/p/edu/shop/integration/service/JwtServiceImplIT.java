@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -105,7 +106,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
         String sub = jsonNodeOf(payload).get("sub").asText();
 
         assertThat(sub)
-            .isNotNull()
+            .isNotBlank()
             .isEqualTo(givenLogin);
 
         //Exp
@@ -120,10 +121,36 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"e", "example@example.com", "verylargeemailaddressemailforaccount1234567892000324132@example.com"})
+    @DisplayName("Should generate jwt verification token with login in subject and duration provided in property")
+    void generateVerificationToken_positive_1(String givenEmail) {
+        //given
+        Account givenAccount = TestData.getDefaultAccountBuilder()
+            .email(givenEmail)
+            .build();
+        String givenLogin = givenAccount.getLogin();
+
+        //when
+        String result = underTest.generateVerificationToken(givenLogin, givenEmail);
+
+        //then
+        String payload = decodeJwtToken(result).get(1);
+
+        //Sub
+        String sub = jsonNodeOf(payload).get("sub").asText();
+
+        assertThat(sub)
+            .isNotBlank()
+            .isEqualTo(givenLogin);
+
+    }
+
+    @ParameterizedTest
     @CsvFileSource(
         files = "src/test/resources/data/jwtTokens.csv",
         numLinesToSkip = 1
     )
+    @DisplayName("Should decode subject from jwt token without validation")
     void decodeSubjectFromJwtTokenWithoutValidation(String givenToken, String login) {
         //given
 
