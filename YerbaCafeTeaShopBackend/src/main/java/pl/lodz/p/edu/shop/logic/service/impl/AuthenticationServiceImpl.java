@@ -78,7 +78,7 @@ class AuthenticationServiceImpl implements AuthenticationService {
         String loginFromRefreshToken = jwtService.validateAndExtractClaimsFromRefreshToken(refreshToken).getSubject();
 
         if (!login.equals(loginFromRefreshToken)) {
-            throw ApplicationExceptionFactory.createInvalidRefreshTokenException();
+            throw ApplicationExceptionFactory.createInvalidTokenException();
         }
 
         Account account = accountRepository.findByLogin(login)

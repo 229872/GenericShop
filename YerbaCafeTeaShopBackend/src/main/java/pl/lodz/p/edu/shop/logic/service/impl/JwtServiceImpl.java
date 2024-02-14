@@ -1,6 +1,5 @@
 package pl.lodz.p.edu.shop.logic.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
@@ -102,16 +101,15 @@ class JwtServiceImpl implements JwtService {
 
     @Override
     public String decodeSubjectFromJwtTokenWithoutValidation(String jwtToken) {
-        String[] tokenParts = jwtToken.split("\\.");
-        String decodedPayload = new String(Base64.getDecoder().decode(tokenParts[1]));
-
         try {
+            String[] tokenParts = jwtToken.split("\\.");
+            String decodedPayload = new String(Base64.getDecoder().decode(tokenParts[1]));
             JsonNode jsonNode = objectMapper.readTree(decodedPayload);
             return jsonNode.get("sub").asText();
 
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             log.warn("Couldn't decode subject: ", e);
-            throw SystemExceptionFactory.createMappingException(e);
+            throw SystemExceptionFactory.createDecodeException(e);
         }
     }
 
@@ -126,11 +124,11 @@ class JwtServiceImpl implements JwtService {
 
         } catch (ExpiredJwtException e) {
             log.info("Jwt token expired", e);
-            throw ApplicationExceptionFactory.createExpiredRefreshTokenException();
+            throw ApplicationExceptionFactory.createExpiredTokenException();
 
         } catch (JwtException e) {
             log.info("Jwt token invalid", e);
-            throw ApplicationExceptionFactory.createInvalidRefreshTokenException();
+            throw ApplicationExceptionFactory.createInvalidTokenException();
         }
     }
 

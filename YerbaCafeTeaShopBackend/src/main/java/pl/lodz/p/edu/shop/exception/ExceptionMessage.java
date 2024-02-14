@@ -8,7 +8,7 @@ public final class ExceptionMessage {
 
     public static final String UNKNOWN = "exception.unknown";
     public static final String DB_CONSTRAINT_VIOLATION = "exception.db.constraint.violation";
-    public static final String MAPPING_EXCEPTION = "exception.mapping";
+    public static final String DECODE_EXCEPTION = "exception.mapping";
     public static final String TRANSACTION_TIMEOUT = "exception.transaction.timeout";
     public static final String ACCOUNT_NOT_FOUND = "exception.account.not_found";
     public static final String ACCOUNT_CONFLICT_LOGIN = "exception.account.conflict.login";
@@ -29,8 +29,8 @@ public final class ExceptionMessage {
     public static final String AUTH_ACCOUNT_ARCHIVAL = "exception.auth.archival";
     public static final String AUTH_ACCOUNT_NOT_VERIFIED = "exception.auth.state.not_verified";
     public static final String AUTH_ACCOUNT_BLOCKED = "exception.auth.state.blocked";
-    public static final String AUTH_TOKEN_REFRESH_EXPIRED = "exception.auth.token.refresh.expired";
-    public static final String AUTH_TOKEN_REFRESH_INVALID = "exception.auth.token.refresh.invalid";
+    public static final String TOKEN_EXPIRED = "exception.auth.token.refresh.expired";
+    public static final String TOKEN_INVALID = "exception.auth.token.refresh.invalid";
 
 
     public static class Validation {

@@ -94,11 +94,11 @@ public final class ApplicationExceptionFactory {
         return new CantAccessNotVerifiedAccountException(UNAUTHORIZED, ExceptionMessage.AUTH_ACCOUNT_NOT_VERIFIED);
     }
 
-    public static ResponseStatusException createExpiredRefreshTokenException() {
-        return new ExpiredRefreshTokenException(UNAUTHORIZED, ExceptionMessage.AUTH_TOKEN_REFRESH_EXPIRED);
+    public static ResponseStatusException createExpiredTokenException() {
+        return new ExpiredTokenException(UNAUTHORIZED, ExceptionMessage.TOKEN_EXPIRED);
     }
 
-    public static ResponseStatusException createInvalidRefreshTokenException() {
-        return new InvalidRefreshTokenException(UNAUTHORIZED, ExceptionMessage.AUTH_TOKEN_REFRESH_INVALID);
+    public static ResponseStatusException createInvalidTokenException() {
+        return new InvalidTokenException(UNAUTHORIZED, ExceptionMessage.TOKEN_INVALID);
     }
 }
