@@ -104,7 +104,7 @@ class JwtServiceImpl implements JwtService {
 
         try {
             JsonNode jsonNode = objectMapper.readTree(decodedPayload);
-            return jsonNode.get("subject").asText();
+            return jsonNode.get("sub").asText();
 
         } catch (JsonProcessingException e) {
             log.warn("Couldn't decode subject: ", e);
