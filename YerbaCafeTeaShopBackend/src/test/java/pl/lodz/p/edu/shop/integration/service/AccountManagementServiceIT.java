@@ -277,7 +277,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should update found account with one value")
-    void update_positive_1() {
+    void updateContactInformation_positive_1() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
 
@@ -306,7 +306,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should update found account without all values")
-    void update_positive_2() {
+    void updateContactInformation_positive_2() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
         txTemplate.execute(status -> {
@@ -353,7 +353,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw AccountNotFoundException when account can't be found during update")
-    void update_negative_1() {
+    void updateContactInformation_negative_1() {
         //given
         Long givenId = 1L;
         Contact newInfo = Contact.builder()
@@ -373,7 +373,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
 
     @Test
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
-    void update_negative_2() {
+    void updateContactInformation_negative_2() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
         txTemplate.execute(status -> {

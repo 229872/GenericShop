@@ -243,7 +243,7 @@ class AccountManagementServiceImplTest {
 
     @Test
     @DisplayName("Should update found account with only set values")
-    void update_positive_1() {
+    void updateContactInformation_positive_1() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
         String givenFirstName = givenAccount.getContact().getFirstName();
@@ -280,7 +280,7 @@ class AccountManagementServiceImplTest {
 
     @Test
     @DisplayName("Should update found account with all values")
-    void update_positive_2() {
+    void updateContactInformation_positive_2() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
         Contact givenContact = givenAccount.getContact();
@@ -357,7 +357,7 @@ class AccountManagementServiceImplTest {
 
     @Test
     @DisplayName("Should throw AccountNotFoundException when account can't be found during update")
-    void update_negative_1() {
+    void updateContactInformation_negative_1() {
         //given
         Long givenId = 1L;
         Contact newInfo = Contact.builder().firstName("newFirstName").build();
@@ -378,7 +378,7 @@ class AccountManagementServiceImplTest {
 
     @Test
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
-    void update_negative_2() {
+    void updateContactInformation_negative_2() {
         //given
         Long givenId = 1L;
         Account givenAccount = TestData.getDefaultAccountBuilder()
