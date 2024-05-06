@@ -10,9 +10,9 @@
 	</parent>
 
 	<groupId>pl.lodz.p.edu</groupId>
-	<artifactId>YerbaCafeTeaShopBackend</artifactId>
+	<artifactId>GenericShopBackend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>YerbaCafeTeaShopBackend</name>
+	<name>GenericShopBackend</name>
 
 	<description>An online store with dynamic product data model with a product recommendation mechanism based on its features.</description>
 
@@ -20,7 +20,7 @@
 		<developer>
 			<id>229872</id>
 			<name>Bartłomiej Dygasiński</name>
-			<url>https://github.com/229872/YerbaCafeTeaShop</url>
+			<url>https://github.com/229872/GenericShopBackend</url>
 		</developer>
 	</developers>
 
