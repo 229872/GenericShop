@@ -19,11 +19,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
-import pl.lodz.p.edu.shop.config.PostgresqlContainerSetup;
 import pl.lodz.p.edu.shop.TestData;
+import pl.lodz.p.edu.shop.config.PostgresqlContainerSetup;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.shop.exception.ExceptionMessage;
+import pl.lodz.p.edu.shop.presentation.controller.ApiRoot;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountCreateDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.AccountMapper;
@@ -64,7 +65,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
 
     private ObjectMapper objectMapper;
 
-    private final String BASE_API = "/api/account";
+    private final String BASE_API = "%s/account".formatted(ApiRoot.API_ROOT);
 
     @BeforeEach
     void setUp() {
