@@ -14,11 +14,12 @@ import java.net.URI;
 import java.util.List;
 
 import static pl.lodz.p.edu.shop.config.security.role.RoleName.ADMIN;
+import static pl.lodz.p.edu.shop.presentation.controller.ApiRoot.API_ROOT;
 
 @RequiredArgsConstructor
 
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping(API_ROOT + "/account")
 @DenyAll
 public class AccountManagementController {
 

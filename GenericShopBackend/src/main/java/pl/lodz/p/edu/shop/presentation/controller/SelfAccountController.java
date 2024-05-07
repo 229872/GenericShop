@@ -12,12 +12,13 @@ import pl.lodz.p.edu.shop.presentation.dto.user.account.ChangeLanguageDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.ChangePasswordDto;
 import pl.lodz.p.edu.shop.config.security.role.RoleName;
 
+import static pl.lodz.p.edu.shop.presentation.controller.ApiRoot.API_ROOT;
 import static pl.lodz.p.edu.shop.util.SecurityUtil.getLoginFromSecurityContext;
 
 @RequiredArgsConstructor
 
 @RestController
-@RequestMapping("/api/account/self")
+@RequestMapping( API_ROOT + "/account/self")
 @DenyAll
 public class SelfAccountController {
 

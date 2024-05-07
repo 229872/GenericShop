@@ -12,12 +12,13 @@ import pl.lodz.p.edu.shop.presentation.dto.authentication.Credentials;
 import pl.lodz.p.edu.shop.presentation.dto.authentication.Tokens;
 
 import static pl.lodz.p.edu.shop.config.security.role.RoleName.*;
+import static pl.lodz.p.edu.shop.presentation.controller.ApiRoot.API_ROOT;
 import static pl.lodz.p.edu.shop.util.SecurityUtil.getLoginFromSecurityContext;
 
 @RequiredArgsConstructor
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(API_ROOT + "/auth")
 @DenyAll
 public class AuthenticationController {
 
