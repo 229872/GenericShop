@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, Link, Stack, TextField, Typography } from "@mui/material";
 import z from 'zod';
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -75,7 +75,7 @@ export default function AuthenticationPage() {
             <Typography variant='h5' textAlign='center'>{t('authentication.app.please.login')}</Typography>
           </Stack>
 
-          <Stack spacing={5} sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Stack spacing={5} sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
             <TextField label={t('authentication.label.login')} {...register('login')}
               error={Boolean(errors.login?.message)}
               placeholder={t('authentication.enter.login')}
@@ -89,6 +89,8 @@ export default function AuthenticationPage() {
               helperText={errors.password?.message && t(errors.password.message)}
               sx={fieldStyle}
             />
+
+            <Link href='#' color='inherit' variant='h6' underline='hover'>{t('authentication.forgot.password')}</Link>
           </Stack>
         </CardContent>
 
