@@ -6,6 +6,10 @@ const resources = {
     translation: {
       'error': 'Unknown error occurred',
 
+      'app.dialog.title': 'Session expired',
+      'app.dialog.message': 'Session expired, please sign in again.',
+      'app.dialog.action': 'OK',
+
       'nav.home': 'Home',
       'nav.login': 'Login',
       'nav.create_account': 'Create Account',
@@ -30,6 +34,10 @@ const resources = {
   pl: {
     translation: {
       'error': 'Wystąpił nieznany błąd',
+
+      'app.dialog.title': 'Sesja wygasła',
+      'app.dialog.message': 'Sesja wygasła. Zaloguj się ponownie.',
+      'app.dialog.action': 'OK',
 
       'nav.home': 'Strona Główna',
       'nav.login': 'Zaloguj się',

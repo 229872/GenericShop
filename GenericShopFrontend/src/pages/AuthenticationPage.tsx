@@ -5,9 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from "react-i18next";
 import axios from 'axios';
 import { environment } from "../utils/constants";
-import { decodeJwtToken, saveJwtToken, saveLocale, saveRefreshToken } from "../utils/tokenService";
+import { decodeJwtToken, getExpirationTime, getJwtToken, saveJwtToken, saveLocale, saveRefreshToken } from "../utils/tokenService";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'sonner'
+import { Dispatch, SetStateAction } from "react";
 
 const schema = z.object({
   login: z.string().regex(/^[a-zA-Z][a-zA-Z0-9]*$/, 'authentication.login.not_valid'),
@@ -21,8 +22,11 @@ type Tokens = {
   refreshToken: string
 }
 
+type ComponentParams = {
+  setDialog: Dispatch<SetStateAction<boolean>>
+}
 
-export default function AuthenticationPage() {
+export default function AuthenticationPage({setDialog}: ComponentParams) {
   const fieldStyle = {height: '64px', width: '60%'};
   const {t} = useTranslation();
   const navigate = useNavigate();
@@ -41,10 +45,11 @@ export default function AuthenticationPage() {
       reset()
       navigate('/home')
       toast.success(t('authentication.toast.success'))
+      showDialogAfterTimeout()
 
     } catch (e: any) {
       if (e.response && e.response.data) {
-        toast.error(t(e.response.data))
+        toast.error(t(e.response.data.message))
       } else {
         toast.error(t('error'))
       }
@@ -64,7 +69,17 @@ export default function AuthenticationPage() {
     }
   }
 
-  
+  const calculateSessionExpiredTimeout = () => {
+    const now = Date.now() / 1000;
+    return (Number(getExpirationTime(getJwtToken())) - now) * 1000;
+  };
+
+  const showDialogAfterTimeout = () => {
+    setTimeout(() => {
+      setDialog(true)
+    }, calculateSessionExpiredTimeout())
+  }
+
   return (
     <Card elevation={2} sx={{margin: '20vh 25vw'}}>
       <form onSubmit={handleSubmit(onValid)} noValidate>
