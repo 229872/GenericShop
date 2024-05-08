@@ -21,6 +21,7 @@ const resources = {
       'authentication.enter.password': 'Enter password',
       'authentication.button.login': 'Log in',
       'authentication.toast.success': 'You have successfully logged in !',
+      'authentication.forgot.password': 'Forgot password ?',
 
       // Backend
       'exception.auth.credentials': 'Credentials are incorrect'
@@ -45,6 +46,7 @@ const resources = {
       'authentication.enter.password': 'Wprowadź hasło',
       'authentication.button.login': 'Zaloguj się',
       'authentication.toast.success': 'Zalogowałeś się pomyślnie',
+      'authentication.forgot.password': 'Zapomniałeś hasła ?',
 
       // Backend
       'exception.auth.credentials': 'Nieprawidłowe dane logowania'

@@ -24,18 +24,18 @@ type Tokens = {
 
 export default function AuthenticationPage() {
   const fieldStyle = {height: '64px', width: '60%'};
+  const {t} = useTranslation();
+  const navigate = useNavigate();
+
   const { register, formState, handleSubmit, reset } = useForm<Credentials>({
     mode: 'onChange',
     resolver: zodResolver(schema)   
   });
   const { errors, isValid } = formState;  
-  const {t} = useTranslation();
-  const navigate = useNavigate();
 
   const onValid = async (credentials: Credentials) => {
     try {
       const { data: {token, refreshToken} } = await sendCredentials(credentials)
-
       const lang = decodeJwtToken(token)?.lang;
       saveDataInLocalStorage(token, refreshToken, lang)
       reset()
@@ -43,14 +43,16 @@ export default function AuthenticationPage() {
       toast.success(t('authentication.toast.success'))
 
     } catch (e: any) {
-
       if (e.response && e.response.data) {
-        const { message } = e.response.data;
-        toast.error(t(message))
+        toast.error(t(e.response.data))
       } else {
         toast.error(t('error'))
       }
     }
+  }
+
+  const sendCredentials = async (data: Credentials) => {
+    return axios.post<Tokens>(`${environment.apiBaseUrl}/auth`, data)
   }
 
   const saveDataInLocalStorage = (token: string, refreshToken: string, language: string | undefined) => {
@@ -62,10 +64,7 @@ export default function AuthenticationPage() {
     }
   }
 
-  const sendCredentials = async (data: Credentials) => {
-    return axios.post<Tokens>(`${environment.apiBaseUrl}/auth`, data)
-  }
-
+  
   return (
     <Card elevation={2} sx={{margin: '20vh 25vw'}}>
       <form onSubmit={handleSubmit(onValid)} noValidate>
