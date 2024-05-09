@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 import { SessionDialogsActions, Tokens } from "../utils/types";
 import { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import VisibilityButton from "../components/reusable/VisibilityButton";
 
 const schema = z.object({
   login: z.string().regex(/^[a-zA-Z][a-zA-Z0-9]*$/, 'authentication.login.not_valid'),
@@ -88,11 +89,7 @@ export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, 
               helperText={errors.password?.message && t(errors.password.message)}
               sx={fieldStyle}
               InputProps={{
-                endAdornment: <InputAdornment position='end'>
-                  <IconButton onClick={() => setPasswordVisible(!passwordVisible)}>
-                    {passwordVisible ? <Visibility /> : <VisibilityOff />}
-                  </IconButton>
-                </InputAdornment>
+                endAdornment: <VisibilityButton visible={passwordVisible} onClick={() => setPasswordVisible(!passwordVisible)} />
               }}
             />
 
