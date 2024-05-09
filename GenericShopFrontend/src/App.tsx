@@ -9,9 +9,10 @@ import MuiDialog from './components/MuiDialog';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { environment } from './utils/constants';
-import { getJwtToken, getRefreshToken, saveJwtToken, saveRefreshToken } from './utils/tokenService';
+import { getExpirationTime, getJwtToken, getRefreshToken, isTokenExpired, saveJwtToken, saveRefreshToken } from './utils/tokenService';
 import { Tokens } from './utils/types';
 import { toast } from 'sonner'
+
 
 function App() {
   const [showTokenExpiredDialog, setShowTokenExpiredDialog] = useState(false);
@@ -33,6 +34,7 @@ function App() {
         const data: Tokens = await sendExtendSessionRequest(refreshToken, token)
         saveJwtToken(data.token)
         saveRefreshToken(data.refreshToken)
+        showExtendSessionDialogAfterTimeout()
         toast.success(t('app.dialog.session_extend.dialog.success'))
 
       } catch (e) {
@@ -41,6 +43,45 @@ function App() {
 
     }
     setShowExtendSessionDialog(false)
+  }
+
+  const showTokenExpiredDialogAfterTimeout = () => {
+    setTimeout(() => {
+      if (isTokenExpired()) {
+        setShowExtendSessionDialog(false)
+        setShowTokenExpiredDialog(true)
+      } else {
+        showTokenExpiredDialogAfterTimeout()
+      }
+    }, calculateSessionExpiredTimeout())
+  }
+
+  const showExtendSessionDialogAfterTimeout = () => {
+    const timeout = calculateExtendSessionDialogTimeout()
+    setTimeout(() => {
+      if (!isTokenExpired()) {
+        setShowExtendSessionDialog(true)
+      }
+    }, timeout)
+  }
+
+  const calculateSessionExpiredTimeout = () => {
+    const now = Date.now() / 1000;
+    return (Number(getExpirationTime(getJwtToken())) - now) * 1000;
+  };
+  
+  const calculateExtendSessionDialogTimeout = (): number | undefined => {
+    const expirationTime = getExpirationTime(getJwtToken());
+    if (expirationTime) {
+      const sessionTmeInMillis = expirationTime * 1000 - Date.now();
+  
+      if (sessionTmeInMillis <= 1.5 * 180 * 1000) {
+        return sessionTmeInMillis - (0.3 * 180 * 1000)
+      }
+  
+      return sessionTmeInMillis - (180 * 1000)
+    }
+    return undefined;
   }
   
   const sendExtendSessionRequest = async (givenRefreshToken: string, givenToken: string): Promise<Tokens> => {
@@ -60,8 +101,8 @@ function App() {
     <Routes>
       <Route path='/auth' element={
         <AuthenticationPage
-          setSessionExpiredDialog={setShowTokenExpiredDialog}
-          setExtendSessionDialog={setShowExtendSessionDialog}
+          showTokenExpiredDialogAfterTimeout={showTokenExpiredDialogAfterTimeout}
+          showExtendSessionDialogAfterTimeout={showExtendSessionDialogAfterTimeout}
         />
       } />
     </Routes>
