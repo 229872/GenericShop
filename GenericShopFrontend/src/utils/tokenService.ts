@@ -2,17 +2,6 @@ import { environment } from "./constants";
 import { jwtDecode } from "jwt-decode";
 import { TokenData } from "./types";
 
-export const isTokenExpired = (): boolean => {
-  const expirationTime: number | null = getExpirationTime(getJwtToken())
-
-  if (expirationTime === null) {
-    return true;
-  }
-
-  return expirationTime < Date.now() / 1000;
-}
-
-
 
 export const saveJwtToken = (token: string): void => {
   localStorage.setItem(environment.jwtTokenKey, token)

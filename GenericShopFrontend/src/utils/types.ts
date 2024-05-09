@@ -9,3 +9,8 @@ export type Tokens = {
   token: string
   refreshToken: string
 }
+
+export type SessionDialogsActions = {
+  showTokenExpiredDialogAfterTimeout: () => void
+  showExtendSessionDialogAfterTimeout: () => void
+}

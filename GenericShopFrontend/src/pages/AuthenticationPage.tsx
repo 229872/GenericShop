@@ -8,7 +8,7 @@ import { environment } from "../utils/constants";
 import { decodeJwtToken, saveJwtToken, saveLocale, saveRefreshToken } from "../utils/tokenService";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'sonner'
-import { Tokens } from "../utils/types";
+import { SessionDialogsActions, Tokens } from "../utils/types";
 
 const schema = z.object({
   login: z.string().regex(/^[a-zA-Z][a-zA-Z0-9]*$/, 'authentication.login.not_valid'),
@@ -17,12 +17,9 @@ const schema = z.object({
 
 type Credentials = z.infer<typeof schema>;
 
-type ComponentParams = {
-  showTokenExpiredDialogAfterTimeout: () => void
-  showExtendSessionDialogAfterTimeout: () => void
-}
 
-export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, showExtendSessionDialogAfterTimeout}: ComponentParams) {
+
+export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, showExtendSessionDialogAfterTimeout}: SessionDialogsActions) {
   const fieldStyle = {height: '64px', width: '60%'};
   const {t} = useTranslation();
   const navigate = useNavigate();
