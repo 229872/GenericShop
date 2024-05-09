@@ -6,9 +6,15 @@ const resources = {
     translation: {
       'error': 'Unknown error occurred',
 
-      'app.dialog.title': 'Session expired',
-      'app.dialog.message': 'Session expired, please sign in again.',
-      'app.dialog.action': 'OK',
+      'app.dialog.session_expired.title': 'Session expired',
+      'app.dialog.session_expired.message': 'Session expired, please sign in again.',
+      'app.dialog.session_expired.action': 'OK',
+      'app.dialog.session_extend.title': 'Extend session',
+      'app.dialog.session_extend.message': 'Do you want to extend session ?',
+      'app.dialog.session_extend.action.yes': 'Yes',
+      'app.dialog.session_extend.action.no': 'No',
+      'app.dialog.session_extend.dialog.success': 'Session extended successfully',
+      'app.dialog.session_extend.dialog.error': 'Couldn\'t extend session',
 
       'nav.home': 'Home',
       'nav.login': 'Login',
@@ -35,9 +41,15 @@ const resources = {
     translation: {
       'error': 'Wystąpił nieznany błąd',
 
-      'app.dialog.title': 'Sesja wygasła',
-      'app.dialog.message': 'Sesja wygasła. Zaloguj się ponownie.',
-      'app.dialog.action': 'OK',
+      'app.dialog.session_expired.title': 'Sesja wygasła',
+      'app.dialog.session_expired.message': 'Sesja wygasła. Zaloguj się ponownie.',
+      'app.dialog.session_expired.action': 'OK',
+      'app.dialog.session_extend.title': 'Przedłuż sesję',
+      'app.dialog.session_extend.message': 'Czy chcesz przedłużyć sesję ?',
+      'app.dialog.session_extend.action.yes': 'Tak',
+      'app.dialog.session_extend.action.no': 'Nie',
+      'app.dialog.session_extend.dialog.success': 'Przedłużono sesję z powodzeniem',
+      'app.dialog.session_extend.dialog.error': 'Nie udało się przedłużyć sesji',
 
       'nav.home': 'Strona Główna',
       'nav.login': 'Zaloguj się',
