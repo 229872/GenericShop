@@ -1,9 +1,9 @@
 import { AppBar, Button, Menu, MenuItem, Stack, Toolbar, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { saveLocale } from "../utils/tokenService";
+import { saveLocale } from "../services/tokenService";
 import { useState } from "react";
-import { isTokenExpired } from "../utils/sessionService";
+import { isTokenExpired } from "../services/sessionService";
 
 export default function NavigationBar() {
   const navigate = useNavigate();

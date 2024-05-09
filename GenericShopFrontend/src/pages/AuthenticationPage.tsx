@@ -1,14 +1,16 @@
-import { Button, Card, CardActions, CardContent, Link, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, IconButton, InputAdornment, Link, Stack, TextField, Typography } from "@mui/material";
 import z from 'zod';
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from "react-i18next";
 import axios from 'axios';
 import { environment } from "../utils/constants";
-import { decodeJwtToken, saveJwtToken, saveLocale, saveRefreshToken } from "../utils/tokenService";
+import { decodeJwtToken, saveJwtToken, saveLocale, saveRefreshToken } from "../services/tokenService";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'sonner'
 import { SessionDialogsActions, Tokens } from "../utils/types";
+import { useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const schema = z.object({
   login: z.string().regex(/^[a-zA-Z][a-zA-Z0-9]*$/, 'authentication.login.not_valid'),
@@ -23,6 +25,7 @@ export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, 
   const fieldStyle = {height: '64px', width: '60%'};
   const {t} = useTranslation();
   const navigate = useNavigate();
+  const [ passwordVisible, setPasswordVisible ] = useState<boolean>(false)
   const { register, formState, handleSubmit, reset } = useForm<Credentials>({
     mode: 'onChange',
     resolver: zodResolver(schema)   
@@ -79,11 +82,18 @@ export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, 
               sx={fieldStyle}
             />
 
-            <TextField label={t('authentication.label.password')} {...register('password')} type='password'
+            <TextField label={t('authentication.label.password')} {...register('password')} type={passwordVisible ? 'text' : 'password'}
               error={Boolean(errors.password?.message)}
               placeholder={t('authentication.enter.password')}
               helperText={errors.password?.message && t(errors.password.message)}
               sx={fieldStyle}
+              InputProps={{
+                endAdornment: <InputAdornment position='end'>
+                  <IconButton onClick={() => setPasswordVisible(!passwordVisible)}>
+                    {passwordVisible ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              }}
             />
 
             <Link href='#' color='inherit' variant='h6' underline='hover'>{t('authentication.forgot.password')}</Link>

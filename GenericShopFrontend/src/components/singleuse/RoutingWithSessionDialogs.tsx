@@ -3,11 +3,11 @@ import MuiDialog from '../reusable/MuiDialog';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { environment } from '../../utils/constants';
-import { getJwtToken, getRefreshToken, saveJwtToken, saveRefreshToken } from '../../utils/tokenService';
+import { getJwtToken, getRefreshToken, saveJwtToken, saveRefreshToken } from '../../services/tokenService';
 import { Tokens } from '../../utils/types';
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom';
-import { calculateExtendSessionDialogTimeout, calculateSessionExpiredTimeout, isTokenExpired } from '../../utils/sessionService';
+import { calculateExtendSessionDialogTimeout, calculateSessionExpiredTimeout, isTokenExpired } from '../../services/sessionService';
 import Routing from './Routing';
 
 

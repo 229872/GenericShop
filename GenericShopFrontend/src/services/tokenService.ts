@@ -1,6 +1,6 @@
-import { environment } from "./constants";
+import { environment } from "../utils/constants";
 import { jwtDecode } from "jwt-decode";
-import { TokenData } from "./types";
+import { TokenData } from "../utils/types";
 
 
 export const saveJwtToken = (token: string): void => {
