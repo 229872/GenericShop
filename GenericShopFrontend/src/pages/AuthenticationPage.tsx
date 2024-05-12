@@ -1,21 +1,20 @@
-import { Button, Card, CardActions, CardContent, IconButton, InputAdornment, Link, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, Link, Stack, TextField, Typography } from "@mui/material";
 import z from 'zod';
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from "react-i18next";
 import axios from 'axios';
-import { environment } from "../utils/constants";
+import { environment, regex } from "../utils/constants";
 import { decodeJwtToken, saveJwtToken, saveLocale, saveRefreshToken } from "../services/tokenService";
 import { useNavigate } from "react-router-dom";
 import { toast } from 'sonner'
 import { SessionDialogsActions, Tokens } from "../utils/types";
 import { useState } from "react";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import VisibilityButton from "../components/reusable/VisibilityButton";
 
 const schema = z.object({
-  login: z.string().regex(/^[a-zA-Z][a-zA-Z0-9]*$/, 'authentication.login.not_valid'),
-  password: z.string().regex(/^(?=.*[A-Z])(?=.*[!@#$%^&+=]).*$/, 'authentication.password.not_valid')
+  login: z.string().regex(regex.LOGIN, 'authentication.login.not_valid'),
+  password: z.string().regex(regex.PASSWORD, 'authentication.password.not_valid')
 });
 
 type Credentials = z.infer<typeof schema>;
@@ -71,8 +70,8 @@ export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, 
       <form onSubmit={handleSubmit(onValid)} noValidate>
         <CardContent>
           <Stack spacing={5} sx={{margin: '35px'}}>
-            <Typography variant='h3' textAlign='center'><b>{t('authentication.app.name')}</b></Typography>
-            <Typography variant='h5' textAlign='center'>{t('authentication.app.please.login')}</Typography>
+            <Typography variant='h3' textAlign='center'><b>{t('app.name')}</b></Typography>
+            <Typography variant='h5' textAlign='center'>{t('authentication.please.login')}</Typography>
           </Stack>
 
           <Stack spacing={5} sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>

@@ -6,6 +6,7 @@ import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.logic.service.api.AccountAccessService;
 import pl.lodz.p.edu.shop.presentation.adapter.api.AccountAccessServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountRegisterDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.ChangeLanguageDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.ChangePasswordDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.AccountMapper;
@@ -37,5 +38,12 @@ class AccountAccessServiceAdapter implements AccountAccessServiceOperations {
     public AccountOutputDto changePassword(String login, ChangePasswordDto passwords) {
         Account account = accountAccessService.changePassword(login, passwords.currentPassword(), passwords.newPassword());
         return accountMapper.mapToAccountOutputDto(account);
+    }
+
+    @Override
+    public AccountOutputDto register(AccountRegisterDto registerDto) {
+        Account account = accountMapper.mapToAccount(registerDto);
+        Account registeredAccount = accountAccessService.register(account);
+        return accountMapper.mapToAccountOutputDto(registeredAccount);
     }
 }

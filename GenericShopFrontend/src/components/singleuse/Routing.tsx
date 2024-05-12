@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import AuthenticationPage from "../../pages/AuthenticationPage";
 import { SessionDialogsActions } from "../../utils/types";
+import RegisterPage from "../../pages/RegisterPage";
 
 export default function Routing({showTokenExpiredDialogAfterTimeout, showExtendSessionDialogAfterTimeout}: SessionDialogsActions) {
   return (
@@ -11,6 +12,8 @@ export default function Routing({showTokenExpiredDialogAfterTimeout, showExtendS
           showExtendSessionDialogAfterTimeout={showExtendSessionDialogAfterTimeout}
         />
       } />
+
+      <Route path='/register' element={<RegisterPage />} />
     </Routes>
   )
 }

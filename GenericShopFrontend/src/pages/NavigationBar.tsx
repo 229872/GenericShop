@@ -28,7 +28,7 @@ export default function NavigationBar() {
   return (
     <AppBar>
       <Toolbar sx={{justifyContent: 'space-between'}}>
-        <Typography variant='h5'>Internet shop</Typography>
+        <Typography variant='h5'>{t('app.name')}</Typography>
         {isTokenExpired() && (
           <Stack direction='row' spacing={2}>
             <Button color='inherit' onClick={() => navigate('/home')}>{t('nav.home')}</Button>

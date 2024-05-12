@@ -11,6 +11,7 @@ import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountCreateDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountRegisterDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.address.AddressOutputDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.log.AuthLogOutputDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.AccountMapper;
@@ -50,6 +51,35 @@ class AccountMapperImpl implements AccountMapper {
             .locale(createDto.locale())
             .accountState(AccountState.valueOf(createDto.accountState().toUpperCase()))
             .accountRoles(new HashSet<>(Set.of(AccountRole.valueOf(createDto.role().toUpperCase()))))
+            .contact(contact)
+            .build();
+    }
+
+    @Override
+    public Account mapToAccount(AccountRegisterDto registerDto) {
+        var addressDto = registerDto.address();
+
+        Address address = Address.builder()
+            .postalCode(addressDto.postalCode())
+            .country(addressDto.country())
+            .city(addressDto.city())
+            .street(addressDto.street())
+            .houseNumber(addressDto.houseNumber())
+            .build();
+
+        Contact contact = Contact.builder()
+            .firstName(registerDto.firstName())
+            .lastName(registerDto.lastName())
+            .address(address)
+            .build();
+
+        return Account.builder()
+            .login(registerDto.login())
+            .password(passwordEncoder.encode(registerDto.password()))
+            .email(registerDto.email())
+            .locale(registerDto.locale())
+            .accountState(AccountState.NOT_VERIFIED)
+            .accountRoles(Set.of(AccountRole.CLIENT))
             .contact(contact)
             .build();
     }

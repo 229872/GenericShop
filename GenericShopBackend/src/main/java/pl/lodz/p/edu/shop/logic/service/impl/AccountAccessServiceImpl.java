@@ -14,14 +14,13 @@ import pl.lodz.p.edu.shop.logic.service.api.AccountAccessService;
 import pl.lodz.p.edu.shop.logic.service.api.JwtService;
 import pl.lodz.p.edu.shop.logic.service.api.MailService;
 
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
 @Service
 @Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.REQUIRES_NEW)
 @Qualifier("AccountAccessServiceImpl")
-class AccountAccessServiceImpl extends AccountManagementServiceImpl implements AccountAccessService {
+class AccountAccessServiceImpl extends AccountService implements AccountAccessService {
 
     private final AccountRepository accountRepository;
     private final MailService mailService;
@@ -76,7 +75,7 @@ class AccountAccessServiceImpl extends AccountManagementServiceImpl implements A
         mailService.sendVerificationMail(account.getEmail(), account.getLocale(), verificationToken);
 
         account.setAccountState(AccountState.NOT_VERIFIED);
-        account.setAccountRoles(new HashSet<>(Set.of(AccountRole.CLIENT)));
+        account.setAccountRoles(Set.of(AccountRole.CLIENT));
 
         return save(account);
     }

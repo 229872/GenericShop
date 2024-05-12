@@ -8,9 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.shop.presentation.adapter.api.AccountAccessServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountRegisterDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.ChangeLanguageDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.ChangePasswordDto;
 import pl.lodz.p.edu.shop.config.security.role.RoleName;
+
+import java.net.URI;
 
 import static pl.lodz.p.edu.shop.presentation.controller.ApiRoot.API_ROOT;
 import static pl.lodz.p.edu.shop.util.SecurityUtil.getLoginFromSecurityContext;
@@ -49,5 +52,13 @@ public class SelfAccountController {
         AccountOutputDto result = ownAccountService.changePassword(login, passwords);
 
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/register")
+    @RolesAllowed({RoleName.GUEST})
+    ResponseEntity<AccountOutputDto> register(@RequestBody @Valid AccountRegisterDto registerDto) {
+        AccountOutputDto responseBody = ownAccountService.register(registerDto);
+
+        return ResponseEntity.created(URI.create("/id/%d".formatted(responseBody.id()))).body(responseBody);
     }
 }

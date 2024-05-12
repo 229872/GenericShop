@@ -4,6 +4,7 @@ import { initReactI18next } from "react-i18next";
 const resources = {
   en: {
     translation: {
+      'app.name': 'Internet shop',
       'error': 'Unknown error occurred',
 
       'app.dialog.session_expired.title': 'Session expired',
@@ -21,8 +22,7 @@ const resources = {
       'nav.create_account': 'Create Account',
       'nav.language': 'Change language',
 
-      'authentication.app.name': 'Internet shop',
-      'authentication.app.please.login': 'Log In to continue',
+      'authentication.please.login': 'Log In to continue',
       'authentication.login.not_valid': 'Login must starts with letter and then contains only letters and digits',
       'authentication.password.not_valid': 'Password not valid',
       'authentication.label.login': 'Login',
@@ -33,12 +33,44 @@ const resources = {
       'authentication.toast.success': 'You have successfully logged in !',
       'authentication.forgot.password': 'Forgot password ?',
 
+      'register.title': 'Create account',
+      'register.step.1.title': 'Complete your account details',
+      'register.step.2.title': 'Complete your personal details',
+      'register.step.3.title': 'Confirm email address',
+      'register.step.1.label.login': 'Login',
+      'register.step.1.label.password': 'Password',
+      'register.step.1.label.email': 'Email',
+      'register.step.1.label.language': 'Language',
+      'register.step.1.enter.login': 'Enter login',
+      'register.step.1.enter.password': 'Enter password',
+      'register.step.1.enter.email': 'Enter email',
+      'register.step.1.enter.language': 'Choose language',
+      'register.step.1.action.next_step': 'Next',
+      'register.step.2.label.firstname': 'First name',
+      'register.step.2.label.lastname': 'Last name',
+      'register.step.2.label.postal_code': 'Postal code',
+      'register.step.2.label.country': 'Country',
+      'register.step.2.label.city': 'City',
+      'register.step.2.label.street': 'Street',
+      'register.step.2.label.house_number': 'House number',
+      'register.step.2.enter.firstname': 'Enter first name',
+      'register.step.2.enter.lastname': 'Enter last name',
+      'register.step.2.enter.postal_code': 'Enter postal code',
+      'register.step.2.enter.country': 'Enter country',
+      'register.step.2.enter.city': 'Enter city',
+      'register.step.2.enter.street': 'Enter street',
+      'register.step.2.enter.house_number': 'Enter house number',
+      'register.step.2.action.back': 'Back',
+      'register.step.2.action.submit': 'Register',
+
+
       // Backend
       'exception.auth.credentials': 'Credentials are incorrect'
     }
   },
   pl: {
     translation: {
+      'app.name': 'Sklep internetowy',
       'error': 'Wystąpił nieznany błąd',
 
       'app.dialog.session_expired.title': 'Sesja wygasła',
@@ -56,8 +88,7 @@ const resources = {
       'nav.create_account': 'Stwórz konto',
       'nav.language': 'Zmień język',
 
-      'authentication.app.name': 'Sklep internetowy',
-      'authentication.app.please.login': 'Zaloguj się aby kontynuować',
+      'authentication.please.login': 'Zaloguj się aby kontynuować',
       'authentication.login.not_valid': 'Login musi zaczynać się literą i dalej zawierać tylko litery i cyfry',
       'authentication.password.not_valid': 'Hasło jest nieodpowiednie',
       'authentication.label.login': 'Login',
@@ -67,6 +98,37 @@ const resources = {
       'authentication.button.login': 'Zaloguj się',
       'authentication.toast.success': 'Zalogowałeś się pomyślnie',
       'authentication.forgot.password': 'Zapomniałeś hasła ?',
+
+      'register.title': 'Stwórz konto',
+      'register.step.1.title': 'Uzupełnij dane konta',
+      'register.step.2.title': 'Uzupełnij dane personalne',
+      'register.step.3.title': 'Potwierdź adres email',
+      'register.step.1.label.login': 'Login',
+      'register.step.1.label.password': 'Hasło',
+      'register.step.1.label.email': 'Email',
+      'register.step.1.label.language': 'Język',
+      'register.step.1.enter.login': 'Wprowadź login',
+      'register.step.1.enter.password': 'Wprowadź password',
+      'register.step.1.enter.email': 'Wprowadź email',
+      'register.step.1.enter.language': 'Wybierz język',
+      'register.step.1.action.next_step': 'Dalej',
+      'register.step.2.label.firstname': 'Imię',
+      'register.step.2.label.lastname': 'Nazwisko',
+      'register.step.2.label.postal_code': 'Kod pocztowy',
+      'register.step.2.label.country': 'Kraj',
+      'register.step.2.label.city': 'Miasto',
+      'register.step.2.label.street': 'Ulica',
+      'register.step.2.label.house_number': 'Numer domu',
+      'register.step.2.enter.firstname': 'Wprowadź imię',
+      'register.step.2.enter.lastname': 'Wprowadź nazwisko',
+      'register.step.2.enter.postal_code': 'Wprowadź kod pocztowy',
+      'register.step.2.enter.country': 'Wprowadź kraj',
+      'register.step.2.enter.city': 'Wprowadź miasto',
+      'register.step.2.enter.street': 'Wprowadź ulicę',
+      'register.step.2.enter.house_number': 'Wprowadź numer domu',
+      'register.step.2.action.back': 'Wróć',
+      'register.step.2.action.submit': 'Zarejestruj się',
+      
 
       // Backend
       'exception.auth.credentials': 'Nieprawidłowe dane logowania'
