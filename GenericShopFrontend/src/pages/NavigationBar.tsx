@@ -24,7 +24,7 @@ export default function NavigationBar() {
   };
 
   return (
-    <AppBar>
+    <AppBar sx={{height: '64px'}}>
       <Toolbar sx={{justifyContent: 'space-between'}}>
         <Typography variant='h5'>{t('app.name')}</Typography>
         {isTokenExpired() && (

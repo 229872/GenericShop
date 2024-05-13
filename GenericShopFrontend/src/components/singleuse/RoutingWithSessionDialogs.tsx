@@ -10,8 +10,11 @@ import { useNavigate } from 'react-router-dom';
 import { calculateExtendSessionDialogTimeout, calculateSessionExpiredTimeout, isTokenExpired } from '../../services/sessionService';
 import Routing from './Routing';
 
+type RoutingWithSessionDialogsParams = {
+  setLoading: (state: boolean) => void
+}
 
-export default function RoutingWithSessionDialogs() {
+export default function RoutingWithSessionDialogs({ setLoading }: RoutingWithSessionDialogsParams) {
   const navigate = useNavigate();
   const {t} = useTranslation()
   const [showTokenExpiredDialog, setShowTokenExpiredDialog] = useState(false);
@@ -77,7 +80,8 @@ export default function RoutingWithSessionDialogs() {
     <>
       <Routing
         showTokenExpiredDialogAfterTimeout={showTokenExpiredDialogAfterTimeout}
-        showExtendSessionDialogAfterTimeout={showExtendSessionDialogAfterTimeout} 
+        showExtendSessionDialogAfterTimeout={showExtendSessionDialogAfterTimeout}
+        setLoading={setLoading}
       />
 
       <MuiDialog

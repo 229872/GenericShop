@@ -1,5 +1,5 @@
 import { Autocomplete, Button, Card, CardActions, CardContent, Grid, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { environment, regex } from "../utils/constants";
@@ -48,14 +48,17 @@ type RegisterAccountData = z.infer<typeof registerSchema>
 const steps: string[] = ['register.step.1.title', 'register.step.2.title', 'register.step.3.title'];
 
 
+type RegisterPageParams = {
+  setLoading: (state: boolean) => void
+}
 
-export default function RegisterPage() {
+export default function RegisterPage({setLoading}: RegisterPageParams) {
   const fieldStyleForStep1 = {height: '64px', width: '60%'}
   const fieldStyleForStep2 = {height: '64px', width: '100%'};
   const { t } = useTranslation();
   const [ passwordVisible, setPasswordVisible ] = useState<boolean>(false);
   const [ activeStep, setActiveStep ] = useState<number>(0);
-  const { register, formState, handleSubmit, getValues, setValue } = useForm<RegisterAccountData>({
+  const { register, formState, handleSubmit, getValues, setValue, watch } = useForm<RegisterAccountData>({
     mode: "onBlur",
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -65,6 +68,12 @@ export default function RegisterPage() {
     }
   });
   const { errors, isValid } = formState;
+  const watchedFields = watch(['login', 'email', 'password', 'locale']);
+
+
+
+  useEffect(() => {
+  }, [watchedFields]);
 
   const handleChange = (_event: any, value: string | null) => {
     value && setValue('locale', value);
@@ -81,15 +90,17 @@ export default function RegisterPage() {
 
   const onValid = async (data: RegisterAccountData) => {
     try {
+      setLoading(true)
       await registerAccount(data);
       setActiveStep(2)
-      toast.success('Success check your email to activate your account')
     } catch (e: any) {
       if (e.response && e.response.data) {
         toast.error(t(e.response.data.message))
       } else {
         toast.error(t('error'))
       }
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -99,7 +110,7 @@ export default function RegisterPage() {
 
   return (
     <>
-      <Card elevation={20} sx={{ margin: '15vh 25vw', height: '70vh' }}>
+      <Card elevation={20} sx={{ margin: '13vh 25vw', height: '70vh' }}>
         <form noValidate onSubmit={handleSubmit(onValid)}>
           <CardContent>
             <Stepper activeStep={activeStep}>

@@ -13,4 +13,5 @@ export type Tokens = {
 export type SessionDialogsActions = {
   showTokenExpiredDialogAfterTimeout: () => void
   showExtendSessionDialogAfterTimeout: () => void
+  setLoading: (value: boolean) => void
 }

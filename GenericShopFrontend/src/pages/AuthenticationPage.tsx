@@ -21,7 +21,7 @@ type Credentials = z.infer<typeof schema>;
 
 
 
-export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, showExtendSessionDialogAfterTimeout}: SessionDialogsActions) {
+export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, showExtendSessionDialogAfterTimeout, setLoading}: SessionDialogsActions) {
   const fieldStyle = {height: '64px', width: '60%'};
   const {t} = useTranslation();
   const navigate = useNavigate();
@@ -34,6 +34,7 @@ export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, 
 
   const onValid = async (credentials: Credentials) => {
     try {
+      setLoading(true)
       const { data: {token, refreshToken} } = await sendCredentials(credentials)
       const lang = decodeJwtToken(token)?.lang;
       saveDataInLocalStorage(token, refreshToken, lang)
@@ -49,6 +50,8 @@ export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, 
       } else {
         toast.error(t('error'))
       }
+    } finally {
+      setLoading(false)
     }
   }
 
