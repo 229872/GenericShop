@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent, Grid, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, Grid, Link, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -13,7 +13,7 @@ const step1Schema = z.object({
   login: z.string().regex(regex.LOGIN, 'register.step.1.error.login'),
   email: z.string().email('register.step.1.error.email'),
   password: z.string().regex(regex.PASSWORD, 'register.step.1.error.password'),
-  locale: z.enum(['pl', 'en'], {message: 'egister.step.1.error.language'})
+  locale: z.enum(['pl', 'en'], {message: 'register.step.1.error.language'})
 });
 type RegisterStep1 = z.infer<typeof step1Schema>;
 
@@ -108,7 +108,7 @@ export default function RegisterPage() {
             </Stepper>
 
             <Stack spacing={5} sx={{ margin: '35px' }}>
-              <Typography variant='h3' textAlign='center'><b>{t('register.title')}</b></Typography>
+              <Typography variant='h3' textAlign='center'><b>{activeStep !== 2 ? t('register.title') : t('register.step.3.label')}</b></Typography>
             </Stack>
 
 
@@ -206,6 +206,22 @@ export default function RegisterPage() {
                   />
                 </Grid>
               </Grid>
+            )}
+
+            {activeStep === 2 && (
+              <Stack direction='column' spacing={5}>
+                <Typography variant='body1'>
+                  {t('register.step.3.content.1')}
+                  <br />
+                  <br />
+                  {t('register.step.3.content.2')}
+                </Typography>
+
+                <Typography variant='body1'>
+                  {t('register.step.3.content.3')}
+                  <Link href='/auth'>{t('register.step.3.link')}</Link>
+                </Typography>
+              </Stack>
             )}
           </CardContent>
 
