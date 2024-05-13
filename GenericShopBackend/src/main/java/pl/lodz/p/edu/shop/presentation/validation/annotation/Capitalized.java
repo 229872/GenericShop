@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 
 @Documented
 @NotNull(message = ExceptionMessage.Validation.NOT_NULL)
-@Pattern(regexp = "^[\\p{Lu}][\\p{L}\\p{M}*\\s-]*$",
+@Pattern(regexp = "^[A-ZĄĆĘŁŃÓŚŻŹ][A-ZĄĆĘŁŃÓŚŻŹa-ząćęłńóśżź]+$",
     message = ExceptionMessage.Validation.CAPITALIZED)
 @Size(min = 1, max = 20, message = ExceptionMessage.Validation.SIZE)
 @Constraint(validatedBy = {})

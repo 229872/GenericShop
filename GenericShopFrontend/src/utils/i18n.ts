@@ -46,6 +46,10 @@ const resources = {
       'register.step.1.enter.email': 'Enter email',
       'register.step.1.enter.language': 'Choose language',
       'register.step.1.action.next_step': 'Next',
+      'register.step.1.error.login': 'Login must starts with letter and then contains at least one lette or digit',
+      'register.step.1.error.email': 'Email is not valid',
+      'register.step.1.error.password': 'Password is not valid',
+      'register.step.1.error.language': 'Language must be pl or en',
       'register.step.2.label.firstname': 'First name',
       'register.step.2.label.lastname': 'Last name',
       'register.step.2.label.postal_code': 'Postal code',
@@ -62,7 +66,14 @@ const resources = {
       'register.step.2.enter.house_number': 'Enter house number',
       'register.step.2.action.back': 'Back',
       'register.step.2.action.submit': 'Register',
-
+      'register.step.2.error.firstname': 'First name must start with capital letter and contains only letters',
+      'register.step.2.error.lastname': 'Last name must start with capital letter and contains only letters',
+      'register.step.2.error.postal_code': 'Postal code must be in dd-ddd format',
+      'register.step.2.error.country': 'Country must start with capital letter and contains only letters',
+      'register.step.2.error.city': 'City must start with capital letter and contains only letters',
+      'register.step.2.error.street': 'Street must start with capital letter and contains only letters',
+      'register.step.2.error.house_number': 'House number must be positive integer number',
+  
 
       // Backend
       'exception.auth.credentials': 'Credentials are incorrect'
@@ -112,6 +123,10 @@ const resources = {
       'register.step.1.enter.email': 'Wprowadź email',
       'register.step.1.enter.language': 'Wybierz język',
       'register.step.1.action.next_step': 'Dalej',
+      'register.step.1.error.login': 'Login musi zaczynać się literą i potem zawierać przynajmniej jedną literę lub cyfrę',
+      'register.step.1.error.email': 'Email jest nieodpowiedni',
+      'register.step.1.error.password': 'Hasło jest nieodpowiednie',
+      'register.step.1.error.language': 'Język może przyjmować wartość pl albo en',
       'register.step.2.label.firstname': 'Imię',
       'register.step.2.label.lastname': 'Nazwisko',
       'register.step.2.label.postal_code': 'Kod pocztowy',
@@ -128,6 +143,13 @@ const resources = {
       'register.step.2.enter.house_number': 'Wprowadź numer domu',
       'register.step.2.action.back': 'Wróć',
       'register.step.2.action.submit': 'Zarejestruj się',
+      'register.step.2.error.firstname': 'Imię musi zaczynać się literą i zawierać tylko litery',
+      'register.step.2.error.lastname': 'Nazwisko musi zaczynać się literą i zawierać tylko litery',
+      'register.step.2.error.postal_code': 'Kod pocztowy musi być w postaci: dd-ddd',
+      'register.step.2.error.country': 'Kraj musi zaczynać się literą i zawierać tylko litery',
+      'register.step.2.error.city': 'Miasto musi zaczynać się literą i zawierać tylko litery',
+      'register.step.2.error.street': 'Ulica musi zaczynać się literą i zawierać tylko litery',
+      'register.step.2.error.house_number': 'Number domu musi być pozytywną liczbą',
       
 
       // Backend

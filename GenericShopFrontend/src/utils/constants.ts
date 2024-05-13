@@ -8,8 +8,8 @@ export const environment = {
 }
 
 export const regex = {
-  CAPITALIZED : /^[\p{Lu}][\p{L}\p{M}*\s-]*$/,
+  CAPITALIZED : /^[A-ZĄĆĘŁŃÓŚŻŹ][A-ZĄĆĘŁŃÓŚŻŹa-ząćęłńóśżź]+$/,
   POSTAL_CODE : /^\d{2}-\d{3}$/,
-  LOGIN : /^[a-zA-Z][a-zA-Z0-9]*$/,
+  LOGIN : /^[a-zA-Z][a-zA-Z0-9]+$/,
   PASSWORD: /^(?=.*[A-Z])(?=.*[!@#$%^&+=]).*$/
 }

@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 
 @Documented
 @NotNull(message = ExceptionMessage.Validation.NOT_NULL)
-@Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9]*$",
+@Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9]+$",
     message = ExceptionMessage.Validation.LOGIN_WRONG)
 @Size(min = 1, max = 20, message = ExceptionMessage.Validation.SIZE)
 @Constraint(validatedBy = {})

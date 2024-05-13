@@ -1,29 +1,31 @@
-import { Box, Button, Card, CardActions, CardContent, Grid, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, Grid, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
-import { regex } from "../utils/constants";
+import { environment, regex } from "../utils/constants";
 import { useForm } from "react-hook-form";
 import VisibilityButton from "../components/reusable/VisibilityButton";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+import { toast } from 'sonner'
 
 const step1Schema = z.object({
-  login: z.string().regex(regex.LOGIN, 'Login is in wrong format'),
-  email: z.string().email('Email is not valid'),
-  password: z.string().regex(regex.PASSWORD, 'Password is not valid'),
-  locale: z.enum(['pl', 'en'], {message: 'Language must be pl or en'})
+  login: z.string().regex(regex.LOGIN, 'register.step.1.error.login'),
+  email: z.string().email('register.step.1.error.email'),
+  password: z.string().regex(regex.PASSWORD, 'register.step.1.error.password'),
+  locale: z.enum(['pl', 'en'], {message: 'egister.step.1.error.language'})
 });
 type RegisterStep1 = z.infer<typeof step1Schema>;
 
 const step2Schema = z.object({
-  firstName: z.string().regex(regex.CAPITALIZED, 'First name must start with capital letter'),
-  lastName: z.string().regex(regex.CAPITALIZED, 'Last name must start with capital letter'),
+  firstName: z.string().regex(regex.CAPITALIZED, 'register.step.2.error.firstname'),
+  lastName: z.string().regex(regex.CAPITALIZED, 'register.step.2.error.lastname'),
   address: z.object({
-    postalCode: z.string().regex(regex.POSTAL_CODE),
-    country: z.string().regex(regex.CAPITALIZED, 'Country must start with capital letter'),
-    city: z.string().regex(regex.CAPITALIZED, 'City must start with capital letter'),
-    street: z.string().regex(regex.CAPITALIZED, 'Street must start with capital letter'),
-    houseNumber: z.number({message: 'House number must be number'}).int('House number must be integer value').positive('House number must be positive')
+    postalCode: z.string().regex(regex.POSTAL_CODE, 'register.step.2.error.postal_code'),
+    country: z.string().regex(regex.CAPITALIZED, 'register.step.2.error.country'),
+    city: z.string().regex(regex.CAPITALIZED, 'register.step.2.error.city'),
+    street: z.string().regex(regex.CAPITALIZED, 'register.step.2.error.street'),
+    houseNumber: z.number({message: 'register.step.2.error.house_number'}).int('register.step.2.error.house_number').positive('register.step.2.error.house_number')
   })
 })
 type RegisterStep2 = z.infer<typeof step2Schema>;
@@ -51,7 +53,7 @@ export default function RegisterPage() {
   const fieldStyleForStep2 = {height: '64px', width: '100%'};
   const { t } = useTranslation();
   const [ passwordVisible, setPasswordVisible ] = useState<boolean>(false);
-  const [ activeStep, setActiveStep ] = useState<number>(1);
+  const [ activeStep, setActiveStep ] = useState<number>(0);
   const { register, formState, handleSubmit, getValues } = useForm<RegisterAccountData>({
     mode: "onChange",
     resolver: zodResolver(registerSchema),
@@ -72,10 +74,28 @@ export default function RegisterPage() {
     }
   }
 
+  const onValid = async (data: RegisterAccountData) => {
+    try {
+      await registerAccount(data);
+      setActiveStep(2)
+      toast.success('Success check your email to activate your account')
+    } catch (e: any) {
+      if (e.response && e.response.data) {
+        toast.error(t(e.response.data.message))
+      } else {
+        toast.error(t('error'))
+      }
+    }
+  }
+
+  const registerAccount = async (data: RegisterAccountData) => {
+    return await axios.post<RegisterAccountData>(`${environment.apiBaseUrl}/account/self/register`, data);
+  }
+
   return (
     <>
       <Card elevation={20} sx={{ margin: '17vh 25vw' }}>
-        <form noValidate>
+        <form noValidate onSubmit={handleSubmit(onValid)}>
           <CardContent>
             <Stepper activeStep={activeStep}>
               {
@@ -202,7 +222,7 @@ export default function RegisterPage() {
                   <Typography>{t('register.step.2.action.back')}</Typography>
                 </Button>
 
-                <Button type='submit' disabled={!isValid} onClick={() => setActiveStep(2)} variant='contained'>
+                <Button type='submit' disabled={!isValid} variant='contained'>
                   <Typography>{t('register.step.2.action.submit')}</Typography>
                 </Button>
               </Stack>
