@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent, Grid, Link, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
+import { Autocomplete, Button, Card, CardActions, CardContent, Grid, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -8,12 +8,13 @@ import VisibilityButton from "../components/reusable/VisibilityButton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { toast } from 'sonner'
+import { Link } from "react-router-dom";
 
 const step1Schema = z.object({
   login: z.string().regex(regex.LOGIN, 'register.step.1.error.login'),
   email: z.string().email('register.step.1.error.email'),
   password: z.string().regex(regex.PASSWORD, 'register.step.1.error.password'),
-  locale: z.enum(['pl', 'en'], {message: 'register.step.1.error.language'})
+  locale: z.enum(environment.supportedLanguages as readonly [string, ...string[]], {message: 'register.step.1.error.language'})
 });
 type RegisterStep1 = z.infer<typeof step1Schema>;
 
@@ -54,8 +55,8 @@ export default function RegisterPage() {
   const { t } = useTranslation();
   const [ passwordVisible, setPasswordVisible ] = useState<boolean>(false);
   const [ activeStep, setActiveStep ] = useState<number>(0);
-  const { register, formState, handleSubmit, getValues } = useForm<RegisterAccountData>({
-    mode: "onChange",
+  const { register, formState, handleSubmit, getValues, setValue } = useForm<RegisterAccountData>({
+    mode: "onBlur",
     resolver: zodResolver(registerSchema),
     defaultValues: {
       address: {
@@ -64,6 +65,10 @@ export default function RegisterPage() {
     }
   });
   const { errors, isValid } = formState;
+
+  const handleChange = (_event: any, value: string | null) => {
+    value && setValue('locale', value);
+  };
 
   const isStep1Valid = (data: RegisterAccountData): boolean => {
     try {
@@ -94,7 +99,7 @@ export default function RegisterPage() {
 
   return (
     <>
-      <Card elevation={20} sx={{ margin: '17vh 25vw' }}>
+      <Card elevation={20} sx={{ margin: '15vh 25vw', height: '70vh' }}>
         <form noValidate onSubmit={handleSubmit(onValid)}>
           <CardContent>
             <Stepper activeStep={activeStep}>
@@ -131,24 +136,33 @@ export default function RegisterPage() {
                   }}
                 />
 
-                <TextField label={t('register.step.1.label.email')} {...register('email')}
+                <TextField label={t('register.step.1.label.email')} {...register('email')} type='email'
                   error={Boolean(errors.email?.message)}
                   placeholder={t('register.step.1.enter.email')}
                   helperText={errors.email?.message && t(errors.email.message)}
                   sx={fieldStyleForStep1}
                 />
 
-                <TextField label={t('register.step.1.label.language')} {...register('locale')}
-                  error={Boolean(errors.locale?.message)}
-                  placeholder={t('register.step.1.enter.language')}
-                  helperText={errors.locale?.message && t(errors.locale.message)}
+                <Autocomplete
+                  options={environment.supportedLanguages}
                   sx={fieldStyleForStep1}
+                  onChange={handleChange}
+                  renderInput={(params) => (
+                    <TextField
+                    {...params}
+                    {...register('locale')}
+                      label={t('register.step.1.label.language')}
+                      error={Boolean(errors.locale?.message)}
+                      helperText={errors.locale?.message && t(errors.locale.message)}
+                      placeholder={t('register.step.1.enter.language')}
+                    />
+                  )}
                 />
               </Stack>
             )}
 
             {activeStep === 1 && (
-              <Grid container spacing={4}>
+              <Grid container spacing={5}>
                 <Grid item xs={12} sm={6}>
                   <TextField label={t('register.step.2.label.firstname')} {...register('firstName')}
                     error={Boolean(errors.firstName?.message)}
@@ -198,7 +212,7 @@ export default function RegisterPage() {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField label={t('register.step.2.label.house_number')} {...register('address.houseNumber', { valueAsNumber: true })}
+                  <TextField label={t('register.step.2.label.house_number')} {...register('address.houseNumber', { valueAsNumber: true })} type='number'
                     error={Boolean(errors.address?.houseNumber?.message)}
                     placeholder={t('register.step.2.enter.house_number')}
                     helperText={errors.address?.houseNumber?.message && t(errors.address.houseNumber.message)}
@@ -219,7 +233,7 @@ export default function RegisterPage() {
 
                 <Typography variant='body1'>
                   {t('register.step.3.content.3')}
-                  <Link href='/auth'>{t('register.step.3.link')}</Link>
+                  <Link to='/auth'>{t('register.step.3.link')}</Link>
                 </Typography>
               </Stack>
             )}
@@ -227,13 +241,13 @@ export default function RegisterPage() {
 
           <CardActions sx={{ justifyContent: 'center', marginBottom: '20px' }}>
             {activeStep == 0 && (
-              <Button type='button' disabled={!isStep1Valid(getValues())} onClick={() => setActiveStep(1)}>
+              <Button type='button' disabled={!isStep1Valid(getValues())} onClick={() => setActiveStep(1)} variant='contained'>
                 <Typography>{t('register.step.1.action.next_step')}</Typography>
               </Button>
             )}
 
             {activeStep == 1 && (
-              <Stack direction='row' spacing={20}>
+              <Stack direction='row' spacing={10} sx={{ marginTop: '40px'}}>
                 <Button type='button' onClick={() => setActiveStep(0)}>
                   <Typography>{t('register.step.2.action.back')}</Typography>
                 </Button>

@@ -4,7 +4,9 @@ export const environment = {
   jwtTokenKey: "jwtToken",
   timeoutKey: "tokenTimeout",
   localeKey: "locale",
-  refreshTokenKey: "refreshToken"
+  refreshTokenKey: "refreshToken",
+  supportedLanguages: ['pl', 'en'] as readonly string[],
+  defaultLanguage: 'en'
 }
 
 export const regex = {
