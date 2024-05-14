@@ -59,6 +59,26 @@ export default function RegisterPage({setLoading}: RegisterPageParams) {
     }
   }
 
+  const renderButtons = (activeStep: 1 | 2 | 3) => {
+    switch (activeStep) {
+      case 1:
+        return <Button type='button' variant='contained' disabled={!isStep1Valid} onClick={() => setActiveStep(2)}>
+          <Typography>{t('register.step.1.action.next_step')}</Typography>
+        </Button>
+      
+      case 2:
+        return <Stack direction='row' spacing={10} sx={{ marginTop: '40px' }}>
+          <Button type='button' onClick={() => setActiveStep(1)}>
+            <Typography>{t('register.step.2.action.back')}</Typography>
+          </Button>
+
+          <Button type='submit' disabled={!isValid} variant='contained'>
+            <Typography>{t('register.step.2.action.submit')}</Typography>
+          </Button>
+        </Stack>
+    }
+  }
+
   return (
     <>
       <Card elevation={20} sx={{ margin: '13vh 25vw', height: '70vh' }}>
@@ -74,35 +94,17 @@ export default function RegisterPage({setLoading}: RegisterPageParams) {
               }
             </Stepper>
 
-            {renderStep(activeStep)}
+            { renderStep(activeStep) }
           </CardContent>
 
           <CardActions sx={{ justifyContent: 'center', marginBottom: '20px' }}>
-            {activeStep == 1 && (
-              <Button type='button' variant='contained' disabled={!isStep1Valid} onClick={() => setActiveStep(2)}>
-                <Typography>{t('register.step.1.action.next_step')}</Typography>
-              </Button>
-            )}
-
-            {activeStep == 2 && (
-              <Stack direction='row' spacing={10} sx={{ marginTop: '40px' }}>
-                <Button type='button' onClick={() => setActiveStep(1)}>
-                  <Typography>{t('register.step.2.action.back')}</Typography>
-                </Button>
-
-                <Button type='submit' disabled={!isValid} variant='contained'>
-                  <Typography>{t('register.step.2.action.submit')}</Typography>
-                </Button>
-              </Stack>
-            )}
+            { renderButtons(activeStep) }
           </CardActions>
         </form>
       </Card>
     </>
   )
 }
-
-
 
 
 
@@ -154,6 +156,7 @@ function Step1({ t, register, formState, control, setIsStep1Valid, watch }: Step
           placeholder={t('register.step.1.enter.login')}
           helperText={errors.login?.message && t(errors.login.message)}
           sx={fieldStyleForStep1}
+          autoComplete='true'
         />
 
         <TextField label={t('register.step.1.label.password')} {...register('password')} type={passwordVisible ? 'text' : 'password'}
@@ -164,6 +167,7 @@ function Step1({ t, register, formState, control, setIsStep1Valid, watch }: Step
           InputProps={{
             endAdornment: <VisibilityButton visible={passwordVisible} onClick={() => setPasswordVisible(!passwordVisible)} />
           }}
+          autoComplete='true'
         />
 
         <TextField label={t('register.step.1.label.email')} {...register('email')} type='email'
@@ -171,6 +175,7 @@ function Step1({ t, register, formState, control, setIsStep1Valid, watch }: Step
           placeholder={t('register.step.1.enter.email')}
           helperText={errors.email?.message && t(errors.email.message)}
           sx={fieldStyleForStep1}
+          autoComplete='true'
         />
 
         <Controller
@@ -199,8 +204,6 @@ function Step1({ t, register, formState, control, setIsStep1Valid, watch }: Step
     </>
   )
 }
-
-
 
 
 
@@ -299,8 +302,6 @@ function Step2({ t, register, formState, control }: Step2Params) {
 
 
 
-
-
 function Step3() {
   const { t } = useTranslation()
 
@@ -326,6 +327,8 @@ function Step3() {
     </>
   )
 }
+
+
 
 const combinedSchema = step1Schema.merge(step2Schema);
 
