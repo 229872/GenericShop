@@ -32,6 +32,10 @@ app:
     verification-token:
       timeout_in_minutes: 600
 
+  frontend:
+    frontend-app-url: http://localhost:5173
+    frontend-account-verification-url: ${app.frontend.frontend-app-url}/register/confirm
+
 spring:
   config:
     import: optional:file:./config/external.properties

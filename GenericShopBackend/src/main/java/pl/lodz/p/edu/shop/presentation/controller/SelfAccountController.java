@@ -61,4 +61,12 @@ public class SelfAccountController {
 
         return ResponseEntity.created(URI.create("/id/%d".formatted(responseBody.id()))).body(responseBody);
     }
+
+    @PutMapping("/register/confirm")
+    @RolesAllowed({RoleName.GUEST})
+    ResponseEntity<Void> confirmRegistration(@RequestParam("token") String token) {
+        ownAccountService.confirmRegistration(token);
+
+        return ResponseEntity.ok().build();
+    }
 }

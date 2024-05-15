@@ -46,4 +46,9 @@ class AccountAccessServiceAdapter implements AccountAccessServiceOperations {
         Account registeredAccount = accountAccessService.register(account);
         return accountMapper.mapToAccountOutputDto(registeredAccount);
     }
+
+    @Override
+    public void confirmRegistration(String verificationToken) {
+        accountAccessService.confirmRegistration(verificationToken);
+    }
 }

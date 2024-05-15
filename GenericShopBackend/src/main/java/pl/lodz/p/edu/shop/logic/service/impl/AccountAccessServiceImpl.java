@@ -79,4 +79,17 @@ class AccountAccessServiceImpl extends AccountService implements AccountAccessSe
 
         return save(account);
     }
+
+    @Override
+    public void confirmRegistration(String verificationToken) {
+        String login = jwtService.decodeSubjectFromJwtTokenWithoutValidation(verificationToken);
+        Account account = accountRepository.findByLogin(login)
+            .orElseThrow(ApplicationExceptionFactory::createExpiredTokenException);
+
+        jwtService.validateVerificationToken(verificationToken, account.getEmail());
+
+        account.setAccountState(AccountState.ACTIVE);
+
+        save(account);
+    }
 }

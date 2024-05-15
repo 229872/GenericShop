@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import pl.lodz.p.edu.shop.config.frontend.property.FrontendProperties;
 import pl.lodz.p.edu.shop.logic.service.api.MailService;
 import pl.lodz.p.edu.shop.util.I18nUtil;
 import pl.lodz.p.edu.shop.util.I18nUtil.MessageKey;
@@ -25,6 +26,7 @@ class MailServiceImpl implements MailService {
 
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
+    private final FrontendProperties frontendProperties;
 
     @Override
     public void sendSimpleMessage(String recipientEmail, String messageSubject, String message) {
@@ -58,19 +60,22 @@ class MailServiceImpl implements MailService {
     public void sendVerificationMail(String recipientEmail, String locale, String verificationToken) {
         String subject = I18nUtil.getMessage(MessageKey.MAIL_VERIFICATION_SUBJECT, locale);
         String hello = I18nUtil.getMessage(MessageKey.MAIL_HELLO, locale);
+        String frontendUrl = frontendProperties.getFrontendAppUrl();
         String companyName = I18nUtil.getMessage(MessageKey.MAIL_COMPANY_NAME, locale);
         String subtitle = I18nUtil.getMessage(MessageKey.MAIL_VERIFICATION_SUBTITLE, locale);
         String content = I18nUtil.getMessage(MessageKey.MAIL_VERIFICATION_CONTENT, locale);
+        String url = "%s?token=%s".formatted(frontendProperties.getFrontendAccountVerificationUrl(), verificationToken);
         String urlText = I18nUtil.getMessage(MessageKey.MAIL_VERIFICATION_URL_TEXT, locale);
         String footer = I18nUtil.getMessage(MessageKey.MAIL_VERIFICATION_FOOTER, locale);
 
         Map<String, Object> variables = Map.of(
             "hello", hello,
+            "frontendUrl", frontendUrl,
             "companyName", companyName,
             "subtitle", subtitle,
             "name", recipientEmail,
             "content", content,
-            "url", verificationToken,
+            "url", url,
             "urlText", urlText,
             "footer", footer
         );

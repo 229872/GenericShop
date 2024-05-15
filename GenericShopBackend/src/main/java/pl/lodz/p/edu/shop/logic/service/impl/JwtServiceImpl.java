@@ -9,7 +9,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import pl.lodz.p.edu.shop.config.database.property.JwtProperties;
+import pl.lodz.p.edu.shop.config.security.property.JwtProperties;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.exception.ApplicationExceptionFactory;

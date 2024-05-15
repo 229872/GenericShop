@@ -82,6 +82,11 @@ const resources = {
       'register.step.3.content.3': 'If your account has already been verified, ',
       'register.step.3.link': 'you can log in now.',
 
+      'notfound.title': 'Page not found',
+      'notfound.description': 'Page you are trying to access does not exist...',
+      'notfound.button': 'Home',
+      'notfound.oops': 'Oops!',
+
       // Backend
       'exception.auth.credentials': 'Credentials are incorrect'
     }
@@ -163,6 +168,11 @@ const resources = {
       'register.step.3.content.2': 'Mamy nadzieję że znajdziesz to, czego szukasz i będziesz cieszył/a się zakupami u nas :)',
       'register.step.3.content.3': 'Jeśli twoje konto zostało już zweryfikowane, ',
       'register.step.3.link': 'możesz się teraz zalogować.',
+
+      'notfound.title': 'Nie znaleziono strony',
+      'notfound.description': 'Strona którą próbujesz odwiedzić nie istnieje...',
+      'notfound.button': 'Wróć',
+      'notfound.oops': 'Ups!',
       
 
       // Backend

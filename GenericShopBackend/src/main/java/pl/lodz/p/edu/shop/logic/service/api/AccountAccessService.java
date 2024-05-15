@@ -13,4 +13,6 @@ public interface AccountAccessService {
     Account changePassword(String login, String currentPassword, String newPassword);
 
     Account register(Account account);
+
+    void confirmRegistration(String verificationToken);
 }

@@ -14,4 +14,6 @@ public interface AccountAccessServiceOperations {
     AccountOutputDto changePassword(String login, ChangePasswordDto passwords);
 
     AccountOutputDto register(AccountRegisterDto registerDto);
+
+    void confirmRegistration(String verificationToken);
 }

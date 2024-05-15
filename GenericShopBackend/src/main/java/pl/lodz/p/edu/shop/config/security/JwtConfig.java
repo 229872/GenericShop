@@ -3,7 +3,7 @@ package pl.lodz.p.edu.shop.config.security;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pl.lodz.p.edu.shop.config.database.property.JwtProperties;
+import pl.lodz.p.edu.shop.config.security.property.JwtProperties;
 
 @Configuration
 public class JwtConfig {

@@ -21,7 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.shop.TestData;
 import pl.lodz.p.edu.shop.config.PostgresqlContainerSetup;
-import pl.lodz.p.edu.shop.config.database.property.JwtProperties;
+import pl.lodz.p.edu.shop.config.security.property.JwtProperties;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.exception.ExceptionMessage;

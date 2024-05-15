@@ -36,4 +36,23 @@ abstract class AbstractRetryHandler {
 
         throw ApplicationExceptionFactory.createTransactionTimeoutException();
     }
+
+    protected void repeatTransactionWhenTimeoutOccurred(Runnable runnable) {
+        int retryCounter = 1;
+
+        while (retryCounter <= transactionRetries) {
+            try {
+                log.info("Transaction number {}", retryCounter);
+                runnable.run();
+            } catch (JpaSystemException e) {
+                TransactionException cause = ExceptionUtil.findCause(e, TransactionException.class);
+                if (Objects.nonNull(cause) && cause.getMessage().contains("timeout")) {
+                    log.warn("Transaction number {} failed", retryCounter);
+                    retryCounter++;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
 }

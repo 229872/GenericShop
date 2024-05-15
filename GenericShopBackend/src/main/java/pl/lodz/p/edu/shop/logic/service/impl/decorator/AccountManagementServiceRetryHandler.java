@@ -30,7 +30,7 @@ class AccountManagementServiceRetryHandler extends AbstractRetryHandler implemen
 
     @Override
     public List<Account> findAll() {
-        return repeatTransactionWhenTimeoutOccurred(accountManagementService::findAll);
+        return repeatTransactionWhenTimeoutOccurred(() -> accountManagementService.findAll());
     }
 
     @Override

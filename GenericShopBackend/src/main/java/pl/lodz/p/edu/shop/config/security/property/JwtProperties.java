@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.shop.config.database.property;
+package pl.lodz.p.edu.shop.config.security.property;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
