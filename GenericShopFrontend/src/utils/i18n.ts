@@ -78,7 +78,7 @@ const resources = {
       'register.step.2.error.house_number': 'House number must be positive integer number',
       'register.step.3.label': 'Congratulations',
       'register.step.3.content.1': `Your account has been successfully created but is not yet active.
-                                    To activate your account, check your email address and go to the link we sent you.`,
+                                    To activate your account, check your email address and push the activation button.`,
       'register.step.3.content.2': 'We hope you will find what you are looking for and enjoy shopping with us :)',
       'register.step.3.content.3': 'If your account has already been verified, ',
       'register.step.3.link': 'you can log in now.',
@@ -170,7 +170,7 @@ const resources = {
       'register.step.2.error.house_number': 'Number domu musi być pozytywną liczbą',
       'register.step.3.label': 'Gratulacje!',
       'register.step.3.content.1': `Twoje konto zostało pomyślnie utworzone ale jeszcze nie jest aktywne.
-                                  Aby aktywować konto sprawdź podaną przez ciebie skrzynkę mailową i przejdź na podane tobie hiperłącze.`,
+                                  Aby aktywować konto sprawdź podaną przez ciebie skrzynkę mailową i wciśnij przycisk aktywacji.`,
       'register.step.3.content.2': 'Mamy nadzieję że znajdziesz to, czego szukasz i będziesz cieszył/a się zakupami u nas :)',
       'register.step.3.content.3': 'Jeśli twoje konto zostało już zweryfikowane, ',
       'register.step.3.link': 'możesz się teraz zalogować.',
