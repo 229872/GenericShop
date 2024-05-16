@@ -10,6 +10,7 @@ import axios from "axios";
 import { toast } from 'sonner'
 import { Link } from "react-router-dom";
 import { TFunction } from "i18next";
+import handleAxiosException from "../services/apiService";
 
 
 type RegisterPageParams = {
@@ -33,11 +34,7 @@ export default function RegisterPage({setLoading}: RegisterPageParams) {
       setActiveStep(3)
 
     } catch (e: any) {
-      if (e.response && e.response.data) {
-        toast.error(t(e.response.data.message))
-      } else {
-        toast.error(t('error'))
-      }
+      handleAxiosException(e)
 
     } finally {
       setLoading(false)

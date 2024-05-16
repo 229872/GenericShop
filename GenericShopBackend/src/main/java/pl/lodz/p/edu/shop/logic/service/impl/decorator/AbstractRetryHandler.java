@@ -44,6 +44,7 @@ abstract class AbstractRetryHandler {
             try {
                 log.info("Transaction number {}", retryCounter);
                 runnable.run();
+                return;
             } catch (JpaSystemException e) {
                 TransactionException cause = ExceptionUtil.findCause(e, TransactionException.class);
                 if (Objects.nonNull(cause) && cause.getMessage().contains("timeout")) {

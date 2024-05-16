@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 import { SessionDialogsActions, Tokens } from "../utils/types";
 import { useState } from "react";
 import VisibilityButton from "../components/reusable/VisibilityButton";
+import handleAxiosException from "../services/apiService";
 
 const schema = z.object({
   login: z.string().regex(regex.LOGIN, 'authentication.login.not_valid'),
@@ -45,11 +46,8 @@ export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, 
       showExtendSessionDialogAfterTimeout()
 
     } catch (e: any) {
-      if (e.response && e.response.data) {
-        toast.error(t(e.response.data.message))
-      } else {
-        toast.error(t('error'))
-      }
+      handleAxiosException(e)
+      
     } finally {
       setLoading(false)
     }
@@ -82,6 +80,7 @@ export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, 
               error={Boolean(errors.login?.message)}
               placeholder={t('authentication.enter.login')}
               helperText={errors.login?.message && t(errors.login.message)}
+              autoComplete='true'
               sx={fieldStyle}
             />
 
@@ -93,6 +92,7 @@ export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, 
               InputProps={{
                 endAdornment: <VisibilityButton visible={passwordVisible} onClick={() => setPasswordVisible(!passwordVisible)} />
               }}
+              autoComplete='true'
             />
 
             <Link href='#' color='inherit' variant='h6' underline='hover'>{t('authentication.forgot.password')}</Link>

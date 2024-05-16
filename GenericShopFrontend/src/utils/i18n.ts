@@ -34,6 +34,7 @@ const resources = {
       'authentication.button.login': 'Log in',
       'authentication.toast.success': 'You have successfully logged in !',
       'authentication.forgot.password': 'Forgot password ?',
+      'confirm_account.success': 'Congratulations, your account is now active. Sign in to continue :)',
 
       'register.title': 'Create account',
       'register.step.1.title': 'Complete your account details',
@@ -88,7 +89,10 @@ const resources = {
       'notfound.oops': 'Oops!',
 
       // Backend
-      'exception.auth.credentials': 'Credentials are incorrect'
+      'exception.auth.credentials': 'Credentials are incorrect',
+      // todo, change this message cause it can be caused by different use cases
+      'exception.auth.token.expired': `Your account could not be confirmed because the time for this operation has most likely expired.
+                                       Don't worry, try creating an account again`,
     }
   },
   pl: {
@@ -121,6 +125,8 @@ const resources = {
       'authentication.button.login': 'Zaloguj się',
       'authentication.toast.success': 'Zalogowałeś się pomyślnie',
       'authentication.forgot.password': 'Zapomniałeś hasła ?',
+
+      'confirm_account.success': 'Gratulacje, Twoje konto jest teraz aktywne. Zaloguj się, aby kontynuować :)',
 
       'register.title': 'Stwórz konto',
       'register.step.1.title': 'Uzupełnij dane konta',
@@ -176,7 +182,9 @@ const resources = {
       
 
       // Backend
-      'exception.auth.credentials': 'Nieprawidłowe dane logowania'
+      'exception.auth.credentials': 'Nieprawidłowe dane logowania',
+      'exception.auth.token.expired': `Nie udało się potwierdzić twojego konta, ponieważ najprawdopodobniej czas na tę operację dobiegł końca.
+                                       Nie martw się, spróbój założyć konto jeszcze raz`,
     }
   }
 };

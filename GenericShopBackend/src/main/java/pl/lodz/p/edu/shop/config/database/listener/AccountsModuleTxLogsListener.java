@@ -1,38 +1,48 @@
 package pl.lodz.p.edu.shop.config.database.listener;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.lang.NonNull;
 import org.springframework.transaction.TransactionExecution;
 import org.springframework.transaction.TransactionExecutionListener;
 import pl.lodz.p.edu.shop.util.SecurityUtil;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
-
-@Component
 public class AccountsModuleTxLogsListener implements TransactionExecutionListener {
 
-    private String transactionId;
+    private final Map<TransactionExecution, UUID> mapTxWithId = Collections.synchronizedMap(new HashMap<>());
 
     @Override
-    public void afterBegin(TransactionExecution transaction, Throwable beginFailure) {
-        transactionId = Long.toString(System.currentTimeMillis())
-            + ThreadLocalRandom.current().nextLong(Long.MAX_VALUE);
+    public void afterBegin(@NonNull TransactionExecution transaction, Throwable beginFailure) {
+        UUID transactionId = UUID.randomUUID();
+        mapTxWithId.put(transaction, transactionId);
 
-        log.info("Transaction in AccountsModule with TXid={} in {} started, identity: {}", transactionId,
-            transaction.getTransactionName(), SecurityUtil.getLoginFromSecurityContext());
+        log.info("TX id={}: AccountsModule transaction STARTED with identity: {} in {}", transactionId,
+            SecurityUtil.getLoginFromSecurityContext(), transaction.getTransactionName());
     }
 
     @Override
-    public void afterCommit(TransactionExecution transaction, Throwable commitFailure) {
-        log.info("Transaction in AccountsModule with TXid={} in {} ends with status COMMIT, identity: {}",
-            transactionId, transaction.getTransactionName(), SecurityUtil.getLoginFromSecurityContext());
+    public void afterCommit(@NonNull TransactionExecution transaction, Throwable commitFailure) {
+        UUID transactionId = mapTxWithId.get(transaction);
+
+        log.info("TX id={}: AccountsModule transaction ENDS with status COMMIT, identity: {} in {}", transactionId,
+            SecurityUtil.getLoginFromSecurityContext(), transaction.getTransactionName());
+
+        mapTxWithId.remove(transaction);
     }
 
     @Override
-    public void afterRollback(TransactionExecution transaction, Throwable rollbackFailure) {
-        log.info("Transaction in AccountsModule with TXid={} in {} ends with status ROLLBACK, identity: {}",
-            transactionId, transaction.getTransactionName(), SecurityUtil.getLoginFromSecurityContext());
+    public void afterRollback(@NonNull TransactionExecution transaction, Throwable rollbackFailure) {
+        UUID transactionId = mapTxWithId.get(transaction);
+
+        log.info("TX id={}: AccountsModule transaction ENDS with status ROLLBACK, identity: {} in {}", transactionId,
+            SecurityUtil.getLoginFromSecurityContext(), transaction.getTransactionName());
+
+        mapTxWithId.remove(transaction);
     }
+
 }
