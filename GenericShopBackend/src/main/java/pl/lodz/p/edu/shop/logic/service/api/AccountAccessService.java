@@ -17,4 +17,8 @@ public interface AccountAccessService {
     void confirmRegistration(String verificationToken);
 
     void forgotPassword(String email);
+
+    void validateResetPasswordToken(String resetPasswordToken);
+
+    void resetPassword(String password, String resetPasswordToken);
 }

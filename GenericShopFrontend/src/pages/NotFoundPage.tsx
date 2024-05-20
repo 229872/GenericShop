@@ -2,6 +2,7 @@ import { Button, Card, CardActions, CardContent, Stack, Typography } from "@mui/
 import { CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { HOME_PATH } from "../components/singleuse/Routing";
 
 type NotFoundPageParams = {
   style: CSSProperties
@@ -25,7 +26,7 @@ export default function NotFoundPage({ style } : NotFoundPageParams) {
       </CardContent>
 
       <CardActions sx={{ display: 'flex', justifyContent: 'center', paddingBottom: '20px' }}>
-        <Button variant='contained' onClick={() => navigate('/home')}>{t('notfound.button')}</Button>
+        <Button variant='contained' onClick={() => navigate(HOME_PATH)}>{t('notfound.button')}</Button>
       </CardActions>
     </Card>
   )

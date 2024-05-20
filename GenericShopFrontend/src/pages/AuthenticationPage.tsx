@@ -12,6 +12,7 @@ import { SessionDialogsActions, Tokens } from "../utils/types";
 import { useState } from "react";
 import VisibilityButton from "../components/reusable/VisibilityButton";
 import handleAxiosException from "../services/apiService";
+import { HOME_PATH } from "../components/singleuse/Routing";
 
 const schema = z.object({
   login: z.string().regex(regex.LOGIN, 'authentication.login.not_valid'),
@@ -43,7 +44,7 @@ export default function AuthenticationPage({ showTokenExpiredDialogAfterTimeout,
       const lang = decodeJwtToken(token)?.lang;
       saveDataInLocalStorage(token, refreshToken, lang)
       reset()
-      navigate('/home')
+      navigate(HOME_PATH)
       toast.success(t('authentication.toast.success'))
       showTokenExpiredDialogAfterTimeout()
       showExtendSessionDialogAfterTimeout()
@@ -98,7 +99,7 @@ export default function AuthenticationPage({ showTokenExpiredDialogAfterTimeout,
               autoComplete='true'
             />
 
-            <Link to='/auth/reset-password' style={linkStyle} onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
+            <Link to='/auth/forgot-password' style={linkStyle} onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
               <Typography variant='h6'>
                 {t('authentication.forgot.password')}
               </Typography>

@@ -10,6 +10,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { TFunction } from "i18next";
 import handleAxiosException from "../services/apiService";
+import { AUTH_PATH } from "../components/singleuse/Routing";
 
 
 type RegisterPageParams = {
@@ -318,7 +319,7 @@ function Step3() {
 
         <Typography variant='body1'>
           {t('register.step.3.content.3')}
-          <Link to='/auth'>{t('register.step.3.link')}</Link>
+          <Link to={AUTH_PATH}>{t('register.step.3.link')}</Link>
         </Typography>
       </Stack>
     </>

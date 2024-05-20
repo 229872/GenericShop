@@ -108,7 +108,14 @@ class JwtServiceImpl implements JwtService {
     public void validateVerificationToken(String verificationToken, String email) {
         Key key = getSigningKeyFromNotEncodedSecret(email);
 
-        validateAndExtractClaimsFromJwtToken(verificationToken, key).getSubject();
+        validateAndExtractClaimsFromJwtToken(verificationToken, key);
+    }
+
+    @Override
+    public void validateResetPasswordToken(String token, String password) {
+        Key key = getSigningKeyFromNotEncodedSecret(password);
+
+        validateAndExtractClaimsFromJwtToken(token, key);
     }
 
     @Override

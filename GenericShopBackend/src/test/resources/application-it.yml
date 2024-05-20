@@ -37,7 +37,7 @@ app:
   frontend:
     frontend-app-url: http://localhost:5173
     frontend-account-verification-url: ${app.frontend.frontend-app-url}/register/confirm
-    frontend-account-reset-password-url: ${app.frontend.frontend-app-url}/auth/reset-password/verify
+    frontend-account-reset-password-url: ${app.frontend.frontend-app-url}/auth/reset-password
 
 spring:
   config:

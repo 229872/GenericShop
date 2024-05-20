@@ -10,6 +10,7 @@ import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.shop.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.shop.exception.ApplicationExceptionFactory;
+import pl.lodz.p.edu.shop.exception.account.helper.AccountStateOperation;
 import pl.lodz.p.edu.shop.logic.service.api.AccountAccessService;
 import pl.lodz.p.edu.shop.logic.service.api.JwtService;
 import pl.lodz.p.edu.shop.logic.service.api.MailService;
@@ -100,5 +101,35 @@ class AccountAccessServiceImpl extends AccountService implements AccountAccessSe
                 String token = jwtService.generateResetPasswordToken(account.getLogin(), account.getPassword());
                 mailService.sendResetPasswordMail(email, account.getLocale(), token);
             });
+    }
+
+    private Account verifyResetPasswordToken(String resetPasswordToken) {
+        String login = jwtService.decodeSubjectFromJwtTokenWithoutValidation(resetPasswordToken);
+        Account account = accountRepository.findByLogin(login)
+            .orElseThrow(ApplicationExceptionFactory::createExpiredTokenException);
+
+        if (!account.getAccountState().equals(AccountState.ACTIVE)) {
+            throw ApplicationExceptionFactory
+                .createOperationNotAllowedWithActualAccountStateException(AccountStateOperation.BLOCK);
+        }
+
+        if (account.isArchival()) {
+            throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
+        }
+
+        jwtService.validateResetPasswordToken(resetPasswordToken, account.getPassword());
+        return account;
+    }
+
+    @Override
+    public void validateResetPasswordToken(String resetPasswordToken) {
+        verifyResetPasswordToken(resetPasswordToken);
+    }
+
+    @Override
+    public void resetPassword(String password, String resetPasswordToken) {
+        Account account = verifyResetPasswordToken(resetPasswordToken);
+        account.setPassword(passwordEncoder.encode(password));
+        save(account);
     }
 }

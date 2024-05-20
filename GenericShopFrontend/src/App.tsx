@@ -1,5 +1,5 @@
 import './App.css'
-import NavigationBar from './pages/NavigationBar';
+import NavigationBar from './components/singleuse/NavigationBar';
 import './utils/i18n'; 
 import { Toaster } from 'sonner'
 import RoutingWithSessionDialogs from './components/singleuse/RoutingWithSessionDialogs';

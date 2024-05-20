@@ -53,4 +53,14 @@ class AccountAccessServiceAdapter implements AccountAccessServiceOperations {
     public void forgotPassword(ForgotPasswordDto forgotPasswordDto) {
         accountAccessService.forgotPassword(forgotPasswordDto.email());
     }
+
+    @Override
+    public void validateResetPasswordToken(String token) {
+        accountAccessService.validateResetPasswordToken(token);
+    }
+
+    @Override
+    public void resetPassword(ResetPasswordDto resetPasswordDto) {
+        accountAccessService.resetPassword(resetPasswordDto.password(), resetPasswordDto.resetPasswordToken());
+    }
 }

@@ -15,4 +15,8 @@ public interface AccountAccessServiceOperations {
     void confirmRegistration(String verificationToken);
 
     void forgotPassword(ForgotPasswordDto forgotPasswordDto);
+
+    void validateResetPasswordToken(String token);
+
+    void resetPassword(ResetPasswordDto resetPasswordDto);
 }

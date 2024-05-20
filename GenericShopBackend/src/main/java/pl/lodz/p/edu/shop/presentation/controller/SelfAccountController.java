@@ -3,8 +3,10 @@ package pl.lodz.p.edu.shop.presentation.controller;
 import jakarta.annotation.security.DenyAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.shop.presentation.adapter.api.AccountAccessServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.*;
@@ -19,6 +21,7 @@ import static pl.lodz.p.edu.shop.util.SecurityUtil.getLoginFromSecurityContext;
 
 @RestController
 @RequestMapping( API_ROOT + "/account/self")
+@Validated
 @DenyAll
 public class SelfAccountController {
 
@@ -71,6 +74,22 @@ public class SelfAccountController {
     @RolesAllowed({RoleName.GUEST})
     ResponseEntity<Void> forgotPassword(@RequestBody @Valid ForgotPasswordDto forgotPasswordDto) {
         ownAccountService.forgotPassword(forgotPasswordDto);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/reset-password/validate")
+    @RolesAllowed({RoleName.GUEST})
+    ResponseEntity<Void> validateResetPasswordToken(@NotBlank @RequestParam("token") String token) {
+        ownAccountService.validateResetPasswordToken(token);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/reset-password")
+    @RolesAllowed({RoleName.GUEST})
+    ResponseEntity<Void> resetPassword(@RequestBody @Valid ResetPasswordDto resetPasswordDto) {
+        ownAccountService.resetPassword(resetPasswordDto);
 
         return ResponseEntity.ok().build();
     }

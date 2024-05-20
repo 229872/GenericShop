@@ -19,5 +19,7 @@ public interface JwtService {
 
     void validateVerificationToken(String verificationToken, String email);
 
+    void validateResetPasswordToken(String token, String password);
+
     String decodeSubjectFromJwtTokenWithoutValidation(String jwtToken);
 }

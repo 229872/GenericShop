@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import handleAxiosException from "../services/apiService";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { AUTH_PATH, REGISTER_PATH } from "../components/singleuse/Routing";
 
 
 export default function ConfirmAccountPage() {
@@ -25,15 +26,15 @@ export default function ConfirmAccountPage() {
         confirmAccount(verificationToken)
           .then(() => {
             toast.success(t('confirm_account.success'))
-            navigate('/auth')
+            navigate(AUTH_PATH)
           })
           .catch(e => {
             handleAxiosException(e)
-            navigate('/register')
+            navigate(REGISTER_PATH)
           })
   
       } else {
-        navigate('/register')
+        navigate(REGISTER_PATH)
         toast.error(t('exception.auth.token.expired'))
       }
       flag = false;
