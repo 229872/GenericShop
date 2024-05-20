@@ -33,9 +33,13 @@ app:
       key: "lPe/UW3XpvXCA8QZihq1Izy0Xhiz9YG7ZQkjFxgBIoWOooX8YBdHqvVFhL5CLhK/bm++L27Hyc7fzemv6vA1KQ0dFgd58c756ehFQBfg8SE="
     verification-token:
       timeout_in_minutes: 600
+    reset-password:
+      timeout-in-minutes: 600
+
   frontend:
     frontend-app-url: http://localhost:5173
     frontend-account-verification-url: ${app.frontend.frontend-app-url}/register/confirm
+    frontend-account-reset-password-url: ${app.frontend.frontend-app-url}/auth/reset-password/verify
 
 
 spring:

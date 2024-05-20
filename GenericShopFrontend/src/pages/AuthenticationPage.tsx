@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent, Link, Stack, TextField, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, Stack, TextField, Typography } from "@mui/material";
 import z from 'zod';
 import { useForm } from "react-hook-form"
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import axios from 'axios';
 import { environment, regex } from "../utils/constants";
 import { decodeJwtToken, saveJwtToken, saveLocale, saveRefreshToken } from "../services/tokenService";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'sonner'
 import { SessionDialogsActions, Tokens } from "../utils/types";
 import { useState } from "react";
@@ -22,8 +22,10 @@ type Credentials = z.infer<typeof schema>;
 
 
 
-export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, showExtendSessionDialogAfterTimeout, setLoading}: SessionDialogsActions) {
+export default function AuthenticationPage({ showTokenExpiredDialogAfterTimeout, showExtendSessionDialogAfterTimeout, setLoading, style }: SessionDialogsActions) {
   const fieldStyle = {height: '64px', width: '60%'};
+  const [ isHover, setIsHover ] = useState(false)
+  const linkStyle = { color: 'black', textDecoration: isHover ? 'underline' : 'none' }
   const {t} = useTranslation();
   const navigate = useNavigate();
   const [ passwordVisible, setPasswordVisible ] = useState<boolean>(false)
@@ -31,7 +33,8 @@ export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, 
     mode: 'onChange',
     resolver: zodResolver(schema)   
   });
-  const { errors, isValid } = formState;  
+  const { errors, isValid } = formState;
+
 
   const onValid = async (credentials: Credentials) => {
     try {
@@ -67,7 +70,7 @@ export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, 
   }
 
   return (
-    <Card elevation={2} sx={{margin: '20vh 25vw'}}>
+    <Card elevation={2} sx={style}>
       <form onSubmit={handleSubmit(onValid)} noValidate>
         <CardContent>
           <Stack spacing={5} sx={{margin: '35px'}}>
@@ -95,7 +98,11 @@ export default function AuthenticationPage({showTokenExpiredDialogAfterTimeout, 
               autoComplete='true'
             />
 
-            <Link href='#' color='inherit' variant='h6' underline='hover'>{t('authentication.forgot.password')}</Link>
+            <Link to='/auth/reset-password' style={linkStyle} onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
+              <Typography variant='h6'>
+                {t('authentication.forgot.password')}
+              </Typography>
+            </Link>
           </Stack>
         </CardContent>
 

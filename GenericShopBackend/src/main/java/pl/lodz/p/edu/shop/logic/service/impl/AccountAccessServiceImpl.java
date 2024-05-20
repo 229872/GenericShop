@@ -92,4 +92,13 @@ class AccountAccessServiceImpl extends AccountService implements AccountAccessSe
 
         save(account);
     }
+
+    @Override
+    public void forgotPassword(String email) {
+        accountRepository.findByEmail(email)
+            .ifPresent(account -> {
+                String token = jwtService.generateResetPasswordToken(account.getLogin(), account.getPassword());
+                mailService.sendResetPasswordMail(email, account.getLocale(), token);
+            });
+    }
 }

@@ -31,10 +31,13 @@ app:
       key: "SbukNWysYjebgzpFLx0Ax21RnASrRa03JzBzZ8JRYsrOeECSUl2WkI0AxW3DkAscvslkKW6R0hk57uIoDhZ06+GZV9z880zMiypIQGgcMn0="
     verification-token:
       timeout_in_minutes: 600
+    reset-password:
+      timeout-in-minutes: 600
 
   frontend:
     frontend-app-url: http://localhost:5173
     frontend-account-verification-url: ${app.frontend.frontend-app-url}/register/confirm
+    frontend-account-reset-password-url: ${app.frontend.frontend-app-url}/auth/reset-password/verify
 
 spring:
   config:

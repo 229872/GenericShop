@@ -35,17 +35,20 @@ class JwtServiceImpl implements JwtService {
     private final JwtProperties authTokenProperties;
     private final JwtProperties refreshTokenProperties;
     private final JwtProperties verificationTokenProperties;
+    private final JwtProperties resetPasswordProperties;
     private final ObjectMapper objectMapper;
 
     public JwtServiceImpl(
         @Qualifier("authTokenProperties") JwtProperties authTokenProperties,
         @Qualifier("refreshTokenProperties") JwtProperties refreshTokenProperties,
         @Qualifier("verificationTokenProperties") JwtProperties verificationTokenProperties,
+        @Qualifier("resetPasswordTokenProperties") JwtProperties resetPasswordProperties,
         ObjectMapper objectMapper
     ) {
         this.authTokenProperties = authTokenProperties;
         this.refreshTokenProperties = refreshTokenProperties;
         this.verificationTokenProperties = verificationTokenProperties;
+        this.resetPasswordProperties = resetPasswordProperties;
         this.objectMapper = objectMapper;
     }
 
@@ -74,6 +77,15 @@ class JwtServiceImpl implements JwtService {
 
         Date expiration = Date.from(now().plusMillis(verificationTokenProperties.getTimeoutInMillis()));
         Key key = getSigningKeyFromNotEncodedSecret(email);
+
+        return generateTokenWithIssuedAtNow(subject, Map.of(), expiration, key, SignatureAlgorithm.HS256);
+    }
+
+    @Override
+    public String generateResetPasswordToken(String subject, String password) {
+
+        Date expiration = Date.from(now().plusMillis(resetPasswordProperties.getTimeoutInMillis()));
+        Key key = getSigningKeyFromNotEncodedSecret(password);
 
         return generateTokenWithIssuedAtNow(subject, Map.of(), expiration, key, SignatureAlgorithm.HS256);
     }

@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.shop.presentation.adapter.api.AccountAccessServiceOperations;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountRegisterDto;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.ChangeLanguageDto;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.ChangePasswordDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.*;
 import pl.lodz.p.edu.shop.config.security.role.RoleName;
 
 import java.net.URI;
@@ -66,6 +63,14 @@ public class SelfAccountController {
     @RolesAllowed({RoleName.GUEST})
     ResponseEntity<Void> confirmRegistration(@RequestParam("token") String token) {
         ownAccountService.confirmRegistration(token);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/forgot-password")
+    @RolesAllowed({RoleName.GUEST})
+    ResponseEntity<Void> forgotPassword(@RequestBody @Valid ForgotPasswordDto forgotPasswordDto) {
+        ownAccountService.forgotPassword(forgotPasswordDto);
 
         return ResponseEntity.ok().build();
     }

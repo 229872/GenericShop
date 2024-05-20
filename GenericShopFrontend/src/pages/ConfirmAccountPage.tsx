@@ -6,6 +6,7 @@ import handleAxiosException from "../services/apiService";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 
+
 export default function ConfirmAccountPage() {
   const location = useLocation();
   const navigate = useNavigate();

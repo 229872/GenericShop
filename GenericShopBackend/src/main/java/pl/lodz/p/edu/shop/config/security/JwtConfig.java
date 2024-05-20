@@ -25,4 +25,10 @@ public class JwtConfig {
     public JwtProperties verificationTokenProperties() {
         return new JwtProperties();
     }
+
+    @Bean(name = "resetPasswordTokenProperties")
+    @ConfigurationProperties("app.security.reset-password")
+    public JwtProperties resetPasswordTokenProperties() {
+        return new JwtProperties();
+    }
 }

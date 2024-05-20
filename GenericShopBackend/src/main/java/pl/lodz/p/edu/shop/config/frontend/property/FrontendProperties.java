@@ -17,4 +17,7 @@ public class FrontendProperties {
 
     @NotBlank(message = "Frontend application account verification link must be set for emails")
     private String frontendAccountVerificationUrl;
+
+    @NotBlank(message = "Frontend application account reset password link must be set for emails")
+    private String frontendAccountResetPasswordUrl;
 }

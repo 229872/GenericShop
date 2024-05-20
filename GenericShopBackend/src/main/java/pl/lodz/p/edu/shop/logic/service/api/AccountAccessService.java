@@ -15,4 +15,6 @@ public interface AccountAccessService {
     Account register(Account account);
 
     void confirmRegistration(String verificationToken);
+
+    void forgotPassword(String email);
 }

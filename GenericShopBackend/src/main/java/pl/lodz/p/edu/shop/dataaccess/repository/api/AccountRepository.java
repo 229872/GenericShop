@@ -17,6 +17,8 @@ public interface AccountRepository {
 
     Optional<Account> findByLogin(String login);
 
+    Optional<Account> findByEmail(String email);
+
     Account save(Account account);
 
     void flush();

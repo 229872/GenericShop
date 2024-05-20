@@ -50,4 +50,9 @@ class AccountAccessServiceRetryHandler extends AbstractRetryHandler implements A
     public void confirmRegistration(String verificationToken) {
         repeatTransactionWhenTimeoutOccurred(() -> accountAccessService.confirmRegistration(verificationToken));
     }
+
+    @Override
+    public void forgotPassword(String email) {
+        repeatTransactionWhenTimeoutOccurred(() -> accountAccessService.forgotPassword(email));
+    }
 }

@@ -1,5 +1,5 @@
 import { Autocomplete, Button, Card, CardActions, CardContent, Grid, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { CSSProperties, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { environment, regex } from "../utils/constants";
@@ -7,7 +7,6 @@ import { Control, Controller, FormState, UseFormRegister, UseFormWatch, useForm 
 import VisibilityButton from "../components/reusable/VisibilityButton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { toast } from 'sonner'
 import { Link } from "react-router-dom";
 import { TFunction } from "i18next";
 import handleAxiosException from "../services/apiService";
@@ -15,9 +14,10 @@ import handleAxiosException from "../services/apiService";
 
 type RegisterPageParams = {
   setLoading: (state: boolean) => void
+  style: CSSProperties
 }
 
-export default function RegisterPage({setLoading}: RegisterPageParams) {
+export default function RegisterPage({ setLoading, style } : RegisterPageParams) {
   const steps: string[] = ['register.step.1.title', 'register.step.2.title', 'register.step.3.title'];
   const [ activeStep, setActiveStep ] = useState<1 | 2 | 3>(1);
   const [ isStep1Valid, setIsStep1Valid ] = useState<boolean>(false);
@@ -78,7 +78,7 @@ export default function RegisterPage({setLoading}: RegisterPageParams) {
 
   return (
     <>
-      <Card elevation={20} sx={{ margin: '13vh 25vw', height: '70vh' }}>
+      <Card elevation={20} sx={style}>
         <form onSubmit={handleSubmit(onValid)} noValidate>
           <CardContent>
             <Stepper activeStep={activeStep - 1}>

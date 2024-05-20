@@ -11,6 +11,8 @@ public interface JwtService {
 
     String generateVerificationToken(String subject, String email);
 
+    String generateResetPasswordToken(String subject, String password);
+
     Claims validateAndExtractClaimsFromAuthToken(String authToken);
 
     Claims validateAndExtractClaimsFromRefreshToken(String refreshToken);

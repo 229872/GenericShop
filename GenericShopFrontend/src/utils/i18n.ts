@@ -34,6 +34,7 @@ const resources = {
       'authentication.button.login': 'Log in',
       'authentication.toast.success': 'You have successfully logged in !',
       'authentication.forgot.password': 'Forgot password ?',
+
       'confirm_account.success': 'Congratulations, your account is now active. Sign in to continue :)',
 
       'register.title': 'Create account',
@@ -82,6 +83,14 @@ const resources = {
       'register.step.3.content.2': 'We hope you will find what you are looking for and enjoy shopping with us :)',
       'register.step.3.content.3': 'If your account has already been verified, ',
       'register.step.3.link': 'you can log in now.',
+
+      'reset_password.email.not_valid' : 'Email is not valid',
+      'reset_password.title': 'Reset password',
+      'reset_password.enter.email' : 'Enter your email address associated with your account',
+      'reset_password.label.email' : 'Email',
+      'reset_password.submit' : 'Submit',
+      'reset_password.reset' : 'Clear form',
+      'reset_password.success': 'A password reset request has been sent. If the email address you provided is part of an account, an email will be sent to it with further instructions',
 
       'notfound.title': 'Page not found',
       'notfound.description': 'Page you are trying to access does not exist...',
@@ -170,10 +179,18 @@ const resources = {
       'register.step.2.error.house_number': 'Number domu musi być pozytywną liczbą',
       'register.step.3.label': 'Gratulacje!',
       'register.step.3.content.1': `Twoje konto zostało pomyślnie utworzone ale jeszcze nie jest aktywne.
-                                  Aby aktywować konto sprawdź podaną przez ciebie skrzynkę mailową i wciśnij przycisk aktywacji.`,
+                                  Aby aktywować konto sprawdź podaną przez ciebie skrzynkę mailową i wciśnij przycisk aktywacji.`,
       'register.step.3.content.2': 'Mamy nadzieję że znajdziesz to, czego szukasz i będziesz cieszył/a się zakupami u nas :)',
       'register.step.3.content.3': 'Jeśli twoje konto zostało już zweryfikowane, ',
       'register.step.3.link': 'możesz się teraz zalogować.',
+
+      'reset_password.email.not_valid' : 'Email jest w niepoprawnej formie',
+      'reset_password.title': 'Resetuj hasło',
+      'reset_password.enter.email' : 'Wprowadź swój email który jest powiązany z twoim kontem',
+      'reset_password.label.email' : 'Email',
+      'reset_password.submit' : 'Wyślij',
+      'reset_password.reset' : 'Wyczyść formularz',
+      'reset_password.success': 'Wysłano prośbę o reset hasła. Jeżeli podany przez ciebie adres email należy do konta, zostanie na niego wysłana wiadomość z dalszymi instrukcjami',
 
       'notfound.title': 'Nie znaleziono strony',
       'notfound.description': 'Strona którą próbujesz odwiedzić nie istnieje...',

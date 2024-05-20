@@ -14,4 +14,5 @@ export type SessionDialogsActions = {
   showTokenExpiredDialogAfterTimeout: () => void
   showExtendSessionDialogAfterTimeout: () => void
   setLoading: (value: boolean) => void
+  style: React.CSSProperties
 }

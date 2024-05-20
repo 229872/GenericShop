@@ -9,4 +9,6 @@ public interface MailService {
     void sendHtmlMessage(String recipientEmail, String messageSubject, String templateName, Map<String, Object> variables);
 
     void sendVerificationMail(String recipientEmail, String locale, String verificationToken);
+
+    void sendResetPasswordMail(String recipientEmail, String locale, String resetPasswordToken);
 }
