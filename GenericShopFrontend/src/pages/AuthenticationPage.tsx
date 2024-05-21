@@ -27,7 +27,7 @@ export default function AuthenticationPage({ showTokenExpiredDialogAfterTimeout,
   const fieldStyle = {height: '64px', width: '60%'};
   const [ isHover, setIsHover ] = useState(false)
   const linkStyle = { color: 'black', textDecoration: isHover ? 'underline' : 'none' }
-  const {t} = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [ passwordVisible, setPasswordVisible ] = useState<boolean>(false)
   const { register, formState, handleSubmit, reset } = useForm<Credentials>({
@@ -63,6 +63,7 @@ export default function AuthenticationPage({ showTokenExpiredDialogAfterTimeout,
   
     if (language) {
       saveLocale(language)
+      i18n.changeLanguage(language)
     }
   }
 
