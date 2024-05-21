@@ -7,7 +7,7 @@ import { getJwtToken, getRefreshToken, saveJwtToken, saveRefreshToken } from '..
 import { Tokens } from '../../utils/types';
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom';
-import { calculateExtendSessionDialogTimeout, calculateSessionExpiredTimeout, isTokenExpired } from '../../services/sessionService';
+import { calculateExtendSessionDialogTimeout, calculateSessionExpiredTimeout, isTokenExpired, isUserSignIn } from '../../services/sessionService';
 import Routing from './Routing';
 
 type RoutingWithSessionDialogsParams = {
@@ -50,7 +50,7 @@ export default function RoutingWithSessionDialogs({ setLoading }: RoutingWithSes
     setTimeout(() => {
       if (isTokenExpired()) {
         setShowExtendSessionDialog(false)
-        setShowTokenExpiredDialog(true)
+        getJwtToken() && setShowTokenExpiredDialog(true)
       } else {
         showTokenExpiredDialogAfterTimeout()
       }
@@ -60,7 +60,7 @@ export default function RoutingWithSessionDialogs({ setLoading }: RoutingWithSes
   const showExtendSessionDialogAfterTimeout = () => {
     const timeout = calculateExtendSessionDialogTimeout()
     setTimeout(() => {
-      if (!isTokenExpired()) {
+      if (isUserSignIn()) {
         setShowExtendSessionDialog(true)
       }
     }, timeout)

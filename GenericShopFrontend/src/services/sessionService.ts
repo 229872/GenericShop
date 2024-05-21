@@ -1,3 +1,4 @@
+import { environment } from "../utils/constants";
 import { getExpirationTime, getJwtToken } from "./tokenService";
 
 export const isTokenExpired = (): boolean => {
@@ -8,6 +9,16 @@ export const isTokenExpired = (): boolean => {
   }
 
   return expirationTime < Date.now() / 1000;
+}
+
+export const isUserSignIn = (): boolean => {
+  return !isTokenExpired();
+}
+
+export const logout = (): void => {
+  localStorage.removeItem(environment.jwtTokenKey);
+  localStorage.removeItem(environment.localeKey);
+  localStorage.removeItem(environment.refreshTokenKey);
 }
 
 export const calculateSessionExpiredTimeout = () => {

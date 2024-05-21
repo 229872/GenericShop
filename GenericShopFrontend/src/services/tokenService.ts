@@ -15,10 +15,6 @@ export const saveLocale = (lang: string): void => {
   localStorage.setItem(environment.localeKey, lang)
 }
 
-export const saveTimeout = (timeout: number): void => {
-  localStorage.setItem(environment.timeoutKey, (Date.now() + timeout).toString())
-}
-
 
 
 export const getJwtToken = (): string | null => {
@@ -31,10 +27,6 @@ export const getRefreshToken = (): string | null => {
 
 export const getLocale = (): string | null => {
   return localStorage.getItem(environment.localeKey)
-}
-
-export const getTimeout = (): string | null => {
-  return localStorage.getItem(environment.timeoutKey)
 }
 
 export const getExpirationTime = (token: string | null): number | null => {

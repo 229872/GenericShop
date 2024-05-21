@@ -23,6 +23,10 @@ const resources = {
       'nav.login': 'Login',
       'nav.create_account': 'Create Account',
       'nav.language': 'Change language',
+      'nav.language.polish': 'Polish',
+      'nav.language.english': 'English',
+      'nav.account': 'My account',
+      'nav.logout': 'Logout',
 
       'authentication.please.login': 'Log In to continue',
       'authentication.login.not_valid': 'Login must starts with letter and then contains only letters and digits',
@@ -134,6 +138,10 @@ const resources = {
       'nav.login': 'Zaloguj się',
       'nav.create_account': 'Stwórz konto',
       'nav.language': 'Zmień język',
+      'nav.language.polish': 'Polski',
+      'nav.language.english': 'Angielski',
+      'nav.account': 'Moje konto',
+      'nav.logout': 'Wyloguj się',
 
       'authentication.please.login': 'Zaloguj się aby kontynuować',
       'authentication.login.not_valid': 'Login musi zaczynać się literą i dalej zawierać tylko litery i cyfry',

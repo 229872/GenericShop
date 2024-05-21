@@ -12,7 +12,7 @@ function App() {
   const [ loading, setLoading ] = useState<boolean>(false)
 
   return <>
-    <Toaster position='top-right' richColors style={{marginTop: '45px'}} />
+    <Toaster position='top-right' richColors style={{marginTop: '45px'}} closeButton />
     <NavigationBar />
     <Progress loading={loading} />
     <RoutingWithSessionDialogs setLoading={setLoading} />
