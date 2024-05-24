@@ -8,7 +8,7 @@ import { Tokens } from '../../utils/types';
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom';
 import { calculateExtendSessionDialogTimeout, calculateSessionExpiredTimeout, isTokenExpired, isUserSignIn } from '../../services/sessionService';
-import Routing from './Routing';
+import Routing, { AUTH_PATH } from './Routing';
 
 type RoutingWithSessionDialogsParams = {
   setLoading: (state: boolean) => void
@@ -50,6 +50,7 @@ export default function RoutingWithSessionDialogs({ setLoading }: RoutingWithSes
     setTimeout(() => {
       if (isTokenExpired()) {
         setShowExtendSessionDialog(false)
+        navigate(AUTH_PATH)
         getJwtToken() && setShowTokenExpiredDialog(true)
       } else {
         showTokenExpiredDialogAfterTimeout()
