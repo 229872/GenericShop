@@ -16,3 +16,39 @@ export type SessionDialogsActions = {
   setLoading: (value: boolean) => void
   style?: React.CSSProperties
 }
+
+export type AuthLogs = {
+  lastSuccessfulAuthIpAddr: string,
+  lastUnsuccessfulAuthIpAddr: string,
+  lastSuccessfulAuthTime: Date,
+  lastUnsuccessfulAuthTime: Date,
+  unsuccessfulAuthCounter: number,
+  blockadeEndTime: Date
+}
+
+export type Address = {
+  postalCode: string,
+  country: string,
+  city: string,
+  street: string,
+  houseNumber: number
+}
+
+export type Account = {
+  id: number,
+  archival: boolean,
+  login: string,
+  email: string,
+  locale: string,
+  firstName: string,
+  lastName: string,
+  address: Address,
+  state: string,
+  roles: string[],
+  authLogs: AuthLogs
+}
+
+export type GridItemData = {
+  label: string
+  content: string | number
+}

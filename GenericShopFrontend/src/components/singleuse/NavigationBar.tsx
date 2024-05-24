@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { isTokenExpired, logout } from "../../services/sessionService";
-import { AUTH_PATH, HOME_PATH, REGISTER_PATH } from "./Routing";
+import { AUTH_PATH, HOME_PATH, REGISTER_PATH, SELF_ACCOUNT_PATH } from "./Routing";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LanguageIcon from '@mui/icons-material/Language';
 import PersonIcon from '@mui/icons-material/Person';
@@ -27,6 +27,13 @@ export default function NavigationBar() {
     setLanguageAnchorEl(null)
     setAccountAnchorEl(null)
     setReload(!reload)
+    navigate(AUTH_PATH)
+  }
+
+  const navigateToSelfInformations = () => {
+    setLanguageAnchorEl(null)
+    setAccountAnchorEl(null)
+    navigate(SELF_ACCOUNT_PATH)
   }
 
   return (
@@ -57,7 +64,7 @@ export default function NavigationBar() {
       </Menu>
 
       <Menu id='account-menu' anchorEl={accountAnchorEl} keepMounted open={Boolean(accountAnchorEl)} onClose={() => setAccountAnchorEl(null)}>
-        <MenuItem sx={menuStyle}>
+        <MenuItem sx={menuStyle} onClick={navigateToSelfInformations}>
           <ListItemIcon><PersonIcon /></ListItemIcon>
           <ListItemText>{t('nav.account')}</ListItemText>
         </MenuItem>
