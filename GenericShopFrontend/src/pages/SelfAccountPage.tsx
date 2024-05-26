@@ -11,6 +11,7 @@ import { formatDate } from "../services/timeService"
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import GridCard from "../components/reusable/GridCard"
 import { TFunction } from "i18next"
+import ChangePasswordDialog from "../components/singleuse/ChangePasswordDialog"
 
 type SelfAccountPageParams = {
   setLoading: (state: boolean) => void
@@ -79,7 +80,7 @@ export default function SelfAccountPage({ setLoading, style } : SelfAccountPageP
   return (
     <Grid sx={{...style}} container spacing={3}>
       <Grid item xs={12} md={6}>
-        <AccountOperationsCard t={t} account={account} loadAccount={loadAccount} />
+        <AccountOperationsCard t={t} account={account} loadAccount={loadAccount} setLoading={setLoading} />
         <GridCard data={accountAuthLogsData} labelSize={9} contentSize={3} />
       </Grid>
 
@@ -96,9 +97,12 @@ type AccountOperationsCardProps = {
   t: TFunction<"translation", undefined>
   account: Account | null
   loadAccount: () => Promise<void>
+  setLoading: (state: boolean) => void
 }
 
-const AccountOperationsCard = ({ t, account, loadAccount } : AccountOperationsCardProps) => {
+const AccountOperationsCard = ({ t, account, loadAccount, setLoading } : AccountOperationsCardProps) => {
+  const [ visibleChangePasswordDialog, setVisibleChangePasswordDialog ] = useState<boolean>(false)
+
   return (
     <Card sx={{ border: `1px solid black`, marginBottom: 3 }}>
       <CardContent sx={{ textAlign: 'center' }}>
@@ -115,7 +119,7 @@ const AccountOperationsCard = ({ t, account, loadAccount } : AccountOperationsCa
             <Button startIcon={<RefreshIcon />} color="primary" onClick={loadAccount} />
           </Tooltip>
 
-          <Button color="primary" onClick={() => console.log('Edit Account')}>
+          <Button color="primary" onClick={() => console.log('Edit')}>
             {t('self.button.edit')}
           </Button>
 
@@ -123,9 +127,15 @@ const AccountOperationsCard = ({ t, account, loadAccount } : AccountOperationsCa
             {t('self.button.change_email')}
           </Button>
 
-          <Button color="primary" onClick={() => console.log('Change Password')}>
+          <Button color="primary" onClick={() => setVisibleChangePasswordDialog(true)}>
             {t('self.button.change_password')}
           </Button>
+
+          <ChangePasswordDialog 
+            open={visibleChangePasswordDialog} 
+            onClose={() => setVisibleChangePasswordDialog(false)} 
+            setLoading={setLoading} 
+          />
         </Stack>
       </CardContent>
     </Card>
