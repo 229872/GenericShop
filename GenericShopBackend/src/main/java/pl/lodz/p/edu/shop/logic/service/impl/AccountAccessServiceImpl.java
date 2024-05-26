@@ -71,6 +71,20 @@ class AccountAccessServiceImpl extends AccountService implements AccountAccessSe
     }
 
     @Override
+    public Account changeEmail(String login, String email) {
+        Account account = accountRepository.findByLogin(login)
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
+
+        if (account.isArchival()) {
+            throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
+        }
+
+        account.setEmail(email);
+
+        return save(account);
+    }
+
+    @Override
     public Account register(Account account) {
         String verificationToken = jwtService.generateVerificationToken(account.getLogin(), account.getEmail());
         mailService.sendVerificationMail(account.getEmail(), account.getLocale(), verificationToken);

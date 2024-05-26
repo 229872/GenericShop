@@ -28,7 +28,7 @@ public class SelfAccountController {
     private final AccountAccessServiceOperations ownAccountService;
 
     @GetMapping
-    @RolesAllowed({RoleName.CLIENT, RoleName.EMPLOYEE, RoleName.ADMIN})
+    @RolesAllowed({RoleName.CLIENT, RoleName.ADMIN, RoleName.EMPLOYEE})
     ResponseEntity<AccountOutputDto> getOwnAccountInformation() {
         String login = getLoginFromSecurityContext();
         AccountOutputDto result = ownAccountService.findByLogin(login);
@@ -53,6 +53,16 @@ public class SelfAccountController {
 
         return ResponseEntity.ok(result);
     }
+
+    @PutMapping("/change-email")
+    @RolesAllowed({RoleName.CLIENT, RoleName.ADMIN, RoleName.EMPLOYEE})
+    ResponseEntity<AccountOutputDto> changeOwnEmail(@RequestBody @Valid ChangeEmailDto email) {
+        String login = getLoginFromSecurityContext();
+        AccountOutputDto result = ownAccountService.changeEmail(login, email);
+
+        return ResponseEntity.ok(result);
+    }
+
 
     @PostMapping("/register")
     @RolesAllowed({RoleName.GUEST})

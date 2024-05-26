@@ -284,7 +284,7 @@ class AccountAccessServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw AccountEmailConflictException when creating account with already used email")
+    @DisplayName("Should throw AccountEmailConflictException when creating account with already used newEmail")
     void register_negative_3() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();

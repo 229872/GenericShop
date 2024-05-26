@@ -38,6 +38,12 @@ class AccountAccessServiceAdapter implements AccountAccessServiceOperations {
     }
 
     @Override
+    public AccountOutputDto changeEmail(String login, ChangeEmailDto email) {
+        Account account = accountAccessService.changeEmail(login, email.newEmail());
+        return accountMapper.mapToAccountOutputDto(account);
+    }
+
+    @Override
     public AccountOutputDto register(AccountRegisterDto registerDto) {
         Account account = accountMapper.mapToAccount(registerDto);
         Account registeredAccount = accountAccessService.register(account);

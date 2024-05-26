@@ -12,7 +12,7 @@ public final class ExceptionMessage {
     public static final String TRANSACTION_TIMEOUT = "exception.transaction.timeout";
     public static final String ACCOUNT_NOT_FOUND = "exception.account.not_found";
     public static final String ACCOUNT_CONFLICT_LOGIN = "exception.account.conflict.login";
-    public static final String ACCOUNT_CONFLICT_EMAIL = "exception.account.conflict.email";
+    public static final String ACCOUNT_CONFLICT_EMAIL = "exception.account.conflict.newEmail";
     public static final String ACCOUNT_NOT_BLOCKED = "exception.account.state.not_blocked";
     public static final String ACCOUNT_NOT_ACTIVE = "exception.account.state.not_active";
     public static final String ACCOUNT_ARCHIVAL = "exception.account.state.archival";
@@ -39,7 +39,7 @@ public final class ExceptionMessage {
         public static final String POSITIVE = "exception.validation.positive";
         public static final String CAPITALIZED = "exception.validation.field.capitalized";
         public static final String SIZE = "exception.validation.field..size";
-        public static final String EMAIL = "exception.validation.email.wrong";
+        public static final String EMAIL = "exception.validation.newEmail.wrong";
         public static final String PASSWORD_WRONG_SIZE = "exception.validation.password.size";
         public static final String PASSWORD_WRONG = "exception.validation.password.wrong";
         public static final String ACCOUNT_LOCALE_NOT_SUPPORTED = "exception.validation.account.locale.not_supported";

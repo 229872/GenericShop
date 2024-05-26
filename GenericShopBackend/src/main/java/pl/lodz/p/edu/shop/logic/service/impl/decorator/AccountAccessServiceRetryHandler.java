@@ -42,6 +42,11 @@ class AccountAccessServiceRetryHandler extends AbstractRetryHandler implements A
     }
 
     @Override
+    public Account changeEmail(String login, String email) {
+        return repeatTransactionWhenTimeoutOccurred(() -> accountAccessService.changeEmail(login, email));
+    }
+
+    @Override
     public Account register(Account account) {
         return repeatTransactionWhenTimeoutOccurred(() -> accountAccessService.register(account));
     }

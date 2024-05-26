@@ -12,6 +12,8 @@ public interface AccountAccessService {
 
     Account changePassword(String login, String currentPassword, String newPassword);
 
+    Account changeEmail(String login, String email);
+
     Account register(Account account);
 
     void confirmRegistration(String verificationToken);

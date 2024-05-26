@@ -35,7 +35,7 @@ public class MailServiceIT extends PostgresqlContainerSetup {
     }
 
     @EnabledIf(value = "isMailSet")
-    @DisplayName("Should send simple text email message")
+    @DisplayName("Should send simple text newEmail message")
     @Test
     void sendSimpleMessage_positive_1() {
         //given
@@ -52,7 +52,7 @@ public class MailServiceIT extends PostgresqlContainerSetup {
     }
 
     @EnabledIf(value = "isMailSet")
-    @DisplayName("Should send html email message")
+    @DisplayName("Should send html newEmail message")
     @Test
     void sendHtmlMessage_positive_2() {
         //given
@@ -80,7 +80,7 @@ public class MailServiceIT extends PostgresqlContainerSetup {
     }
 
     @ParameterizedTest
-    @DisplayName("Should send html email message with verification token")
+    @DisplayName("Should send html newEmail message with verification token")
     @ValueSource(strings = {"pl", "en"})
     void sendVerificationMail_positive_3(String locale) {
         Assumptions.assumeTrue(isMailSet(), "Mail properties are not set, so there is no need to test sending mails");

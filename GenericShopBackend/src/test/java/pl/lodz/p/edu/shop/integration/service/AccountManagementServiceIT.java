@@ -252,7 +252,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     }
 
     @Test
-    @DisplayName("Should throw AccountEmailConflictException when new Account has same email")
+    @DisplayName("Should throw AccountEmailConflictException when new Account has same newEmail")
     void create_negative_5() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();

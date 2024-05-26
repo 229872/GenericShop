@@ -29,14 +29,14 @@ type ChangePasswordRequest = {
   newPassword: string
 }
 
-type ChangePasswordPageProps = {
+type ChangePasswordDialogProps = {
   open: boolean
   onClose: () => void
   style?: CSSProperties
   setLoading: (loading: boolean) => void
 }
 
-export default function ChangePasswordDialog({ open, onClose, style, setLoading } : ChangePasswordPageProps) {
+export default function ChangePasswordDialog({ open, onClose, style, setLoading } : ChangePasswordDialogProps) {
   const { t } = useTranslation()
   const { register, handleSubmit, formState, reset } = useForm<ChangePasswordData>({
     mode: 'onChange',

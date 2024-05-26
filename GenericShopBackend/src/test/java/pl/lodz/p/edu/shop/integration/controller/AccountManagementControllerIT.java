@@ -335,7 +335,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
 
                     @ParameterizedTest
                     @NullSource
-                    @DisplayName("Should return response with status 400 and body with exception message when provided email is null")
+                    @DisplayName("Should return response with status 400 and body with exception message when provided newEmail is null")
                     void createAccount_should_return_status_bad_request_when_email_is_null(String givenEmail) throws Exception {
                         //given
                         AccountCreateDto accountWithNullEmail = TestData.getDefaultAccountCreateDtoBuilder()
@@ -358,8 +358,8 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     }
 
                     @ParameterizedTest
-                    @ValueSource(strings = {" ", "email", "email@"})
-                    @DisplayName("Should return response with status 400 and body with exception message when provided email is not valid")
+                    @ValueSource(strings = {" ", "newEmail", "newEmail@"})
+                    @DisplayName("Should return response with status 400 and body with exception message when provided newEmail is not valid")
                     void createAccount_should_return_status_bad_request_when_email_is_not_valid(String givenEmail) throws Exception {
                         //given
                         AccountCreateDto accountWithGivenEmail = TestData.getDefaultAccountCreateDtoBuilder()
@@ -1100,7 +1100,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
             }
 
             @Test
-            @DisplayName("Should return response with status 409 and body with exception message when there is already account with given email")
+            @DisplayName("Should return response with status 409 and body with exception message when there is already account with given newEmail")
             void createAccount_should_return_status_conflict_with_exception_message_containing_duplicate_email_message() throws Exception {
                 //given
                 Account account = TestData.buildDefaultAccount();

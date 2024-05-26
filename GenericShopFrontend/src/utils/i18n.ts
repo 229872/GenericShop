@@ -19,6 +19,14 @@ const resources = {
       'app.dialog.session_extend.dialog.success': 'Session extended successfully',
       'app.dialog.session_extend.dialog.error': 'Couldn\'t extend session',
 
+      'change_email.not_valid.wrong_format': 'Email is in wrong format',
+      'change_email.title': 'Change your email',
+      'change_email.label.new_email': 'New email',
+      'change_email.enter.email': 'Enter new email',
+      'change_email.back': 'Back',
+      'change_email.reset': 'Reset',
+      'change_email.submit': 'Submit',
+
       'change_password.current_password.not_valid': 'Current password is incorrect',
       'change_password.new_password.not_valid': 'New password is in wrong format',
       'change_password.repeat_password.not_valid': 'The repeated password is different',
@@ -178,6 +186,14 @@ const resources = {
       'app.dialog.session_extend.dialog.success': 'Przedłużono sesję z powodzeniem',
       'app.dialog.session_extend.dialog.error': 'Nie udało się przedłużyć sesji',
 
+      'change_email.not_valid.wrong_format': 'Adres email jest w złym formacie',
+      'change_email.title': 'Zmień swój adres email',
+      'change_email.label.new_email': 'Nowy adres email',
+      'change_email.enter.email': 'Wprowadź nowy adres email',
+      'change_email.back': 'Wróć',
+      'change_email.reset': 'Wyczyść',
+      'change_email.submit': 'Zatwierdź',
+
       'change_password.current_password.not_valid': 'Obecne hasło jest nieprawidłowe',
       'change_password.new_password.not_valid': 'Nowe hasło jest w złym formacie',
       'change_password.repeat_password.not_valid': 'Powtórzone nowe hasło się różni',
@@ -190,9 +206,9 @@ const resources = {
       'change_password.label.repeat_new_password': 'Powtórz nowe hasło',
       'change_password.enter.repeat_new_password': 'Wprowadź nowe hasło jeszcze raz',
       'change_password.back': 'Wróć',
-      'change_password.submit': 'Zatwierdź',
       'change_password.reset': 'Wyczyść',
-
+      'change_password.submit': 'Zatwierdź',
+      
       'nav.home': 'Strona Główna',
       'nav.login': 'Zaloguj się',
       'nav.create_account': 'Stwórz konto',

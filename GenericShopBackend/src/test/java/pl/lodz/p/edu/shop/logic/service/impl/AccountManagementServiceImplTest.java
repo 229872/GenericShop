@@ -220,11 +220,11 @@ class AccountManagementServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should throw AccountEmailConflictException when new Account has same email")
+    @DisplayName("Should throw AccountEmailConflictException when new Account has same newEmail")
     void create_negative_5() {
         //given
         Account givenAccount = TestData.getDefaultAccountBuilder()
-            .email("email@example.com")
+            .email("newEmail@example.com")
             .build();
         var cause = new ConstraintViolationException("Database violation occurred", null, "accounts_email_key");
         var dataIntegrityViolationException = new DataIntegrityViolationException("Violation occurred", cause);

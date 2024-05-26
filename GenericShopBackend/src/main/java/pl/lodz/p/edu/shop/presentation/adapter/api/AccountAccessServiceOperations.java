@@ -10,6 +10,8 @@ public interface AccountAccessServiceOperations {
 
     AccountOutputDto changePassword(String login, ChangePasswordDto passwords);
 
+    AccountOutputDto changeEmail(String login, ChangeEmailDto email);
+
     AccountOutputDto register(AccountRegisterDto registerDto);
 
     void confirmRegistration(String verificationToken);

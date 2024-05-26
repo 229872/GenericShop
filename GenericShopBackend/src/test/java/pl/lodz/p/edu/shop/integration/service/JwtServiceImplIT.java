@@ -472,7 +472,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     }
 
     @Test
-    @DisplayName("Should throw InvalidTokenException when for validation is provided another email")
+    @DisplayName("Should throw InvalidTokenException when for validation is provided another newEmail")
     void validateVerificationToken_negative_4() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
