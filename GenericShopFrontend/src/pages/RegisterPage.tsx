@@ -51,7 +51,7 @@ export default function RegisterPage({ setLoading, style } : RegisterPageParams)
       case 1:
         return <Step1 t={t} register={register} formState={formState} control={control} setIsStep1Valid={setIsStep1Valid} watch={watch} />
       case 2:
-        return <Step2 t={t} register={register} formState={formState} control={control} />
+        return <Step2 t={t} register={register} formState={formState} />
       case 3:
         return <Step3 />
     }
@@ -223,10 +223,9 @@ type Step2Params = {
   t: TFunction<"translation", undefined>
   register: UseFormRegister<RegisterAccountData>
   formState: FormState<RegisterAccountData>
-  control: Control<RegisterAccountData>
 }
 
-function Step2({ t, register, formState, control }: Step2Params) {
+function Step2({ t, register, formState }: Step2Params) {
   const fieldStyleForStep2 = {height: '64px', width: '100%'};
   const { errors } = formState;
 

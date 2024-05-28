@@ -25,7 +25,7 @@ import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.shop.exception.ExceptionMessage;
 import pl.lodz.p.edu.shop.presentation.controller.ApiRoot;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountCreateDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.AccountMapper;
 
@@ -208,8 +208,8 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
             @DisplayName("Should return response with status 201 and body with created account")
             void createAccount_should_return_status_created_with_created_account() throws Exception {
                 //given
-                AccountCreateDto accountCreateDto = TestData.buildDefaultAccountCreateDto();
-                String inputData = objectMapper.writeValueAsString(accountCreateDto);
+                CreateAccountDto createAccountDto = TestData.buildDefaultAccountCreateDto();
+                String inputData = objectMapper.writeValueAsString(createAccountDto);
 
                 //when
                 MockHttpServletRequestBuilder postRequest = post(BASE_API)
@@ -261,7 +261,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided login is null")
                     void createAccount_should_return_status_bad_request_when_login_is_null(String givenLogin) throws Exception {
                         //given
-                        AccountCreateDto accountWithNullLogin = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithNullLogin = TestData.getDefaultAccountCreateDtoBuilder()
                             .login(givenLogin)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullLogin);
@@ -285,7 +285,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided login is not capitalized")
                     void createAccount_should_return_status_bad_request_when_login_is_not_capitalized(String givenLogin) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenLogin = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenLogin = TestData.getDefaultAccountCreateDtoBuilder()
                             .login(givenLogin)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLogin);
@@ -309,7 +309,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided login is too short or too long")
                     void createAccount_should_return_status_bad_request_when_login_has_wrong_size(String givenLogin) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenLogin = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenLogin = TestData.getDefaultAccountCreateDtoBuilder()
                             .login(givenLogin)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLogin);
@@ -338,7 +338,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided newEmail is null")
                     void createAccount_should_return_status_bad_request_when_email_is_null(String givenEmail) throws Exception {
                         //given
-                        AccountCreateDto accountWithNullEmail = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithNullEmail = TestData.getDefaultAccountCreateDtoBuilder()
                             .email(givenEmail)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullEmail);
@@ -362,7 +362,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided newEmail is not valid")
                     void createAccount_should_return_status_bad_request_when_email_is_not_valid(String givenEmail) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenEmail = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenEmail = TestData.getDefaultAccountCreateDtoBuilder()
                             .email(givenEmail)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenEmail);
@@ -391,7 +391,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided password is null")
                     void createAccount_should_return_status_bad_request_when_password_is_null(String givenPassword) throws Exception {
                         //given
-                        AccountCreateDto accountWithNullPassword = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithNullPassword = TestData.getDefaultAccountCreateDtoBuilder()
                             .password(givenPassword)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullPassword);
@@ -415,7 +415,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided password is not valid password")
                     void createAccount_should_return_status_bad_request_when_password_is_not_valid(String givenPassword) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenPassword = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenPassword = TestData.getDefaultAccountCreateDtoBuilder()
                             .password(givenPassword)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenPassword);
@@ -439,7 +439,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided password is too short or too long")
                     void createAccount_should_return_status_bad_request_when_password_has_wrong_size(String givenPassword) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenPassword = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenPassword = TestData.getDefaultAccountCreateDtoBuilder()
                             .password(givenPassword)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenPassword);
@@ -469,7 +469,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided locale is blank")
                     void createAccount_should_return_status_bad_request_when_locale_is_blank(String givenLocale) throws Exception {
                         //given
-                        AccountCreateDto accountWithNullLocale = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithNullLocale = TestData.getDefaultAccountCreateDtoBuilder()
                             .locale(givenLocale)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullLocale);
@@ -493,7 +493,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided locale is not supported")
                     void createAccount_should_return_status_bad_request_when_locale_is_not_supported(String givenLocale) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenLocale = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenLocale = TestData.getDefaultAccountCreateDtoBuilder()
                             .locale(givenLocale)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLocale);
@@ -522,7 +522,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided firstName is null")
                     void createAccount_should_return_status_bad_request_when_firstName_is_null(String givenFirstName) throws Exception {
                         //given
-                        AccountCreateDto accountWithNullFirstName = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithNullFirstName = TestData.getDefaultAccountCreateDtoBuilder()
                             .firstName(givenFirstName)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullFirstName);
@@ -546,7 +546,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided firstName is not capitalized")
                     void createAccount_should_return_status_bad_request_when_firstName_is_not_capitalized(String givenFirstName) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenFirstName = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenFirstName = TestData.getDefaultAccountCreateDtoBuilder()
                             .firstName(givenFirstName)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenFirstName);
@@ -570,7 +570,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided firstName is too short or too long")
                     void createAccount_should_return_status_bad_request_when_firstName_has_wrong_size(String givenFirstName) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenFirstName = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenFirstName = TestData.getDefaultAccountCreateDtoBuilder()
                             .firstName(givenFirstName)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenFirstName);
@@ -599,7 +599,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided lastName is null")
                     void createAccount_should_return_status_bad_request_when_lastName_is_null(String givenLastName) throws Exception {
                         //given
-                        AccountCreateDto accountWithNullLastName = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithNullLastName = TestData.getDefaultAccountCreateDtoBuilder()
                             .lastName(givenLastName)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullLastName);
@@ -623,7 +623,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided lastName is not capitalized")
                     void createAccount_should_return_status_bad_request_when_lastName_is_not_capitalized(String givenLastName) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenLastName = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenLastName = TestData.getDefaultAccountCreateDtoBuilder()
                             .lastName(givenLastName)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLastName);
@@ -647,7 +647,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided lastName is too short or too long")
                     void createAccount_should_return_status_bad_request_when_lastName_has_wrong_size(String givenLastName) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenLastName = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenLastName = TestData.getDefaultAccountCreateDtoBuilder()
                             .lastName(givenLastName)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenLastName);
@@ -676,7 +676,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided postalCode is null")
                     void createAccount_should_return_status_bad_request_when_postalCode_is_null(String givenPostalCode) throws Exception {
                         //given
-                        AccountCreateDto accountWithNullPostalCode = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithNullPostalCode = TestData.getDefaultAccountCreateDtoBuilder()
                             .address(TestData.getDefaultAddressCreateDtoBuilder().postalCode(givenPostalCode).build())
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullPostalCode);
@@ -700,7 +700,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided postalCode is not in format dd-ddd")
                     void createAccount_should_return_status_bad_request_when_postalCode_is_not_in_format(String givenPostalCode) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenPostalCode = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenPostalCode = TestData.getDefaultAccountCreateDtoBuilder()
                             .address(TestData.getDefaultAddressCreateDtoBuilder().postalCode(givenPostalCode).build())
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenPostalCode);
@@ -724,7 +724,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided country is null")
                     void createAccount_should_return_status_bad_request_when_country_is_null(String givenCountry) throws Exception {
                         //given
-                        AccountCreateDto accountWithNullCountry = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithNullCountry = TestData.getDefaultAccountCreateDtoBuilder()
                             .address(TestData.getDefaultAddressCreateDtoBuilder().country(givenCountry).build())
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullCountry);
@@ -748,7 +748,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided country is not capitalized")
                     void createAccount_should_return_status_bad_request_when_country_is_not_capitalized(String givenCountry) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenCountry = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenCountry = TestData.getDefaultAccountCreateDtoBuilder()
                             .address(TestData.getDefaultAddressCreateDtoBuilder().country(givenCountry).build())
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenCountry);
@@ -772,7 +772,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided city is null")
                     void createAccount_should_return_status_bad_request_when_city_is_null(String givenCity) throws Exception {
                         //given
-                        AccountCreateDto accountWithNullCity = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithNullCity = TestData.getDefaultAccountCreateDtoBuilder()
                             .address(TestData.getDefaultAddressCreateDtoBuilder().city(givenCity).build())
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullCity);
@@ -796,7 +796,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided city is not capitalized")
                     void createAccount_should_return_status_bad_request_when_city_is_not_capitalized(String givenCity) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenCity = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenCity = TestData.getDefaultAccountCreateDtoBuilder()
                             .address(TestData.getDefaultAddressCreateDtoBuilder().city(givenCity).build())
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenCity);
@@ -820,7 +820,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided street is null")
                     void createAccount_should_return_status_bad_request_when_street_is_null(String givenStreet) throws Exception {
                         //given
-                        AccountCreateDto accountWithNullStreet = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithNullStreet = TestData.getDefaultAccountCreateDtoBuilder()
                             .address(TestData.getDefaultAddressCreateDtoBuilder().street(givenStreet).build())
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullStreet);
@@ -844,7 +844,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided street is not capitalized")
                     void createAccount_should_return_status_bad_request_when_street_is_not_capitalized(String givenStreet) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenStreet = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenStreet = TestData.getDefaultAccountCreateDtoBuilder()
                             .address(TestData.getDefaultAddressCreateDtoBuilder().street(givenStreet).build())
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenStreet);
@@ -868,7 +868,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided houseNumber is null")
                     void createAccount_should_return_status_bad_request_when_houseNumber_is_null(Integer givenHouseNumber) throws Exception {
                         //given
-                        AccountCreateDto accountWithNullHouseNumber = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithNullHouseNumber = TestData.getDefaultAccountCreateDtoBuilder()
                             .address(TestData.getDefaultAddressCreateDtoBuilder().houseNumber(givenHouseNumber).build())
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNullHouseNumber);
@@ -892,7 +892,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided houseNumber is not positive")
                     void createAccount_should_return_status_bad_request_when_street_is_not_capitalized(Integer givenHouseNumber) throws Exception {
                         //given
-                        AccountCreateDto accountWithNotPositiveHouseNumber = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithNotPositiveHouseNumber = TestData.getDefaultAccountCreateDtoBuilder()
                             .address(TestData.getDefaultAddressCreateDtoBuilder().houseNumber(givenHouseNumber).build())
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithNotPositiveHouseNumber);
@@ -922,7 +922,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided accountState is blank")
                     void createAccount_should_return_status_bad_request_when_accountState_is_blank(String givenAccountState) throws Exception {
                         //given
-                        AccountCreateDto accountWithBlankAccountState = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithBlankAccountState = TestData.getDefaultAccountCreateDtoBuilder()
                             .accountState(givenAccountState)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithBlankAccountState);
@@ -946,7 +946,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided accountState is not supported")
                     void createAccount_should_return_status_bad_request_when_accountState_is_not_supported(String givenAccountState) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenAccountState = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenAccountState = TestData.getDefaultAccountCreateDtoBuilder()
                             .accountState(givenAccountState)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenAccountState);
@@ -976,7 +976,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided accountRole is blank")
                     void createAccount_should_return_status_bad_request_when_accountRole_is_blank(String givenAccountRole) throws Exception {
                         //given
-                        AccountCreateDto accountWithBlankAccountRole = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithBlankAccountRole = TestData.getDefaultAccountCreateDtoBuilder()
                             .role(givenAccountRole)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithBlankAccountRole);
@@ -1000,7 +1000,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     @DisplayName("Should return response with status 400 and body with exception message when provided accountRole is not supported")
                     void createAccount_should_return_status_bad_request_when_accountRole_is_not_supported(String givenAccountRole) throws Exception {
                         //given
-                        AccountCreateDto accountWithGivenAccountRole = TestData.getDefaultAccountCreateDtoBuilder()
+                        CreateAccountDto accountWithGivenAccountRole = TestData.getDefaultAccountCreateDtoBuilder()
                             .role(givenAccountRole)
                             .build();
                         String givenRequestBody = objectMapper.writeValueAsString(accountWithGivenAccountRole);
@@ -1026,10 +1026,10 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
             @DisplayName("Should return response with status 400 and body with exception message when given role is GUEST")
             void createAccount_should_return_status_bad_request_when_given_role_is_GUEST(String role) throws Exception {
                 //given
-                AccountCreateDto accountCreateDto = TestData.getDefaultAccountCreateDtoBuilder()
+                CreateAccountDto createAccountDto = TestData.getDefaultAccountCreateDtoBuilder()
                     .role(role)
                     .build();
-                String inputData = objectMapper.writeValueAsString(accountCreateDto);
+                String inputData = objectMapper.writeValueAsString(createAccountDto);
 
                 //when
                 MockHttpServletRequestBuilder postRequest = post(BASE_API)
@@ -1050,7 +1050,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
             @DisplayName("Should return response with status 400 and body with exception message when given account state is NOT_VERIFIED")
             void createAccount_should_return_bad_request_when_given_state_is_NOT_VERIFIED(String status) throws Exception {
                 //given
-                AccountCreateDto accountWithNotVerifiedStatus = TestData.getDefaultAccountCreateDtoBuilder()
+                CreateAccountDto accountWithNotVerifiedStatus = TestData.getDefaultAccountCreateDtoBuilder()
                     .accountState(status)
                     .build();
                 String inputData = objectMapper.writeValueAsString(accountWithNotVerifiedStatus);
@@ -1081,7 +1081,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     return status;
                 });
 
-                AccountCreateDto accountWithDuplicateLogin = TestData.getDefaultAccountCreateDtoBuilder()
+                CreateAccountDto accountWithDuplicateLogin = TestData.getDefaultAccountCreateDtoBuilder()
                     .login(givenLogin)
                     .build();
                 String givenRequestBody = objectMapper.writeValueAsString(accountWithDuplicateLogin);
@@ -1111,7 +1111,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     return status;
                 });
 
-                AccountCreateDto accountWithDuplicateLogin = TestData.getDefaultAccountCreateDtoBuilder()
+                CreateAccountDto accountWithDuplicateLogin = TestData.getDefaultAccountCreateDtoBuilder()
                     .email(givenEmail)
                     .build();
                 String givenRequestBody = objectMapper.writeValueAsString(accountWithDuplicateLogin);

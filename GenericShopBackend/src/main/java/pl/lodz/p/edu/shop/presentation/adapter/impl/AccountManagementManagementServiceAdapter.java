@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.logic.service.api.AccountManagementService;
 import pl.lodz.p.edu.shop.presentation.adapter.api.AccountManagementServiceOperations;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountCreateDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountUpdateDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.UpdateContactDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.AccountMapper;
 
 import java.util.List;
@@ -42,14 +42,14 @@ class AccountManagementManagementServiceAdapter implements AccountManagementServ
     }
 
     @Override
-    public AccountOutputDto create(AccountCreateDto account) {
+    public AccountOutputDto create(CreateAccountDto account) {
         Account outputAccount = accountMapper.mapToAccount(account);
         Account createdAccount = accountManagementService.create(outputAccount);
         return accountMapper.mapToAccountOutputDto(createdAccount);
     }
 
     @Override
-    public AccountOutputDto updateContactInformation(Long id, AccountUpdateDto newContactData) {
+    public AccountOutputDto updateContactInformation(Long id, UpdateContactDto newContactData) {
         return null;
     }
 

@@ -1,6 +1,7 @@
 package pl.lodz.p.edu.shop.logic.service.api;
 
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 
 import java.util.Locale;
 
@@ -13,6 +14,8 @@ public interface AccountAccessService {
     Account changePassword(String login, String currentPassword, String newPassword);
 
     Account changeEmail(String login, String email);
+
+    Account updateContactInformation(String login, Contact newContactData);
 
     Account register(Account account);
 

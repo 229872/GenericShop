@@ -3,6 +3,7 @@ package pl.lodz.p.edu.shop.presentation.adapter.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.logic.service.api.AccountAccessService;
 import pl.lodz.p.edu.shop.presentation.adapter.api.AccountAccessServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.*;
@@ -44,7 +45,14 @@ class AccountAccessServiceAdapter implements AccountAccessServiceOperations {
     }
 
     @Override
-    public AccountOutputDto register(AccountRegisterDto registerDto) {
+    public AccountOutputDto updateContactInformation(String login, UpdateContactDto updateDto) {
+        Contact contact = accountMapper.mapToContact(updateDto);
+        Account account = accountAccessService.updateContactInformation(login, contact);
+        return accountMapper.mapToAccountOutputDto(account);
+    }
+
+    @Override
+    public AccountOutputDto register(RegisterDto registerDto) {
         Account account = accountMapper.mapToAccount(registerDto);
         Account registeredAccount = accountAccessService.register(account);
         return accountMapper.mapToAccountOutputDto(registeredAccount);

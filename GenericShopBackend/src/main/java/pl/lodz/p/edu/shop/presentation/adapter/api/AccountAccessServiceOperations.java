@@ -12,7 +12,9 @@ public interface AccountAccessServiceOperations {
 
     AccountOutputDto changeEmail(String login, ChangeEmailDto email);
 
-    AccountOutputDto register(AccountRegisterDto registerDto);
+    AccountOutputDto updateContactInformation(String login, UpdateContactDto updateDto);
+
+    AccountOutputDto register(RegisterDto registerDto);
 
     void confirmRegistration(String verificationToken);
 

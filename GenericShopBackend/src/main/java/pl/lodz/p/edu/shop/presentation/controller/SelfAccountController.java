@@ -63,10 +63,19 @@ public class SelfAccountController {
         return ResponseEntity.ok(result);
     }
 
+    @PutMapping("/edit")
+    @RolesAllowed({RoleName.CLIENT, RoleName.ADMIN, RoleName.EMPLOYEE})
+    ResponseEntity<AccountOutputDto> updateContactInformation(@RequestBody @Valid UpdateContactDto updateDto) {
+        String login = getLoginFromSecurityContext();
+        AccountOutputDto result = ownAccountService.updateContactInformation(login, updateDto);
+
+        return ResponseEntity.ok(result);
+    }
+
 
     @PostMapping("/register")
     @RolesAllowed({RoleName.GUEST})
-    ResponseEntity<AccountOutputDto> register(@RequestBody @Valid AccountRegisterDto registerDto) {
+    ResponseEntity<AccountOutputDto> register(@RequestBody @Valid RegisterDto registerDto) {
         AccountOutputDto responseBody = ownAccountService.register(registerDto);
 
         return ResponseEntity.created(URI.create("/id/%d".formatted(responseBody.id()))).body(responseBody);

@@ -13,6 +13,7 @@ import GridCard from "../components/reusable/GridCard"
 import { TFunction } from "i18next"
 import ChangePasswordDialog from "../components/singleuse/ChangePasswordDialog"
 import ChangeEmailDialog from "../components/singleuse/ChangeEmailDialog"
+import EditSelfAccountDialog from "../components/singleuse/EditSelfAccountDialog"
 
 type SelfAccountPageParams = {
   setLoading: (state: boolean) => void
@@ -107,6 +108,7 @@ type AccountOperationsCardProps = {
 const AccountOperationsCard = ({ t, account, loadAccount, setLoading, reload, setReload } : AccountOperationsCardProps) => {
   const [ visibleChangePasswordDialog, setVisibleChangePasswordDialog ] = useState<boolean>(false)
   const [ visibleChangeEmailDialog, setVisibleChangeEmailDialog ] = useState<boolean>(false)
+  const [ visibleEditAccountDialog, setVisibleEditAccountDialog ] = useState<boolean>(false)
 
   const closeEmailDialog = () => {
     setVisibleChangeEmailDialog(false)
@@ -129,9 +131,16 @@ const AccountOperationsCard = ({ t, account, loadAccount, setLoading, reload, se
             <Button startIcon={<RefreshIcon />} color="primary" onClick={loadAccount} />
           </Tooltip>
 
-          <Button color="primary" onClick={() => console.log('Edit')}>
+          <Button color="primary" onClick={() => setVisibleEditAccountDialog(true)}>
             {t('self.button.edit')}
           </Button>
+
+          {account && <EditSelfAccountDialog
+            open={visibleEditAccountDialog}
+            account={account}
+            onClose={() => setVisibleEditAccountDialog(false)}
+            setLoading={setLoading}
+          />} 
 
           <Button color="primary" onClick={() => setVisibleChangeEmailDialog(true)}>
             {t('self.button.change_email')}

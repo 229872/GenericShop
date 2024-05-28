@@ -1,6 +1,7 @@
 package pl.lodz.p.edu.shop.presentation.mapper.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.dataaccess.model.embeddable.AuthLogs;
@@ -9,25 +10,28 @@ import pl.lodz.p.edu.shop.dataaccess.model.entity.Address;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountCreateDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountRegisterDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.RegisterDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.UpdateContactDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.address.AddressOutputDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.log.AuthLogOutputDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.AccountMapper;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @RequiredArgsConstructor
 
+@Slf4j
 @Component
 class AccountMapperImpl implements AccountMapper {
 
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Account mapToAccount(AccountCreateDto createDto) {
+    public Account mapToAccount(CreateAccountDto createDto) {
         var addressDto = createDto.address();
 
         Address address = Address.builder()
@@ -56,7 +60,7 @@ class AccountMapperImpl implements AccountMapper {
     }
 
     @Override
-    public Account mapToAccount(AccountRegisterDto registerDto) {
+    public Account mapToAccount(RegisterDto registerDto) {
         var addressDto = registerDto.address();
 
         Address address = Address.builder()
@@ -85,9 +89,40 @@ class AccountMapperImpl implements AccountMapper {
     }
 
     @Override
+    public Contact mapToContact(UpdateContactDto updateDto) {
+        Address address = Address.builder()
+            .country(updateDto.country())
+            .city(updateDto.city())
+            .postalCode(updateDto.postalCode())
+            .street(updateDto.street())
+            .houseNumber(updateDto.houseNumber())
+            .build();
+
+        String version = updateDto.version();
+        long longVersion = Long.parseLong(version);
+        Objects.requireNonNull(version);
+
+
+        Contact contact = Contact.builder()
+            .id(2L)
+            .firstName(updateDto.firstName())
+            .lastName(updateDto.lastName())
+            .address(address)
+            .version(longVersion)
+            .build();
+
+        log.info("Object {}", contact);
+
+        return contact;
+    }
+
+    @Override
     public AccountOutputDto mapToAccountOutputDto(Account account) {
         Contact contact = account.getContact();
+        Address address = contact.getAddress();
         AuthLogs authLogs = account.getAuthLogs();
+
+        String combinedVersion = String.valueOf(account.getVersion() + contact.getVersion() + address.getVersion());
 
         AddressOutputDto addressDto = AddressOutputDto.builder()
             .postalCode(contact.getPostalCode())
@@ -108,6 +143,7 @@ class AccountMapperImpl implements AccountMapper {
 
         return AccountOutputDto.builder()
             .id(account.getId())
+            .version(combinedVersion)
             .archival(account.isArchival())
             .login(account.getLogin())
             .email(account.getEmail())

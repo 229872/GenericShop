@@ -8,8 +8,8 @@ import pl.lodz.p.edu.shop.dataaccess.model.embeddable.AuthLogs;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountCreateDto;
-import pl.lodz.p.edu.shop.presentation.dto.user.address.AddressCreateDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.address.InputAddressDto;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -94,16 +94,16 @@ public class TestData {
             .build();
     }
 
-    public static AddressCreateDto buildDefaultAddressCreateDto() {
+    public static InputAddressDto buildDefaultAddressCreateDto() {
         return getDefaultAddressCreateDtoBuilder().build();
     }
 
-    public static AccountCreateDto buildDefaultAccountCreateDto() {
+    public static CreateAccountDto buildDefaultAccountCreateDto() {
         return getDefaultAccountCreateDtoBuilder().build();
     }
 
-    public static AddressCreateDto.AddressCreateDtoBuilder getDefaultAddressCreateDtoBuilder() {
-        return AddressCreateDto.builder()
+    public static InputAddressDto.InputAddressDtoBuilder getDefaultAddressCreateDtoBuilder() {
+        return InputAddressDto.builder()
             .postalCode(defaultPostalCode)
             .country(defaultCountry)
             .city(defaultCity)
@@ -111,8 +111,8 @@ public class TestData {
             .houseNumber(defaultHouseNumber);
     }
 
-    public static AccountCreateDto.AccountCreateDtoBuilder getDefaultAccountCreateDtoBuilder() {
-        return AccountCreateDto.builder()
+    public static CreateAccountDto.CreateAccountDtoBuilder getDefaultAccountCreateDtoBuilder() {
+        return CreateAccountDto.builder()
             .login(defaultLogin)
             .email(defaultEmail)
             .password(defaultPassword)

@@ -36,6 +36,7 @@ export type Address = {
 
 export type Account = {
   id: number,
+  version: string,
   archival: boolean,
   login: string,
   email: string,

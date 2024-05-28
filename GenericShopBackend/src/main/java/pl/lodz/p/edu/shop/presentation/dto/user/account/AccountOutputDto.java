@@ -9,6 +9,7 @@ import java.util.List;
 @Builder
 public record AccountOutputDto(
     Long id,
+    String version,
     Boolean archival,
     String login,
     String email,

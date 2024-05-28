@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.RequestScope;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.logic.service.api.AccountAccessService;
 
 import java.util.Locale;
@@ -44,6 +45,11 @@ class AccountAccessServiceRetryHandler extends AbstractRetryHandler implements A
     @Override
     public Account changeEmail(String login, String email) {
         return repeatTransactionWhenTimeoutOccurred(() -> accountAccessService.changeEmail(login, email));
+    }
+
+    @Override
+    public Account updateContactInformation(String login, Contact newContactData) {
+        return repeatTransactionWhenTimeoutOccurred(() -> accountAccessService.updateContactInformation(login, newContactData));
     }
 
     @Override

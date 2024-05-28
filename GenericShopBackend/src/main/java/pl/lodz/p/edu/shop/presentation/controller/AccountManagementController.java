@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.shop.presentation.adapter.api.AccountManagementServiceOperations;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountCreateDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
 
 import java.net.URI;
@@ -43,7 +43,7 @@ public class AccountManagementController {
 
     @PostMapping
     @RolesAllowed(ADMIN)
-    ResponseEntity<AccountOutputDto> createAccount(@RequestBody @Valid AccountCreateDto createDto) {
+    ResponseEntity<AccountOutputDto> createAccount(@RequestBody @Valid CreateAccountDto createDto) {
         AccountOutputDto result = accountService.create(createDto);
 
         return ResponseEntity.created(URI.create("/id/%d".formatted(result.id()))).body(result);

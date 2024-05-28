@@ -1,11 +1,13 @@
 package pl.lodz.p.edu.shop.logic.service.impl;
 
+import jakarta.persistence.OptimisticLockException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.shop.dataaccess.repository.api.AccountRepository;
@@ -16,6 +18,7 @@ import pl.lodz.p.edu.shop.logic.service.api.JwtService;
 import pl.lodz.p.edu.shop.logic.service.api.MailService;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -80,6 +83,24 @@ class AccountAccessServiceImpl extends AccountService implements AccountAccessSe
         }
 
         account.setEmail(email);
+
+        return save(account);
+    }
+
+    @Override
+    public Account updateContactInformation(String login, Contact newContactData) {
+        Account account = accountRepository.findByLogin(login)
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
+
+        if (account.isArchival()) {
+            throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
+        }
+
+        if (!Objects.equals(newContactData.getVersion(), account.getContact().getVersion())) {
+            throw new OptimisticLockException();
+        }
+
+        updatePersonalInformation(account, newContactData);
 
         return save(account);
     }

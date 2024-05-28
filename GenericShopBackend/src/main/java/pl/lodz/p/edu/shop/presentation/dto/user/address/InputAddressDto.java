@@ -8,7 +8,7 @@ import pl.lodz.p.edu.shop.presentation.validation.annotation.Capitalized;
 import pl.lodz.p.edu.shop.presentation.validation.annotation.PostalCode;
 
 @Builder
-public record AddressCreateDto(
+public record InputAddressDto(
     @PostalCode
     String postalCode,
     @Capitalized

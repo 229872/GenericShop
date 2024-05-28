@@ -17,8 +17,6 @@ import pl.lodz.p.edu.shop.logic.service.api.AccountManagementService;
 import java.util.List;
 import java.util.Set;
 
-import static pl.lodz.p.edu.shop.util.UpdatableUtil.setNullableValue;
-
 @Service
 @Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.REQUIRES_NEW)
 @Qualifier("AccountManagementServiceImpl")
@@ -202,20 +200,6 @@ class AccountManagementServiceImpl extends AccountService implements AccountMana
         roles.add(newRole);
 
         return save(account);
-    }
-
-
-
-    private void updatePersonalInformation(Account account, Contact personalInformation) {
-        Contact contact = account.getContact();
-
-        setNullableValue(personalInformation.getFirstName(), contact::setFirstName);
-        setNullableValue(personalInformation.getLastName(), contact::setLastName);
-        setNullableValue(personalInformation.getPostalCode(), contact::setPostalCode);
-        setNullableValue(personalInformation.getCountry(), contact::setCountry);
-        setNullableValue(personalInformation.getCity(), contact::setCity);
-        setNullableValue(personalInformation.getStreet(), contact::setStreet);
-        setNullableValue(personalInformation.getHouseNumber(), contact::setHouseNumber);
     }
 
     private void archiveAccount(Account account) {

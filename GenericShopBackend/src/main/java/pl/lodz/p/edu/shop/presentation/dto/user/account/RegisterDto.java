@@ -2,12 +2,10 @@ package pl.lodz.p.edu.shop.presentation.dto.user.account;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import pl.lodz.p.edu.shop.presentation.dto.user.address.AddressCreateDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.address.InputAddressDto;
 import pl.lodz.p.edu.shop.presentation.validation.annotation.*;
 
-@Builder
-public record AccountCreateDto(
+public record RegisterDto(
     @Login
     String login,
     @Email
@@ -21,10 +19,6 @@ public record AccountCreateDto(
     @Capitalized
     String lastName,
     @NotNull @Valid
-    AddressCreateDto address,
-    @AccountState
-    String accountState,
-    @AccountRole
-    String role
+    InputAddressDto address
 ) {
 }
