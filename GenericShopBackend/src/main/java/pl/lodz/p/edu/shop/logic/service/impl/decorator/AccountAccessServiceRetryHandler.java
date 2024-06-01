@@ -39,7 +39,9 @@ class AccountAccessServiceRetryHandler extends AbstractRetryHandler implements A
 
     @Override
     public Account changePassword(String login, String currentPassword, String newPassword) {
-        return repeatTransactionWhenTimeoutOccurred(() -> accountAccessService.changePassword(login, currentPassword, newPassword));
+        return repeatTransactionWhenTimeoutOccurred(
+            () -> accountAccessService.changePassword(login, currentPassword, newPassword)
+        );
     }
 
     @Override
@@ -48,8 +50,10 @@ class AccountAccessServiceRetryHandler extends AbstractRetryHandler implements A
     }
 
     @Override
-    public Account updateContactInformation(String login, Contact newContactData) {
-        return repeatTransactionWhenTimeoutOccurred(() -> accountAccessService.updateContactInformation(login, newContactData));
+    public Account updateContactInformation(String login, Contact newContactData, Long frontendContactVersion) {
+        return repeatTransactionWhenTimeoutOccurred(
+            () -> accountAccessService.updateContactInformation(login, newContactData, frontendContactVersion)
+        );
     }
 
     @Override

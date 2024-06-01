@@ -6,6 +6,7 @@ import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.shop.exception.account.*;
 import pl.lodz.p.edu.shop.exception.account.helper.AccountStateOperation;
 import pl.lodz.p.edu.shop.exception.auth.*;
+import pl.lodz.p.edu.shop.exception.other.ApplicationOptimisticLockException;
 import pl.lodz.p.edu.shop.exception.other.UnknownException;
 import pl.lodz.p.edu.shop.exception.transaction.TransactionTimeoutException;
 
@@ -100,5 +101,9 @@ public final class ApplicationExceptionFactory {
 
     public static ResponseStatusException createInvalidTokenException() {
         return new InvalidTokenException(UNAUTHORIZED, ExceptionMessage.TOKEN_INVALID);
+    }
+
+    public static ResponseStatusException createApplicationOptimisticLockException() {
+        return new ApplicationOptimisticLockException(CONFLICT, ExceptionMessage.TRANSACTION_OPTIMISTIC_LOCK);
     }
 }

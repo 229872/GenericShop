@@ -41,7 +41,7 @@ public class ExceptionController {
 
     @ExceptionHandler(ResponseStatusException.class)
     ResponseEntity<?> handleResponseStatusException(ResponseStatusException e) {
-        log.info("Exception occured: ", e);
+        log.info("Exception occurred: ", e);
 
         ExceptionResponseDto body = ExceptionResponseDto.builder()
             .timestamp(LocalDateTime.now())

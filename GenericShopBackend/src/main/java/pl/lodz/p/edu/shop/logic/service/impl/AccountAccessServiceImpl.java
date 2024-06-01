@@ -1,6 +1,6 @@
 package pl.lodz.p.edu.shop.logic.service.impl;
 
-import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,16 +30,19 @@ class AccountAccessServiceImpl extends AccountService implements AccountAccessSe
     private final MailService mailService;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final EntityManager entityManager;
 
     public AccountAccessServiceImpl(
         AccountRepository accountRepository, PasswordEncoder passwordEncoder,
-        MailService mailService, JwtService jwtService
+        MailService mailService, JwtService jwtService,
+        @Qualifier("accountsModEmFactory") EntityManager entityManager
     ) {
         super(accountRepository);
         this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
         this.jwtService = jwtService;
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -88,16 +91,17 @@ class AccountAccessServiceImpl extends AccountService implements AccountAccessSe
     }
 
     @Override
-    public Account updateContactInformation(String login, Contact newContactData) {
+    public Account updateContactInformation(String login, Contact newContactData, Long frontendContactVersion) {
         Account account = accountRepository.findByLogin(login)
             .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
+        Contact contact = account.getContact();
 
         if (account.isArchival()) {
             throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
         }
 
-        if (!Objects.equals(newContactData.getVersion(), account.getContact().getVersion())) {
-            throw new OptimisticLockException();
+        if (!Objects.equals(contact.getVersion() + contact.getAddress().getVersion(), frontendContactVersion)) {
+            throw ApplicationExceptionFactory.createApplicationOptimisticLockException();
         }
 
         updatePersonalInformation(account, newContactData);

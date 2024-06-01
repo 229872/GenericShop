@@ -342,13 +342,14 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
 
         //then
         Contact resultContact = result.getContact();
+        Address resultAddress = resultContact.getAddress();
         assertEquals(newFirstName, resultContact.getFirstName());
         assertEquals(newLastName, resultContact.getLastName());
-        assertEquals(newPostalCode, resultContact.getPostalCode());
-        assertEquals(newCountry, resultContact.getCountry());
-        assertEquals(newCity, resultContact.getCity());
-        assertEquals(newStreet, resultContact.getStreet());
-        assertEquals(newHouseNumber, resultContact.getHouseNumber());
+        assertEquals(newPostalCode, resultAddress.getPostalCode());
+        assertEquals(newCountry, resultAddress.getCountry());
+        assertEquals(newCity, resultAddress.getCity());
+        assertEquals(newStreet, resultAddress.getStreet());
+        assertEquals(newHouseNumber, resultAddress.getHouseNumber());
     }
 
     @Test

@@ -47,7 +47,8 @@ class AccountAccessServiceAdapter implements AccountAccessServiceOperations {
     @Override
     public AccountOutputDto updateContactInformation(String login, UpdateContactDto updateDto) {
         Contact contact = accountMapper.mapToContact(updateDto);
-        Account account = accountAccessService.updateContactInformation(login, contact);
+        Long frontendContactVersion = Long.parseLong(updateDto.version());
+        Account account = accountAccessService.updateContactInformation(login, contact, frontendContactVersion);
         return accountMapper.mapToAccountOutputDto(account);
     }
 

@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Stack,
 import { useForm } from "react-hook-form";
 import z from "zod"
 import { environment, regex } from "../../utils/constants";
-import { CSSProperties } from "react";
+import { CSSProperties, Dispatch, SetStateAction, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
@@ -18,7 +18,7 @@ const schema = z.object({
     country: z.string().regex(regex.CAPITALIZED, 'edit_self.not_valid.country'),
     city: z.string().regex(regex.CAPITALIZED, 'edit_self.not_valid.city'),
     street: z.string().regex(regex.CAPITALIZED, 'edit_self.not_valid.street'),
-    houseNumber: z.number().positive('edit_self.not_valid.house_number')
+    houseNumber: z.number({ message: 'edit_self.not_valid.house_number'}).positive('edit_self.not_valid.house_number')
   })
 })
 
@@ -27,12 +27,13 @@ type EditContactData = z.infer<typeof schema>
 type EditSelfAccountDialogProps = {
   open: boolean
   account: Account
+  setAccount: Dispatch<SetStateAction<Account | null>>
   onClose: () => void
   style?: CSSProperties
   setLoading: (loading: boolean) => void
 }
 
-export default function EditSelfAccountDialog({ open, account, onClose, style, setLoading } : EditSelfAccountDialogProps) {
+export default function EditSelfAccountDialog({ open, account, setAccount, onClose, style, setLoading } : EditSelfAccountDialogProps) {
   const { t } = useTranslation()
   const { register, handleSubmit, formState, reset } = useForm<EditContactData>({
     mode: 'onChange',
@@ -52,13 +53,19 @@ export default function EditSelfAccountDialog({ open, account, onClose, style, s
   const { errors } = formState
   const fieldStyle = { height: '64px', width: '100%' }
 
-  const onValid = async (data: EditContactData) => {
+  useEffect(() => {
+    console.log('Use effect')
+    reset(account)
+  }, [open])
+
+  const onValid = async (formData: EditContactData) => {
     try {
       setLoading(true)
       const version = account.version;
-      const updateRequestData = { ...data, version }
-      await sendEditContactRequest(updateRequestData)
-      reset()
+      const updateRequestData = { ...formData, version }
+      const { data } = await sendEditContactRequest(updateRequestData)
+      setAccount(data)
+      reset(data)
       onClose();
 
     } catch (e) {
@@ -70,7 +77,7 @@ export default function EditSelfAccountDialog({ open, account, onClose, style, s
   }
 
   const sendEditContactRequest = async (data: EditContactData) => {
-    return axios.put<EditContactData>(`${environment.apiBaseUrl}/account/self/edit`, data, {
+    return axios.put<Account>(`${environment.apiBaseUrl}/account/self/edit`, data, {
       headers: {
         Authorization: `Bearer ${getJwtToken()}`
       }
@@ -82,7 +89,7 @@ export default function EditSelfAccountDialog({ open, account, onClose, style, s
       <DialogTitle variant='h3' textAlign='center'>{t('edit_self.title')}</DialogTitle>
       <form onSubmit={handleSubmit(onValid)} noValidate>
         <DialogContent>
-          <Grid container spacing={4} justifyContent='center'>
+          <Grid container columnSpacing={4} rowSpacing={6} justifyContent='center'>
             <Grid item xs={12} sm={6}>
               <TextField label={t('edit_self.label.first_name')} {...register('firstName')}
                 placeholder={t('edit_self.enter.first_name')}
@@ -160,7 +167,9 @@ export default function EditSelfAccountDialog({ open, account, onClose, style, s
           <Stack direction='row' spacing={16}>
             <Stack direction='row' spacing={2}>
             <Button type='button' onClick={() => onClose()}>{t('edit_self.back')}</Button>
-            <Button type='button' onClick={() => reset(account)}>{t('edit_self.reset')}</Button>
+            <Button type='button' onClick={() => {
+              reset(account)
+            } }>{t('edit_self.reset')}</Button>
             </Stack>
 
             <Button type='submit' variant='contained'>{t('edit_self.submit')}</Button>

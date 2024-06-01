@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useState } from "react"
+import { CSSProperties, Dispatch, SetStateAction, useEffect, useState } from "react"
 import { Account, GridItemData } from "../utils/types"
 import { useTranslation } from "react-i18next"
 import axios from "axios"
@@ -50,7 +50,6 @@ export default function SelfAccountPage({ setLoading, style } : SelfAccountPageP
     { label: 'self.account_state', content: account?.state ?? '-' },
     { label: 'self.archival', content: t(account?.archival ? 'self.archival_true' : 'self.archival_false') }
   ];
-  const [ reload, setReload ] = useState<boolean>(false)
   let once = true;
 
   useEffect(() => {
@@ -58,7 +57,7 @@ export default function SelfAccountPage({ setLoading, style } : SelfAccountPageP
       loadAccount()
       once = false;
     }
-  }, [reload])
+  }, [])
   
   const loadAccount = async () => {
     try {
@@ -83,7 +82,7 @@ export default function SelfAccountPage({ setLoading, style } : SelfAccountPageP
   return (
     <Grid sx={{...style}} container spacing={3}>
       <Grid item xs={12} md={6}>
-        <AccountOperationsCard t={t} account={account} loadAccount={loadAccount} setLoading={setLoading} reload={reload} setReload={setReload} />
+        <AccountOperationsCard t={t} account={account} setAccount={setAccount} loadAccount={loadAccount} setLoading={setLoading} />
         <GridCard data={accountAuthLogsData} labelSize={9} contentSize={3} />
       </Grid>
 
@@ -99,21 +98,15 @@ export default function SelfAccountPage({ setLoading, style } : SelfAccountPageP
 type AccountOperationsCardProps = {
   t: TFunction<"translation", undefined>
   account: Account | null
+  setAccount: Dispatch<SetStateAction<Account | null>>
   loadAccount: () => Promise<void>
   setLoading: (state: boolean) => void
-  reload: boolean
-  setReload: (state: boolean) => void
 }
 
-const AccountOperationsCard = ({ t, account, loadAccount, setLoading, reload, setReload } : AccountOperationsCardProps) => {
+const AccountOperationsCard = ({ t, account, setAccount, loadAccount, setLoading } : AccountOperationsCardProps) => {
   const [ visibleChangePasswordDialog, setVisibleChangePasswordDialog ] = useState<boolean>(false)
   const [ visibleChangeEmailDialog, setVisibleChangeEmailDialog ] = useState<boolean>(false)
   const [ visibleEditAccountDialog, setVisibleEditAccountDialog ] = useState<boolean>(false)
-
-  const closeEmailDialog = () => {
-    setVisibleChangeEmailDialog(false)
-    setReload(!reload)
-  }
 
   return (
     <Card sx={{ border: `1px solid black`, marginBottom: 3 }}>
@@ -138,6 +131,7 @@ const AccountOperationsCard = ({ t, account, loadAccount, setLoading, reload, se
           {account && <EditSelfAccountDialog
             open={visibleEditAccountDialog}
             account={account}
+            setAccount={setAccount}
             onClose={() => setVisibleEditAccountDialog(false)}
             setLoading={setLoading}
           />} 
@@ -148,7 +142,7 @@ const AccountOperationsCard = ({ t, account, loadAccount, setLoading, reload, se
 
           <ChangeEmailDialog
             open={visibleChangeEmailDialog}
-            onClose={() => closeEmailDialog()}
+            onClose={() => setVisibleChangeEmailDialog(false)}
             setLoading={setLoading}
           />
 

@@ -10,8 +10,8 @@ import pl.lodz.p.edu.shop.dataaccess.model.entity.Address;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.RegisterDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.UpdateContactDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.address.AddressOutputDto;
@@ -19,7 +19,6 @@ import pl.lodz.p.edu.shop.presentation.dto.user.log.AuthLogOutputDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.AccountMapper;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -98,22 +97,11 @@ class AccountMapperImpl implements AccountMapper {
             .houseNumber(updateDto.houseNumber())
             .build();
 
-        String version = updateDto.version();
-        long longVersion = Long.parseLong(version);
-        Objects.requireNonNull(version);
-
-
-        Contact contact = Contact.builder()
-            .id(2L)
+        return Contact.builder()
             .firstName(updateDto.firstName())
             .lastName(updateDto.lastName())
             .address(address)
-            .version(longVersion)
             .build();
-
-        log.info("Object {}", contact);
-
-        return contact;
     }
 
     @Override
@@ -122,14 +110,14 @@ class AccountMapperImpl implements AccountMapper {
         Address address = contact.getAddress();
         AuthLogs authLogs = account.getAuthLogs();
 
-        String combinedVersion = String.valueOf(account.getVersion() + contact.getVersion() + address.getVersion());
+        String combinedVersion = String.valueOf(contact.getVersion() + address.getVersion());
 
         AddressOutputDto addressDto = AddressOutputDto.builder()
-            .postalCode(contact.getPostalCode())
-            .country(contact.getCountry())
-            .city(contact.getCity())
-            .street(contact.getStreet())
-            .houseNumber(contact.getHouseNumber())
+            .postalCode(address.getPostalCode())
+            .country(address.getCountry())
+            .city(address.getCity())
+            .street(address.getStreet())
+            .houseNumber(address.getHouseNumber())
             .build();
 
         AuthLogOutputDto logs = AuthLogOutputDto.builder()

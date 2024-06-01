@@ -10,6 +10,7 @@ public final class ExceptionMessage {
     public static final String DB_CONSTRAINT_VIOLATION = "exception.db.constraint.violation";
     public static final String DECODE_EXCEPTION = "exception.mapping";
     public static final String TRANSACTION_TIMEOUT = "exception.transaction.timeout";
+    public static final String TRANSACTION_OPTIMISTIC_LOCK = "exception.transaction.optimistic_lock";
     public static final String ACCOUNT_NOT_FOUND = "exception.account.not_found";
     public static final String ACCOUNT_CONFLICT_LOGIN = "exception.account.conflict.login";
     public static final String ACCOUNT_CONFLICT_EMAIL = "exception.account.conflict.newEmail";

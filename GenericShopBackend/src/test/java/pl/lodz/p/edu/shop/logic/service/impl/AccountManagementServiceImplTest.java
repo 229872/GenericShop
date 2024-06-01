@@ -242,7 +242,7 @@ class AccountManagementServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should update found account with only set values")
+    @DisplayName("Should update found account with all values")
     void updateContactInformation_positive_1() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
@@ -270,12 +270,13 @@ class AccountManagementServiceImplTest {
             .isNotEqualTo(givenFirstName);
 
         Contact updatedContact = result.getContact();
+        Address updatedAddress = updatedContact.getAddress();
         Assertions.assertNotNull(updatedContact.getLastName());
-        Assertions.assertNotNull(updatedContact.getPostalCode());
-        Assertions.assertNotNull(updatedContact.getCountry());
-        Assertions.assertNotNull(updatedContact.getCity());
-        Assertions.assertNotNull(updatedContact.getStreet());
-        Assertions.assertNotNull(updatedContact.getHouseNumber());
+        Assertions.assertNotNull(updatedAddress.getPostalCode());
+        Assertions.assertNotNull(updatedAddress.getCountry());
+        Assertions.assertNotNull(updatedAddress.getCity());
+        Assertions.assertNotNull(updatedAddress.getStreet());
+        Assertions.assertNotNull(updatedAddress.getHouseNumber());
     }
 
     @Test
@@ -287,11 +288,12 @@ class AccountManagementServiceImplTest {
         Long givenId = givenAccount.getId();
         String givenFirstName = givenContact.getFirstName();
         String givenLastName = givenContact.getLastName();
-        String givenPostalCode = givenContact.getPostalCode();
-        String givenCountry = givenContact.getCountry();
-        String givenCity = givenContact.getCity();
-        String givenStreet = givenContact.getStreet();
-        Integer givenHouseNumber = givenContact.getHouseNumber();
+        Address givenAddress = givenContact.getAddress();
+        String givenPostalCode = givenAddress.getPostalCode();
+        String givenCountry = givenAddress.getCountry();
+        String givenCity = givenAddress.getCity();
+        String givenStreet = givenAddress.getStreet();
+        Integer givenHouseNumber = givenAddress.getHouseNumber();
 
         String newFirstName = "newFirstName";
         String newLastName = "newLastName";
@@ -326,6 +328,7 @@ class AccountManagementServiceImplTest {
         then(accountRepository).should().save(givenAccount);
 
         Contact resultContact = result.getContact();
+        Address resultAddress = resultContact.getAddress();
         assertThat(resultContact.getFirstName())
             .isEqualTo(newFirstName)
             .isNotEqualTo(givenFirstName);
@@ -334,23 +337,23 @@ class AccountManagementServiceImplTest {
             .isEqualTo(newLastName)
             .isNotEqualTo(givenLastName);
 
-        assertThat(resultContact.getPostalCode())
+        assertThat(resultAddress.getPostalCode())
             .isEqualTo(newPostalCode)
             .isNotEqualTo(givenPostalCode);
 
-        assertThat(resultContact.getCountry())
+        assertThat(resultAddress.getCountry())
             .isEqualTo(newCountry)
             .isNotEqualTo(givenCountry);
 
-        assertThat(resultContact.getCity())
+        assertThat(resultAddress.getCity())
             .isEqualTo(newCity)
             .isNotEqualTo(givenCity);
 
-        assertThat(resultContact.getStreet())
+        assertThat(resultAddress.getStreet())
             .isEqualTo(newStreet)
             .isNotEqualTo(givenStreet);
 
-        assertThat(resultContact.getHouseNumber())
+        assertThat(resultAddress.getHouseNumber())
             .isEqualTo(newHouseNumber)
             .isNotEqualTo(givenHouseNumber);
     }

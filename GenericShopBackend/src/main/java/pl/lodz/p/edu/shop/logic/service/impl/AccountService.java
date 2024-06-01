@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.Address;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.dataaccess.repository.api.AccountRepository;
 import pl.lodz.p.edu.shop.exception.ApplicationExceptionFactory;
@@ -11,6 +12,8 @@ import pl.lodz.p.edu.shop.exception.SystemExceptionFactory;
 import pl.lodz.p.edu.shop.util.ExceptionUtil;
 
 import java.util.Objects;
+
+import static pl.lodz.p.edu.shop.util.UpdatableUtil.setNullableValue;
 
 @RequiredArgsConstructor
 abstract class AccountService {
@@ -35,15 +38,18 @@ abstract class AccountService {
     }
 
     protected void updatePersonalInformation(Account account, Contact personalInformation) {
-        Contact contact = account.getContact();
+        Address newAddressData = personalInformation.getAddress();
 
-        contact.setFirstName(personalInformation.getFirstName());
-        contact.setLastName(personalInformation.getLastName());
-        contact.setPostalCode(personalInformation.getPostalCode());
-        contact.setCountry(personalInformation.getCountry());
-        contact.setCity(personalInformation.getCity());
-        contact.setStreet(personalInformation.getStreet());
-        contact.setHouseNumber(personalInformation.getHouseNumber());
+        Contact contact = account.getContact();
+        Address address = contact.getAddress();
+
+        setNullableValue(personalInformation.getFirstName(), contact::setFirstName);
+        setNullableValue(personalInformation.getLastName(), contact::setLastName);
+        setNullableValue(newAddressData.getPostalCode(), address::setPostalCode);
+        setNullableValue(newAddressData.getCountry(), address::setCountry);
+        setNullableValue(newAddressData.getCity(), address::setCity);
+        setNullableValue(newAddressData.getStreet(), address::setStreet);
+        setNullableValue(newAddressData.getHouseNumber(), address::setHouseNumber);
     }
 
     private Account handleConstraintViolationException(ConstraintViolationException e) {
