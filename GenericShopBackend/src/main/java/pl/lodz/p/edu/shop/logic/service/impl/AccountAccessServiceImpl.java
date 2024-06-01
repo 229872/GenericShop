@@ -1,6 +1,5 @@
 package pl.lodz.p.edu.shop.logic.service.impl;
 
-import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,9 +15,9 @@ import pl.lodz.p.edu.shop.exception.account.helper.AccountStateOperation;
 import pl.lodz.p.edu.shop.logic.service.api.AccountAccessService;
 import pl.lodz.p.edu.shop.logic.service.api.JwtService;
 import pl.lodz.p.edu.shop.logic.service.api.MailService;
+import pl.lodz.p.edu.shop.util.SecurityUtil;
 
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -30,19 +29,16 @@ class AccountAccessServiceImpl extends AccountService implements AccountAccessSe
     private final MailService mailService;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
-    private final EntityManager entityManager;
 
     public AccountAccessServiceImpl(
         AccountRepository accountRepository, PasswordEncoder passwordEncoder,
-        MailService mailService, JwtService jwtService,
-        @Qualifier("accountsModEmFactory") EntityManager entityManager
+        MailService mailService, JwtService jwtService
     ) {
         super(accountRepository);
         this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
         this.jwtService = jwtService;
-        this.entityManager = entityManager;
     }
 
     @Override
@@ -91,7 +87,7 @@ class AccountAccessServiceImpl extends AccountService implements AccountAccessSe
     }
 
     @Override
-    public Account updateContactInformation(String login, Contact newContactData, Long frontendContactVersion) {
+    public Account updateContactInformation(String login, Contact newContactData, String frontendContactVersion) {
         Account account = accountRepository.findByLogin(login)
             .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
         Contact contact = account.getContact();
@@ -100,7 +96,9 @@ class AccountAccessServiceImpl extends AccountService implements AccountAccessSe
             throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
         }
 
-        if (!Objects.equals(contact.getVersion() + contact.getAddress().getVersion(), frontendContactVersion)) {
+        long version = contact.getVersion() + contact.getAddress().getVersion();
+
+        if (!SecurityUtil.verifySignature(version, frontendContactVersion)) {
             throw ApplicationExceptionFactory.createApplicationOptimisticLockException();
         }
 

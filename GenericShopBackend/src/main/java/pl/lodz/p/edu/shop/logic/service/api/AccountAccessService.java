@@ -15,7 +15,7 @@ public interface AccountAccessService {
 
     Account changeEmail(String login, String email);
 
-    Account updateContactInformation(String login, Contact newContactData, Long frontendContactVersion);
+    Account updateContactInformation(String login, Contact newContactData, String frontendContactVersion);
 
     Account register(Account account);
 

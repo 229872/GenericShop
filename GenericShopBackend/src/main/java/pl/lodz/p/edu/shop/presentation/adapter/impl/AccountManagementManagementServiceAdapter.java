@@ -24,28 +24,28 @@ class AccountManagementManagementServiceAdapter implements AccountManagementServ
     @Override
     public List<AccountOutputDto> findAll() {
         return accountManagementService.findAll().stream()
-            .map(accountMapper::mapToAccountOutputDto)
+            .map(accountMapper::mapToAccountOutputDtoWithVersion)
             .toList();
     }
 
     @Override
     public List<AccountOutputDto> findAll(Pageable pageable) {
         return accountManagementService.findAll(pageable).stream()
-            .map(accountMapper::mapToAccountOutputDto)
+            .map(accountMapper::mapToAccountOutputDtoWithVersion)
             .toList();
     }
 
     @Override
     public AccountOutputDto findById(Long id) {
         Account account = accountManagementService.findById(id);
-        return accountMapper.mapToAccountOutputDto(account);
+        return accountMapper.mapToAccountOutputDtoWithVersion(account);
     }
 
     @Override
     public AccountOutputDto create(CreateAccountDto account) {
         Account outputAccount = accountMapper.mapToAccount(account);
         Account createdAccount = accountManagementService.create(outputAccount);
-        return accountMapper.mapToAccountOutputDto(createdAccount);
+        return accountMapper.mapToAccountOutputDtoWithVersion(createdAccount);
     }
 
     @Override
@@ -56,19 +56,19 @@ class AccountManagementManagementServiceAdapter implements AccountManagementServ
     @Override
     public AccountOutputDto block(Long id) {
         Account account = accountManagementService.block(id);
-        return accountMapper.mapToAccountOutputDto(account);
+        return accountMapper.mapToAccountOutputDtoWithVersion(account);
     }
 
     @Override
     public AccountOutputDto unblock(Long id) {
         Account account = accountManagementService.unblock(id);
-        return accountMapper.mapToAccountOutputDto(account);
+        return accountMapper.mapToAccountOutputDtoWithVersion(account);
     }
 
     @Override
     public AccountOutputDto archive(Long id) {
         Account account = accountManagementService.archive(id);
-        return accountMapper.mapToAccountOutputDto(account);
+        return accountMapper.mapToAccountOutputDtoWithVersion(account);
     }
 
     @Override

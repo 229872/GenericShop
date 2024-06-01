@@ -33,6 +33,8 @@ app:
       timeout_in_minutes: 600
     reset-password:
       timeout-in-minutes: 600
+    version:
+      key: "kWnJGuwYniUE4ylpCuKZ7cL3Y7C6AClc2FQSoI2rSKE="
 
   frontend:
     frontend-app-url: http://localhost:5173

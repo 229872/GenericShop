@@ -15,6 +15,8 @@ public interface AccountMapper {
 
     Contact mapToContact(UpdateContactDto updateDto);
 
-    AccountOutputDto mapToAccountOutputDto(Account account);
+    AccountOutputDto mapToAccountOutputDtoWithoutVersion(Account account);
+
+    AccountOutputDto mapToAccountOutputDtoWithVersion(Account account);
 
 }

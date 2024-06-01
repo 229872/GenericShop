@@ -50,7 +50,7 @@ class AccountAccessServiceRetryHandler extends AbstractRetryHandler implements A
     }
 
     @Override
-    public Account updateContactInformation(String login, Contact newContactData, Long frontendContactVersion) {
+    public Account updateContactInformation(String login, Contact newContactData, String frontendContactVersion) {
         return repeatTransactionWhenTimeoutOccurred(
             () -> accountAccessService.updateContactInformation(login, newContactData, frontendContactVersion)
         );

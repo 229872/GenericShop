@@ -22,41 +22,40 @@ class AccountAccessServiceAdapter implements AccountAccessServiceOperations {
     @Override
     public AccountOutputDto findByLogin(String login) {
         Account account = accountAccessService.findByLogin(login);
-        return accountMapper.mapToAccountOutputDto(account);
+        return accountMapper.mapToAccountOutputDtoWithVersion(account);
     }
 
     @Override
     public AccountOutputDto updateOwnLocale(String login, ChangeLanguageDto locale) {
         Locale language = new Locale(locale.locale());
         Account account = accountAccessService.updateOwnLocale(login, language);
-        return accountMapper.mapToAccountOutputDto(account);
+        return accountMapper.mapToAccountOutputDtoWithVersion(account);
     }
 
     @Override
     public AccountOutputDto changePassword(String login, ChangePasswordDto passwords) {
         Account account = accountAccessService.changePassword(login, passwords.currentPassword(), passwords.newPassword());
-        return accountMapper.mapToAccountOutputDto(account);
+        return accountMapper.mapToAccountOutputDtoWithVersion(account);
     }
 
     @Override
     public AccountOutputDto changeEmail(String login, ChangeEmailDto email) {
         Account account = accountAccessService.changeEmail(login, email.newEmail());
-        return accountMapper.mapToAccountOutputDto(account);
+        return accountMapper.mapToAccountOutputDtoWithVersion(account);
     }
 
     @Override
     public AccountOutputDto updateContactInformation(String login, UpdateContactDto updateDto) {
         Contact contact = accountMapper.mapToContact(updateDto);
-        Long frontendContactVersion = Long.parseLong(updateDto.version());
-        Account account = accountAccessService.updateContactInformation(login, contact, frontendContactVersion);
-        return accountMapper.mapToAccountOutputDto(account);
+        Account account = accountAccessService.updateContactInformation(login, contact, updateDto.version());
+        return accountMapper.mapToAccountOutputDtoWithVersion(account);
     }
 
     @Override
     public AccountOutputDto register(RegisterDto registerDto) {
         Account account = accountMapper.mapToAccount(registerDto);
         Account registeredAccount = accountAccessService.register(account);
-        return accountMapper.mapToAccountOutputDto(registeredAccount);
+        return accountMapper.mapToAccountOutputDtoWithVersion(registeredAccount);
     }
 
     @Override

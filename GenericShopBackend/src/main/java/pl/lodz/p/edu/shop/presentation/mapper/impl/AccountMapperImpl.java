@@ -15,8 +15,10 @@ import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.RegisterDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.UpdateContactDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.address.AddressOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.address.InputAddressDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.log.AuthLogOutputDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.AccountMapper;
+import pl.lodz.p.edu.shop.util.SecurityUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -31,21 +33,8 @@ class AccountMapperImpl implements AccountMapper {
 
     @Override
     public Account mapToAccount(CreateAccountDto createDto) {
-        var addressDto = createDto.address();
-
-        Address address = Address.builder()
-            .postalCode(addressDto.postalCode())
-            .country(addressDto.country())
-            .city(addressDto.city())
-            .street(addressDto.street())
-            .houseNumber(addressDto.houseNumber())
-            .build();
-
-        Contact contact = Contact.builder()
-            .firstName(createDto.firstName())
-            .lastName(createDto.lastName())
-            .address(address)
-            .build();
+        Address address = mapToAddress(createDto.address());
+        Contact contact = mapToContact(createDto.firstName(), createDto.lastName(), address);
 
         return Account.builder()
             .login(createDto.login())
@@ -60,21 +49,8 @@ class AccountMapperImpl implements AccountMapper {
 
     @Override
     public Account mapToAccount(RegisterDto registerDto) {
-        var addressDto = registerDto.address();
-
-        Address address = Address.builder()
-            .postalCode(addressDto.postalCode())
-            .country(addressDto.country())
-            .city(addressDto.city())
-            .street(addressDto.street())
-            .houseNumber(addressDto.houseNumber())
-            .build();
-
-        Contact contact = Contact.builder()
-            .firstName(registerDto.firstName())
-            .lastName(registerDto.lastName())
-            .address(address)
-            .build();
+        Address address = mapToAddress(registerDto.address());
+        Contact contact = mapToContact(registerDto.firstName(), registerDto.lastName(), address);
 
         return Account.builder()
             .login(registerDto.login())
@@ -89,49 +65,41 @@ class AccountMapperImpl implements AccountMapper {
 
     @Override
     public Contact mapToContact(UpdateContactDto updateDto) {
-        Address address = Address.builder()
-            .country(updateDto.country())
-            .city(updateDto.city())
-            .postalCode(updateDto.postalCode())
-            .street(updateDto.street())
-            .houseNumber(updateDto.houseNumber())
-            .build();
+        Address address = mapToAddress(updateDto.address());
 
-        return Contact.builder()
-            .firstName(updateDto.firstName())
-            .lastName(updateDto.lastName())
-            .address(address)
+        return mapToContact(updateDto.firstName(), updateDto.lastName(), address);
+    }
+
+    @Override
+    public AccountOutputDto mapToAccountOutputDtoWithoutVersion(Account account) {
+        Contact contact = account.getContact();
+        Address address = contact.getAddress();
+
+        AddressOutputDto addressDto = mapToAddressOutputDto(address);
+        AuthLogOutputDto logs = mapToAuthLogOutputDto(account.getAuthLogs());
+
+        return mapToAccountOutputDto(account, contact, addressDto, logs)
             .build();
     }
 
     @Override
-    public AccountOutputDto mapToAccountOutputDto(Account account) {
+    public AccountOutputDto mapToAccountOutputDtoWithVersion(Account account) {
         Contact contact = account.getContact();
         Address address = contact.getAddress();
-        AuthLogs authLogs = account.getAuthLogs();
 
-        String combinedVersion = String.valueOf(contact.getVersion() + address.getVersion());
+        String combinedVersion = SecurityUtil.signVersion(contact.getVersion() + contact.getAddress().getVersion());
+        AddressOutputDto addressDto = mapToAddressOutputDto(address);
+        AuthLogOutputDto logs = mapToAuthLogOutputDto(account.getAuthLogs());
 
-        AddressOutputDto addressDto = AddressOutputDto.builder()
-            .postalCode(address.getPostalCode())
-            .country(address.getCountry())
-            .city(address.getCity())
-            .street(address.getStreet())
-            .houseNumber(address.getHouseNumber())
+        return mapToAccountOutputDto(account, contact, addressDto, logs)
+            .version(combinedVersion)
             .build();
+    }
 
-        AuthLogOutputDto logs = AuthLogOutputDto.builder()
-            .lastSuccessfulAuthIpAddr(authLogs.getLastSuccessfulAuthIpAddr())
-            .lastUnsuccessfulAuthIpAddr(authLogs.getLastUnsuccessfulAuthIpAddr())
-            .lastSuccessfulAuthTime(authLogs.getLastSuccessfulAuthTime())
-            .lastUnsuccessfulAuthTime(authLogs.getLastUnsuccessfulAuthTime())
-            .unsuccessfulAuthCounter(authLogs.getUnsuccessfulAuthCounter())
-            .blockadeEndTime(authLogs.getBlockadeEndTime())
-            .build();
-
+    private AccountOutputDto.AccountOutputDtoBuilder mapToAccountOutputDto(Account account, Contact contact,
+                                                                           AddressOutputDto addressDto, AuthLogOutputDto logs) {
         return AccountOutputDto.builder()
             .id(account.getId())
-            .version(combinedVersion)
             .archival(account.isArchival())
             .login(account.getLogin())
             .email(account.getEmail())
@@ -141,7 +109,45 @@ class AccountMapperImpl implements AccountMapper {
             .firstName(contact.getFirstName())
             .lastName(contact.getLastName())
             .address(addressDto)
-            .authLogs(logs)
+            .authLogs(logs);
+    }
+
+    private AddressOutputDto mapToAddressOutputDto(Address address) {
+        return AddressOutputDto.builder()
+            .postalCode(address.getPostalCode())
+            .country(address.getCountry())
+            .city(address.getCity())
+            .street(address.getStreet())
+            .houseNumber(address.getHouseNumber())
+            .build();
+    }
+
+    private AuthLogOutputDto mapToAuthLogOutputDto(AuthLogs authLogs) {
+        return AuthLogOutputDto.builder()
+            .lastSuccessfulAuthIpAddr(authLogs.getLastSuccessfulAuthIpAddr())
+            .lastUnsuccessfulAuthIpAddr(authLogs.getLastUnsuccessfulAuthIpAddr())
+            .lastSuccessfulAuthTime(authLogs.getLastSuccessfulAuthTime())
+            .lastUnsuccessfulAuthTime(authLogs.getLastUnsuccessfulAuthTime())
+            .unsuccessfulAuthCounter(authLogs.getUnsuccessfulAuthCounter())
+            .blockadeEndTime(authLogs.getBlockadeEndTime())
+            .build();
+    }
+
+    private Address mapToAddress(InputAddressDto addressDto) {
+        return Address.builder()
+            .postalCode(addressDto.postalCode())
+            .country(addressDto.country())
+            .city(addressDto.city())
+            .street(addressDto.street())
+            .houseNumber(addressDto.houseNumber())
+            .build();
+    }
+
+    private Contact mapToContact(String firstName, String lastName, Address address) {
+        return Contact.builder()
+            .firstName(firstName)
+            .lastName(lastName)
+            .address(address)
             .build();
     }
 }

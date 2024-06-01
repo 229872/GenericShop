@@ -120,7 +120,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     return status;
                 });
 
-                AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDto(account);
+                AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDtoWithVersion(account);
                 String expectedResult = objectMapper.writeValueAsString(Collections.singletonList(accountOutputDto));
 
                 //when
@@ -159,7 +159,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     return status;
                 });
 
-                AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDto(account);
+                AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDtoWithVersion(account);
                 String expectedResult = objectMapper.writeValueAsString(accountOutputDto);
 
                 //when
@@ -234,7 +234,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                 Long accountId = Long.parseLong(matcher.group(1));
 
                 Account account = em.find(Account.class, accountId);
-                AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDto(account);
+                AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDtoWithVersion(account);
                 String expectedResult = objectMapper.writeValueAsString(accountOutputDto);
 
                 resultActions.andDo(print())
