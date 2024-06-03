@@ -25,7 +25,7 @@ export default function RoutingWithSessionDialogs({ setLoading, isAuthenticated,
 
   const closeDialogAndNavigateToAuth = (): void => {
     setShowTokenExpiredDialog(false)
-    navigate('/auth')
+    navigate(AUTH_PATH)
   }
 
   const extendSession = async (): Promise<void> => {
@@ -52,6 +52,7 @@ export default function RoutingWithSessionDialogs({ setLoading, isAuthenticated,
     setTimeout(() => {
       if (isTokenExpired()) {
         setShowExtendSessionDialog(false)
+        setIsAuthenticated(false)
         navigate(AUTH_PATH)
         getJwtToken() && setShowTokenExpiredDialog(true)
       } else {
