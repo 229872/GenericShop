@@ -8,7 +8,7 @@ import { environment, regex } from "../utils/constants";
 import { decodeJwtToken, saveJwtToken, saveLocale, saveRefreshToken } from "../services/tokenService";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'sonner'
-import { SessionDialogsActions, Tokens } from "../utils/types";
+import { Tokens } from "../utils/types";
 import { useState } from "react";
 import VisibilityButton from "../components/reusable/VisibilityButton";
 import handleAxiosException from "../services/apiService";
@@ -21,9 +21,17 @@ const schema = z.object({
 
 type Credentials = z.infer<typeof schema>;
 
+type AuthenticationPageProps = {
+  showTokenExpiredDialogAfterTimeout: () => void
+  showExtendSessionDialogAfterTimeout: () => void
+  setLoading: (value: boolean) => void
+  style?: React.CSSProperties
+  setIsAuthenticated: (value: boolean) => void
+}
 
+export default function AuthenticationPage({ showTokenExpiredDialogAfterTimeout, showExtendSessionDialogAfterTimeout,
+   setLoading, style, setIsAuthenticated } : AuthenticationPageProps) {
 
-export default function AuthenticationPage({ showTokenExpiredDialogAfterTimeout, showExtendSessionDialogAfterTimeout, setLoading, style }: SessionDialogsActions) {
   const fieldStyle = {height: '64px', width: '60%'};
   const [ isHover, setIsHover ] = useState(false)
   const linkStyle = { color: 'black', textDecoration: isHover ? 'underline' : 'none' }
@@ -43,6 +51,7 @@ export default function AuthenticationPage({ showTokenExpiredDialogAfterTimeout,
       const { data: {token, refreshToken} } = await sendCredentials(credentials)
       const lang = decodeJwtToken(token)?.lang;
       saveDataInLocalStorage(token, refreshToken, lang)
+      setIsAuthenticated(true)
       reset()
       navigate(HOME_PATH)
       toast.success(t('authentication.toast.success'))

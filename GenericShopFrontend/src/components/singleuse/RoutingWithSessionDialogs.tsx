@@ -12,9 +12,11 @@ import Routing, { AUTH_PATH } from './Routing';
 
 type RoutingWithSessionDialogsParams = {
   setLoading: (state: boolean) => void
+  isAuthenticated: boolean
+  setIsAuthenticated: (state: boolean) => void
 }
 
-export default function RoutingWithSessionDialogs({ setLoading }: RoutingWithSessionDialogsParams) {
+export default function RoutingWithSessionDialogs({ setLoading, isAuthenticated, setIsAuthenticated }: RoutingWithSessionDialogsParams) {
   const navigate = useNavigate();
   const {t} = useTranslation()
   const [showTokenExpiredDialog, setShowTokenExpiredDialog] = useState(false);
@@ -83,6 +85,8 @@ export default function RoutingWithSessionDialogs({ setLoading }: RoutingWithSes
         showTokenExpiredDialogAfterTimeout={showTokenExpiredDialogAfterTimeout}
         showExtendSessionDialogAfterTimeout={showExtendSessionDialogAfterTimeout}
         setLoading={setLoading}
+        isAuthenticated={isAuthenticated}
+        setIsAuthenticated={setIsAuthenticated}
       />
 
       <MuiDialog

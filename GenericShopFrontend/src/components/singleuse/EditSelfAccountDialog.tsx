@@ -54,7 +54,6 @@ export default function EditSelfAccountDialog({ open, account, setAccount, onClo
   const fieldStyle = { height: '64px', width: '100%' }
 
   useEffect(() => {
-    console.log('Use effect')
     reset(account)
   }, [open])
 

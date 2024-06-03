@@ -10,13 +10,6 @@ export type Tokens = {
   refreshToken: string
 }
 
-export type SessionDialogsActions = {
-  showTokenExpiredDialogAfterTimeout: () => void
-  showExtendSessionDialogAfterTimeout: () => void
-  setLoading: (value: boolean) => void
-  style?: React.CSSProperties
-}
-
 export type AuthLogs = {
   lastSuccessfulAuthIpAddr: string,
   lastUnsuccessfulAuthIpAddr: string,

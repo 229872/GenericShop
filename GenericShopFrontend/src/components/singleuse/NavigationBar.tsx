@@ -12,8 +12,11 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ChangeLanguageMenu from "../reusable/ChangeLanguageMenu";
 
+type NavigationBarProps = {
+  setIsAuthenticated: (state: boolean) => void
+}
 
-export default function NavigationBar() {
+export default function NavigationBar({ setIsAuthenticated } : NavigationBarProps ) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [changeLanguageAnchorEl, setLanguageAnchorEl] = useState(null);
@@ -24,6 +27,7 @@ export default function NavigationBar() {
 
   const logoutFromApp = () => {
     logout();
+    setIsAuthenticated(false)
     setLanguageAnchorEl(null)
     setAccountAnchorEl(null)
     setReload(!reload)
