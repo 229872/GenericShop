@@ -14,7 +14,7 @@ function App() {
   const [ isAuthenticated, setIsAuthenticated ] = useState<boolean>(isUserSignIn())
 
   return <>
-    <Toaster position='top-left' richColors closeButton expand style={{ marginTop: '60px' }}  offset={'40px'} />
+    <Toaster position='top-left' richColors closeButton expand style={{ marginTop: '70px' }}  offset={'20px'} />
     <NavigationBar setIsAuthenticated={setIsAuthenticated} />
     <Progress loading={loading} />
     <RoutingWithSessionDialogs setLoading={setLoading} isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
