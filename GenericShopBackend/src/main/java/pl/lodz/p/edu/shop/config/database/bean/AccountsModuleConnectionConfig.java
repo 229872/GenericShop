@@ -13,6 +13,7 @@ import pl.lodz.p.edu.shop.config.database.preconfig.JpaConfigurable;
 import pl.lodz.p.edu.shop.config.database.property.DataSourceProperties;
 
 import javax.sql.DataSource;
+import java.util.Properties;
 
 @Configuration
 @EnableJpaRepositories(
@@ -42,6 +43,13 @@ public class AccountsModuleConnectionConfig implements JpaConfigurable {
     public DataSourceInitializer dataSourceInitializerBean(@Qualifier("accountsModDataSource") DataSource dataSource,
                                                            @Qualifier("accountsModDataSourceProperties") DataSourceProperties properties) {
         return JpaConfigurable.super.dataSourceInitializerBean(dataSource, properties);
+    }
+
+    @Override
+    public Properties getJpaProperties(@Qualifier("accountsModDataSourceProperties") DataSourceProperties dataSourceProperties) {
+        Properties jpaProperties = JpaConfigurable.super.getJpaProperties(dataSourceProperties);
+        jpaProperties.putAll(dataSourceProperties.getJpa().getProperties());
+        return jpaProperties;
     }
 
     @Override

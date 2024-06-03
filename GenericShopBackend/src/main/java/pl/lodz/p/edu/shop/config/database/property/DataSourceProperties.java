@@ -7,7 +7,9 @@ import lombok.Getter;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Validated
@@ -47,5 +49,6 @@ public class DataSourceProperties {
     public static class JpaProperties {
 
         private DatabaseAction databaseAction = DatabaseAction.NONE;
+        private Map<String, String> properties = new HashMap<>();
     }
 }

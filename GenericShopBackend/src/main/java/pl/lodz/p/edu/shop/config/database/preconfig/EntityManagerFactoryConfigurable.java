@@ -19,13 +19,14 @@ public interface EntityManagerFactoryConfigurable {
         emFactory.setPersistenceUnitName(properties.getPersistenceUnitName());
         emFactory.setDataSource(dataSource);
         emFactory.setPersistenceProvider(new HibernatePersistenceProvider());
-        emFactory.setJpaProperties(getJpaProperties(properties.getJpa()));
+        emFactory.setJpaProperties(getJpaProperties(properties));
         emFactory.setPackagesToScan("pl.lodz.p.edu.shop.dataaccess.model");
 
         return emFactory;
     }
 
-    private Properties getJpaProperties(DataSourceProperties.JpaProperties properties) {
+    default Properties getJpaProperties(DataSourceProperties dataSourceProperties) {
+        DataSourceProperties.JpaProperties properties = dataSourceProperties.getJpa();
         Properties jpaProperties = new Properties();
         jpaProperties.setProperty("jakarta.persistence.schema-generation.database.action", properties.getDatabaseAction().getActionName());
         return jpaProperties;

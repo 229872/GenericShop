@@ -23,6 +23,11 @@ app:
         url: jdbc:postgresql://localhost:5432/shop
         username: shop_accounts
         password: dbaccounts
+        jpa:
+          properties:
+            hibernate.show_sql: true
+            hibernate.format_sql: true
+            hibernate.use_sql_comments: true
 
   security:
     auth-token:
