@@ -5,10 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from "react-i18next";
 import axios from 'axios';
 import { environment, regex } from "../utils/constants";
-import { decodeJwtToken, saveJwtToken, saveLocale, saveRefreshToken } from "../services/tokenService";
+import { decodeJwtToken, getActiveRole, getJwtToken, saveJwtToken, saveLocale, saveRefreshToken } from "../services/tokenService";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'sonner'
-import { Tokens } from "../utils/types";
+import { Role, Tokens } from "../utils/types";
 import { useState } from "react";
 import VisibilityButton from "../components/reusable/VisibilityButton";
 import handleAxiosException from "../services/apiService";
@@ -27,10 +27,11 @@ type AuthenticationPageProps = {
   setLoading: (value: boolean) => void
   style?: React.CSSProperties
   setIsAuthenticated: (value: boolean) => void
+  setActiveRole: (role: Role) => void
 }
 
 export default function AuthenticationPage({ showTokenExpiredDialogAfterTimeout, showExtendSessionDialogAfterTimeout,
-   setLoading, style, setIsAuthenticated } : AuthenticationPageProps) {
+   setLoading, style, setIsAuthenticated, setActiveRole } : AuthenticationPageProps) {
 
   const fieldStyle = {height: '64px', width: '60%'};
   const [ isHover, setIsHover ] = useState(false)
@@ -52,6 +53,7 @@ export default function AuthenticationPage({ showTokenExpiredDialogAfterTimeout,
       const lang = decodeJwtToken(token)?.lang;
       saveDataInLocalStorage(token, refreshToken, lang)
       setIsAuthenticated(true)
+      setActiveRole(getActiveRole(getJwtToken()))
       reset()
       navigate(HOME_PATH)
       toast.success(t('authentication.toast.success'))

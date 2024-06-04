@@ -8,6 +8,8 @@ import { CSSProperties } from "react";
 import ResetPasswordPage from "../../pages/ResetPasswordPage";
 import SelfAccountPage from "../../pages/SelfAccountPage";
 import ProtectedElement from "./ProtectedElement";
+import { Role } from "../../utils/types";
+import ManageAccountsPage from "../../pages/ManageAccountsPage";
 
 export const ROOT_PATH = '/'
 export const HOME_PATH = '/home'
@@ -18,6 +20,7 @@ export const REGISTER_CONFIRM_PATH = '/register/confirm'
 export const RESET_PASSWORD_PATH = '/auth/reset-password'
 export const SELF_ACCOUNT_PATH = '/self'
 export const NOT_FOUND_PATH = '/not-found'
+export const MANAGE_ACCOUNTS_PATH = '/manage/accounts'
 
 type RoutingProps = {
   showTokenExpiredDialogAfterTimeout: () => void
@@ -26,10 +29,12 @@ type RoutingProps = {
   style?: React.CSSProperties
   isAuthenticated: boolean
   setIsAuthenticated: (state: boolean) => void
+  activeRole: Role
+  setActiveRole: (role: Role) => void
 }
 
 export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtendSessionDialogAfterTimeout, 
-  setLoading, isAuthenticated, setIsAuthenticated } : RoutingProps) {
+  setLoading, isAuthenticated, setIsAuthenticated, setActiveRole, activeRole } : RoutingProps) {
 
   const routesStyle: CSSProperties = { margin: '12vh 25vw' }
 
@@ -48,6 +53,7 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
               setLoading={setLoading}
               style={{ margin: '20vh 25vw' }}
               setIsAuthenticated={setIsAuthenticated}
+              setActiveRole={setActiveRole}
             />
           }
           shouldRender={!isAuthenticated}
@@ -116,8 +122,21 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
           redirect={AUTH_PATH}
         />
       } />
+
+      <Route path={MANAGE_ACCOUNTS_PATH} element={
+        <ProtectedElement
+          element={
+            <ManageAccountsPage
+              setLoading={setLoading}
+              style={routesStyle}
+            />
+          }
+          shouldRender={isAuthenticated && (activeRole === Role.ADMIN)}
+          redirect={NOT_FOUND_PATH}
+        />
+      } />
       
-      <Route path='*' element={<NotFoundPage style={routesStyle} />} />
+      <Route path='*' element={<NotFoundPage style={{ margin: '12vh 15vw' }} />} />
     </Routes>
   )
 }

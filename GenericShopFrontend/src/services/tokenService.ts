@@ -1,6 +1,6 @@
 import { environment } from "../utils/constants";
 import { jwtDecode } from "jwt-decode";
-import { TokenData } from "../utils/types";
+import { Role, TokenData } from "../utils/types";
 
 
 export const saveJwtToken = (token: string): void => {
@@ -31,6 +31,10 @@ export const getLocale = (): string | null => {
 
 export const getExpirationTime = (token: string | null): number | null => {
   return decodeJwtToken(token)?.exp ?? null;
+}
+
+export const getActiveRole = (token: string | null): Role => {
+  return decodeJwtToken(token)?.roles[0] ?? Role.GUEST
 }
 
 

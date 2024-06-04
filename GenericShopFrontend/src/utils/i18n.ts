@@ -185,6 +185,8 @@ const resources = {
       'self.button.change_password': 'Change password',
       'self.tooltipl.refresh': 'Refresh data',
 
+      'table.no_content': 'No records found',
+
       'notfound.title': 'Page not found',
       'notfound.description': 'Page you are trying to access does not exist...',
       'notfound.button': 'Home',
@@ -377,6 +379,8 @@ const resources = {
       'self.button.change_email': 'Zmień adres email',
       'self.button.change_password': 'Zmień hasło',
       'self.tooltipl.refresh': 'Odśwież dane',
+
+      'table.no_content': 'Nie ma szukanych rekordów',
 
       'notfound.title': 'Nie znaleziono strony',
       'notfound.description': 'Strona którą próbujesz odwiedzić nie istnieje...',

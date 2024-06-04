@@ -1,6 +1,6 @@
 export type TokenData = {
   sub: string;
-  roles: string[];
+  roles: Role[];
   exp: number,
   lang: string
 }
@@ -45,4 +45,11 @@ export type Account = {
 export type GridItemData = {
   label: string
   content: string | number
+}
+
+export enum Role {
+  GUEST = 'GUEST',
+  CLIENT = 'CLIENT',
+  ADMIN = 'ADMIN',
+  EMPLOYEE = 'EMPLOYEE'
 }

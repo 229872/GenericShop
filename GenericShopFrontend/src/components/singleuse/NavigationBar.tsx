@@ -11,12 +11,14 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ChangeLanguageMenu from "../reusable/ChangeLanguageMenu";
+import { Role } from "../../utils/types";
 
 type NavigationBarProps = {
   setIsAuthenticated: (state: boolean) => void
+  setActiveRole: (role: Role) => void
 }
 
-export default function NavigationBar({ setIsAuthenticated } : NavigationBarProps ) {
+export default function NavigationBar({ setIsAuthenticated, setActiveRole } : NavigationBarProps ) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [changeLanguageAnchorEl, setLanguageAnchorEl] = useState(null);
@@ -28,6 +30,7 @@ export default function NavigationBar({ setIsAuthenticated } : NavigationBarProp
   const logoutFromApp = () => {
     logout();
     setIsAuthenticated(false)
+    setActiveRole(Role.GUEST)
     setLanguageAnchorEl(null)
     setAccountAnchorEl(null)
     setReload(!reload)

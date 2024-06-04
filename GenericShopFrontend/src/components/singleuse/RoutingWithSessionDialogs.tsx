@@ -4,19 +4,21 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { environment } from '../../utils/constants';
 import { getJwtToken, getRefreshToken, saveJwtToken, saveRefreshToken } from '../../services/tokenService';
-import { Tokens } from '../../utils/types';
+import { Role, Tokens } from '../../utils/types';
 import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom';
-import { calculateExtendSessionDialogTimeout, calculateSessionExpiredTimeout, isTokenExpired, isUserSignIn } from '../../services/sessionService';
+import { calculateExtendSessionDialogTimeout, calculateSessionExpiredTimeout, isTokenExpired, isUserSignIn, logout } from '../../services/sessionService';
 import Routing, { AUTH_PATH } from './Routing';
 
 type RoutingWithSessionDialogsParams = {
   setLoading: (state: boolean) => void
   isAuthenticated: boolean
   setIsAuthenticated: (state: boolean) => void
+  activeRole: Role
+  setActiveRole: (role: Role) => void
 }
 
-export default function RoutingWithSessionDialogs({ setLoading, isAuthenticated, setIsAuthenticated }: RoutingWithSessionDialogsParams) {
+export default function RoutingWithSessionDialogs({ setLoading, isAuthenticated, setIsAuthenticated, activeRole, setActiveRole }: RoutingWithSessionDialogsParams) {
   const navigate = useNavigate();
   const {t} = useTranslation()
   const [showTokenExpiredDialog, setShowTokenExpiredDialog] = useState(false);
@@ -53,6 +55,8 @@ export default function RoutingWithSessionDialogs({ setLoading, isAuthenticated,
       if (isTokenExpired()) {
         setShowExtendSessionDialog(false)
         setIsAuthenticated(false)
+        setActiveRole(Role.GUEST)
+        logout()
         navigate(AUTH_PATH)
         getJwtToken() && setShowTokenExpiredDialog(true)
       } else {
@@ -88,6 +92,8 @@ export default function RoutingWithSessionDialogs({ setLoading, isAuthenticated,
         setLoading={setLoading}
         isAuthenticated={isAuthenticated}
         setIsAuthenticated={setIsAuthenticated}
+        activeRole={activeRole}
+        setActiveRole={setActiveRole}
       />
 
       <MuiDialog
