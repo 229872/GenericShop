@@ -42,6 +42,17 @@ export type Account = {
   authLogs: AuthLogs
 }
 
+export type BasicAccount = {
+  id: number
+  archival: boolean
+  login: string
+  email: string
+  firstName: string
+  lastName: string
+  state: string
+  roles: Role[]
+}
+
 export type GridItemData = {
   label: string
   content: string | number
@@ -52,4 +63,13 @@ export enum Role {
   CLIENT = 'CLIENT',
   ADMIN = 'ADMIN',
   EMPLOYEE = 'EMPLOYEE'
+}
+
+export type HasId = {
+  id: number
+}
+
+export type Column<T> = {
+  name: string
+  dataProp: keyof T
 }

@@ -19,7 +19,7 @@ import static pl.lodz.p.edu.shop.presentation.controller.ApiRoot.API_ROOT;
 @RequiredArgsConstructor
 
 @RestController
-@RequestMapping(API_ROOT + "/account")
+@RequestMapping(API_ROOT + "/accounts")
 @DenyAll
 public class AccountManagementController {
 

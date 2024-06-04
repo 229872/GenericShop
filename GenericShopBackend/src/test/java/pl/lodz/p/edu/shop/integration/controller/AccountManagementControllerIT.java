@@ -65,7 +65,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
 
     private ObjectMapper objectMapper;
 
-    private final String BASE_API = "%s/account".formatted(ApiRoot.API_ROOT);
+    private final String BASE_API = "%s/accounts".formatted(ApiRoot.API_ROOT);
 
     @BeforeEach
     void setUp() {

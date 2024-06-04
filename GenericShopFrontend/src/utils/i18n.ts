@@ -68,6 +68,15 @@ const resources = {
       'edit_self.reset': 'Reset',
       'edit_self.submit': 'Submit',
 
+      'manage_accounts.column.id': 'ID',
+      'manage_accounts.column.archival': 'Is archival?',
+      'manage_accounts.column.login': 'Login',
+      'manage_accounts.column.email': 'Email',
+      'manage_accounts.column.first_name': 'First name',
+      'manage_accounts.column.last_name': 'Last name',
+      'manage_accounts.column.state': 'State',
+      'manage_accounts.column.roles': 'Roles',
+
       'nav.home': 'Home',
       'nav.login': 'Login',
       'nav.create_account': 'Create Account',
@@ -186,6 +195,8 @@ const resources = {
       'self.tooltipl.refresh': 'Refresh data',
 
       'table.no_content': 'No records found',
+      'table.yes': 'Yes',
+      'table.no': 'No',
 
       'notfound.title': 'Page not found',
       'notfound.description': 'Page you are trying to access does not exist...',
@@ -262,6 +273,15 @@ const resources = {
       'edit_self.back': 'Wróć',
       'edit_self.reset': 'Przywróć domyślne',
       'edit_self.submit': 'Zatwierdź',
+
+      'manage_accounts.column.id': 'ID',
+      'manage_accounts.column.archival': 'Czy jest archiwalne?',
+      'manage_accounts.column.login': 'Login',
+      'manage_accounts.column.email': 'Email',
+      'manage_accounts.column.first_name': 'Imię',
+      'manage_accounts.column.last_name': 'Nazwisko',
+      'manage_accounts.column.state': 'Stan',
+      'manage_accounts.column.roles': 'Role',
       
       'nav.home': 'Strona Główna',
       'nav.login': 'Zaloguj się',
@@ -381,6 +401,8 @@ const resources = {
       'self.tooltipl.refresh': 'Odśwież dane',
 
       'table.no_content': 'Nie ma szukanych rekordów',
+      'table.yes': 'Tak',
+      'table.no': 'Nie',
 
       'notfound.title': 'Nie znaleziono strony',
       'notfound.description': 'Strona którą próbujesz odwiedzić nie istnieje...',
