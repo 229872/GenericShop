@@ -66,19 +66,6 @@ class AccountManagementServiceImpl extends AccountService implements AccountMana
     }
 
     @Override
-    public Account updateContactInformation(Long id, Contact newContactData) {
-        Account account = accountRepository.findById(id)
-            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
-
-        if (account.isArchival()) {
-            throw ApplicationExceptionFactory.createCantModifyArchivalAccountException();
-        }
-
-        updatePersonalInformation(account, newContactData);
-        return save(account);
-    }
-
-    @Override
     public Account block(Long id) {
         Account account = accountRepository.findById(id)
             .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);

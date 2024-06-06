@@ -1,5 +1,6 @@
 package pl.lodz.p.edu.shop.integration.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.persistence.EntityManager;
@@ -25,12 +26,15 @@ import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.shop.exception.ExceptionMessage;
 import pl.lodz.p.edu.shop.presentation.controller.ApiRoot;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.AccountMapper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,7 +111,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                 resultActions.andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(content().json(expectedResult));
+                    .andExpect(jsonPath("$.content").value(asParsedJson(expectedResult)));
             }
 
             @Test
@@ -120,7 +124,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     return status;
                 });
 
-                AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDtoWithVersion(account);
+                AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDtoWithoutVersion(account);
                 String expectedResult = objectMapper.writeValueAsString(Collections.singletonList(accountOutputDto));
 
                 //when
@@ -130,7 +134,8 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                 resultActions.andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(content().json(expectedResult));
+                    .andExpect(jsonPath("$.content").value(asParsedJson(expectedResult)))
+                    .andExpect(jsonPath("$.totalElements").value(1));
             }
         }
 
@@ -150,7 +155,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
         class Positive {
 
             @Test
-            @DisplayName("Should return response with status 200 and body with account in list")
+            @DisplayName("Should return response with status 200 and body with account in page")
             void getById_should_return_status_ok_with_account() throws Exception {
                 //given
                 Account account = TestData.buildDefaultAccount();
@@ -159,7 +164,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     return status;
                 });
 
-                AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDtoWithVersion(account);
+                AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDtoWithoutVersion(account);
                 String expectedResult = objectMapper.writeValueAsString(accountOutputDto);
 
                 //when
@@ -234,7 +239,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                 Long accountId = Long.parseLong(matcher.group(1));
 
                 Account account = em.find(Account.class, accountId);
-                AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDtoWithVersion(account);
+                AccountOutputDto accountOutputDto = accountMapper.mapToAccountOutputDtoWithoutVersion(account);
                 String expectedResult = objectMapper.writeValueAsString(accountOutputDto);
 
                 resultActions.andDo(print())
@@ -1400,5 +1405,9 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                     .andExpect(jsonPath("$.message", is(ExceptionMessage.ACCOUNT_ARCHIVAL)));
             }
         }
+    }
+
+    private List<Map<String, Object>> asParsedJson(String json) throws IOException {
+        return objectMapper.readValue(json, new TypeReference<List<Map<String, Object>>>() {});
     }
 }

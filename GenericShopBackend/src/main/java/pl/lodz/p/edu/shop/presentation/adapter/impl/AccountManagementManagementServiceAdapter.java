@@ -7,9 +7,8 @@ import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.logic.service.api.AccountManagementService;
 import pl.lodz.p.edu.shop.presentation.adapter.api.AccountManagementServiceOperations;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.UpdateContactDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.AccountMapper;
 
 import java.util.List;
@@ -25,51 +24,46 @@ class AccountManagementManagementServiceAdapter implements AccountManagementServ
     @Override
     public List<AccountOutputDto> findAll() {
         return accountManagementService.findAll().stream()
-            .map(accountMapper::mapToAccountOutputDtoWithVersion)
+            .map(accountMapper::mapToAccountOutputDtoWithoutVersion)
             .toList();
     }
 
     @Override
     public Page<AccountOutputDto> findAll(Pageable pageable) {
         return accountManagementService.findAll(pageable)
-            .map(accountMapper::mapToAccountOutputDtoWithVersion);
+            .map(accountMapper::mapToAccountOutputDtoWithoutVersion);
 
     }
 
     @Override
     public AccountOutputDto findById(Long id) {
         Account account = accountManagementService.findById(id);
-        return accountMapper.mapToAccountOutputDtoWithVersion(account);
+        return accountMapper.mapToAccountOutputDtoWithoutVersion(account);
     }
 
     @Override
     public AccountOutputDto create(CreateAccountDto account) {
         Account outputAccount = accountMapper.mapToAccount(account);
         Account createdAccount = accountManagementService.create(outputAccount);
-        return accountMapper.mapToAccountOutputDtoWithVersion(createdAccount);
-    }
-
-    @Override
-    public AccountOutputDto updateContactInformation(Long id, UpdateContactDto newContactData) {
-        return null;
+        return accountMapper.mapToAccountOutputDtoWithoutVersion(createdAccount);
     }
 
     @Override
     public AccountOutputDto block(Long id) {
         Account account = accountManagementService.block(id);
-        return accountMapper.mapToAccountOutputDtoWithVersion(account);
+        return accountMapper.mapToAccountOutputDtoWithoutVersion(account);
     }
 
     @Override
     public AccountOutputDto unblock(Long id) {
         Account account = accountManagementService.unblock(id);
-        return accountMapper.mapToAccountOutputDtoWithVersion(account);
+        return accountMapper.mapToAccountOutputDtoWithoutVersion(account);
     }
 
     @Override
     public AccountOutputDto archive(Long id) {
         Account account = accountManagementService.archive(id);
-        return accountMapper.mapToAccountOutputDtoWithVersion(account);
+        return accountMapper.mapToAccountOutputDtoWithoutVersion(account);
     }
 
     @Override

@@ -15,8 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.shop.TestData;
 import pl.lodz.p.edu.shop.config.PostgresqlContainerSetup;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
-import pl.lodz.p.edu.shop.dataaccess.model.entity.Address;
-import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.shop.exception.ExceptionMessage;
@@ -273,129 +271,6 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
             .isNotNull()
             .isExactlyInstanceOf(AccountEmailConflictException.class)
             .hasMessageContaining(ExceptionMessage.ACCOUNT_CONFLICT_EMAIL);
-    }
-
-    @Test
-    @DisplayName("Should update found account with one value")
-    void updateContactInformation_positive_1() {
-        //given
-        Account givenAccount = TestData.buildDefaultAccount();
-
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
-
-        String newFirstName = "newFirstName";
-        Contact newPersonalInfo = Contact.builder()
-            .firstName(newFirstName)
-            .address(Address.builder().build())
-            .build();
-
-        //when
-        Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
-
-        //then
-        assertThat(result.getContact().getFirstName())
-            .isEqualTo(newFirstName);
-
-        assertThat(result.getContact().getLastName())
-            .isEqualTo(givenAccount.getContact().getLastName());
-    }
-
-    @Test
-    @DisplayName("Should update found account without all values")
-    void updateContactInformation_positive_2() {
-        //given
-        Account givenAccount = TestData.buildDefaultAccount();
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
-
-        String newFirstName = "newFirstName";
-        String newLastName = "newLastName";
-        String newPostalCode = "newPostalCode";
-        String newCountry = "newCountry";
-        String newCity = "newCity";
-        String newStreet = "newStreet";
-        Integer newHouseNumber = 2;
-
-        Address newAddress = Address.builder()
-            .postalCode(newPostalCode)
-            .country(newCountry)
-            .city(newCity)
-            .street(newStreet)
-            .houseNumber(newHouseNumber)
-            .build();
-
-        Contact newPersonalInfo = Contact.builder()
-            .firstName(newFirstName)
-            .lastName(newLastName)
-            .address(newAddress)
-            .build();
-
-        //when
-        Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
-
-        //then
-        Contact resultContact = result.getContact();
-        Address resultAddress = resultContact.getAddress();
-        assertEquals(newFirstName, resultContact.getFirstName());
-        assertEquals(newLastName, resultContact.getLastName());
-        assertEquals(newPostalCode, resultAddress.getPostalCode());
-        assertEquals(newCountry, resultAddress.getCountry());
-        assertEquals(newCity, resultAddress.getCity());
-        assertEquals(newStreet, resultAddress.getStreet());
-        assertEquals(newHouseNumber, resultAddress.getHouseNumber());
-    }
-
-    @Test
-    @DisplayName("Should throw AccountNotFoundException when account can't be found during update")
-    void updateContactInformation_negative_1() {
-        //given
-        Long givenId = 1L;
-        Contact newInfo = Contact.builder()
-            .firstName("newFirstName")
-            .address(Address.builder().build())
-            .build();
-
-        //when
-        Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
-
-        //then
-        assertThat(exception)
-            .isNotNull()
-            .isExactlyInstanceOf(AccountNotFoundException.class)
-            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
-    }
-
-    @Test
-    @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
-    void updateContactInformation_negative_2() {
-        //given
-        Account givenAccount = TestData.buildDefaultAccount();
-        txTemplate.execute(status -> {
-            em.persist(givenAccount);
-            givenAccount.setArchival(true);
-            return status;
-        });
-        Long givenId = givenAccount.getId();
-        Contact newInfo = Contact.builder()
-            .firstName("newFirstName")
-            .address(Address.builder().build())
-            .build();
-
-        //when
-        Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
-
-        //then
-        assertThat(exception)
-            .isNotNull()
-            .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
-            .hasMessageContaining(ExceptionMessage.ACCOUNT_ARCHIVAL);
     }
 
     @Test

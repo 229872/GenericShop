@@ -2,9 +2,8 @@ package pl.lodz.p.edu.shop.presentation.adapter.api;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.UpdateContactDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 
 import java.util.List;
 
@@ -17,8 +16,6 @@ public interface AccountManagementServiceOperations {
     AccountOutputDto findById(Long id);
 
     AccountOutputDto create(CreateAccountDto account);
-
-    AccountOutputDto updateContactInformation(Long id, UpdateContactDto newContactData);
 
     AccountOutputDto block(Long id);
 

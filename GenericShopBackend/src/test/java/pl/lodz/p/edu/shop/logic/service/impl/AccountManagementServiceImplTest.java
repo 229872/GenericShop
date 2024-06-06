@@ -2,7 +2,6 @@ package pl.lodz.p.edu.shop.logic.service.impl;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,8 +12,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.shop.TestData;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
-import pl.lodz.p.edu.shop.dataaccess.model.entity.Address;
-import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
 import pl.lodz.p.edu.shop.dataaccess.repository.api.AccountRepository;
@@ -239,170 +236,6 @@ class AccountManagementServiceImplTest {
             .isNotNull()
             .isExactlyInstanceOf(AccountEmailConflictException.class)
             .hasMessageContaining(ExceptionMessage.ACCOUNT_CONFLICT_EMAIL);
-    }
-
-    @Test
-    @DisplayName("Should update found account with all values")
-    void updateContactInformation_positive_1() {
-        //given
-        Account givenAccount = TestData.buildDefaultAccount();
-        String givenFirstName = givenAccount.getContact().getFirstName();
-        Long givenId = givenAccount.getId();
-
-        String newFirstName = "newFirstName";
-        Contact newPersonalInfo = Contact.builder()
-            .firstName(newFirstName)
-            .address(Address.builder().build())
-            .build();
-
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
-        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-
-        //when
-        Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
-
-        //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).should().save(givenAccount);
-
-        assertThat(result.getContact().getFirstName())
-            .isEqualTo(newFirstName)
-            .isNotEqualTo(givenFirstName);
-
-        Contact updatedContact = result.getContact();
-        Address updatedAddress = updatedContact.getAddress();
-        Assertions.assertNotNull(updatedContact.getLastName());
-        Assertions.assertNotNull(updatedAddress.getPostalCode());
-        Assertions.assertNotNull(updatedAddress.getCountry());
-        Assertions.assertNotNull(updatedAddress.getCity());
-        Assertions.assertNotNull(updatedAddress.getStreet());
-        Assertions.assertNotNull(updatedAddress.getHouseNumber());
-    }
-
-    @Test
-    @DisplayName("Should update found account with all values")
-    void updateContactInformation_positive_2() {
-        //given
-        Account givenAccount = TestData.buildDefaultAccount();
-        Contact givenContact = givenAccount.getContact();
-        Long givenId = givenAccount.getId();
-        String givenFirstName = givenContact.getFirstName();
-        String givenLastName = givenContact.getLastName();
-        Address givenAddress = givenContact.getAddress();
-        String givenPostalCode = givenAddress.getPostalCode();
-        String givenCountry = givenAddress.getCountry();
-        String givenCity = givenAddress.getCity();
-        String givenStreet = givenAddress.getStreet();
-        Integer givenHouseNumber = givenAddress.getHouseNumber();
-
-        String newFirstName = "newFirstName";
-        String newLastName = "newLastName";
-        String newPostalCode = "newPostalCode";
-        String newCountry = "newCountry";
-        String newCity = "newCity";
-        String newStreet = "newStreet";
-        Integer newHouseNumber = 2;
-
-        Address newAddress = Address.builder()
-            .postalCode(newPostalCode)
-            .country(newCountry)
-            .city(newCity)
-            .street(newStreet)
-            .houseNumber(newHouseNumber)
-            .build();
-
-        Contact newPersonalInfo = Contact.builder()
-            .firstName(newFirstName)
-            .lastName(newLastName)
-            .address(newAddress)
-            .build();
-
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
-        given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
-
-        //when
-        Account result = underTest.updateContactInformation(givenId, newPersonalInfo);
-
-        //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).should().save(givenAccount);
-
-        Contact resultContact = result.getContact();
-        Address resultAddress = resultContact.getAddress();
-        assertThat(resultContact.getFirstName())
-            .isEqualTo(newFirstName)
-            .isNotEqualTo(givenFirstName);
-
-        assertThat(resultContact.getLastName())
-            .isEqualTo(newLastName)
-            .isNotEqualTo(givenLastName);
-
-        assertThat(resultAddress.getPostalCode())
-            .isEqualTo(newPostalCode)
-            .isNotEqualTo(givenPostalCode);
-
-        assertThat(resultAddress.getCountry())
-            .isEqualTo(newCountry)
-            .isNotEqualTo(givenCountry);
-
-        assertThat(resultAddress.getCity())
-            .isEqualTo(newCity)
-            .isNotEqualTo(givenCity);
-
-        assertThat(resultAddress.getStreet())
-            .isEqualTo(newStreet)
-            .isNotEqualTo(givenStreet);
-
-        assertThat(resultAddress.getHouseNumber())
-            .isEqualTo(newHouseNumber)
-            .isNotEqualTo(givenHouseNumber);
-    }
-
-    @Test
-    @DisplayName("Should throw AccountNotFoundException when account can't be found during update")
-    void updateContactInformation_negative_1() {
-        //given
-        Long givenId = 1L;
-        Contact newInfo = Contact.builder().firstName("newFirstName").build();
-        given(accountRepository.findById(givenId)).willReturn(Optional.empty());
-
-        //when
-        Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
-
-        //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
-        assertThat(exception)
-            .isNotNull()
-            .isExactlyInstanceOf(AccountNotFoundException.class)
-            .hasMessageContaining(ExceptionMessage.ACCOUNT_NOT_FOUND);
-    }
-
-    @Test
-    @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
-    void updateContactInformation_negative_2() {
-        //given
-        Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
-            .isArchival(true)
-            .build();
-
-        Contact newInfo = Contact.builder().firstName("newFirstName").build();
-
-        given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
-
-        //when
-        Exception exception = catchException(() -> underTest.updateContactInformation(givenId, newInfo));
-
-        //then
-        then(accountRepository).should().findById(givenId);
-        then(accountRepository).shouldHaveNoMoreInteractions();
-
-        assertThat(exception)
-            .isNotNull()
-            .isExactlyInstanceOf(CantModifyArchivalAccountException.class)
-            .hasMessageContaining(ExceptionMessage.ACCOUNT_ARCHIVAL);
     }
 
     @Test

@@ -3,7 +3,6 @@ package pl.lodz.p.edu.shop.logic.service.api;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
-import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 
 import java.util.List;
@@ -17,8 +16,6 @@ public interface AccountManagementService {
     Account findById(Long id);
 
     Account create(Account account);
-
-    Account updateContactInformation(Long id, Contact newContactData);
 
     Account block(Long id);
 

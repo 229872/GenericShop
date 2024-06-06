@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.RequestScope;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
-import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.logic.service.api.AccountManagementService;
 
@@ -47,11 +46,6 @@ class AccountManagementServiceRetryHandler extends AbstractRetryHandler implemen
     @Override
     public Account create(Account account) {
         return repeatTransactionWhenTimeoutOccurred(() -> accountManagementService.create(account));
-    }
-
-    @Override
-    public Account updateContactInformation(Long id, Contact newContactData) {
-        return repeatTransactionWhenTimeoutOccurred(() -> accountManagementService.updateContactInformation(id, newContactData));
     }
 
     @Override
