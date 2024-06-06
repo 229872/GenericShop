@@ -97,38 +97,22 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
     })
   }
 
-  const sendBlockRequest = async (accountId: number) => {
-    try {
-      setLoading(true)
-      await blockAccount(accountId)
-      toast.success(t('manage_accounts.operation.success'))
+  const sendRequest = async (accountId: number, operation: 'block' | 'unblock' | 'archive') => {
+    const operationsMap = {
+      block: blockAccount,
+      unblock: unblockAccount,
+      archive: archiveAccount
+    };
 
-    } catch (e) {
-      handleAxiosException(e)
+    const operationFunction = operationsMap[operation];
 
-    } finally {
-      setLoading(false)
+    if (!operationFunction) {
+      throw new Error('Invalid operation');
     }
-  }
 
-  const sendUnBlockRequest = async (accountId: number) => {
     try {
       setLoading(true)
-      await unblockAccount(accountId)
-      toast.success(t('manage_accounts.operation.success'))
-
-    } catch (e) {
-      handleAxiosException(e)
-
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const sendArchiveRequest = async (accountId: number) => {
-    try {
-      setLoading(true)
-      await archiveAccount(accountId)
+      await operationFunction(accountId)
       toast.success(t('manage_accounts.operation.success'))
 
     } catch (e) {
@@ -142,9 +126,13 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
   const getButtonByAccountState = (accountState: string, accountId: number) => {
     switch (accountState) {
       case 'ACTIVE':
-        return <Button variant='contained' color='secondary' onClick={() => sendBlockRequest(accountId)}>{t('manage_accounts.button.block')}</Button>
+        return <Button variant='contained' color='secondary' onClick={() => sendRequest(accountId, 'block')}>
+          {t('manage_accounts.button.block')}
+        </Button>
       case 'BLOCKED':
-        return <Button variant='contained' color='primary' onClick={() => sendUnBlockRequest(accountId)}>{t('manage_accounts.button.unblock')}</Button>
+        return <Button variant='contained' color='primary' onClick={() => sendRequest(accountId, 'unblock')}>
+          {t('manage_accounts.button.unblock')}
+        </Button>
       default: 
         return
     }
@@ -158,7 +146,10 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
           getButtonByAccountState(account.state, account.id)
         }
         {
-          !account.archival && <Button variant='contained' color='primary' onClick={() => sendArchiveRequest(account.id)}>{t('manage_accounts.button.archive')}</Button>
+          !account.archival && 
+          <Button variant='contained' color='primary' onClick={() => sendRequest(account.id, 'archive')}>
+            {t('manage_accounts.button.archive')}
+          </Button>
         }
       </Stack>
     };
@@ -169,7 +160,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
       <Typography textAlign='center' variant='h3'>Manage accounts</Typography>
       <Stack direction='row' spacing={5} marginBottom='15px'>
         <Tooltip title={t('manage_accounts.button.refresh')} placement='top'>
-            <Button startIcon={<RefreshIcon />} color="primary" />
+            <Button startIcon={<RefreshIcon />} color='primary' onClick={() => loadAccounts()} />
         </Tooltip>
         <Button>Create Account</Button>
       </Stack>
