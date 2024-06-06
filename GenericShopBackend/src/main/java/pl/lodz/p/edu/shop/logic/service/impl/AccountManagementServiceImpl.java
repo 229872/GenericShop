@@ -1,6 +1,7 @@
 package pl.lodz.p.edu.shop.logic.service.impl;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -35,8 +36,8 @@ class AccountManagementServiceImpl extends AccountService implements AccountMana
     }
 
     @Override
-    public List<Account> findAll(Pageable pageable) {
-        return accountRepository.findAll(pageable).stream().toList();
+    public Page<Account> findAll(Pageable pageable) {
+        return accountRepository.findAll(pageable);
     }
 
     @Override

@@ -4,14 +4,15 @@ import jakarta.annotation.security.DenyAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.shop.presentation.adapter.api.AccountManagementServiceOperations;
-import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 
 import java.net.URI;
-import java.util.List;
 
 import static pl.lodz.p.edu.shop.config.security.role.RoleName.ADMIN;
 import static pl.lodz.p.edu.shop.presentation.controller.ApiRoot.API_ROOT;
@@ -27,8 +28,8 @@ public class AccountManagementController {
 
     @GetMapping
     @RolesAllowed(ADMIN)
-    ResponseEntity<List<AccountOutputDto>> getAll() {
-        List<AccountOutputDto> result = accountService.findAll();
+    ResponseEntity<Page<AccountOutputDto>> getAll(Pageable pageable) {
+        Page<AccountOutputDto> result = accountService.findAll(pageable);
 
         return ResponseEntity.ok(result);
     }

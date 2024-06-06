@@ -128,7 +128,7 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
           element={
             <ManageAccountsPage
               setLoading={setLoading}
-              style={{ margin: '15vh 15vw' }}
+              style={{ margin: '15vh 10vw' }}
             />
           }
           shouldRender={isAuthenticated && (activeRole === Role.ADMIN)}

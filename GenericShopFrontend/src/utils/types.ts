@@ -65,10 +65,6 @@ export enum Role {
   EMPLOYEE = 'EMPLOYEE'
 }
 
-export type HasId = {
-  id: number
-}
-
 export type Column<T> = {
   name: string
   dataProp: keyof T

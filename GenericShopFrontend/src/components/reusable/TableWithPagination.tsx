@@ -1,26 +1,27 @@
 import { Card, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, Typography } from "@mui/material"
-import { FormEvent, ReactNode, useState } from "react"
+import React, { FormEvent, ReactNode, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { Column, HasId } from "../../utils/types"
+import { Column } from "../../utils/types"
 import { AxiosResponse } from "axios"
 
-type TableWithPaginationProps<T extends HasId> = {
+type TableWithPaginationProps<T> = {
   columns: Column<T>[]
   data: T[]
   totalElements: number
-  getData: (pageNr: number, pageSize: number, sortBy: keyof T, direction: 'asc' | 'desc') => Promise<AxiosResponse<T[]>>
+  getData: (pageNr: number, pageSize: number, sortBy: keyof T, direction: 'asc' | 'desc') => Promise<AxiosResponse>
+  sortBy: keyof T
+  setSortBy: (column: keyof T) => void
   rowsPerPageOptions: number[]
   tableStyle?: React.CSSProperties
   headerStyle?: React.CSSProperties
   contentStyle?: React.CSSProperties
 }
 
-export default function TableWithPagination<T extends HasId>({ columns, data, totalElements, getData,
+export default function TableWithPagination<T>({ columns, data, sortBy, setSortBy, totalElements, getData,
    rowsPerPageOptions, tableStyle, headerStyle, contentStyle } : TableWithPaginationProps<T>) {
   const { t } = useTranslation();
   const [currentPage, setCurrentPage] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(10)
-  const [sortBy, setSortBy] = useState<keyof T>('id')
   const [direction, setDirection] = useState<'asc' | 'desc'>('asc')
 
   const changePage = (event: any, page: number): void => {
@@ -34,7 +35,7 @@ export default function TableWithPagination<T extends HasId>({ columns, data, to
     getData(currentPage, newPageSize, sortBy, direction)
   }
 
-  const handleSortChange = (event: FormEvent<HTMLSpanElement>, column: keyof T | 'id'): void => {
+  const handleSortChange = (event: FormEvent<HTMLSpanElement>, column: keyof T): void => {
     
     if (column === sortBy) {
       const newDirection = direction === 'asc' ? 'desc' : 'asc'
@@ -49,19 +50,28 @@ export default function TableWithPagination<T extends HasId>({ columns, data, to
     getData(currentPage, pageSize, sortBy, newDirection)
   }
 
-  const changeSortBy = (newSortBy: keyof T | 'id') => {
+  const changeSortBy = (newSortBy: keyof T) => {
     setSortBy(newSortBy)
     getData(currentPage, pageSize, newSortBy, direction)
   }
 
   const getPropertyAsNode = <T, K extends keyof T>(obj: T, key: K): ReactNode => {
     const value = obj[key];
-    if (typeof value === 'number' || typeof value === 'string') {
-      return value;
-    } else if ( typeof value === 'boolean') {
-      return value ? t('table.yes') : t('table.no')
-    } else {
-      return 'Not simple value'
+    switch (typeof value) {
+      case 'number':
+      case 'string':
+        return value;
+      case 'boolean':
+        return value ? t('table.yes') : t('table.no')
+      case 'object':
+        if (React.isValidElement(value)) {
+          return value;
+        } else if (Array.isArray(value)) {
+          return value.join(', ');
+        }
+        return 'Not simple value'
+      default:
+        return 'Not simple value'
     }
   }
 

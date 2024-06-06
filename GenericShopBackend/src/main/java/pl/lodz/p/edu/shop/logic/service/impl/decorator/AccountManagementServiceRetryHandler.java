@@ -2,6 +2,7 @@ package pl.lodz.p.edu.shop.logic.service.impl.decorator;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -34,7 +35,7 @@ class AccountManagementServiceRetryHandler extends AbstractRetryHandler implemen
     }
 
     @Override
-    public List<Account> findAll(Pageable pageable) {
+    public Page<Account> findAll(Pageable pageable) {
         return repeatTransactionWhenTimeoutOccurred(() -> accountManagementService.findAll(pageable));
     }
 

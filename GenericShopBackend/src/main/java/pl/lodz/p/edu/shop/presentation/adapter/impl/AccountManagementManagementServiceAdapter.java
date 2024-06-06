@@ -1,6 +1,7 @@
 package pl.lodz.p.edu.shop.presentation.adapter.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
@@ -29,10 +30,10 @@ class AccountManagementManagementServiceAdapter implements AccountManagementServ
     }
 
     @Override
-    public List<AccountOutputDto> findAll(Pageable pageable) {
-        return accountManagementService.findAll(pageable).stream()
-            .map(accountMapper::mapToAccountOutputDtoWithVersion)
-            .toList();
+    public Page<AccountOutputDto> findAll(Pageable pageable) {
+        return accountManagementService.findAll(pageable)
+            .map(accountMapper::mapToAccountOutputDtoWithVersion);
+
     }
 
     @Override

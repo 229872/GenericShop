@@ -120,7 +120,7 @@ const AccountOperationsCard = ({ t, account, setAccount, loadAccount, setLoading
         <Typography>{account?.email}</Typography>
 
         <Stack direction='row' spacing={3} sx={{ justifyContent: 'center', marginTop: 3 }}>
-          <Tooltip title={t('self.tooltipl.refresh')} placement='top'>
+          <Tooltip title={t('self.tooltip.refresh')} placement='top'>
             <Button startIcon={<RefreshIcon />} color="primary" onClick={loadAccount} />
           </Tooltip>
 

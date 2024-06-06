@@ -1,5 +1,6 @@
 package pl.lodz.p.edu.shop.presentation.adapter.api;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
@@ -11,7 +12,7 @@ public interface AccountManagementServiceOperations {
 
     List<AccountOutputDto> findAll();
 
-    List<AccountOutputDto> findAll(Pageable pageable);
+    Page<AccountOutputDto> findAll(Pageable pageable);
 
     AccountOutputDto findById(Long id);
 

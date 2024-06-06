@@ -1,5 +1,6 @@
 package pl.lodz.p.edu.shop.logic.service.api;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
@@ -11,7 +12,7 @@ public interface AccountManagementService {
 
     List<Account> findAll();
 
-    List<Account> findAll(Pageable pageable);
+    Page<Account> findAll(Pageable pageable);
 
     Account findById(Long id);
 
