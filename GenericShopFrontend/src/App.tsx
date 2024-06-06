@@ -18,7 +18,7 @@ function App() {
 
   return <>
     <Toaster position='top-left' richColors closeButton expand style={{ marginTop: '70px' }}  offset={'20px'} />
-    <NavigationBar setIsAuthenticated={setIsAuthenticated} setActiveRole={setActiveRole} />
+    <NavigationBar setIsAuthenticated={setIsAuthenticated} activeRole={activeRole} setActiveRole={setActiveRole} />
     <Progress loading={loading} />
     <RoutingWithSessionDialogs 
       setLoading={setLoading}

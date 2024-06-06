@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { isTokenExpired, logout } from "../../services/sessionService";
-import { AUTH_PATH, HOME_PATH, REGISTER_PATH, SELF_ACCOUNT_PATH } from "./Routing";
+import { AUTH_PATH, HOME_PATH, MANAGE_ACCOUNTS_PATH, REGISTER_PATH, SELF_ACCOUNT_PATH } from "./Routing";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LanguageIcon from '@mui/icons-material/Language';
 import PersonIcon from '@mui/icons-material/Person';
@@ -16,9 +16,10 @@ import { Role } from "../../utils/types";
 type NavigationBarProps = {
   setIsAuthenticated: (state: boolean) => void
   setActiveRole: (role: Role) => void
+  activeRole: Role
 }
 
-export default function NavigationBar({ setIsAuthenticated, setActiveRole } : NavigationBarProps ) {
+export default function NavigationBar({ setIsAuthenticated, setActiveRole, activeRole } : NavigationBarProps ) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [changeLanguageAnchorEl, setLanguageAnchorEl] = useState(null);
@@ -49,6 +50,7 @@ export default function NavigationBar({ setIsAuthenticated, setActiveRole } : Na
         <Typography variant='h5'>{t('app.name')}</Typography>
         <Stack direction='row' spacing={2}>
           <Button color='inherit' onClick={() => navigate(HOME_PATH)}>{t('nav.home')}</Button>
+          { activeRole === Role.ADMIN && <Button color='inherit' onClick={() => navigate(MANAGE_ACCOUNTS_PATH)}>{t('nav.manage.accounts')}</Button> }
           {isTokenExpired() ? (
             <>
               <Button color='inherit' onClick={() => navigate(AUTH_PATH)}>{t('nav.login')}</Button>

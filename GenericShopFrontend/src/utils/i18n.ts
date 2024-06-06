@@ -92,6 +92,7 @@ const resources = {
       'nav.language.english': 'English',
       'nav.account': 'My account',
       'nav.logout': 'Logout',
+      'nav.manage.accounts': 'Manage accounts',
 
       'authentication.please.login': 'Log In to continue',
       'authentication.login.not_valid': 'Login must starts with letter and then contains only letters and digits',
@@ -305,6 +306,7 @@ const resources = {
       'nav.language.english': 'Angielski',
       'nav.account': 'Moje konto',
       'nav.logout': 'Wyloguj się',
+      'nav.manage.accounts': 'Zarządzaj kontami',
 
       'authentication.please.login': 'Zaloguj się aby kontynuować',
       'authentication.login.not_valid': 'Login musi zaczynać się literą i dalej zawierać tylko litery i cyfry',
