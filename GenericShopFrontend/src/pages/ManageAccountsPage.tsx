@@ -1,4 +1,4 @@
-import { Box, Button, Card, Stack, Tooltip, Typography } from "@mui/material"
+import { Button, Stack, Tooltip, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import { BasicAccount, Column } from "../utils/types"
 import axios from "axios"
@@ -8,6 +8,7 @@ import handleAxiosException from "../services/apiService"
 import TableWithPagination from "../components/reusable/TableWithPagination"
 import { useTranslation } from "react-i18next"
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { toast } from 'sonner'
 
 type ManageAccountsPageProps = {
   setLoading: (value: boolean) => void
@@ -20,7 +21,6 @@ type AccountResponse = {
 }
 
 type AccountActions = {
-  edit: JSX.Element
   actions: JSX.Element
 }
 
@@ -41,7 +41,6 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
     { dataProp: 'lastName', name: t('manage_accounts.column.last_name') },
     { dataProp: 'state', name: t('manage_accounts.column.state') },
     { dataProp: 'roles', name: t('manage_accounts.column.roles') },
-    { dataProp: 'edit', name: t('manage_accounts.column.edit') },
     { dataProp: 'actions', name: t('manage_accounts.column.actions') }
   ]
   const rowsPerPageOptions = [ 5, 10, 15, 20 ]
@@ -74,12 +73,78 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
     })
   }
 
-  const getButtonByAccountState = (accountState: string) => {
+  const blockAccount = async (accountId: number) => {
+    return axios.put<BasicAccount>(`${environment.apiBaseUrl}/accounts/id/${accountId}/block`, null, {
+      headers: {
+        Authorization: `Bearer ${getJwtToken()}`
+      }
+    })
+  }
+
+  const unblockAccount = async (accountId: number) => {
+    return axios.put<BasicAccount>(`${environment.apiBaseUrl}/accounts/id/${accountId}/unblock`, null, {
+      headers: {
+        Authorization: `Bearer ${getJwtToken()}`
+      }
+    })
+  }
+
+  const archiveAccount = async (accountId: number) => {
+    return axios.put<BasicAccount>(`${environment.apiBaseUrl}/accounts/id/${accountId}/archive`, null, {
+      headers: {
+        Authorization: `Bearer ${getJwtToken()}`
+      }
+    })
+  }
+
+  const sendBlockRequest = async (accountId: number) => {
+    try {
+      setLoading(true)
+      await blockAccount(accountId)
+      toast.success(t('manage_accounts.operation.success'))
+
+    } catch (e) {
+      handleAxiosException(e)
+
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const sendUnBlockRequest = async (accountId: number) => {
+    try {
+      setLoading(true)
+      await unblockAccount(accountId)
+      toast.success(t('manage_accounts.operation.success'))
+
+    } catch (e) {
+      handleAxiosException(e)
+
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const sendArchiveRequest = async (accountId: number) => {
+    try {
+      setLoading(true)
+      await archiveAccount(accountId)
+      toast.success(t('manage_accounts.operation.success'))
+
+    } catch (e) {
+      handleAxiosException(e)
+
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getButtonByAccountState = (accountState: string, accountId: number) => {
     switch (accountState) {
       case 'ACTIVE':
-        return <Button variant='contained' color="secondary">{t('manage_accounts.button.block')}</Button>
+        return <Button variant='contained' color='secondary' onClick={() => sendBlockRequest(accountId)}>{t('manage_accounts.button.block')}</Button>
       case 'BLOCKED':
-        return <Button variant='contained' color="primary">{t('manage_accounts.button.unblock')}</Button>
+        return <Button variant='contained' color='primary' onClick={() => sendUnBlockRequest(accountId)}>{t('manage_accounts.button.unblock')}</Button>
       default: 
         return
     }
@@ -88,13 +153,12 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
   const createAccountWithButtons = (account: BasicAccount): BasicAccountWithActions => {
     return {
       ...account,
-      edit: <Button variant='contained' color="primary">{t('manage_accounts.button.edit')}</Button>,
       actions: <Stack direction='row' spacing={2}>
         {
-          getButtonByAccountState(account.state)
+          getButtonByAccountState(account.state, account.id)
         }
         {
-          !account.archival && <Button variant='contained' color="primary">{t('manage_accounts.button.archive')}</Button>
+          !account.archival && <Button variant='contained' color='primary' onClick={() => sendArchiveRequest(account.id)}>{t('manage_accounts.button.archive')}</Button>
         }
       </Stack>
     };

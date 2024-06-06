@@ -50,7 +50,6 @@ export default function NavigationBar({ setIsAuthenticated, setActiveRole, activ
         <Typography variant='h5'>{t('app.name')}</Typography>
         <Stack direction='row' spacing={2}>
           <Button color='inherit' onClick={() => navigate(HOME_PATH)}>{t('nav.home')}</Button>
-          { activeRole === Role.ADMIN && <Button color='inherit' onClick={() => navigate(MANAGE_ACCOUNTS_PATH)}>{t('nav.manage.accounts')}</Button> }
           {isTokenExpired() ? (
             <>
               <Button color='inherit' onClick={() => navigate(AUTH_PATH)}>{t('nav.login')}</Button>
@@ -59,6 +58,8 @@ export default function NavigationBar({ setIsAuthenticated, setActiveRole, activ
             </>
           ) : (
             <>
+              {activeRole === Role.ADMIN && <Button color='inherit' onClick={() => navigate(MANAGE_ACCOUNTS_PATH)}>{t('nav.manage.accounts')}</Button>}
+
               <IconButton color='inherit' size='large' onClick={(e: any) => setAccountAnchorEl(e.currentTarget)}>
                 <AccountCircleIcon fontSize='large' />
               </IconButton>
