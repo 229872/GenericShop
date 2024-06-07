@@ -45,15 +45,18 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
   ]
   const rowsPerPageOptions = [ 5, 10, 15, 20 ]
   const [totalElements, setTotalElements] = useState<number>(0)
+  const [currentPage, setCurrentPage] = useState<number>(0)
+  const [pageSize, setPageSize] = useState<number>(10)
+  const [direction, setDirection] = useState<'asc' | 'desc'>('asc')
 
   useEffect(() => {
-    loadAccounts()
+    loadAccounts(currentPage, pageSize, sortBy, direction)
   }, [])
 
-  const loadAccounts = async () => {
+  const loadAccounts = async (pageNr: number, pageSize: number, sortBy: keyof BasicAccountWithActions, direction: 'asc' | 'desc') => {
     try {
       setLoading(true)
-      const { data } = await getAccounts(0, 10, 'id', 'asc');
+      const { data } = await getAccounts(pageNr, pageSize, sortBy, direction);
       setAccounts(data.content)
       setTotalElements(data.totalElements)
 
@@ -160,7 +163,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
       <Typography textAlign='center' variant='h3'>Manage accounts</Typography>
       <Stack direction='row' spacing={5} marginBottom='15px'>
         <Tooltip title={t('manage_accounts.button.refresh')} placement='top'>
-            <Button startIcon={<RefreshIcon />} color='primary' onClick={() => loadAccounts()} />
+            <Button startIcon={<RefreshIcon />} color='primary' onClick={() => loadAccounts(currentPage, pageSize, sortBy, direction)} />
         </Tooltip>
         <Button>Create Account</Button>
       </Stack>
@@ -170,11 +173,17 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
         data={
           accounts.map(createAccountWithButtons)
         } 
+        getData={loadAccounts}
         totalElements={totalElements}
-        getData={getAccounts}
-        rowsPerPageOptions={rowsPerPageOptions}
         sortBy={sortBy}
         setSortBy={setSortBy}
+        rowsPerPageOptions={rowsPerPageOptions}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        direction={direction}
+        setDirection={setDirection}
         tableStyle={{ width: '100%' }}
       />
 

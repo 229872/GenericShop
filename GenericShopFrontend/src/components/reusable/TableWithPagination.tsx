@@ -1,5 +1,5 @@
 import { Card, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, Typography } from "@mui/material"
-import React, { FormEvent, ReactNode, useState } from "react"
+import React, { FormEvent, ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 import { Column } from "../../utils/types"
 import { AxiosResponse } from "axios"
@@ -7,22 +7,26 @@ import { AxiosResponse } from "axios"
 type TableWithPaginationProps<T> = {
   columns: Column<T>[]
   data: T[]
+  getData: (pageNr: number, pageSize: number, sortBy: keyof T, direction: 'asc' | 'desc') => Promise<AxiosResponse> | Promise<void>
   totalElements: number
-  getData: (pageNr: number, pageSize: number, sortBy: keyof T, direction: 'asc' | 'desc') => Promise<AxiosResponse>
   sortBy: keyof T
   setSortBy: (column: keyof T) => void
   rowsPerPageOptions: number[]
+  currentPage: number
+  setCurrentPage: (page: number) => void
+  pageSize: number
+  setPageSize: (pageSize: number) => void
+  direction: 'asc' | 'desc'
+  setDirection: (direction: 'asc' | 'desc') => void
   tableStyle?: React.CSSProperties
   headerStyle?: React.CSSProperties
   contentStyle?: React.CSSProperties
 }
 
-export default function TableWithPagination<T>({ columns, data, sortBy, setSortBy, totalElements, getData,
-   rowsPerPageOptions, tableStyle, headerStyle, contentStyle } : TableWithPaginationProps<T>) {
+export default function TableWithPagination<T>({ columns, data, getData, totalElements, sortBy, setSortBy, rowsPerPageOptions,
+  currentPage, setCurrentPage, pageSize, setPageSize, direction, setDirection, tableStyle, headerStyle, contentStyle } : TableWithPaginationProps<T>) {
+
   const { t } = useTranslation();
-  const [currentPage, setCurrentPage] = useState<number>(0)
-  const [pageSize, setPageSize] = useState<number>(10)
-  const [direction, setDirection] = useState<'asc' | 'desc'>('asc')
 
   const changePage = (event: any, page: number): void => {
     setCurrentPage(page)
