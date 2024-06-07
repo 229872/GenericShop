@@ -67,13 +67,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
   }
 
   const getAccounts = async (pageNr: number, pageSize: number, sortBy: keyof BasicAccountWithActions, direction: 'asc' | 'desc') => {
-    let sortedBy: string = sortBy;
-    if (sortBy === 'firstName' || sortBy === 'lastName') {
-      sortedBy = `contact.${sortBy}`
-    } else if (sortBy === 'archival') {
-      sortedBy = 'isArchival'
-    }
-    return axios.get<AccountResponse>(`${environment.apiBaseUrl}/accounts?page=${pageNr}&size=${pageSize}&sort=${sortedBy},${direction}`, {
+    return axios.get<AccountResponse>(`${environment.apiBaseUrl}/accounts?page=${pageNr}&size=${pageSize}&sort=${sortBy},${direction}`, {
       headers: {
         Authorization: `Bearer ${getJwtToken()}`
       }

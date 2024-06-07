@@ -2,7 +2,9 @@ package pl.lodz.p.edu.shop.presentation.adapter.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.logic.service.api.AccountManagementService;
@@ -30,7 +32,17 @@ class AccountManagementManagementServiceAdapter implements AccountManagementServ
 
     @Override
     public Page<AccountOutputDto> findAll(Pageable pageable) {
-        return accountManagementService.findAll(pageable)
+        List<Sort.Order> orders = pageable.getSort().stream()
+            .map(order -> switch (order.getProperty()) {
+                case "archival" -> new Sort.Order(order.getDirection(), "isArchival");
+                case "firstName" -> new Sort.Order(order.getDirection(), "contact.firstName");
+                case "lastName" -> new Sort.Order(order.getDirection(), "contact.lastName");
+                default -> order;
+            })
+            .toList();
+        Sort sort = Sort.by(orders);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        return accountManagementService.findAll(pageRequest)
             .map(accountMapper::mapToAccountOutputDtoWithoutVersion);
 
     }
