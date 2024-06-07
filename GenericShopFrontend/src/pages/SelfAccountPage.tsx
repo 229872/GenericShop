@@ -46,17 +46,13 @@ export default function SelfAccountPage({ setLoading, style } : SelfAccountPageP
     { label: 'self.postal_code', content: account?.address.postalCode ?? '-'}
   ];
   const accountStateData: GridItemData[] = [
-    { label: 'self.roles', content: account?.accountRoles.join(', ') ?? '-' },
-    { label: 'self.account_state', content: account?.accountState ?? '-' },
+    { label: 'self.roles', content: account?.accountRoles.map(role => t(`self.roles.value.${role}`)).join(', ') ?? '-' },
+    { label: 'self.account_state', content: t(`self.account_state.value.${account?.accountState}`) ?? '-' },
     { label: 'self.archival', content: t(account?.archival ? 'self.archival_true' : 'self.archival_false') }
   ];
-  let once = true;
 
   useEffect(() => {
-    if (once) {
-      loadAccount()
-      once = false;
-    }
+    loadAccount()
   }, [])
   
   const loadAccount = async () => {

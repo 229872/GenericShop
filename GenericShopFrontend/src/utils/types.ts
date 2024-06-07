@@ -37,8 +37,8 @@ export type Account = {
   firstName: string,
   lastName: string,
   address: Address,
-  accountState: string,
-  accountRoles: string[],
+  accountState: AccountState,
+  accountRoles: Role[],
   authLogs: AuthLogs
 }
 
@@ -49,7 +49,7 @@ export type BasicAccount = {
   email: string
   firstName: string
   lastName: string
-  accountState: string
+  accountState: AccountState
   accountRoles: Role[]
 }
 
@@ -63,6 +63,12 @@ export enum Role {
   CLIENT = 'CLIENT',
   ADMIN = 'ADMIN',
   EMPLOYEE = 'EMPLOYEE'
+}
+
+export enum AccountState {
+  BLOCKED = 'BLOCKED',
+  ACTIVE = 'ACTIVE',
+  NOT_VERIFIED = 'NOT_VERIFIED'
 }
 
 export type Column<T> = {

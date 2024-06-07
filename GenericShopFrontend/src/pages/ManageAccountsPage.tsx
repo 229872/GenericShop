@@ -147,6 +147,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
     return {
       ...account,
       accountState: t(`manage_accounts.value.${account.accountState}`),
+      accountRoles: account.accountRoles.map(role => t(`manage_accounts.value.${role}`))
     }
   }
 

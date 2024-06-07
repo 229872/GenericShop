@@ -118,7 +118,7 @@ export default function TableWithPagination<T>({ columns, data, getData, totalEl
             <TableBody>
               {
                 data && data.map((obj, key) => (
-                  <TableRow key={key}>
+                  <TableRow sx={{height: '70px'}} key={key}>
                     {
                       columns.map((col, key) => (
                         <TableCell key={key} sx={{...contentStyle}}>
