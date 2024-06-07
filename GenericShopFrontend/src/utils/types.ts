@@ -68,4 +68,5 @@ export enum Role {
 export type Column<T> = {
   name: string
   dataProp: keyof T
+  label: boolean
 }

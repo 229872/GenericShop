@@ -79,6 +79,22 @@ export default function TableWithPagination<T>({ columns, data, getData, totalEl
     }
   }
 
+  type SortLabelProps = {
+    column: Column<T>
+  }
+
+  function SortLabel({ column } : SortLabelProps) {
+    return (
+      <TableSortLabel
+        active={sortBy === column.dataProp}
+        direction={direction}
+        onClick={e => handleSortChange(e, column.dataProp)}
+      >
+        {column.name}
+      </TableSortLabel>
+    )
+  }
+
   if (data.length == 0) {
     return <Typography variant='h6'>{t('table.no_content')}</Typography>
   } else {
@@ -91,13 +107,9 @@ export default function TableWithPagination<T>({ columns, data, getData, totalEl
                 {
                   columns.map((column, key) => (
                     <TableCell key={key} sx={{ ...headerStyle }}>
-                      <TableSortLabel
-                        active={sortBy === column.dataProp}
-                        direction={direction}
-                        onClick={e => handleSortChange(e, column.dataProp)}
-                      >
-                        {column.name}
-                      </TableSortLabel>
+                      {
+                        column.label ? <SortLabel column={column} /> : column.name
+                      }
                     </TableCell>
                   ))
                 }

@@ -36,15 +36,15 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
   const [direction, setDirection] = useState<'asc' | 'desc'>('asc')
   const rowsPerPageOptions = [ 5, 10, 15, 20 ]
   const columns: Column<BasicAccountWithActions>[] = [
-    { dataProp: 'id', name: t('manage_accounts.column.id') },
-    { dataProp: 'archival', name: t('manage_accounts.column.archival') },
-    { dataProp: 'login', name: t('manage_accounts.column.login') },
-    { dataProp: 'email', name: t('manage_accounts.column.email') },
-    { dataProp: 'firstName', name: t('manage_accounts.column.first_name') },
-    { dataProp: 'lastName', name: t('manage_accounts.column.last_name') },
-    { dataProp: 'accountState', name: t('manage_accounts.column.state') },
-    { dataProp: 'accountRoles', name: t('manage_accounts.column.roles') },
-    { dataProp: 'actions', name: t('manage_accounts.column.actions') }
+    { dataProp: 'id', name: t('manage_accounts.column.id'), label: true },
+    { dataProp: 'archival', name: t('manage_accounts.column.archival'), label: true },
+    { dataProp: 'login', name: t('manage_accounts.column.login'), label: true },
+    { dataProp: 'email', name: t('manage_accounts.column.email'), label: true },
+    { dataProp: 'firstName', name: t('manage_accounts.column.first_name'), label: true },
+    { dataProp: 'lastName', name: t('manage_accounts.column.last_name'), label: true },
+    { dataProp: 'accountState', name: t('manage_accounts.column.state'), label: true },
+    { dataProp: 'accountRoles', name: t('manage_accounts.column.roles'), label: true },
+    { dataProp: 'actions', name: t('manage_accounts.column.actions'), label: false }
   ]
 
   useEffect(() => {
@@ -67,7 +67,13 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
   }
 
   const getAccounts = async (pageNr: number, pageSize: number, sortBy: keyof BasicAccountWithActions, direction: 'asc' | 'desc') => {
-    return axios.get<AccountResponse>(`${environment.apiBaseUrl}/accounts?page=${pageNr}&size=${pageSize}&sort=${sortBy},${direction}`, {
+    let sortedBy: string = sortBy;
+    if (sortBy === 'firstName' || sortBy === 'lastName') {
+      sortedBy = `contact.${sortBy}`
+    } else if (sortBy === 'archival') {
+      sortedBy = 'isArchival'
+    }
+    return axios.get<AccountResponse>(`${environment.apiBaseUrl}/accounts?page=${pageNr}&size=${pageSize}&sort=${sortedBy},${direction}`, {
       headers: {
         Authorization: `Bearer ${getJwtToken()}`
       }

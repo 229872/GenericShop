@@ -14,6 +14,8 @@ public interface AccountRepository {
 
     Page<Account> findAll(Pageable pageable);
 
+    Page<Account> findAllSortedByContactFirstName(Pageable pageable);
+
     Optional<Account> findById(Long id);
 
     Optional<Account> findByLogin(String login);
