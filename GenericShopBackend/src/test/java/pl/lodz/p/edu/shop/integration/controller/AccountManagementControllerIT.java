@@ -918,7 +918,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                 }
 
                 @Nested
-                @DisplayName("Account state")
+                @DisplayName("Account accountState")
                 class AccountState {
 
                     @ParameterizedTest
@@ -1052,7 +1052,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
 
             @ParameterizedTest
             @ValueSource(strings = {"not_verified", "NOT_VERIFIED", "Not_verified", "Not_VERIFIED"})
-            @DisplayName("Should return response with status 400 and body with exception message when given account state is NOT_VERIFIED")
+            @DisplayName("Should return response with status 400 and body with exception message when given account accountState is NOT_VERIFIED")
             void createAccount_should_return_bad_request_when_given_state_is_NOT_VERIFIED(String status) throws Exception {
                 //given
                 CreateAccountDto accountWithNotVerifiedStatus = TestData.getDefaultAccountCreateDtoBuilder()
@@ -1163,7 +1163,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                 resultActions.andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$.state", is("BLOCKED")));
+                    .andExpect(jsonPath("$.accountState", is("BLOCKED")));
             }
         }
 
@@ -1261,7 +1261,7 @@ public class AccountManagementControllerIT extends PostgresqlContainerSetup {
                 resultActions.andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$.state", is("ACTIVE")));
+                    .andExpect(jsonPath("$.accountState", is("ACTIVE")));
             }
         }
 

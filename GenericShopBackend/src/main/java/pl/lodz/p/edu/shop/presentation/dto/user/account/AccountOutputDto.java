@@ -17,8 +17,8 @@ public record AccountOutputDto(
     String firstName,
     String lastName,
     AddressOutputDto address,
-    String state,
-    List<String> roles,
+    String accountState,
+    List<String> accountRoles,
     AuthLogOutputDto authLogs
 ) {
 }

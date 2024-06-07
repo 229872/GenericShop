@@ -26,12 +26,15 @@ type AccountActions = {
 
 type BasicAccountWithActions = BasicAccount & AccountActions;
 
-
-
 export default function ManageAccountsPage({ setLoading, style } : ManageAccountsPageProps ) {
   const { t } = useTranslation()
   const [ accounts, setAccounts ] = useState<BasicAccount[]>([])
   const [ sortBy, setSortBy ] = useState<keyof BasicAccountWithActions>('id')
+  const [totalElements, setTotalElements] = useState<number>(0)
+  const [currentPage, setCurrentPage] = useState<number>(0)
+  const [pageSize, setPageSize] = useState<number>(10)
+  const [direction, setDirection] = useState<'asc' | 'desc'>('asc')
+  const rowsPerPageOptions = [ 5, 10, 15, 20 ]
   const columns: Column<BasicAccountWithActions>[] = [
     { dataProp: 'id', name: t('manage_accounts.column.id') },
     { dataProp: 'archival', name: t('manage_accounts.column.archival') },
@@ -39,15 +42,10 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
     { dataProp: 'email', name: t('manage_accounts.column.email') },
     { dataProp: 'firstName', name: t('manage_accounts.column.first_name') },
     { dataProp: 'lastName', name: t('manage_accounts.column.last_name') },
-    { dataProp: 'state', name: t('manage_accounts.column.state') },
-    { dataProp: 'roles', name: t('manage_accounts.column.roles') },
+    { dataProp: 'accountState', name: t('manage_accounts.column.state') },
+    { dataProp: 'accountRoles', name: t('manage_accounts.column.roles') },
     { dataProp: 'actions', name: t('manage_accounts.column.actions') }
   ]
-  const rowsPerPageOptions = [ 5, 10, 15, 20 ]
-  const [totalElements, setTotalElements] = useState<number>(0)
-  const [currentPage, setCurrentPage] = useState<number>(0)
-  const [pageSize, setPageSize] = useState<number>(10)
-  const [direction, setDirection] = useState<'asc' | 'desc'>('asc')
 
   useEffect(() => {
     loadAccounts(currentPage, pageSize, sortBy, direction)
@@ -146,7 +144,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
       ...account,
       actions: <Stack direction='row' spacing={2}>
         {
-          getButtonByAccountState(account.state, account.id)
+          getButtonByAccountState(account.accountState, account.id)
         }
         {
           !account.archival && 
@@ -170,9 +168,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
 
       <TableWithPagination 
         columns={columns}
-        data={
-          accounts.map(createAccountWithButtons)
-        } 
+        data={accounts.map(createAccountWithButtons)} 
         getData={loadAccounts}
         totalElements={totalElements}
         sortBy={sortBy}

@@ -65,7 +65,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     private JwtProperties verificationTokenProperties;
 
     @Test
-    @DisplayName("Should generate jwt auth token with login in subject, roles in claims and duration provided in property")
+    @DisplayName("Should generate jwt auth token with login in subject, accountRoles in claims and duration provided in property")
     void generateAuthToken_positive_1() {
         //given
         Account givenAccount = TestData.buildDefaultAccount();
@@ -87,7 +87,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
 
         //Roles
         Set<AccountRole> resultRoles = new HashSet<>(givenAccountRoles.size());
-        jsonNodeOf(payload).get("roles").iterator().forEachRemaining(jsonNode -> {
+        jsonNodeOf(payload).get("accountRoles").iterator().forEachRemaining(jsonNode -> {
             var accountRole = AccountRole.valueOf(jsonNode.asText());
             resultRoles.add(accountRole);
         });
@@ -174,7 +174,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
 
     @Test
     @SuppressWarnings("unchecked")
-    @DisplayName("Should validate and extract claims with login and roles from valid auth token")
+    @DisplayName("Should validate and extract claims with login and accountRoles from valid auth token")
     void validateAndExtractClaimsFromAuthToken_positive_1() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
@@ -191,7 +191,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
         assertThat(result.getSubject())
             .isEqualTo(givenLogin);
 
-        List<String> resultRoles = result.get("roles", List.class);
+        List<String> resultRoles = result.get("accountRoles", List.class);
         Set<AccountRole> resultAccountRoles = resultRoles.stream()
             .map(AccountRole::valueOf)
             .collect(Collectors.toSet());

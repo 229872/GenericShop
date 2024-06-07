@@ -46,8 +46,8 @@ export default function SelfAccountPage({ setLoading, style } : SelfAccountPageP
     { label: 'self.postal_code', content: account?.address.postalCode ?? '-'}
   ];
   const accountStateData: GridItemData[] = [
-    { label: 'self.roles', content: account?.roles.join(', ') ?? '-' },
-    { label: 'self.account_state', content: account?.state ?? '-' },
+    { label: 'self.roles', content: account?.accountRoles.join(', ') ?? '-' },
+    { label: 'self.account_state', content: account?.accountState ?? '-' },
     { label: 'self.archival', content: t(account?.archival ? 'self.archival_true' : 'self.archival_false') }
   ];
   let once = true;

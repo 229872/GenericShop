@@ -73,7 +73,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
     }
 
     @Test
-    @DisplayName("Should return jwt token with account login in subject and roles in claims when account can be found and credentials are correct")
+    @DisplayName("Should return jwt token with account login in subject and accountRoles in claims when account can be found and credentials are correct")
     @SuppressWarnings("unchecked")
     void authenticate_positive_1() {
         //given
@@ -96,7 +96,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
 
         Claims body = jwtService.validateAndExtractClaimsFromAuthToken(result.token());
         String login = body.getSubject();
-        List<String> roles = body.get("roles", List.class);
+        List<String> roles = body.get("accountRoles", List.class);
 
         assertThat(login)
             .isNotNull()

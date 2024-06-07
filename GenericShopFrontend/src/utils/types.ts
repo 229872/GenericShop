@@ -1,6 +1,6 @@
 export type TokenData = {
   sub: string;
-  roles: Role[];
+  accountRoles: Role[];
   exp: number,
   lang: string
 }
@@ -37,8 +37,8 @@ export type Account = {
   firstName: string,
   lastName: string,
   address: Address,
-  state: string,
-  roles: string[],
+  accountState: string,
+  accountRoles: string[],
   authLogs: AuthLogs
 }
 
@@ -49,8 +49,8 @@ export type BasicAccount = {
   email: string
   firstName: string
   lastName: string
-  state: string
-  roles: Role[]
+  accountState: string
+  accountRoles: Role[]
 }
 
 export type GridItemData = {

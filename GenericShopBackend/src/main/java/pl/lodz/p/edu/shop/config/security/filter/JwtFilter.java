@@ -43,7 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 String token = header.substring(BEARER.length());
                 Claims claims = jwtService.validateAndExtractClaimsFromAuthToken(token);
                 String login = claims.getSubject();
-                List<String> roles = claims.get("roles", List.class);
+                List<String> roles = claims.get("accountRoles", List.class);
 
                 authorizeWithRoles(login, roles);
             } catch (Exception e) {

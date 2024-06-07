@@ -174,7 +174,7 @@ class JwtServiceImpl implements JwtService {
             .map(AccountRole::toString)
             .toList();
 
-        var rolesEntry = Map.entry("roles", roles);
+        var rolesEntry = Map.entry("accountRoles", roles);
         var langEntry = Map.entry("lang", account.getLocale());
 
         return Map.ofEntries(rolesEntry, langEntry);

@@ -222,7 +222,7 @@ class AccountAccessServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should register new account with state NOT_VERIFIED and account role CLIENT")
+    @DisplayName("Should register new account with accountState NOT_VERIFIED and account role CLIENT")
     void register_positive_1() {
         //given
         HashSet<AccountRole> givenAccountRoles = new HashSet<>(Set.of(AccountRole.GUEST));

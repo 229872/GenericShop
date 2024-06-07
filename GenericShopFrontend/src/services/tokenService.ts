@@ -34,7 +34,7 @@ export const getExpirationTime = (token: string | null): number | null => {
 }
 
 export const getActiveRole = (token: string | null): Role => {
-  return decodeJwtToken(token)?.roles[0] ?? Role.GUEST
+  return decodeJwtToken(token)?.accountRoles[0] ?? Role.GUEST
 }
 
 
@@ -48,7 +48,7 @@ export const decodeJwtToken = (token: string | null): TokenData | null => {
 
     return {
       sub: decodedJwtToken.sub,
-      roles: decodedJwtToken.roles,
+      accountRoles: decodedJwtToken.accountRoles,
       exp: decodedJwtToken.exp,
       lang: decodedJwtToken.lang
     }
