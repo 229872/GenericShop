@@ -113,7 +113,11 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
 
     try {
       setLoading(true)
-      await operationFunction(accountId)
+      const { data } = await operationFunction(accountId)
+      const updatedAccounts: BasicAccount[] = accounts.map(acccount => 
+        acccount.id === accountId ? data : acccount
+      )
+      setAccounts(updatedAccounts)
       toast.success(t('manage_accounts.operation.success'))
 
     } catch (e) {
@@ -124,18 +128,25 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
     }
   }
 
-  const getButtonByAccountState = (accountState: string, accountId: number) => {
+  const getButtonByAccountState = (accountState: string, isArchival: boolean, accountId: number) => {
     switch (accountState) {
       case 'ACTIVE':
-        return <Button variant='contained' color='secondary' onClick={() => sendRequest(accountId, 'block')}>
+        return !isArchival ? <Button variant='contained' color='secondary' onClick={() => sendRequest(accountId, 'block')}>
           {t('manage_accounts.button.block')}
-        </Button>
+        </Button> : undefined
       case 'BLOCKED':
-        return <Button variant='contained' color='primary' onClick={() => sendRequest(accountId, 'unblock')}>
+        return !isArchival ? <Button variant='contained' color='primary' onClick={() => sendRequest(accountId, 'unblock')}>
           {t('manage_accounts.button.unblock')}
-        </Button>
+        </Button> : undefined
       default: 
         return
+    }
+  }
+
+  const translateAccountProps = (account: BasicAccountWithActions): BasicAccountWithActions => {
+    return {
+      ...account,
+      accountState: t(`manage_accounts.value.${account.accountState}`),
     }
   }
 
@@ -144,7 +155,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
       ...account,
       actions: <Stack direction='row' spacing={2}>
         {
-          getButtonByAccountState(account.accountState, account.id)
+          getButtonByAccountState(account.accountState, account.archival, account.id)
         }
         {
           !account.archival && 
@@ -155,20 +166,20 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
       </Stack>
     };
   };
-
+  
   return (
     <Stack sx={{...style}}>
-      <Typography textAlign='center' variant='h3'>Manage accounts</Typography>
+      <Typography textAlign='center' variant='h3'>{t('manage_accounts.title')}</Typography>
       <Stack direction='row' spacing={5} marginBottom='15px'>
         <Tooltip title={t('manage_accounts.button.refresh')} placement='top'>
             <Button startIcon={<RefreshIcon />} color='primary' onClick={() => loadAccounts(currentPage, pageSize, sortBy, direction)} />
         </Tooltip>
-        <Button>Create Account</Button>
+        <Button>{t('manage_accounts.button.create_account')}</Button>
       </Stack>
 
       <TableWithPagination 
         columns={columns}
-        data={accounts.map(createAccountWithButtons)} 
+        data={accounts.map(createAccountWithButtons).map(translateAccountProps)} 
         getData={loadAccounts}
         totalElements={totalElements}
         sortBy={sortBy}

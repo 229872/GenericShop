@@ -73,9 +73,9 @@ export default function TableWithPagination<T>({ columns, data, getData, totalEl
         } else if (Array.isArray(value)) {
           return value.join(', ');
         }
-        return 'Not simple value'
+        return 
       default:
-        return 'Not simple value'
+        return 
     }
   }
 
