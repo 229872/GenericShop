@@ -1,6 +1,6 @@
 import { CSSProperties, Dispatch, SetStateAction, useEffect, useState } from "react"
 import { AccountState, Role } from "../../utils/types"
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material"
+import { Autocomplete, Button, Dialog, DialogActions, DialogContent, Grid, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material"
 import { useTranslation } from "react-i18next"
 import axios from "axios"
 import { environment, regex } from "../../utils/constants"
@@ -12,6 +12,17 @@ import { TFunction } from "i18next"
 import { Control, Controller, FormState, UseFormRegister, UseFormWatch, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import VisibilityButton from "../reusable/VisibilityButton"
+
+enum CreateAccountState  {
+  ACTIVE = 'ACTIVE',
+  BLOCKED = 'BLOCKED'
+}
+
+enum CreateAccountRole {
+  CLIENT = 'CLIENT',
+  ADMIN = 'ADMIN',
+  EMPLOYEE = 'EMPLOYEE'
+}
 
 type CreateAccountDialogProps = {
   open: boolean
@@ -124,8 +135,8 @@ const step1Schema = z.object({
   email: z.string().email('create_account.step.1.error.email'),
   password: z.string().regex(regex.PASSWORD, 'create_account.step.1.error.password'),
   locale: z.enum(environment.supportedLanguages as readonly [string, ...string[]], { message: 'create_account.step.1.error.language'}),
-  accountState: z.nativeEnum(AccountState, { message: 'create_account.step.1.error.account_state'}),
-  role: z.nativeEnum(Role, { message: 'create_account.step.1.error.account_role'})
+  accountState: z.nativeEnum(CreateAccountState, { message: 'create_account.step.1.error.account_state'}),
+  role: z.nativeEnum(CreateAccountRole, { message: 'create_account.step.1.error.account_role'})
 });
 
 type CreateAccountStep1 = z.infer<typeof step1Schema>;
@@ -228,11 +239,11 @@ function Step1({ t, register, formState, control, setIsStep1Valid, watch }: Step
             control={control}
             render={({ field }) => (
               <Autocomplete
-                options={Object.values(AccountState)}
+                options={Object.values(CreateAccountState)}
                 sx={fieldStyleForStep1}
                 onChange={(e, value) => field.onChange(value)}
                 isOptionEqualToValue={(option: any, value: any) => option.value === value.value}
-                value={Object.values(AccountState).find(option => option === field.value) || ''}
+                value={Object.values(CreateAccountState).find(option => option === field.value) || ''}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -253,11 +264,11 @@ function Step1({ t, register, formState, control, setIsStep1Valid, watch }: Step
             control={control}
             render={({ field }) => (
               <Autocomplete
-                options={Object.values(Role)}
+                options={Object.values(CreateAccountRole)}
                 sx={fieldStyleForStep1}
                 onChange={(e, value) => field.onChange(value)}
                 isOptionEqualToValue={(option: any, value: any) => option.value === value.value}
-                value={Object.values(Role).find(option => option === field.value) || ''}
+                value={Object.values(CreateAccountRole).find(option => option === field.value) || ''}
                 renderInput={(params) => (
                   <TextField
                     {...params}
