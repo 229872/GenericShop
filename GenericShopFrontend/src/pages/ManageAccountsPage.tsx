@@ -11,6 +11,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import { toast } from 'sonner'
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AccountViewDialog from "../components/singleuse/AccountViewDialog"
+import CreateAccountDialog from "../components/singleuse/CreateAccountDialog"
 
 type ManageAccountsPageProps = {
   setLoading: (value: boolean) => void
@@ -37,6 +38,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
   const [ pageSize, setPageSize ] = useState<number>(10)
   const [ direction, setDirection ] = useState<'asc' | 'desc'>('asc')
   const [ visibleAccountId, setVisibleAccountId ] = useState<number | undefined>(undefined)
+  const [ visibleCreateAccountDialog, setVisibleCreateAccountDialog ] = useState<boolean>(false)
   const rowsPerPageOptions = [ 5, 10, 15, 20 ]
   const columns: Column<BasicAccountWithActions>[] = [
     { dataProp: 'id', name: t('manage_accounts.column.id'), label: true },
@@ -185,7 +187,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
         <Tooltip title={t('manage_accounts.button.refresh')} placement='top'>
             <Button startIcon={<RefreshIcon />} color='primary' onClick={() => loadAccounts(currentPage, pageSize, sortBy, direction)} />
         </Tooltip>
-        <Button>{t('manage_accounts.button.create_account')}</Button>
+        <Button onClick={() => setVisibleCreateAccountDialog(true)}>{t('manage_accounts.button.create_account')}</Button>
       </Stack>
 
       <TableWithPagination 
@@ -210,6 +212,12 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
         setLoading={setLoading}
         open={Boolean(visibleAccountId)}
         onClose={() => setVisibleAccountId(undefined)}
+      />
+
+      <CreateAccountDialog
+        setLoading={setLoading}
+        open={visibleCreateAccountDialog}
+        onClose={() => setVisibleCreateAccountDialog(false)}
       />
 
     </Stack>

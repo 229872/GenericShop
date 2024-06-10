@@ -62,9 +62,9 @@ export default function AccountViewDialog({ accountId, open, onClose, setLoading
 
   const sendAccountRequest = async (id: number) => {
     try {
+      setLoading(true)
       const { data } = await getAccount(id);
       setAccount(data)
-      setLoading(true)
 
     } catch (e) {
       onClose()
