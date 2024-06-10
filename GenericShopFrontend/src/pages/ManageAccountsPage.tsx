@@ -1,4 +1,4 @@
-import { Button, Stack, Tooltip, Typography } from "@mui/material"
+import { Button, IconButton, Stack, Tooltip, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import { BasicAccount, Column } from "../utils/types"
 import axios from "axios"
@@ -9,6 +9,8 @@ import TableWithPagination from "../components/reusable/TableWithPagination"
 import { useTranslation } from "react-i18next"
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { toast } from 'sonner'
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import AccountViewDialog from "../components/singleuse/AccountViewDialog"
 
 type ManageAccountsPageProps = {
   setLoading: (value: boolean) => void
@@ -30,10 +32,11 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
   const { t } = useTranslation()
   const [ accounts, setAccounts ] = useState<BasicAccount[]>([])
   const [ sortBy, setSortBy ] = useState<keyof BasicAccountWithActions>('id')
-  const [totalElements, setTotalElements] = useState<number>(0)
-  const [currentPage, setCurrentPage] = useState<number>(0)
-  const [pageSize, setPageSize] = useState<number>(10)
-  const [direction, setDirection] = useState<'asc' | 'desc'>('asc')
+  const [ totalElements, setTotalElements ] = useState<number>(0)
+  const [ currentPage, setCurrentPage ] = useState<number>(0)
+  const [ pageSize, setPageSize ] = useState<number>(10)
+  const [ direction, setDirection ] = useState<'asc' | 'desc'>('asc')
+  const [ visibleAccountId, setVisibleAccountId ] = useState<number | undefined>(undefined)
   const rowsPerPageOptions = [ 5, 10, 15, 20 ]
   const columns: Column<BasicAccountWithActions>[] = [
     { dataProp: 'id', name: t('manage_accounts.column.id'), label: true },
@@ -156,6 +159,13 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
       ...account,
       actions: <Stack direction='row' spacing={2}>
         {
+          <Tooltip title={t('show.more')} placement='top'>
+            <IconButton onClick={() => setVisibleAccountId(account.id)}>
+              <VisibilityIcon />
+            </IconButton>
+          </Tooltip>
+        }
+        {
           getButtonByAccountState(account.accountState, account.archival, account.id)
         }
         {
@@ -193,6 +203,13 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
         direction={direction}
         setDirection={setDirection}
         tableStyle={{ width: '100%' }}
+      />
+      
+      <AccountViewDialog
+        accountId={visibleAccountId}
+        setLoading={setLoading}
+        open={Boolean(visibleAccountId)}
+        onClose={() => setVisibleAccountId(undefined)}
       />
 
     </Stack>
