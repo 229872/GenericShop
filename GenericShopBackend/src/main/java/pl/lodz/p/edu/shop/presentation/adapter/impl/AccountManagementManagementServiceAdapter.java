@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
+import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.logic.service.api.AccountManagementService;
 import pl.lodz.p.edu.shop.presentation.adapter.api.AccountManagementServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
@@ -80,16 +81,19 @@ class AccountManagementManagementServiceAdapter implements AccountManagementServ
 
     @Override
     public AccountOutputDto addRole(Long id, String newRole) {
-        return null;
+        Account account = accountManagementService.addRole(id, AccountRole.valueOf(newRole));
+        return accountMapper.mapToAccountOutputDtoWithoutVersion(account);
     }
 
     @Override
     public AccountOutputDto removeRole(Long id, String roleForRemoval) {
-        return null;
+        Account account = accountManagementService.removeRole(id, AccountRole.valueOf(roleForRemoval));
+        return accountMapper.mapToAccountOutputDtoWithoutVersion(account);
     }
 
     @Override
     public AccountOutputDto changeRole(Long id, String newRole) {
-        return null;
+        Account account = accountManagementService.changeRole(id, AccountRole.valueOf(newRole));
+        return accountMapper.mapToAccountOutputDtoWithoutVersion(account);
     }
 }

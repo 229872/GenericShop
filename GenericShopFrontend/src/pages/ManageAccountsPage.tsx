@@ -1,6 +1,6 @@
-import { Button, IconButton, Stack, Tooltip, Typography } from "@mui/material"
+import { Button, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Stack, Tooltip, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
-import { BasicAccount, Column } from "../utils/types"
+import { AuthenticatedAccountRole, BasicAccount, Column, Role } from "../utils/types"
 import axios from "axios"
 import { environment } from "../utils/constants"
 import { getJwtToken } from "../services/tokenService"
@@ -12,6 +12,13 @@ import { toast } from 'sonner'
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AccountViewDialog from "../components/singleuse/AccountViewDialog"
 import CreateAccountDialog from "../components/singleuse/CreateAccountDialog"
+import EditIcon from '@mui/icons-material/Edit';
+import ForwardIcon from '@mui/icons-material/Forward';
+import ClearIcon from '@mui/icons-material/Clear';
+import AddIcon from '@mui/icons-material/Add';
+import ChangeAccountRoleDialog from "../components/singleuse/ChangeRoleAccountDialog"
+import AddAccountRoleDialog from "../components/singleuse/AddAccountRoleDialog"
+
 
 type ManageAccountsPageProps = {
   setLoading: (value: boolean) => void
@@ -29,6 +36,10 @@ type AccountActions = {
 
 type BasicAccountWithActions = BasicAccount & AccountActions;
 
+type RoleData = {
+  role: AuthenticatedAccountRole
+}
+
 export default function ManageAccountsPage({ setLoading, style } : ManageAccountsPageProps ) {
   const { t } = useTranslation()
   const [ accounts, setAccounts ] = useState<BasicAccount[]>([])
@@ -39,6 +50,10 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
   const [ direction, setDirection ] = useState<'asc' | 'desc'>('asc')
   const [ visibleAccountId, setVisibleAccountId ] = useState<number | undefined>(undefined)
   const [ visibleCreateAccountDialog, setVisibleCreateAccountDialog ] = useState<boolean>(false)
+  const [ editAccountAnchorEl, setEditAccountAnchorEl ] = useState(null);
+  const [ editAccountData, setEditAccountData ] = useState<BasicAccount | undefined>(undefined);
+  const [ visibleChangeRoleDialog, setVisibleChangeRoleDialog ] = useState<AuthenticatedAccountRole | undefined>(undefined);
+  const [ visibleAddRoleDialog, setVisibleAddRoleDialog ] = useState<AuthenticatedAccountRole[]>([]);
   const rowsPerPageOptions = [ 5, 10, 15, 20 ]
   const columns: Column<BasicAccountWithActions>[] = [
     { dataProp: 'id', name: t('manage_accounts.column.id'), label: true },
@@ -103,7 +118,31 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
     })
   }
 
-  const sendRequest = async (accountId: number, operation: 'block' | 'unblock' | 'archive') => {
+  const addRole = async (accountId: number, newRole: RoleData) => {
+    return axios.put(`${environment.apiBaseUrl}/accounts/id/${accountId}/role/add`, newRole, {
+      headers: {
+        Authorization: `Bearer ${getJwtToken()}`
+      }
+    })
+  }
+
+  const removeRole = async (accountId: number, roleForRemoval: RoleData) => {
+    return axios.put(`${environment.apiBaseUrl}/accounts/id/${accountId}/role/remove`, roleForRemoval, {
+      headers: {
+        Authorization: `Bearer ${getJwtToken()}`
+      }
+    })
+  }
+
+  const changeRole = async (accountId: number, newRole: RoleData) => {
+    return axios.put(`${environment.apiBaseUrl}/accounts/id/${accountId}/role/change`, newRole, {
+      headers: {
+        Authorization: `Bearer ${getJwtToken()}`
+      }
+    })
+  }
+
+  const sendChangeStateRequest = async (accountId: number, operation: 'block' | 'unblock' | 'archive') => {
     const operationsMap = {
       block: blockAccount,
       unblock: unblockAccount,
@@ -133,14 +172,56 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
     }
   }
 
+  const sendEditRolesRequest = async (accountId: number, role: RoleData, operation: 'addRole' | 'removeRole' | 'changeRole') => {
+    const operationsMap = {
+      addRole: addRole,
+      removeRole: removeRole,
+      changeRole: changeRole
+    };
+
+    const operationFunction = operationsMap[operation];
+
+    if (!operationFunction) {
+      throw new Error('Invalid operation');
+    }
+
+    try {
+      setLoading(true)
+      const { data } = await operationFunction(accountId, role)
+      const updatedAccounts: BasicAccount[] = accounts.map(acccount => 
+        acccount.id === accountId ? data : acccount
+      )
+      setAccounts(updatedAccounts)
+      toast.success(t('manage_accounts.operation.success'))
+
+    } catch (e) {
+      handleAxiosException(e)
+
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const changeRoleOnValid = async (data: RoleData) => {
+    editAccountData?.id && await sendEditRolesRequest(editAccountData.id, data, 'changeRole')
+    setVisibleChangeRoleDialog(undefined)
+    setEditAccountAnchorEl(null)
+  }
+
+  const addRoleOnValid = async (data: RoleData) => {
+    editAccountData?.id && await sendEditRolesRequest(editAccountData.id, data, 'addRole')
+    setVisibleAddRoleDialog([])
+    setEditAccountAnchorEl(null)
+  }
+
   const getButtonByAccountState = (accountState: string, isArchival: boolean, accountId: number) => {
     switch (accountState) {
       case 'ACTIVE':
-        return !isArchival ? <Button variant='contained' color='secondary' onClick={() => sendRequest(accountId, 'block')}>
+        return !isArchival ? <Button variant='contained' color='secondary' onClick={() => sendChangeStateRequest(accountId, 'block')}>
           {t('manage_accounts.button.block')}
         </Button> : undefined
       case 'BLOCKED':
-        return !isArchival ? <Button variant='contained' color='primary' onClick={() => sendRequest(accountId, 'unblock')}>
+        return !isArchival ? <Button variant='contained' color='primary' onClick={() => sendChangeStateRequest(accountId, 'unblock')}>
           {t('manage_accounts.button.unblock')}
         </Button> : undefined
       default: 
@@ -161,18 +242,30 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
       ...account,
       actions: <Stack direction='row' spacing={2}>
         {
-          <Tooltip title={t('show.more')} placement='top'>
+          <Tooltip title={t('manage_account.tooltip.show_more')} placement='top'>
             <IconButton onClick={() => setVisibleAccountId(account.id)}>
               <VisibilityIcon />
             </IconButton>
           </Tooltip>
         }
         {
+          !account.archival && (
+            <Tooltip title={t('manage_account.tooltip.edit')} placement='top'>
+              <IconButton onClick={(e: any) => {
+                setEditAccountData(account)
+                setEditAccountAnchorEl(e.currentTarget)
+              }}>
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+          )
+        }
+        {
           getButtonByAccountState(account.accountState, account.archival, account.id)
         }
         {
           !account.archival && 
-          <Button variant='contained' color='primary' onClick={() => sendRequest(account.id, 'archive')}>
+          <Button variant='contained' color='primary' onClick={() => sendChangeStateRequest(account.id, 'archive')}>
             {t('manage_accounts.button.archive')}
           </Button>
         }
@@ -219,6 +312,72 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
         open={visibleCreateAccountDialog}
         onClose={() => setVisibleCreateAccountDialog(false)}
       />
+
+      <ChangeAccountRoleDialog
+        currentRole={visibleChangeRoleDialog}
+        open={Boolean(visibleChangeRoleDialog)}
+        onClose={() => setVisibleChangeRoleDialog(undefined)}
+        onValid={changeRoleOnValid}
+      />
+
+      <AddAccountRoleDialog
+        currentRoles={visibleAddRoleDialog}
+        open={visibleAddRoleDialog.length != 0}
+        onClose={() => setVisibleAddRoleDialog([])}
+        onValid={addRoleOnValid}
+      />
+
+      <Menu id='account-menu'
+        anchorEl={editAccountAnchorEl}
+        keepMounted
+        open={Boolean(editAccountAnchorEl)}
+        onClose={() => {
+          setEditAccountAnchorEl(null)
+          setEditAccountData(undefined)
+        }}
+      >
+        {
+          editAccountData?.accountRoles
+            .filter((role) : role is Exclude<Role, Role.GUEST> => role !== Role.GUEST)
+            .map((role, key) => {
+              if (editAccountData.accountRoles.length > 1) {
+                return (
+                  <MenuItem key={key} onClick={() => {
+                    sendEditRolesRequest(editAccountData.id, { role: role as unknown as AuthenticatedAccountRole }, 'removeRole')
+                    setEditAccountAnchorEl(null)
+                  }}>
+                    <ListItemIcon>
+                      <ClearIcon />
+                    </ListItemIcon>
+                    <ListItemText>{t('manage_account.remove_role')} {t(`manage_accounts.value.${role}`)}</ListItemText>
+                  </MenuItem>
+                )
+              } else if (editAccountData.accountRoles.length === 1 && editAccountData.accountRoles[0] !== Role.GUEST) {
+                return (
+                  <MenuItem key={key} onClick={() => {
+                    setVisibleChangeRoleDialog(role as unknown as AuthenticatedAccountRole)
+                    setEditAccountAnchorEl(null)
+                  }}>
+                    <ListItemIcon onClick={() => setVisibleChangeRoleDialog(role as unknown as AuthenticatedAccountRole)}>
+                      <ForwardIcon />
+                    </ListItemIcon>
+                    <ListItemText>{t('manage_account.change_role')} {t(`manage_accounts.value.${role}`)}</ListItemText>
+                  </MenuItem>
+                )
+              }
+            })
+        }
+        {
+          editAccountData && editAccountData.accountRoles.length === 1 && editAccountData.accountRoles[0] !== Role.GUEST && editAccountData.accountRoles[0] !== Role.ADMIN && (
+            <MenuItem onClick={() => setVisibleAddRoleDialog(editAccountData.accountRoles as unknown as AuthenticatedAccountRole[])}>
+              <ListItemIcon>
+                <AddIcon />
+              </ListItemIcon>
+              <ListItemText>{t('manage_accounts.add_role.title')}</ListItemText>
+            </MenuItem>
+          )
+        }
+      </Menu>
 
     </Stack>
   )

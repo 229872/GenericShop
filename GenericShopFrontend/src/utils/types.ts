@@ -71,6 +71,17 @@ export enum AccountState {
   NOT_VERIFIED = 'NOT_VERIFIED'
 }
 
+export enum AuthenticatedAccountState  {
+  ACTIVE = 'ACTIVE',
+  BLOCKED = 'BLOCKED'
+}
+
+export enum AuthenticatedAccountRole {
+  CLIENT = 'CLIENT',
+  ADMIN = 'ADMIN',
+  EMPLOYEE = 'EMPLOYEE'
+}
+
 export type Column<T> = {
   name: string
   dataProp: keyof T

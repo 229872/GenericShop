@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.shop.presentation.adapter.api.AccountManagementServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountRoleDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 
 import java.net.URI;
@@ -70,6 +71,30 @@ public class AccountManagementController {
     @RolesAllowed(ADMIN)
     ResponseEntity<AccountOutputDto> archiveAccount(@PathVariable Long id) {
         AccountOutputDto result = accountService.archive(id);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/id/{id}/role/add")
+    @RolesAllowed(ADMIN)
+    ResponseEntity<AccountOutputDto> addRole(@PathVariable Long id, @RequestBody @Valid AccountRoleDto roleDto) {
+        AccountOutputDto result = accountService.addRole(id, roleDto.role());
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/id/{id}/role/remove")
+    @RolesAllowed(ADMIN)
+    ResponseEntity<AccountOutputDto> removeRole(@PathVariable Long id, @RequestBody @Valid AccountRoleDto roleDto) {
+        AccountOutputDto result = accountService.removeRole(id, roleDto.role());
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/id/{id}/role/change")
+    @RolesAllowed(ADMIN)
+    ResponseEntity<AccountOutputDto> changeExistingRole(@PathVariable Long id, @RequestBody @Valid AccountRoleDto roleDto) {
+        AccountOutputDto result = accountService.changeRole(id, roleDto.role());
 
         return ResponseEntity.ok(result);
     }
