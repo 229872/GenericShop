@@ -7,7 +7,7 @@ import lombok.experimental.SuperBuilder;
 import pl.lodz.p.edu.shop.dataaccess.model.embeddable.AuthLogs;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
-import pl.lodz.p.edu.shop.dataaccess.model.superclass.AbstractEntity;
+import pl.lodz.p.edu.shop.dataaccess.model.superclass.ArchivableEntity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,7 +21,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "accounts")
-public class Account extends AbstractEntity {
+public class Account extends ArchivableEntity {
 
     @EqualsAndHashCode.Include
     @Column(nullable = false, updatable = false, unique = true)
@@ -54,7 +54,4 @@ public class Account extends AbstractEntity {
     @Embedded
     private AuthLogs authLogs = new AuthLogs();
 
-    public Long getSumOfVersions() {
-        return getVersion() + contact.getVersion() + contact.getAddress().getVersion();
-    }
 }
