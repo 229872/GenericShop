@@ -1,22 +1,22 @@
-package pl.lodz.p.edu.shop.dataaccess.repository.api;
+package pl.lodz.p.edu.shop.logic.service.api;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface ProductRepository {
+public interface ProductService {
 
     List<Product> findAll();
 
     Page<Product> findAll(Pageable pageable);
 
-    Optional<Product> findById(Long id);
+    Product findById(Long id);
 
-    Product save(Product product);
+    Product create(Product product);
 
-    void flush();
+    Product update(Long id, Product newProduct);
 
+    Product archive(Long id);
 }

@@ -49,4 +49,8 @@ public final class ExceptionMessage {
         public static final String ACCOUNT_POSTAL_CODE_WRONG = "exception.validation.account.address.postal_code.wrong";
         public static final String LOGIN_WRONG = "exception.validation.login.wrong";
     }
+
+    public static class Orders {
+        public static final String PRODUCT_NOT_FOUND = "exception.product.not_found";
+    }
 }
