@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { isTokenExpired, logout } from "../../services/sessionService";
-import { AUTH_PATH, HOME_PATH, MANAGE_ACCOUNTS_PATH, REGISTER_PATH, SELF_ACCOUNT_PATH } from "./Routing";
+import { AUTH_PATH, HOME_PATH, MANAGE_ACCOUNTS_PATH, MANAGE_PRODUCTS_PATH, REGISTER_PATH, SELF_ACCOUNT_PATH } from "./Routing";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LanguageIcon from '@mui/icons-material/Language';
 import PersonIcon from '@mui/icons-material/Person';
@@ -59,6 +59,7 @@ export default function NavigationBar({ setIsAuthenticated, setActiveRole, activ
           ) : (
             <>
               {activeRole === Role.ADMIN && <Button color='inherit' onClick={() => navigate(MANAGE_ACCOUNTS_PATH)}>{t('nav.manage.accounts')}</Button>}
+              {activeRole === Role.EMPLOYEE && <Button color='inherit' onClick={() => navigate(MANAGE_PRODUCTS_PATH)}>{t('nav.manage.products')}</Button>}
 
               <IconButton color='inherit' size='large' onClick={(e: any) => setAccountAnchorEl(e.currentTarget)}>
                 <AccountCircleIcon fontSize='large' />

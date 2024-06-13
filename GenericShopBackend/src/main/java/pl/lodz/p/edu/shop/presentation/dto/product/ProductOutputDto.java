@@ -9,7 +9,7 @@ import java.util.Set;
 public record ProductOutputDto(
     Long id,
     String version,
-    Boolean isArchival,
+    Boolean archival,
     String name,
     BigDecimal price,
     Integer quantity,

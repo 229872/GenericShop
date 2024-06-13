@@ -2,7 +2,9 @@ package pl.lodz.p.edu.shop.presentation.adapter.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 import pl.lodz.p.edu.shop.logic.service.api.ProductService;
@@ -30,7 +32,14 @@ public class ProductServiceAdapter implements ProductServiceOperations {
 
     @Override
     public Page<ProductOutputDto> findAll(Pageable pageable) {
-        return productService.findAll(pageable)
+        List<Sort.Order> orders = pageable.getSort().stream()
+            .map(order -> order.getProperty().equals("archival") ?
+                new Sort.Order(order.getDirection(), "isArchival") :
+                order)
+            .toList();
+        Sort sort = Sort.by(orders);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+        return productService.findAll(pageRequest)
             .map(productMapper::mapToProductOutputDtoWithoutVersion);
     }
 

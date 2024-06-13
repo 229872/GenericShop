@@ -53,6 +53,24 @@ export type BasicAccount = {
   accountRoles: Role[]
 }
 
+export type BasicProduct = {
+  id: number
+  archival: boolean
+  name: string
+  price: number
+  quantity: number
+  imageUrl: string
+}
+
+export type BasicProductWithFixedPrice = {
+  id: number
+  archival: boolean
+  name: string
+  price: string
+  quantity: number
+  imageUrl: string
+}
+
 export type GridItemData = {
   label: string
   content: string | number

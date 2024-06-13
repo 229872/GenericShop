@@ -10,6 +10,7 @@ import SelfAccountPage from "../../pages/SelfAccountPage";
 import ProtectedElement from "./ProtectedElement";
 import { Role } from "../../utils/types";
 import ManageAccountsPage from "../../pages/ManageAccountsPage";
+import ManageProductsPage from "../../pages/ManageProductsPage";
 
 export const ROOT_PATH = '/'
 export const HOME_PATH = '/home'
@@ -21,6 +22,7 @@ export const RESET_PASSWORD_PATH = '/auth/reset-password'
 export const SELF_ACCOUNT_PATH = '/self'
 export const NOT_FOUND_PATH = '/not-found'
 export const MANAGE_ACCOUNTS_PATH = '/manage/accounts'
+export const MANAGE_PRODUCTS_PATH = '/manage/products'
 
 type RoutingProps = {
   showTokenExpiredDialogAfterTimeout: () => void
@@ -128,10 +130,23 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
           element={
             <ManageAccountsPage
               setLoading={setLoading}
-              style={{ margin: '15vh 10vw' }}
+              style={{ margin: '10vh 10vw' }}
             />
           }
           shouldRender={isAuthenticated && (activeRole === Role.ADMIN)}
+          redirect={NOT_FOUND_PATH}
+        />
+      } />
+
+      <Route path={MANAGE_PRODUCTS_PATH} element={
+        <ProtectedElement
+          element={
+            <ManageProductsPage
+              setLoading={setLoading}
+              style={{ margin: '10vh 10vw' }}
+            />
+          }
+          shouldRender={isAuthenticated && (activeRole === Role.EMPLOYEE)}
           redirect={NOT_FOUND_PATH}
         />
       } />

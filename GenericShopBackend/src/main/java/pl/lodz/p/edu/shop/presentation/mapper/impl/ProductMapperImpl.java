@@ -27,7 +27,7 @@ public class ProductMapperImpl implements ProductMapper {
         return ProductOutputDto.builder()
             .id(product.getId())
             .version(combinedVersion)
-            .isArchival(product.isArchival())
+            .archival(product.isArchival())
             .name(product.getName())
             .price(product.getPrice())
             .quantity(product.getQuantity())
@@ -40,7 +40,7 @@ public class ProductMapperImpl implements ProductMapper {
 
         return ProductOutputDto.builder()
             .id(product.getId())
-            .isArchival(product.isArchival())
+            .archival(product.isArchival())
             .name(product.getName())
             .price(product.getPrice())
             .quantity(product.getQuantity())
