@@ -11,6 +11,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { toast } from "sonner"
 import TableWithPagination from "../components/reusable/TableWithPagination"
+import CreateProductDialog from "../components/singleuse/CreateProductDialog"
+import EditProductDialog from "../components/singleuse/EditProductDialog"
+import CreateCategoryDialog from "../components/singleuse/CreateCategoryDialog"
+import ViewProductDetailsDialog from "../components/singleuse/ViewProductDetailsDialog"
 
 type ProductsResponse = {
   content: BasicProduct[]
@@ -36,9 +40,10 @@ export default function ManageProductsPage({ setLoading, style } : ManageProduct
   const [ currentPage, setCurrentPage ] = useState<number>(0)
   const [ pageSize, setPageSize ] = useState<number>(10)
   const [ direction, setDirection ] = useState<'asc' | 'desc'>('asc')
-  const [ visibleProductId, setVisibleProductId ] = useState<number | undefined>(undefined)
+  const [ visibleViewProductDetailsDialog, setVisibleViewProductDetailsDialog ] = useState<number | undefined>(undefined)
+  const [ visibleEditProductDialog, setVisibleEditProductDialog ] = useState<number | undefined>(undefined)
   const [ visibleCreateProductDialog, setVisibleCreateProductDialog ] = useState<boolean>(false)
-  const [ visibleEditProductDialog, setVisibleEditProductDialog ] = useState<boolean>(false)
+  const [ visibleCreateCategoryDialog, setVisibleCreateCategoryDialog ] = useState<boolean>(false)
   const rowsPerPageOptions = [ 5, 10, 15, 20 ]
   const columns: Column<BasicProductWithActions>[] = [
     { dataProp: 'id', name: t('manage_products.column.id'), label: true },
@@ -108,7 +113,7 @@ export default function ManageProductsPage({ setLoading, style } : ManageProduct
       actions: <Stack direction='row' spacing={2}>
         {
           <Tooltip title={t('manage_products.tooltip.show_more')} placement='top'>
-            <IconButton onClick={() => setVisibleProductId(product.id)}>
+            <IconButton onClick={() => setVisibleViewProductDetailsDialog(product.id)}>
               <VisibilityIcon />
             </IconButton>
           </Tooltip>
@@ -116,7 +121,7 @@ export default function ManageProductsPage({ setLoading, style } : ManageProduct
         {
           !product.archival && (
             <Tooltip title={t('manage_products.tooltip.edit')} placement='top'>
-              <IconButton>
+              <IconButton onClick={() => setVisibleEditProductDialog(product.id)}>
                 <EditIcon />
               </IconButton>
             </Tooltip>
@@ -147,6 +152,7 @@ export default function ManageProductsPage({ setLoading, style } : ManageProduct
             <Button startIcon={<RefreshIcon />} color='primary' onClick={() => loadProducts(currentPage, pageSize, sortBy, direction)} />
         </Tooltip>
         <Button onClick={() => setVisibleCreateProductDialog(true)}>{t('manage_products.button.create_product')}</Button>
+        <Button onClick={() => setVisibleCreateCategoryDialog(true)}>{t('manage_products.button.create_category')}</Button>
       </Stack>
 
       <TableWithPagination 
@@ -168,6 +174,39 @@ export default function ManageProductsPage({ setLoading, style } : ManageProduct
         setDirection={setDirection}
         tableStyle={{ width: '100%', maxHeight: '60vh'}}
       />
+
+      <CreateProductDialog
+        open={visibleCreateProductDialog}
+        onClose={() => setVisibleCreateProductDialog(false)}
+        setLoading={setLoading}
+      />
+
+      {
+        visibleEditProductDialog &&
+        <EditProductDialog
+          productId={visibleEditProductDialog}
+          open={Boolean(visibleEditProductDialog)}
+          onClose={() => setVisibleEditProductDialog(undefined)}
+          setLoading={setLoading}
+        />
+      }
+
+      <CreateCategoryDialog
+        open={visibleCreateCategoryDialog}
+        onClose={() => setVisibleCreateCategoryDialog(false)}
+        setLoading={setLoading}
+      />
+
+      {
+        visibleViewProductDetailsDialog &&
+        <ViewProductDetailsDialog
+          productId={visibleViewProductDetailsDialog}
+          open={Boolean(setVisibleViewProductDetailsDialog)}
+          onClose={() => setVisibleViewProductDetailsDialog(undefined)}
+          setLoading={setLoading}
+        />
+      }
+
     </Stack>
   )
 }

@@ -23,7 +23,7 @@ import java.util.Set;
 @Table(name = "products")
 public class Product extends ArchivableEntity {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = false)

@@ -164,6 +164,9 @@ const resources = {
       'manage_products.title': 'Manage products',
       'manage_products.button.refresh': 'Refresh data',
       'manage_products.button.create_product': 'Create product',
+      'manage_products.button.create_category': 'Create category',
+      'manage_products.button.back': 'Back',
+      'manage_products.button.submit': 'Submit',
 
       'nav.home': 'Home',
       'nav.login': 'Login',
@@ -467,6 +470,9 @@ const resources = {
       'manage_products.title': 'Zarządzaj produktami',
       'manage_products.button.refresh': 'Odśwież dane',
       'manage_products.button.create_product': 'Stwórz produkt',
+      'manage_products.button.create_category': 'Stwórz kategorię',
+      'manage_products.button.back': 'Wróć',
+      'manage_products.button.submit': 'Zatwierdź',
       
       'nav.home': 'Strona Główna',
       'nav.login': 'Zaloguj się',
