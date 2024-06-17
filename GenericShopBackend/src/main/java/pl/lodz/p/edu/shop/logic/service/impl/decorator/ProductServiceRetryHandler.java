@@ -13,6 +13,7 @@ import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 import pl.lodz.p.edu.shop.logic.service.api.ProductService;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequestScope
@@ -60,5 +61,10 @@ public class ProductServiceRetryHandler extends AbstractRetryHandler implements 
     @Override
     public List<Category> findAllCategories() {
         return repeatTransactionWhenTimeoutOccurred(productService::findAllCategories);
+    }
+
+    @Override
+    public List<Map<String, Object>> findSchemaByCategoryName(String name) {
+        return repeatTransactionWhenTimeoutOccurred(() -> productService.findSchemaByCategoryName(name));
     }
 }

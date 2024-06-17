@@ -13,8 +13,10 @@ import pl.lodz.p.edu.shop.presentation.adapter.api.ProductServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.ProductMapper;
+import pl.lodz.p.edu.shop.presentation.mapper.api.SchemaMapper;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 
@@ -23,6 +25,7 @@ public class ProductServiceAdapter implements ProductServiceOperations {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
+    private final SchemaMapper schemaMapper;
 
     @Override
     public List<ProductOutputDto> findAll() {
@@ -48,6 +51,13 @@ public class ProductServiceAdapter implements ProductServiceOperations {
     public ProductOutputDto findById(Long id) {
         Product product = productService.findById(id);
         return productMapper.mapToProductOutputDtoWithVersion(product);
+    }
+
+    @Override
+    public List<Map<String, Object>> findSchemaByCategoryName(String name) {
+        return productService.findSchemaByCategoryName(name).stream()
+            .map(schemaMapper::mapDbSchemaToApplicationSchema)
+            .toList();
     }
 
     @Override

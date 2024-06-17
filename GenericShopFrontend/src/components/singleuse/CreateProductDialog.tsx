@@ -24,6 +24,7 @@ export default function CreateProductDialog({ open, onClose, setLoading, style }
   const [ isStep1Valid, setIsStep1Valid ] = useState<boolean>(false)
   const [ categories, setCategories ] = useState<string[]>([])
   const [ validCategorySchema, setValidCategorySchema ] = useState<any>(undefined)
+  const [ newProductCategory, setNewProductCategory ] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     let supportedValues: string[] = []
@@ -49,7 +50,7 @@ export default function CreateProductDialog({ open, onClose, setLoading, style }
   }, []);
 
 
-  const findAllCategories = () => {
+  const findAllCategories = async () => {
     return axios.get(`${environment.apiBaseUrl}/categories`, {
       headers: {
         Authorization: `Bearer ${getJwtToken()}`
@@ -57,8 +58,19 @@ export default function CreateProductDialog({ open, onClose, setLoading, style }
     })
   }
 
-  const onStep1Valid = async (data: { name: string }) => {
-    console.log(data)
+  const findCategorySchema = async (categoryName: string) => {
+    return axios.get(`${environment.apiBaseUrl}/categories/name/${categoryName}`, {
+      headers: {
+        Authorization: `Bearer ${getJwtToken()}`
+      }
+    })
+  }
+
+  const onStep1Valid = async (formData: { name: string }) => {
+    console.log(formData)
+    setNewProductCategory(formData.name)
+    const { data } = await findCategorySchema(formData.name)
+    console.log("Category Schema: ", data)
     setActiveStep(2)
   }
 

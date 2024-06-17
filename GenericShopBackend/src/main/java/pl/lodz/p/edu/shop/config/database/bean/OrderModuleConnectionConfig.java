@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -65,5 +66,10 @@ public class OrderModuleConnectionConfig implements JpaConfigurable {
         JpaTransactionManager txManager = JpaConfigurable.super.txManagerBean(emFactory);
         txManager.addListener(new OrdersModuleTxLogsListener());
         return txManager;
+    }
+
+    @Bean("ordersModJdbcTemplate")
+    public JdbcTemplate jdbcTemplateBean(@Qualifier("ordersModDataSource") DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
     }
 }

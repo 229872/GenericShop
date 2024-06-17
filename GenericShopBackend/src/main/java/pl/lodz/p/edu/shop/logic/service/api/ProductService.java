@@ -6,6 +6,7 @@ import pl.lodz.p.edu.shop.dataaccess.model.entity.Category;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProductService {
 
@@ -22,4 +23,6 @@ public interface ProductService {
     Product archive(Long id);
 
     List<Category> findAllCategories();
+
+    List<Map<String, Object>> findSchemaByCategoryName(String name);
 }

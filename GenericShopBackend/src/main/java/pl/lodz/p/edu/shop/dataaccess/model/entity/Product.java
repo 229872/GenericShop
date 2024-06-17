@@ -1,15 +1,14 @@
 package pl.lodz.p.edu.shop.dataaccess.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import pl.lodz.p.edu.shop.dataaccess.model.superclass.ArchivableEntity;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,4 +37,7 @@ public class Product extends ArchivableEntity {
     @Builder.Default
     @OneToMany
     private Set<Rate> rates = new HashSet<>();
+
+    @Transient
+    private Map<String, Object> tableProperties = new HashMap<>();
 }

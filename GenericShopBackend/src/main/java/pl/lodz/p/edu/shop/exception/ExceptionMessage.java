@@ -52,5 +52,6 @@ public final class ExceptionMessage {
 
     public static class Orders {
         public static final String PRODUCT_NOT_FOUND = "exception.product.not_found";
+        public static final String SCHEMA_NOT_FOUND = "exception.schema.not_found";
     }
 }
