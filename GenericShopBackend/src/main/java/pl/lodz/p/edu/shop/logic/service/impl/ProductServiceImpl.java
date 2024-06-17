@@ -8,7 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.Category;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
+import pl.lodz.p.edu.shop.dataaccess.repository.api.CategoryRepository;
 import pl.lodz.p.edu.shop.dataaccess.repository.api.ProductRepository;
 import pl.lodz.p.edu.shop.exception.ApplicationExceptionFactory;
 import pl.lodz.p.edu.shop.exception.SystemExceptionFactory;
@@ -26,10 +28,13 @@ import static java.util.Objects.requireNonNull;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository) {
         requireNonNull(productRepository, "Product service requires non null product repository");
+        requireNonNull(categoryRepository, "Product service requires non null category repository");
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
@@ -74,6 +79,11 @@ public class ProductServiceImpl implements ProductService {
         product.setArchival(true);
 
         return save(product);
+    }
+
+    @Override
+    public List<Category> findAllCategories() {
+        return categoryRepository.findAll();
     }
 
     protected Product save(Product product) {

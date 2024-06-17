@@ -175,11 +175,15 @@ export default function ManageProductsPage({ setLoading, style } : ManageProduct
         tableStyle={{ width: '100%', maxHeight: '60vh'}}
       />
 
-      <CreateProductDialog
-        open={visibleCreateProductDialog}
-        onClose={() => setVisibleCreateProductDialog(false)}
-        setLoading={setLoading}
-      />
+      {
+        visibleCreateProductDialog &&
+        <CreateProductDialog
+          open={visibleCreateProductDialog}
+          onClose={() => setVisibleCreateProductDialog(false)}
+          setLoading={setLoading}
+        />
+      } 
+
 
       {
         visibleEditProductDialog &&

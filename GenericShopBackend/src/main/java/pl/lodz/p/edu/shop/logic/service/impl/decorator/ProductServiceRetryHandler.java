@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.RequestScope;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.Category;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 import pl.lodz.p.edu.shop.logic.service.api.ProductService;
 
@@ -54,5 +55,10 @@ public class ProductServiceRetryHandler extends AbstractRetryHandler implements 
     @Override
     public Product archive(Long id) {
         return repeatTransactionWhenTimeoutOccurred(() -> productService.archive(id));
+    }
+
+    @Override
+    public List<Category> findAllCategories() {
+        return repeatTransactionWhenTimeoutOccurred(productService::findAllCategories);
     }
 }

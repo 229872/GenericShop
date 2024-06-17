@@ -7,7 +7,9 @@ GRANT USAGE, SELECT ON SEQUENCE contacts_seq TO shop_accounts;
 GRANT USAGE, SELECT ON SEQUENCE addresses_seq TO shop_accounts;
 
 GRANT SELECT, INSERT, UPDATE ON products TO shop_orders;
+GRANT SELECT, INSERT, UPDATE ON categories TO shop_orders;
 GRANT SELECT ON accounts TO shop_orders;
 
 GRANT USAGE, SELECT ON SEQUENCE products_seq TO shop_orders;
 GRANT USAGE, SELECT ON SEQUENCE rates_seq TO shop_orders;
+GRANT USAGE, SELECT ON SEQUENCE categories_seq TO shop_orders;

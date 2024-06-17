@@ -20,4 +20,6 @@ public interface ProductServiceOperations {
     ProductOutputDto update(Long id, InputProductDto newProduct);
 
     ProductOutputDto archive(Long id);
+
+    List<String> findAllCategories();
 }

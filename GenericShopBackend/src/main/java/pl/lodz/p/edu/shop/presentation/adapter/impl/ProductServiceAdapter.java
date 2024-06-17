@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.Category;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 import pl.lodz.p.edu.shop.logic.service.api.ProductService;
 import pl.lodz.p.edu.shop.presentation.adapter.api.ProductServiceOperations;
@@ -67,5 +68,12 @@ public class ProductServiceAdapter implements ProductServiceOperations {
     public ProductOutputDto archive(Long id) {
         Product product = productService.archive(id);
         return productMapper.mapToProductOutputDtoWithoutVersion(product);
+    }
+
+    @Override
+    public List<String> findAllCategories() {
+        return productService.findAllCategories().stream()
+            .map(Category::getName)
+            .toList();
     }
 }

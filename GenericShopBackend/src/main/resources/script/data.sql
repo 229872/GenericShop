@@ -34,3 +34,9 @@ INSERT INTO products (id, version, is_archival, created_by, created_at, name, pr
             (nextval('products_seq'), 0, true, 'john123', now(), 'The Lord of the Rings: The Two Towers', 40.99, 1, 'http://localhost'),
             (nextval('products_seq'), 0, false, 'john123', now(), 'Linux. Biblia', 99.99, 3, 'http://localhost'),
             (nextval('products_seq'), 0, true, 'john123', now(), 'Spring w akcji', 110.99, 9, 'http://localhost');
+
+INSERT INTO categories (id, version, created_by, created_at, name)
+    VALUES (nextval('categories_seq'), 0, 'john123', now(), 'Yerba'),
+           (nextval('categories_seq'), 0, 'john123', now(), 'Book'),
+           (nextval('categories_seq'), 0, 'john123', now(), 'Game'),
+           (nextval('categories_seq'), 0, 'john123', now(), 'Tv');
