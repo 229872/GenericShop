@@ -67,4 +67,9 @@ public class ProductServiceRetryHandler extends AbstractRetryHandler implements 
     public List<Map<String, Object>> findSchemaByCategoryName(String name) {
         return repeatTransactionWhenTimeoutOccurred(() -> productService.findSchemaByCategoryName(name));
     }
+
+    @Override
+    public Category createCategory(String category, Map<String, List<String>> schema) {
+        return repeatTransactionWhenTimeoutOccurred(() -> productService.createCategory(category, schema));
+    }
 }

@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.product.ProductSchemaDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -25,4 +26,6 @@ public interface ProductServiceOperations {
     ProductOutputDto archive(Long id);
 
     List<String> findAllCategories();
+
+    void createCategory(ProductSchemaDTO productSchemaDTO);
 }

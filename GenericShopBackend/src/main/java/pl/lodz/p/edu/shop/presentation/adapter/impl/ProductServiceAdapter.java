@@ -12,6 +12,7 @@ import pl.lodz.p.edu.shop.logic.service.api.ProductService;
 import pl.lodz.p.edu.shop.presentation.adapter.api.ProductServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.product.ProductSchemaDTO;
 import pl.lodz.p.edu.shop.presentation.mapper.api.ProductMapper;
 import pl.lodz.p.edu.shop.presentation.mapper.api.SchemaMapper;
 
@@ -85,5 +86,10 @@ public class ProductServiceAdapter implements ProductServiceOperations {
         return productService.findAllCategories().stream()
             .map(Category::getName)
             .toList();
+    }
+
+    @Override
+    public void createCategory(ProductSchemaDTO productSchemaDTO) {
+        productService.createCategory(productSchemaDTO.categoryName(), productSchemaDTO.properties());
     }
 }

@@ -39,4 +39,5 @@ INSERT INTO categories (id, version, created_by, created_at, name)
     VALUES (nextval('categories_seq'), 0, 'john123', now(), 'Yerba'),
            (nextval('categories_seq'), 0, 'john123', now(), 'Book'),
            (nextval('categories_seq'), 0, 'john123', now(), 'Game'),
-           (nextval('categories_seq'), 0, 'john123', now(), 'Tv');
+           (nextval('categories_seq'), 0, 'john123', now(), 'Tv')
+    ON CONFLICT DO NOTHING;

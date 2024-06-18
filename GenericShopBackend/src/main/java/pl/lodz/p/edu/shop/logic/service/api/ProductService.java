@@ -24,5 +24,7 @@ public interface ProductService {
 
     List<Category> findAllCategories();
 
-    List<Map<String, Object>> findSchemaByCategoryName(String name);
+    List<Map<String, Object>> findSchemaByCategoryName(String category);
+
+    Category createCategory(String category, Map<String, List<String>> schema);
 }

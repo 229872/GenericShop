@@ -48,6 +48,8 @@ public final class ExceptionMessage {
         public static final String ACCOUNT_STATE_NOT_SUPPORTED = "exception.validation.account.accountState.not_supported";
         public static final String ACCOUNT_POSTAL_CODE_WRONG = "exception.validation.account.address.postal_code.wrong";
         public static final String LOGIN_WRONG = "exception.validation.login.wrong";
+        public static final String SCHEMA_NOT_VALID = "exception.validation.product_schema.wrong";
+        public static final String TABLE_NAME_NOT_VALID = "exception.validation.table_name.wrong";
     }
 
     public static class Orders {

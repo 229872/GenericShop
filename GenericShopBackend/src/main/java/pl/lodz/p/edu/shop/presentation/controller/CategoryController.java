@@ -2,13 +2,13 @@ package pl.lodz.p.edu.shop.presentation.controller;
 
 import jakarta.annotation.security.DenyAll;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.shop.presentation.adapter.api.ProductServiceOperations;
+import pl.lodz.p.edu.shop.presentation.dto.product.ProductSchemaDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -38,5 +38,13 @@ public class CategoryController {
         List<Map<String, Object>> responseBody = productService.findSchemaByCategoryName(name);
 
         return ResponseEntity.ok(responseBody);
+    }
+
+    @PostMapping
+    @RolesAllowed({EMPLOYEE})
+    public ResponseEntity<Void> createNewCategory(@RequestBody @Valid @NotNull ProductSchemaDTO productSchemaDTO) {
+        productService.createCategory(productSchemaDTO);
+
+        return ResponseEntity.ok().build();
     }
 }
