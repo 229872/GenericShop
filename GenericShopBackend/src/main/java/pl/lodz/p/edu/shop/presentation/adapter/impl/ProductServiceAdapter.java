@@ -6,18 +6,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
-import pl.lodz.p.edu.shop.dataaccess.model.entity.Category;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 import pl.lodz.p.edu.shop.logic.service.api.ProductService;
 import pl.lodz.p.edu.shop.presentation.adapter.api.ProductServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
-import pl.lodz.p.edu.shop.presentation.dto.product.ProductSchemaDTO;
 import pl.lodz.p.edu.shop.presentation.mapper.api.ProductMapper;
-import pl.lodz.p.edu.shop.presentation.mapper.api.SchemaMapper;
 
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 
@@ -26,7 +22,6 @@ public class ProductServiceAdapter implements ProductServiceOperations {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
-    private final SchemaMapper schemaMapper;
 
     @Override
     public List<ProductOutputDto> findAll() {
@@ -55,13 +50,6 @@ public class ProductServiceAdapter implements ProductServiceOperations {
     }
 
     @Override
-    public List<Map<String, Object>> findSchemaByCategoryName(String name) {
-        return productService.findSchemaByCategoryName(name).stream()
-            .map(schemaMapper::mapDbSchemaToApplicationSchema)
-            .toList();
-    }
-
-    @Override
     public ProductOutputDto create(InputProductDto product) {
         Product newProductData = productMapper.mapToProduct(product);
         Product newProduct = productService.create(newProductData);
@@ -81,17 +69,4 @@ public class ProductServiceAdapter implements ProductServiceOperations {
         return productMapper.mapToProductOutputDtoWithoutVersion(product);
     }
 
-    @Override
-    public List<String> findAllCategories() {
-        return productService.findAllCategories().stream()
-            .map(Category::getName)
-            .toList();
-    }
-
-    @Override
-    public void createCategory(ProductSchemaDTO productSchemaDTO) {
-        String categoryName = productSchemaDTO.categoryName();
-        String validCategory = categoryName.substring(0, 1).toUpperCase() + categoryName.substring(1);
-        productService.createCategory(validCategory, productSchemaDTO.properties());
-    }
 }

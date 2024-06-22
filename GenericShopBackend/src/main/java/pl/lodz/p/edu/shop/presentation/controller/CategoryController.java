@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.lodz.p.edu.shop.presentation.adapter.api.ProductServiceOperations;
+import pl.lodz.p.edu.shop.presentation.adapter.api.CategoryServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductSchemaDTO;
 
 import java.util.List;
@@ -22,12 +22,12 @@ import static pl.lodz.p.edu.shop.config.security.role.RoleName.EMPLOYEE;
 @DenyAll
 public class CategoryController {
 
-    private final ProductServiceOperations productService;
+    private final CategoryServiceOperations categoryService;
 
     @GetMapping
     @RolesAllowed({EMPLOYEE})
     public ResponseEntity<List<String>> findAll() {
-        List<String> responseBody = productService.findAllCategories();
+        List<String> responseBody = categoryService.findAllCategories();
 
         return ResponseEntity.ok(responseBody);
     }
@@ -35,7 +35,7 @@ public class CategoryController {
     @GetMapping("/name/{name}")
     @RolesAllowed({EMPLOYEE})
     public ResponseEntity<List<Map<String, Object>>> getCategorySchema(@PathVariable String name) {
-        List<Map<String, Object>> responseBody = productService.findSchemaByCategoryName(name);
+        List<Map<String, Object>> responseBody = categoryService.findSchemaByCategoryName(name);
 
         return ResponseEntity.ok(responseBody);
     }
@@ -43,7 +43,7 @@ public class CategoryController {
     @PostMapping
     @RolesAllowed({EMPLOYEE})
     public ResponseEntity<Void> createNewCategory(@RequestBody @Valid @NotNull ProductSchemaDTO productSchemaDTO) {
-        productService.createCategory(productSchemaDTO);
+        categoryService.createCategory(productSchemaDTO);
 
         return ResponseEntity.ok().build();
     }

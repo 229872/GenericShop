@@ -22,9 +22,4 @@ public interface ProductService {
 
     Product archive(Long id);
 
-    List<Category> findAllCategories();
-
-    List<Map<String, Object>> findSchemaByCategoryName(String category);
-
-    Category createCategory(String category, Map<String, List<String>> schema);
 }

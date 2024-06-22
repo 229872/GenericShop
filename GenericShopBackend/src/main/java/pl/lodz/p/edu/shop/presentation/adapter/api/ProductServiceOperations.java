@@ -4,10 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
-import pl.lodz.p.edu.shop.presentation.dto.product.ProductSchemaDTO;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ProductServiceOperations {
 
@@ -17,15 +15,9 @@ public interface ProductServiceOperations {
 
     ProductOutputDto findById(Long id);
 
-    List<Map<String, Object>> findSchemaByCategoryName(String name);
-
     ProductOutputDto create(InputProductDto product);
 
     ProductOutputDto update(Long id, InputProductDto newProduct);
 
     ProductOutputDto archive(Long id);
-
-    List<String> findAllCategories();
-
-    void createCategory(ProductSchemaDTO productSchemaDTO);
 }
