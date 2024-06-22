@@ -188,6 +188,7 @@ const resources = {
       'manage_products.create_category.error.propertyName.required': 'Property name is required',
       'manage_products.create_category.error.propertyType.not_supported': 'Property type must be one of given values',
       'manage_products.create_category.error.propertyConstraint.not_supported': 'Property constraint must be one of given values',
+      'manage_products.create_category.success': 'Category has been created',
 
       'nav.home': 'Home',
       'nav.login': 'Login',

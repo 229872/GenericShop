@@ -10,6 +10,7 @@ public enum Constraint {
     REQUIRED("NOT NULL", false),
     UNIQUE("UNIQUE", false),
     BIG_NUMBER("BIGINT", true),
+    NUMBER("INTEGER", true),
     TEXT("VARCHAR(255)", true),
     FRACTIONAL_NUMBER("DOUBLE PRECISION", true),
     LOGICAL_VALUE("BOOLEAN", true);

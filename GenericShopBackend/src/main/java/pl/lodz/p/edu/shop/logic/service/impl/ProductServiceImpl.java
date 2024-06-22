@@ -115,21 +115,27 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Category createCategory(String category, Map<String, List<String>> schema) {
-        Category newCategory = Category.builder()
-            .name(category)
-            .build();
-        String tableName = "%ss".formatted(category.toLowerCase());
+        try {
+            Category newCategory = Category.builder()
+                .name(category)
+                .build();
+            String tableName = "%ss".formatted(category.toLowerCase());
 
-        Map<String, List<Constraint>> dbSchema = schema.entrySet().stream()
-            .collect(toMap(
-                Map.Entry::getKey,
-                entry -> entry.getValue().stream()
-                    .map(Constraint::valueOf)
-                    .toList()
-            ));
+            Map<String, List<Constraint>> dbSchema = schema.entrySet().stream()
+                .collect(toMap(
+                    Map.Entry::getKey,
+                    entry -> entry.getValue().stream()
+                        .map(Constraint::valueOf)
+                        .toList()
+                ));
 
-        categoryDAO.createTable(tableName, dbSchema);
-        return categoryRepository.save(newCategory);
+            categoryDAO.createTable(tableName, dbSchema);
+            return categoryRepository.save(newCategory);
+
+        } catch (DataAccessException e) {
+            log.warn("DataAccessException: ", e);
+            throw ApplicationExceptionFactory.createUnknownException();
+        }
     }
 
     protected Product save(Product product) {

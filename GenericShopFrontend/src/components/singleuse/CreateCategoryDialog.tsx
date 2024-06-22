@@ -7,6 +7,9 @@ import { environment, regex } from "../../utils/constants";
 import { useTranslation } from "react-i18next";
 import AddIcon from '@mui/icons-material/Add';
 import { zodResolver } from "@hookform/resolvers/zod";
+import { getJwtToken } from "../../services/tokenService";
+import handleAxiosException from "../../services/apiService";
+import { toast } from "sonner";
 
 const types = ['NUMBER', 'BIG_NUMBER', 'TEXT', 'FRACTIONAL_NUMBER', 'LOGICAL_VALUE'] as const;
 const constraints = ['UNIQUE', 'REQUIRED'] as const;
@@ -24,6 +27,11 @@ const schema = z.object({
 });
 
 type NewCategory = z.infer<typeof schema>;
+
+type CategorySchema = {
+  categoryName: string
+  properties: { [key: string]: string[] };
+}
 
 
 type CreateCategoryDialogProps = {
@@ -52,9 +60,42 @@ export default function CreateCategoryDialog({ open, onClose, setLoading, style 
     return message ?? '';
   }
 
-  const onValid = (data: NewCategory) => {
-    console.log(data)
+  const onValid = async (data: NewCategory) => {
+    const propertiesMap: Map<string, string[]> = new Map();
 
+    if (data.properties) {
+      data.properties.forEach(property => {
+        const propertyDetails: string[] = [property.propertyType, ...property.propertyConstraints];
+        propertiesMap.set(property.propertyName, propertyDetails);
+      })
+    }
+
+    const requestData: CategorySchema = {
+      categoryName: data.name,
+      properties: Object.fromEntries(propertiesMap)
+    }
+
+    try {
+      setLoading(true)
+      await createCategory(requestData)
+      toast.success(t('manage_products.create_category.success'))
+      onClose()
+
+    } catch (e) {
+      handleAxiosException(e)
+
+    } finally {
+      setLoading(false)
+    }
+
+  }
+
+  const createCategory = async (data: CategorySchema) => {
+    return axios.post(`${environment.apiBaseUrl}/categories`, data, {
+      headers: {
+        Authorization: `Bearer ${getJwtToken()}`
+      }
+    })
   }
 
 
@@ -79,7 +120,7 @@ export default function CreateCategoryDialog({ open, onClose, setLoading, style 
             <Grid item xs={12} sm={3}></Grid>
 
             {fields.map((field, index) => (
-              <React.Fragment key={index}>
+             <React.Fragment key={index}>
                 <Grid item xs={12} sm={4}>
                   <TextField
                     label={t('manage_products.create_category.label.propertyName')}
