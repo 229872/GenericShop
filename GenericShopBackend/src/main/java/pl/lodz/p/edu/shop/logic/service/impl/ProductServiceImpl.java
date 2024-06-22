@@ -87,7 +87,7 @@ public class ProductServiceImpl implements ProductService {
         return save(product);
     }
 
-    protected Product save(Product product) {
+    private Product save(Product product) {
         try {
             productRepository.save(product);
             productRepository.flush();

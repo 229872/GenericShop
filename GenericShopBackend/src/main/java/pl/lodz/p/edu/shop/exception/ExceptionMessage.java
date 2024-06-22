@@ -53,7 +53,8 @@ public final class ExceptionMessage {
     }
 
     public static class Orders {
-        public static final String PRODUCT_NOT_FOUND = "exception.product.not_found";
-        public static final String SCHEMA_NOT_FOUND = "exception.schema.not_found";
+        public static final String PRODUCT_NOT_FOUND = "exception.orders.product.not_found";
+        public static final String SCHEMA_NOT_FOUND = "exception.orders.schema.not_found";
+        public static final String CATEGORY_CONFLICT = "exception.orders.category.conflict";
     }
 }

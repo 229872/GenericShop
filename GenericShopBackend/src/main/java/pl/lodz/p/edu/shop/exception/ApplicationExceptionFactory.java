@@ -6,6 +6,7 @@ import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.shop.exception.account.*;
 import pl.lodz.p.edu.shop.exception.account.helper.AccountStateOperation;
 import pl.lodz.p.edu.shop.exception.auth.*;
+import pl.lodz.p.edu.shop.exception.order.CategoryConflictException;
 import pl.lodz.p.edu.shop.exception.order.ProductNotFoundException;
 import pl.lodz.p.edu.shop.exception.order.SchemaNotFoundException;
 import pl.lodz.p.edu.shop.exception.other.ApplicationOptimisticLockException;
@@ -115,5 +116,9 @@ public final class ApplicationExceptionFactory {
 
     public static ResponseStatusException createSchemaNotFoundException() {
         return new SchemaNotFoundException(NOT_FOUND, ExceptionMessage.Orders.SCHEMA_NOT_FOUND);
+    }
+
+    public static ResponseStatusException createCategoryConflictException() {
+        return new CategoryConflictException(CONFLICT, ExceptionMessage.Orders.CATEGORY_CONFLICT);
     }
 }

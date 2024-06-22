@@ -1,6 +1,7 @@
 package pl.lodz.p.edu.shop.logic.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -11,10 +12,13 @@ import pl.lodz.p.edu.shop.dataaccess.model.entity.Category;
 import pl.lodz.p.edu.shop.dataaccess.model.other.Constraint;
 import pl.lodz.p.edu.shop.dataaccess.repository.api.CategoryRepository;
 import pl.lodz.p.edu.shop.exception.ApplicationExceptionFactory;
+import pl.lodz.p.edu.shop.exception.SystemExceptionFactory;
 import pl.lodz.p.edu.shop.logic.service.api.CategoryService;
+import pl.lodz.p.edu.shop.util.ExceptionUtil;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
@@ -70,12 +74,28 @@ class CategoryServiceImpl implements CategoryService {
                         .toList()
                 ));
 
+            Category result = categoryRepository.save(newCategory);
+            categoryRepository.flush();
             categoryDAO.createTable(tableName, dbSchema);
-            return categoryRepository.save(newCategory);
+            return result;
 
         } catch (DataAccessException e) {
             log.warn("DataAccessException: ", e);
+            var violationException = ExceptionUtil.findCause(e, ConstraintViolationException.class);
+
+            if (Objects.nonNull(violationException) && Objects.nonNull(violationException.getConstraintName())) {
+                return handleConstraintViolationException(violationException);
+            }
+
             throw ApplicationExceptionFactory.createUnknownException();
+        }
+    }
+
+
+    private Category handleConstraintViolationException(ConstraintViolationException e) {
+        switch (Objects.requireNonNull(e.getConstraintName())) {
+            case "categories_name_key" -> throw ApplicationExceptionFactory.createCategoryConflictException();
+            default -> throw SystemExceptionFactory.createDbConstraintViolationException(e);
         }
     }
 }

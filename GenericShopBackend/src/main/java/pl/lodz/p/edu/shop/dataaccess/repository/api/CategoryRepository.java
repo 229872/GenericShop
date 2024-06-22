@@ -14,4 +14,6 @@ public interface CategoryRepository {
     Optional<Category> findByName(String name);
 
     Category save(Category category);
+
+    void flush();
 }
