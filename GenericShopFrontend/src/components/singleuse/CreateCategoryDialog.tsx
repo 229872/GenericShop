@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Stack, TextField, Typography } from "@mui/material";
+import { Autocomplete, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Stack, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import React, { CSSProperties, useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { getJwtToken } from "../../services/tokenService";
 import handleAxiosException from "../../services/apiService";
 import { toast } from "sonner";
+import ClearIcon from '@mui/icons-material/Clear';
 
 const types = ['NUMBER', 'BIG_NUMBER', 'TEXT', 'FRACTIONAL_NUMBER', 'LOGICAL_VALUE'] as const;
 const constraints = ['UNIQUE', 'REQUIRED'] as const;
@@ -50,7 +51,7 @@ export default function CreateCategoryDialog({ open, onClose, setLoading, style 
     mode: 'onChange'
   })
   const { errors, isValid } = formState;
-  const { fields, append } = useFieldArray({ control, name: 'properties' });
+  const { fields, append, remove } = useFieldArray({ control, name: 'properties' });
 
   useEffect(() => {
     reset()
@@ -59,6 +60,10 @@ export default function CreateCategoryDialog({ open, onClose, setLoading, style 
   const translate = (message: string | undefined) : string => {
     return message ?? '';
   }
+
+  const handleDeleteProperty = (index: number) => {
+    remove(index);
+  };
 
   const onValid = async (data: NewCategory) => {
     const propertiesMap: Map<string, string[]> = new Map();
@@ -104,7 +109,7 @@ export default function CreateCategoryDialog({ open, onClose, setLoading, style 
       <DialogTitle variant='h3' textAlign='center'>{t('manage_products.create_category.title')}</DialogTitle>
       <DialogContent>
         <form id='manage_products.create_category' onSubmit={handleSubmit(onValid)} noValidate>
-          <Grid container justifyContent='center' spacing={5} sx={{ marginTop: '1px' }}>
+          <Grid container justifyContent='center' rowSpacing={5} columnSpacing={3} sx={{ marginTop: '1px' }}>
             <Grid item xs={12} sm={3}></Grid>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -121,7 +126,7 @@ export default function CreateCategoryDialog({ open, onClose, setLoading, style 
 
             {fields.map((field, index) => (
              <React.Fragment key={index}>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={3}>
                   <TextField
                     label={t('manage_products.create_category.label.propertyName')}
                     placeholder={t('manage_products.create_category.enter.propertyName')}
@@ -188,6 +193,12 @@ export default function CreateCategoryDialog({ open, onClose, setLoading, style 
                       />
                     )}
                   />
+                </Grid>
+
+                <Grid item xs={12} sm={1}>
+                  <IconButton onClick={() => handleDeleteProperty(index)} sx={{ marginTop: '7px' }}>
+                    <ClearIcon />
+                  </IconButton>
                 </Grid>
               </React.Fragment>
             ))}
