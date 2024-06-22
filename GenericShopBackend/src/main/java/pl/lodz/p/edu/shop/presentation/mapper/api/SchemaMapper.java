@@ -5,4 +5,5 @@ import java.util.Map;
 public interface SchemaMapper {
 
     Map<String, Object> mapDbSchemaToApplicationSchema(Map<String, Object> dbSchema);
+
 }

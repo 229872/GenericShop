@@ -7,9 +7,12 @@ import pl.lodz.p.edu.shop.logic.service.api.CategoryService;
 import pl.lodz.p.edu.shop.presentation.adapter.api.CategoryServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductSchemaDTO;
 import pl.lodz.p.edu.shop.presentation.mapper.api.SchemaMapper;
+import pl.lodz.p.edu.shop.util.TextUtil;
 
 import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 @RequiredArgsConstructor
 
@@ -37,6 +40,11 @@ public class CategoryServiceAdapter implements CategoryServiceOperations {
     public void createCategory(ProductSchemaDTO productSchemaDTO) {
         String categoryName = productSchemaDTO.categoryName();
         String validCategory = categoryName.substring(0, 1).toUpperCase() + categoryName.substring(1);
-        categoryService.createCategory(validCategory, productSchemaDTO.properties());
+        Map<String, List<String>> schema = productSchemaDTO.properties().entrySet().stream()
+            .collect(toMap(
+                entry -> TextUtil.toSnakeCase(entry.getKey()),
+                Map.Entry::getValue
+            ));
+        categoryService.createCategory(validCategory, schema);
     }
 }

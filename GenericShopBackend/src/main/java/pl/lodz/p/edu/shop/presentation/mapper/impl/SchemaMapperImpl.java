@@ -2,6 +2,7 @@ package pl.lodz.p.edu.shop.presentation.mapper.impl;
 
 import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.presentation.mapper.api.SchemaMapper;
+import pl.lodz.p.edu.shop.util.TextUtil;
 
 import java.util.Map;
 
@@ -10,7 +11,13 @@ public class SchemaMapperImpl implements SchemaMapper {
 
     @Override
     public Map<String, Object> mapDbSchemaToApplicationSchema(Map<String, Object> dbSchema) {
-        dbSchema.put("property", dbSchema.remove("column_name"));
+        Object columnName = dbSchema.remove("column_name");
+
+        if (columnName instanceof String name) {
+            columnName = TextUtil.toCamelCase(name);
+        }
+
+        dbSchema.put("property", columnName);
         dbSchema.put("type", dbSchema.remove("data_type"));
         dbSchema.put("nullable", dbSchema.remove("is_nullable"));
 
@@ -22,4 +29,6 @@ public class SchemaMapperImpl implements SchemaMapper {
 
         return dbSchema;
     }
+
+
 }
