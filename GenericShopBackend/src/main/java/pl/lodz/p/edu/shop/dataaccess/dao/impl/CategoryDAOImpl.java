@@ -1,6 +1,7 @@
 package pl.lodz.p.edu.shop.dataaccess.dao.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,7 +22,7 @@ class CategoryDAOImpl implements CategoryDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
-    CategoryDAOImpl(JdbcTemplate jdbcTemplate) {
+    CategoryDAOImpl(@Qualifier("ordersModJdbcTemplate") JdbcTemplate jdbcTemplate) {
         requireNonNull(jdbcTemplate, "CategoryDAO requires non null jdbcTemplate");
         this.jdbcTemplate = jdbcTemplate;
     }

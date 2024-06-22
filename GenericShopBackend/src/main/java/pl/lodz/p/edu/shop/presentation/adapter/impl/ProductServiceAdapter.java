@@ -90,6 +90,8 @@ public class ProductServiceAdapter implements ProductServiceOperations {
 
     @Override
     public void createCategory(ProductSchemaDTO productSchemaDTO) {
-        productService.createCategory(productSchemaDTO.categoryName(), productSchemaDTO.properties());
+        String categoryName = productSchemaDTO.categoryName();
+        String validCategory = categoryName.substring(0, 1).toUpperCase() + categoryName.substring(1);
+        productService.createCategory(validCategory, productSchemaDTO.properties());
     }
 }

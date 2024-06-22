@@ -1,5 +1,6 @@
 package pl.lodz.p.edu.shop.dataaccess.dao.impl;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,7 +17,7 @@ class ProductDAOImpl implements ProductDAO {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public ProductDAOImpl(JdbcTemplate jdbcTemplate) {
+    public ProductDAOImpl(@Qualifier("ordersModJdbcTemplate") JdbcTemplate jdbcTemplate) {
         requireNonNull(jdbcTemplate, "ProductDAO requires non null jdbcTemplate");
         this.jdbcTemplate = jdbcTemplate;
     }
