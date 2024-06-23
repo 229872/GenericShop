@@ -1,4 +1,4 @@
-import { Autocomplete, Button, Dialog, DialogActions, DialogContent, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
+import { Autocomplete, Button, Checkbox, Dialog, DialogActions, DialogContent, FormControlLabel, Stack, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { CSSProperties, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -250,17 +250,37 @@ function Step2({ t, setLoading, categorySchema, zodSchema } : Step2Params) {
             key={field.property}
             name={field.property}
             control={control}
-            render={({ field: controlerField, fieldState }) => (
-              <TextField
-                {...controlerField}
-                label={field.property}
-                type={field.type === 'NUMBER' || field.type === 'BIG_NUMBER' || field.type === 'FRACTIONAL_NUMBER'  ? 'number' : 'text'}
-                error={!!fieldState.error}
-                helperText={fieldState.error ? fieldState.error.message : ''}
-                fullWidth
-                margin="normal"
-              />
-            )}
+            render={({ field: controllerField, fieldState }) => {
+              if (field.type === 'LOGICAL_VALUE') {
+                return (
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        {...controllerField}
+                        checked={controllerField.value || false}
+                        onChange={(e) => controllerField.onChange(e.target.checked)}
+                      />
+                    }
+                    label={field.property}
+                  />
+                );
+              }
+              return (
+                <TextField
+                  {...controllerField}
+                  label={field.property}
+                  type={
+                    field.type === 'NUMBER' || field.type === 'BIG_NUMBER' || field.type === 'FRACTIONAL_NUMBER'
+                      ? 'number'
+                      : 'text'
+                  }
+                  error={!!fieldState.error}
+                  helperText={fieldState.error ? fieldState.error.message : ''}
+                  fullWidth
+                  margin="normal"
+                />
+              );
+            }}
           />
         ))}
       </Stack>
