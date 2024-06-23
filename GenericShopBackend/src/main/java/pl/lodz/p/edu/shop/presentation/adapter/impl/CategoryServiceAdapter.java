@@ -12,6 +12,7 @@ import pl.lodz.p.edu.shop.util.TextUtil;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
 
 @RequiredArgsConstructor
@@ -33,6 +34,7 @@ public class CategoryServiceAdapter implements CategoryServiceOperations {
     public List<Map<String, Object>> findSchemaByCategoryName(String name) {
         return categoryService.findSchemaByCategoryName(name).stream()
             .map(schemaMapper::mapDbSchemaToApplicationSchema)
+            .filter(not(Map::isEmpty))
             .toList();
     }
 

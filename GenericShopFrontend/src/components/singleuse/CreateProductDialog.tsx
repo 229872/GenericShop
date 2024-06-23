@@ -10,6 +10,13 @@ import handleAxiosException from "../../services/apiService";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TFunction } from "i18next";
 
+type SchemaField = {
+  property: string;
+  type: 'NUMBER' | 'BIG_NUMBER' | 'LOGICAL_VALUE' | 'TEXT' | 'FRACTIONAL_NUMBER';
+  nullable: 'YES' | 'NO';
+  maxlength?: number;
+}
+
 type CreateProductDialogProps = {
   open: boolean
   onClose: () => void
@@ -25,6 +32,9 @@ export default function CreateProductDialog({ open, onClose, setLoading, style }
   const [ categories, setCategories ] = useState<string[]>([])
   const [ validCategorySchema, setValidCategorySchema ] = useState<any>(undefined)
   const [ newProductCategory, setNewProductCategory ] = useState<string | undefined>(undefined)
+  const [ categorySchema, setCategorySchema ] = useState<SchemaField[]>([])
+  const [ categoryZodSchema, setCategoryZodSchema] = useState<any>(null);
+
 
   useEffect(() => {
     let supportedValues: string[] = []
@@ -67,10 +77,37 @@ export default function CreateProductDialog({ open, onClose, setLoading, style }
   }
 
   const onStep1Valid = async (formData: { name: string }) => {
-    console.log(formData)
     setNewProductCategory(formData.name)
     const { data } = await findCategorySchema(formData.name)
     console.log("Category Schema: ", data)
+    setCategorySchema(data)
+    const generateCategoryZodSchema = (categorySchema: SchemaField[]) => {
+      const schemaObject: any = {};
+      categorySchema.forEach((field: SchemaField) => {
+        switch (field.type) {
+          case 'NUMBER':
+            schemaObject[field.property] = field.nullable === 'NO' ? z.number() : z.number().nullable();
+            break;
+          case 'BIG_NUMBER':
+            schemaObject[field.property] = field.nullable === 'NO' ? z.bigint() : z.bigint().nullable();
+            break;
+          case 'TEXT':
+            schemaObject[field.property] = field.nullable === 'NO'
+              ? z.string().max(field.maxlength ?? Infinity)
+              : z.string().max(field.maxlength ?? Infinity).nullable();
+            break;
+          case 'LOGICAL_VALUE':
+            schemaObject[field.property] = field.nullable === 'NO' ? z.boolean() : z.boolean().nullable();
+            break;
+          case 'FRACTIONAL_NUMBER':
+            schemaObject[field.property] = field.nullable === 'NO' ? z.number() : z.number().nullable();
+            break;
+        }
+      });
+      return z.object(schemaObject);
+    };
+
+    setCategoryZodSchema(generateCategoryZodSchema(categorySchema));
     setActiveStep(2)
   }
 
@@ -79,7 +116,7 @@ export default function CreateProductDialog({ open, onClose, setLoading, style }
       case 1:
         return validCategorySchema && <Step1 schema={validCategorySchema} categories={categories} t={t} setIsValid={setIsStep1Valid} onValid={onStep1Valid} />
       case 2:
-        return
+        return categorySchema.length > 0 && <Step2 categorySchema={categorySchema} setLoading={setLoading} t={t} zodSchema={categoryZodSchema} />
     }
   }
 
@@ -103,7 +140,7 @@ export default function CreateProductDialog({ open, onClose, setLoading, style }
             <Typography>{t('manage_products.button.back')}</Typography>
           </Button>
 
-          <Button type='submit' variant='contained'>
+          <Button type='submit' form='create_product.create' variant='contained'>
             <Typography>{t('manage_products.button.submit')}</Typography>
           </Button>
         </Stack>
@@ -177,6 +214,55 @@ function Step1({ schema, categories, t, setIsValid, onValid } : Step1Params) {
             />
           )}
         />
+      </Stack>
+    </form>
+  )
+}
+
+
+
+type Step2Params = {
+  t: TFunction<"translation", undefined>
+  setLoading: (state: boolean) => void
+  categorySchema: SchemaField[]
+  zodSchema: any
+}
+
+function Step2({ t, setLoading, categorySchema, zodSchema } : Step2Params) {
+  type FormType = z.infer<typeof zodSchema>
+  const { register, handleSubmit, formState, control } = useForm<FormType>({
+    resolver: zodResolver(zodSchema),
+    defaultValues: categorySchema.reduce((acc, field) => {
+      acc[field.property] = field.nullable === 'NO' ? '' : '';
+      return acc;
+    }, {} as Record<string, any>),
+  });
+
+  const onValid = (data: any) => {
+    console.log('Sending data: ', data)
+  }
+
+  return (
+    <form noValidate onSubmit={handleSubmit(onValid)} id='create_product.create'>
+      <Stack spacing={7} sx={{ marginTop: '30px' }}>
+        {categorySchema.map((field: SchemaField) => (
+          <Controller
+            key={field.property}
+            name={field.property}
+            control={control}
+            render={({ field: controlerField, fieldState }) => (
+              <TextField
+                {...controlerField}
+                label={field.property}
+                type={field.type === 'NUMBER' || field.type === 'BIG_NUMBER' || field.type === 'FRACTIONAL_NUMBER'  ? 'number' : 'text'}
+                error={!!fieldState.error}
+                helperText={fieldState.error ? fieldState.error.message : ''}
+                fullWidth
+                margin="normal"
+              />
+            )}
+          />
+        ))}
       </Stack>
     </form>
   )

@@ -13,21 +13,36 @@ public class SchemaMapperImpl implements SchemaMapper {
     public Map<String, Object> mapDbSchemaToApplicationSchema(Map<String, Object> dbSchema) {
         Object columnName = dbSchema.remove("column_name");
 
+        if (columnName.equals("product_id")) {
+            return Map.of();
+        }
+
         if (columnName instanceof String name) {
             columnName = TextUtil.toCamelCase(name);
         }
 
         dbSchema.put("property", columnName);
-        dbSchema.put("type", dbSchema.remove("data_type"));
+        dbSchema.put("type", mapDbTypeToApplicationType((String) dbSchema.remove("data_type")));
         dbSchema.put("nullable", dbSchema.remove("is_nullable"));
 
         Object maxLength = dbSchema.remove("character_maximum_length");
 
         if (dbSchema.get("type").equals("character varying")) {
-            dbSchema.put("max_length", maxLength);
+            dbSchema.put("maxlength", maxLength);
         }
 
         return dbSchema;
+    }
+
+    private String mapDbTypeToApplicationType(String dbType) {
+        return switch (dbType) {
+            case "integer" -> "NUMBER";
+            case "bigint" -> "BIG_NUMBER";
+            case "boolean" -> "LOGICAL_VALUE";
+            case "character varying" -> "TEXT";
+            case "double precision" -> "FRACTIONAL_NUMBER";
+            default -> "";
+        };
     }
 
 
