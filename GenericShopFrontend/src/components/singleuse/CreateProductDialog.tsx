@@ -10,6 +10,8 @@ import handleAxiosException from "../../services/apiService";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TFunction } from "i18next";
 import { toast } from "sonner";
+import { CheckBox } from "@mui/icons-material";
+import { camelCaseToWords } from "../../services/textService";
 
 type SchemaField = {
   property: string;
@@ -85,35 +87,41 @@ export default function CreateProductDialog({ open, onClose, setLoading, style }
     setCategorySchema(data)
     const generateCategoryZodSchema = (categorySchema: SchemaField[]) => {
       const schemaObject: any = {};
-      schemaObject['name'] = z.string().min(1)
-      schemaObject['price'] = z.number().positive()
-      schemaObject['quantity'] = z.number().positive()
-      schemaObject['imageUrl'] = z.string().nullable()
+      schemaObject['name'] = z.string({ message: 'manage_products.create_product.error.property.text' }).min(1, 'manage_products.create_product.error.name.required')
+      schemaObject['price'] = z.number({ message: 'manage_products.create_product.error.property.number' }).positive('manage_products.create_product.error.price.positive')
+      schemaObject['quantity'] = z.number({ message: 'manage_products.create_product.error.property.number' }).positive('manage_products.create_product.error.quantity.positive')
+      schemaObject['imageUrl'] = z.string({ message: 'manage_products.create_product.error.property.text' }).nullable()
       categorySchema.forEach((field: SchemaField) => {
         switch (field.type) {
           case 'NUMBER':
-            schemaObject[field.property] = field.nullable === 'NO' ? z.number() : z.number().nullable();
+            schemaObject[field.property] = field.nullable === 'NO' ? z.number({ message: 'manage_products.create_product.error.property.required' }) 
+            : z.number().nullable();
             break;
           case 'BIG_NUMBER':
-            schemaObject[field.property] = field.nullable === 'NO' ? z.bigint() : z.bigint().nullable();
+            schemaObject[field.property] = field.nullable === 'NO' ? z.bigint({ message: 'manage_products.create_product.error.property.required' }) 
+            : z.bigint({ message: 'manage_products.create_product.error.property.number' }).nullable();
             break;
           case 'TEXT':
             schemaObject[field.property] = field.nullable === 'NO'
-              ? z.string().max(field.maxlength ?? Infinity)
-              : z.string().max(field.maxlength ?? Infinity).nullable();
+              ? z.string({ message: 'manage_products.create_product.error.property.text' })
+                .min(1, 'manage_products.create_product.error.property.required')
+                .max(field.maxlength ?? Infinity, 'manage_products.create_product.error.property.text.max')
+              : z.string({ message: 'manage_products.create_product.error.property.text' })
+                .max(field.maxlength ?? Infinity, 'manage_products.create_product.error.property.text.max').nullable();
             break;
           case 'LOGICAL_VALUE':
-            schemaObject[field.property] = field.nullable === 'NO' ? z.boolean() : z.boolean().nullable();
+            schemaObject[field.property] = field.nullable === 'NO' ? z.boolean({ message: 'manage_products.create_product.error.property.required' }) : z.boolean().nullable();
             break;
           case 'FRACTIONAL_NUMBER':
-            schemaObject[field.property] = field.nullable === 'NO' ? z.number() : z.number().nullable();
+            schemaObject[field.property] = field.nullable === 'NO' ? z.number({ message: 'manage_products.create_product.error.property.required' }) 
+            : z.number({ message: 'manage_products.create_product.error.property.number' }).nullable();
             break;
         }
       });
       return z.object(schemaObject);
     };
 
-    setCategoryZodSchema(generateCategoryZodSchema(categorySchema));
+    setCategoryZodSchema(generateCategoryZodSchema(data));
     setActiveStep(2)
   }
 
@@ -210,6 +218,7 @@ function Step1({ schema, categories, t, setIsValid, onValid } : Step1Params) {
               value={categories.find(option => option === field.value) || ''}
               renderInput={(params) => (
                 <TextField
+                  required
                   {...params}
                   label={t('manage_products.create_product.category.label')}
                   error={Boolean(errors.name)}
@@ -279,44 +288,47 @@ function Step2({ t, setLoading, categorySchema, setIsValid, zodSchema } : Step2P
     <form noValidate onSubmit={handleSubmit(onValid)} id='create_product.create'>
       <Stack spacing={4} sx={{ marginTop: '30px' }}>
         <TextField
+          required
           {...register('name')}
-          label='Name'
-          placeholder='Enter name'
+          label={t('manage_products.create_product.label.name')}
+          placeholder={t('manage_products.create_product.enter.name')}
           error={Boolean(errors.name)}
           fullWidth
-          helperText={errors.name?.message && errors.name.message as string}
+          helperText={errors.name?.message && t(errors.name.message as string)}
           sx={{ ...fieldStyle }}
         />
 
         <TextField
+          required
           {...register('price', { valueAsNumber: true })}
           type='number'
-          label='Price'
-          placeholder='Enter price'
+          label={t('manage_products.create_product.label.price')}
+          placeholder={t('manage_products.create_product.enter.price')}
           error={Boolean(errors.price)}
           fullWidth
-          helperText={errors.price?.message && errors.price.message as string}
+          helperText={errors.price?.message && t(errors.price.message as string)}
           sx={{ ...fieldStyle }}
         />
 
         <TextField
+          required
           {...register('quantity', { valueAsNumber: true })}
           type='number'
-          label='Quantity'
-          placeholder='Enter quantity'
+          label={t('manage_products.create_product.label.quantity')}
+          placeholder={t('manage_products.create_product.enter.quantity')}
           error={Boolean(errors.quantity)}
           fullWidth
-          helperText={errors.quantity?.message && errors.quantity.message as string}
+          helperText={errors.quantity?.message && t(errors.quantity.message as string)}
           sx={{ ...fieldStyle }}
         />
 
         <TextField
           {...register('imageUrl')}
-          label='Image url'
-          placeholder='Enter image url'
+          label={t('manage_products.create_product.label.image_url')}
+          placeholder={t('manage_products.create_product.enter.image_url')}
           error={Boolean(errors.imageUrl)}
           fullWidth
-          helperText={errors.imageUrl?.message && errors.imageUrl.message as string}
+          helperText={errors.imageUrl?.message && t(errors.imageUrl.message as string)}
           sx={{ ...fieldStyle }}
         />
 
@@ -336,28 +348,47 @@ function Step2({ t, setLoading, categorySchema, setIsValid, zodSchema } : Step2P
                         onChange={(e) => controllerField.onChange(e.target.checked)}
                       />
                     }
-                    label={field.property}
+                    label={camelCaseToWords(field.property)}
+                    sx={{...fieldStyle}}
                   />
                 );
               }
+              const inputType =
+                field.type === 'NUMBER' || field.type === 'BIG_NUMBER' || field.type === 'FRACTIONAL_NUMBER'
+                  ? 'number'
+                  : 'text';
+
+                  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                    let value: any = e.target.value;
+                    if ((field.type === 'NUMBER' || field.type === 'FRACTIONAL_NUMBER') && value !== '') {
+                      value = parseFloat(value);
+                      if (isNaN(value)) {
+                        value = '';
+                      }
+                    }
+                    controllerField.onChange(value);
+                  };
+      
+
               return (
                 <TextField
+                  required={field.nullable === 'NO'}
                   {...controllerField}
-                  label={field.property}
-                  type={
-                    field.type === 'NUMBER' || field.type === 'BIG_NUMBER' || field.type === 'FRACTIONAL_NUMBER'
-                      ? 'number'
-                      : 'text'
-                  }
+                  label={camelCaseToWords(field.property)}
+                  placeholder={`${t('manage_products.create_product.enter.additional')} ${field.property}`}
+                  type={inputType}
                   error={!!fieldState.error}
-                  helperText={fieldState.error ? fieldState.error.message : ''}
+                  helperText={fieldState.error?.message ? t(fieldState.error.message) : ''}
                   fullWidth
-                  margin="normal"
+                  margin='normal'
+                  inputProps={inputType === 'number' ? { inputMode: 'numeric', pattern: '[0-9]*' } : {}}
+                  onChange={handleChange}
+                  sx={{...fieldStyle}}
                 />
               );
             }}
           />
-        ))}
+      ))}
       </Stack>
     </form>
   )
