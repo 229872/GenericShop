@@ -13,7 +13,6 @@ public record InputProductDto(
     BigDecimal price,
     @NotNull @Positive
     Integer quantity,
-    @NotBlank
     String imageUrl
 ) {
 }

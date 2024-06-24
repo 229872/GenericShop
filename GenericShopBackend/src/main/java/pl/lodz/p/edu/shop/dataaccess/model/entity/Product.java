@@ -31,7 +31,7 @@ public class Product extends ArchivableEntity {
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url")
     private String imageUrl;
 
     @Builder.Default

@@ -9,6 +9,7 @@ import { getJwtToken } from "../../services/tokenService";
 import handleAxiosException from "../../services/apiService";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TFunction } from "i18next";
+import { toast } from "sonner";
 
 type SchemaField = {
   property: string;
@@ -29,6 +30,7 @@ export default function CreateProductDialog({ open, onClose, setLoading, style }
   const steps: string[] = ['manage_products.create_product.step.1.title', 'manage_products.create_product.step.2.title'];
   const [ activeStep, setActiveStep ] = useState<1 | 2>(1);
   const [ isStep1Valid, setIsStep1Valid ] = useState<boolean>(false)
+  const [ isStep2Valid, setIsStep2Valid ] = useState<boolean>(false)
   const [ categories, setCategories ] = useState<string[]>([])
   const [ validCategorySchema, setValidCategorySchema ] = useState<any>(undefined)
   const [ newProductCategory, setNewProductCategory ] = useState<string | undefined>(undefined)
@@ -83,6 +85,10 @@ export default function CreateProductDialog({ open, onClose, setLoading, style }
     setCategorySchema(data)
     const generateCategoryZodSchema = (categorySchema: SchemaField[]) => {
       const schemaObject: any = {};
+      schemaObject['name'] = z.string().min(1)
+      schemaObject['price'] = z.number().positive()
+      schemaObject['quantity'] = z.number().positive()
+      schemaObject['imageUrl'] = z.string().nullable()
       categorySchema.forEach((field: SchemaField) => {
         switch (field.type) {
           case 'NUMBER':
@@ -116,7 +122,7 @@ export default function CreateProductDialog({ open, onClose, setLoading, style }
       case 1:
         return validCategorySchema && <Step1 schema={validCategorySchema} categories={categories} t={t} setIsValid={setIsStep1Valid} onValid={onStep1Valid} />
       case 2:
-        return categorySchema.length > 0 && <Step2 categorySchema={categorySchema} setLoading={setLoading} t={t} zodSchema={categoryZodSchema} />
+        return categorySchema.length > 0 && <Step2 categorySchema={categorySchema} setLoading={setLoading} t={t} setIsValid={setIsStep2Valid} zodSchema={categoryZodSchema} />
     }
   }
 
@@ -140,7 +146,7 @@ export default function CreateProductDialog({ open, onClose, setLoading, style }
             <Typography>{t('manage_products.button.back')}</Typography>
           </Button>
 
-          <Button type='submit' form='create_product.create' variant='contained'>
+          <Button type='submit' form='create_product.create' variant='contained' disabled={!isStep2Valid}>
             <Typography>{t('manage_products.button.submit')}</Typography>
           </Button>
         </Stack>
@@ -225,26 +231,95 @@ type Step2Params = {
   t: TFunction<"translation", undefined>
   setLoading: (state: boolean) => void
   categorySchema: SchemaField[]
+  setIsValid: (isValid: boolean) => void
   zodSchema: any
 }
 
-function Step2({ t, setLoading, categorySchema, zodSchema } : Step2Params) {
+function Step2({ t, setLoading, categorySchema, setIsValid, zodSchema } : Step2Params) {
+  const fieldStyle = { height: '80px' }
   type FormType = z.infer<typeof zodSchema>
   const { register, handleSubmit, formState, control } = useForm<FormType>({
     resolver: zodResolver(zodSchema),
+    mode: 'onChange',
     defaultValues: categorySchema.reduce((acc, field) => {
       acc[field.property] = field.nullable === 'NO' ? '' : '';
       return acc;
     }, {} as Record<string, any>),
   });
+  const { errors, isValid } = formState;
 
-  const onValid = (data: any) => {
+  useEffect(() => {
+    setIsValid(isValid)
+  }, [isValid])
+
+  const onValid = async (data: any) => {
     console.log('Sending data: ', data)
+    try {
+      setLoading(true)
+      await createProduct(data)
+      toast.success('Product created successfully')
+
+    } catch (e) {
+      handleAxiosException(e)
+
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const createProduct = async (product: any) => {
+    return axios.post(`${environment.apiBaseUrl}/products`, product, {
+      headers: {
+        Authorization: `Bearer ${getJwtToken()}`
+      }
+    })
   }
 
   return (
     <form noValidate onSubmit={handleSubmit(onValid)} id='create_product.create'>
-      <Stack spacing={7} sx={{ marginTop: '30px' }}>
+      <Stack spacing={4} sx={{ marginTop: '30px' }}>
+        <TextField
+          {...register('name')}
+          label='Name'
+          placeholder='Enter name'
+          error={Boolean(errors.name)}
+          fullWidth
+          helperText={errors.name?.message && errors.name.message as string}
+          sx={{ ...fieldStyle }}
+        />
+
+        <TextField
+          {...register('price', { valueAsNumber: true })}
+          type='number'
+          label='Price'
+          placeholder='Enter price'
+          error={Boolean(errors.price)}
+          fullWidth
+          helperText={errors.price?.message && errors.price.message as string}
+          sx={{ ...fieldStyle }}
+        />
+
+        <TextField
+          {...register('quantity', { valueAsNumber: true })}
+          type='number'
+          label='Quantity'
+          placeholder='Enter quantity'
+          error={Boolean(errors.quantity)}
+          fullWidth
+          helperText={errors.quantity?.message && errors.quantity.message as string}
+          sx={{ ...fieldStyle }}
+        />
+
+        <TextField
+          {...register('imageUrl')}
+          label='Image url'
+          placeholder='Enter image url'
+          error={Boolean(errors.imageUrl)}
+          fullWidth
+          helperText={errors.imageUrl?.message && errors.imageUrl.message as string}
+          sx={{ ...fieldStyle }}
+        />
+
         {categorySchema.map((field: SchemaField) => (
           <Controller
             key={field.property}
