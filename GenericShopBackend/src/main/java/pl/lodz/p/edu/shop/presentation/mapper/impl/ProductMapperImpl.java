@@ -1,22 +1,32 @@
 package pl.lodz.p.edu.shop.presentation.mapper.impl;
 
 import org.springframework.stereotype.Component;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.Category;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.ProductMapper;
 import pl.lodz.p.edu.shop.util.SecurityUtil;
 
+import java.util.Map;
+
 @Component
 public class ProductMapperImpl implements ProductMapper {
 
     @Override
     public Product mapToProduct(InputProductDto inputProductDto) {
+        Map<String, Object> categoryProperties = inputProductDto.categoryProperties();
+        Category category = Category.builder()
+            .name(inputProductDto.categoryName())
+            .build();
+
         return Product.builder()
             .name(inputProductDto.name())
             .price(inputProductDto.price())
             .quantity(inputProductDto.quantity())
+            .category(category)
             .imageUrl(inputProductDto.imageUrl())
+            .tableProperties(categoryProperties)
             .build();
     }
 

@@ -47,6 +47,9 @@ public class CategoryServiceAdapter implements CategoryServiceOperations {
                 entry -> TextUtil.toSnakeCase(entry.getKey()),
                 Map.Entry::getValue
             ));
-        categoryService.createCategory(validCategory, schema);
+        Category newCategory = Category.builder()
+            .name(validCategory)
+            .build();
+        categoryService.createCategory(newCategory, schema);
     }
 }

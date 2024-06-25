@@ -59,12 +59,9 @@ class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category createCategory(String category, Map<String, List<String>> schema) {
+    public Category createCategory(Category category, Map<String, List<String>> schema) {
         try {
-            Category newCategory = Category.builder()
-                .name(category)
-                .build();
-            String tableName = "%ss".formatted(category.toLowerCase());
+            String tableName = category.getCategoryTableName();
 
             Map<String, List<Constraint>> dbSchema = schema.entrySet().stream()
                 .collect(toMap(
@@ -74,7 +71,7 @@ class CategoryServiceImpl implements CategoryService {
                         .toList()
                 ));
 
-            Category result = categoryRepository.save(newCategory);
+            Category result = categoryRepository.save(category);
             categoryRepository.flush();
             categoryDAO.createTable(tableName, dbSchema);
             return result;

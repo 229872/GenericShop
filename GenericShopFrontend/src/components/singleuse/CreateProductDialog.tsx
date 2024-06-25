@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { TFunction } from "i18next";
 import { toast } from "sonner";
 import { CheckBox } from "@mui/icons-material";
-import { camelCaseToWords } from "../../services/textService";
+import { camelCaseToWords, camelCaseToWordsStartingWillLoverCase } from "../../services/textService";
 
 type SchemaField = {
   property: string;
@@ -128,9 +128,11 @@ export default function CreateProductDialog({ open, onClose, setLoading, style }
   const renderStep = (activeStep: 1 | 2) => {
     switch (activeStep) {
       case 1:
-        return validCategorySchema && <Step1 schema={validCategorySchema} categories={categories} t={t} setIsValid={setIsStep1Valid} onValid={onStep1Valid} />
+        return validCategorySchema &&
+          <Step1 schema={validCategorySchema} categories={categories} t={t} setIsValid={setIsStep1Valid} onValid={onStep1Valid} />
       case 2:
-        return categorySchema.length > 0 && <Step2 categorySchema={categorySchema} setLoading={setLoading} t={t} setIsValid={setIsStep2Valid} zodSchema={categoryZodSchema} />
+        return categorySchema.length > 0 && newProductCategory && 
+          <Step2 categorySchema={categorySchema} setLoading={setLoading} t={t} setIsValid={setIsStep2Valid} zodSchema={categoryZodSchema} newProductCategory={newProductCategory} onClose={onClose} />
     }
   }
 
@@ -242,9 +244,11 @@ type Step2Params = {
   categorySchema: SchemaField[]
   setIsValid: (isValid: boolean) => void
   zodSchema: any
+  newProductCategory: string
+  onClose: () => void
 }
 
-function Step2({ t, setLoading, categorySchema, setIsValid, zodSchema } : Step2Params) {
+function Step2({ t, setLoading, categorySchema, setIsValid, zodSchema, newProductCategory, onClose } : Step2Params) {
   const fieldStyle = { height: '80px' }
   type FormType = z.infer<typeof zodSchema>
   const { register, handleSubmit, formState, control } = useForm<FormType>({
@@ -262,11 +266,18 @@ function Step2({ t, setLoading, categorySchema, setIsValid, zodSchema } : Step2P
   }, [isValid])
 
   const onValid = async (data: any) => {
-    console.log('Sending data: ', data)
+    const { name, price, quantity, imageUrl, ...otherProperties } = data;
+    const product = {
+      name, price, quantity, imageUrl,
+      categoryName: newProductCategory,
+      categoryProperties: otherProperties
+    }
+    
     try {
       setLoading(true)
-      await createProduct(data)
+      await createProduct(product)
       toast.success('Product created successfully')
+      onClose()
 
     } catch (e) {
       handleAxiosException(e)
@@ -375,7 +386,7 @@ function Step2({ t, setLoading, categorySchema, setIsValid, zodSchema } : Step2P
                   required={field.nullable === 'NO'}
                   {...controllerField}
                   label={camelCaseToWords(field.property)}
-                  placeholder={`${t('manage_products.create_product.enter.additional')} ${field.property}`}
+                  placeholder={`${t('manage_products.create_product.enter.additional')} ${camelCaseToWordsStartingWillLoverCase(field.property)}`}
                   type={inputType}
                   error={!!fieldState.error}
                   helperText={fieldState.error?.message ? t(fieldState.error.message) : ''}

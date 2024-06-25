@@ -50,11 +50,13 @@ public final class ExceptionMessage {
         public static final String LOGIN_WRONG = "exception.validation.login.wrong";
         public static final String SCHEMA_NOT_VALID = "exception.validation.product_schema.wrong";
         public static final String TABLE_NAME_NOT_VALID = "exception.validation.table_name.wrong";
+        public static final String CATEGORY_PROPERTIES_NOT_VALID = "exception.validation.category.properties.wrong";
     }
 
     public static class Orders {
         public static final String PRODUCT_NOT_FOUND = "exception.orders.product.not_found";
         public static final String SCHEMA_NOT_FOUND = "exception.orders.schema.not_found";
         public static final String CATEGORY_CONFLICT = "exception.orders.category.conflict";
+        public static final String CATEGORY_NOT_FOUND = "exception.orders.category.not_found";
     }
 }

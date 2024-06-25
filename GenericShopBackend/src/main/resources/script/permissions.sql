@@ -15,3 +15,5 @@ GRANT CREATE ON SCHEMA public TO shop_orders;
 GRANT USAGE, SELECT ON SEQUENCE products_seq TO shop_orders;
 GRANT USAGE, SELECT ON SEQUENCE rates_seq TO shop_orders;
 GRANT USAGE, SELECT ON SEQUENCE categories_seq TO shop_orders;
+
+GRANT SELECT, INSERT, UPDATE ON yerbas, tvs, books, games TO shop_orders;

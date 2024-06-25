@@ -36,7 +36,7 @@ public class CategoryServiceRetryHandler extends AbstractRetryHandler implements
     }
 
     @Override
-    public Category createCategory(String category, Map<String, List<String>> schema) {
+    public Category createCategory(Category category, Map<String, List<String>> schema) {
         return repeatTransactionWhenTimeoutOccurred(() -> categoryService.createCategory(category, schema));
     }
 }

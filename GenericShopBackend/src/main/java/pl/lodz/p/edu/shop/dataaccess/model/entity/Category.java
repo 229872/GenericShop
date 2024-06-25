@@ -20,4 +20,8 @@ public class Category extends AbstractEntity {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    public String getCategoryTableName() {
+        return "%ss".formatted(name.toLowerCase());
+    }
 }

@@ -38,6 +38,9 @@ public class Product extends ArchivableEntity {
     @OneToMany
     private Set<Rate> rates = new HashSet<>();
 
+    @ManyToOne
+    private Category category;
+
     @Transient
     private Map<String, Object> tableProperties = new HashMap<>();
 }

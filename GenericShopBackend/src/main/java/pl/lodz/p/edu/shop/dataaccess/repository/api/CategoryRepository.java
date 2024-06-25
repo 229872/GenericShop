@@ -9,6 +9,8 @@ public interface CategoryRepository {
 
     List<Category> findAll();
 
+    Optional<Category> findByName(String categoryName);
+
     Optional<Category> findById(Long id);
 
     Category save(Category category);
