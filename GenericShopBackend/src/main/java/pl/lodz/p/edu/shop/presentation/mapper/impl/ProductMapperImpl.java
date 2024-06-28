@@ -7,8 +7,11 @@ import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.ProductMapper;
 import pl.lodz.p.edu.shop.util.SecurityUtil;
+import pl.lodz.p.edu.shop.util.TextUtil;
 
 import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 @Component
 public class ProductMapperImpl implements ProductMapper {
@@ -16,6 +19,12 @@ public class ProductMapperImpl implements ProductMapper {
     @Override
     public Product mapToProduct(InputProductDto inputProductDto) {
         Map<String, Object> categoryProperties = inputProductDto.categoryProperties();
+        Map<String, Object> validProperties = categoryProperties.entrySet().stream()
+            .collect(toMap(
+                entry -> TextUtil.toSnakeCase(entry.getKey()),
+                Map.Entry::getValue
+            ));
+
         Category category = Category.builder()
             .name(inputProductDto.categoryName())
             .build();
@@ -26,7 +35,7 @@ public class ProductMapperImpl implements ProductMapper {
             .quantity(inputProductDto.quantity())
             .category(category)
             .imageUrl(inputProductDto.imageUrl())
-            .tableProperties(categoryProperties)
+            .tableProperties(validProperties)
             .build();
     }
 
