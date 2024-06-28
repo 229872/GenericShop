@@ -3,6 +3,7 @@ package pl.lodz.p.edu.shop.dataaccess.model.superclass;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import pl.lodz.p.edu.shop.util.SecurityUtil;
 
 import java.time.LocalDateTime;
 
@@ -39,12 +40,12 @@ public abstract class AbstractEntity {
     @PrePersist
     void prePersist() {
         createdAt = LocalDateTime.now();
-        //fixme After adding security implement mechanism
-        createdBy = "test";
+        createdBy = SecurityUtil.getLoginFromSecurityContext();
     }
 
     @PreUpdate
     void preUpdate() {
         modifiedAt = LocalDateTime.now();
+        modifiedBy = SecurityUtil.getLoginFromSecurityContext();
     }
 }
