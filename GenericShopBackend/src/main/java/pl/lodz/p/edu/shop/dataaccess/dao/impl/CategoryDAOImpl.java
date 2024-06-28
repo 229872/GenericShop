@@ -38,7 +38,7 @@ class CategoryDAOImpl implements CategoryDAO {
             stringBuilder.append(", ");
         });
 
-        stringBuilder.append("product_id BIGINT, FOREIGN KEY (product_id) REFERENCES products(id) );");
+        stringBuilder.append("product_id BIGINT PRIMARY KEY);");
         String createTableSql = stringBuilder.toString();
 
         jdbcTemplate.execute(createTableSql);

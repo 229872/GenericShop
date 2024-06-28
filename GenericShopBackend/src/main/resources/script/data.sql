@@ -29,30 +29,30 @@ VALUES (nextval('categories_seq'), 0, 'john123', now(), 'Yerba'),
        (nextval('categories_seq'), 0, 'john123', now(), 'Tv')
 ON CONFLICT DO NOTHING;
 
-CREATE TABLE yerbas (
+CREATE TABLE IF NOT EXISTS yerbas (
+    product_id BIGINT PRIMARY KEY,
     net_mass_in_grams INTEGER NOT NULL,
     power_level INTEGER NOT NULL,
     dust_amount INTEGER NOT NULL,
-    bitterness_level INTEGER NOT NULL,
-    product_id BIGINT, FOREIGN KEY (product_id) REFERENCES products(id)
+    bitterness_level INTEGER NOT NULL
 );
 
-CREATE TABLE books (
+CREATE TABLE IF NOT EXISTS books (
+    product_id BIGINT PRIMARY KEY,
     author_name VARCHAR(255) NOT NULL,
-    number_of_pages INTEGER NOT NULL,
-    product_id BIGINT, FOREIGN KEY (product_id) REFERENCES products(id)
+    number_of_pages INTEGER NOT NULL
 );
 
-CREATE TABLE games (
-    genre VARCHAR(255) NOT NULL,
-    product_id BIGINT, FOREIGN KEY (product_id) REFERENCES products(id)
+CREATE TABLE IF NOT EXISTS games (
+    product_id BIGINT PRIMARY KEY,
+    genre VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE tvs (
+CREATE TABLE IF NOT EXISTS tvs (
+    product_id BIGINT PRIMARY KEY,
     brand VARCHAR(255) NOT NULL,
     color VARCHAR(255) NOT NULL,
-    screen VARCHAR(255) NOT NULL,
-    product_id BIGINT, FOREIGN KEY (product_id) REFERENCES products(id)
+    screen VARCHAR(255) NOT NULL
 );
 
 INSERT INTO products (id, version, is_archival, created_by, created_at, name, price, quantity, image_url, category_id)

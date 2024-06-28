@@ -17,6 +17,6 @@ public interface ProductRepository {
 
     Product save(Product product);
 
-    void flush();
+    Product saveAndFlush(Product product);
 
 }

@@ -68,15 +68,19 @@ public class ProductServiceImpl implements ProductService {
         try {
             Category category = categoryRepository.findByName(product.getCategory().getName())
                 .orElseThrow(ApplicationExceptionFactory::createCategoryNotFoundException);
+
             product.setCategory(category);
-            Product result = productRepository.save(product);
-            productRepository.flush();
+            Product result = productRepository.saveAndFlush(product);
+
             Map<String, Object> categoryProperties = product.getTableProperties();
+            categoryProperties.put("product_id", result.getId());
+
             var resultProps = productDAO.insert(product.getCategory().getCategoryTableName(), categoryProperties);
             result.setTableProperties(resultProps);
             return result;
 
         } catch (DataAccessException e) {
+            log.warn("DataAccessExceptions occurred: ", e);
             var violationException = ExceptionUtil.findCause(e, ConstraintViolationException.class);
 
             if (Objects.nonNull(violationException) && Objects.nonNull(violationException.getConstraintName())) {
@@ -112,8 +116,7 @@ public class ProductServiceImpl implements ProductService {
 
     private Product save(Product product) {
         try {
-            productRepository.save(product);
-            productRepository.flush();
+            productRepository.saveAndFlush(product);
             return product;
 
         } catch (DataAccessException e) {
