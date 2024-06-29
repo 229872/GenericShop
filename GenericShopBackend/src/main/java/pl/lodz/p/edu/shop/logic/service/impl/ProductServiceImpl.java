@@ -59,8 +59,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product findById(Long id) {
-        return productRepository.findById(id)
+        Product product = productRepository.findById(id)
             .orElseThrow(ApplicationExceptionFactory::createProductNotFoundException);
+        Map<String, Object> categoryData = productDAO.findByIdInTable(id, product.getCategory().getCategoryTableName());
+        product.setTableProperties(categoryData);
+        return product;
     }
 
     @Override

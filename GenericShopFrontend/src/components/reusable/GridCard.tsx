@@ -8,16 +8,20 @@ type GridCardProps = {
   data: GridItemData[]
   labelSize?: GridSize
   contentSize?: GridSize
+  noBorder?: boolean
+  rowSpacing?: number
 }
 
-export default function GridCard({ title, data, labelSize, contentSize } : GridCardProps) {
+export default function GridCard({ title, data, labelSize, contentSize, noBorder, rowSpacing } : GridCardProps) {
   const { t } = useTranslation();
+  const styleWithBorder = { border: `1px solid black`, marginBottom: 3 }
+  const styleWithoutBorder = { marginBottom: 3 }
 
   return (
-    <Card sx={{ border: `1px solid black`, marginBottom: 3 }}>
+    <Card elevation={noBorder ? 0 : 1} sx={ noBorder ? styleWithoutBorder : styleWithBorder }>
       <CardContent>
         {title && <Typography variant="h5" sx={{ marginBottom: '10px' }}>{t(title)}</Typography>} 
-        <Grid container spacing={0.5}>
+        <Grid container spacing={rowSpacing ?? 0.5}>
           {
             data.map((item, index) => (
               <React.Fragment key={index}>

@@ -56,6 +56,12 @@ public class ProductMapperImpl implements ProductMapper {
 
     @Override
     public ProductOutputDto mapToProductOutputDtoWithVersion(Product product) {
+        Map<String, Object> tableProperties = product.getTableProperties();
+        Map<String, Object> mappedProperties = tableProperties.entrySet().stream()
+            .collect(toMap(
+                entry -> TextUtil.toCamelCase(entry.getKey()),
+                Map.Entry::getValue
+            ));
 
         return ProductOutputDto.builder()
             .id(product.getId())
@@ -64,6 +70,7 @@ public class ProductMapperImpl implements ProductMapper {
             .price(product.getPrice())
             .quantity(product.getQuantity())
             .imageUrl(product.getImageUrl())
+            .categoryProperties(mappedProperties)
             .build();
     }
 }

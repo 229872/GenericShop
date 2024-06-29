@@ -9,7 +9,7 @@ export const camelCaseToWords = (str: string) => {
     });
 }
 
-export const camelCaseToWordsStartingWillLoverCase = (str: string) => {
+export const camelCaseToWordsStartingWillLowerCase = (str: string) => {
   return str
     .replace(/([a-z0-9])([A-Z])/g, '$1 $2') // Add spaces between camel case words
     .replace(/^./, function (str) { // Capitalize the first letter of the entire string

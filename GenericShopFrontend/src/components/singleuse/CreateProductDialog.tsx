@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { TFunction } from "i18next";
 import { toast } from "sonner";
 import { CheckBox } from "@mui/icons-material";
-import { camelCaseToWords, camelCaseToWordsStartingWillLoverCase } from "../../services/textService";
+import { camelCaseToWords, camelCaseToWordsStartingWillLowerCase } from "../../services/textService";
 
 type SchemaField = {
   property: string;
@@ -386,7 +386,7 @@ function Step2({ t, setLoading, categorySchema, setIsValid, zodSchema, newProduc
                   required={field.nullable === 'NO'}
                   {...controllerField}
                   label={camelCaseToWords(field.property)}
-                  placeholder={`${t('manage_products.create_product.enter.additional')} ${camelCaseToWordsStartingWillLoverCase(field.property)}`}
+                  placeholder={`${t('manage_products.create_product.enter.additional')} ${camelCaseToWordsStartingWillLowerCase(field.property)}`}
                   type={inputType}
                   error={!!fieldState.error}
                   helperText={fieldState.error?.message ? t(fieldState.error.message) : ''}

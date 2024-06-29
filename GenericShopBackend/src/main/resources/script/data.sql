@@ -56,17 +56,17 @@ CREATE TABLE IF NOT EXISTS tvs (
 );
 
 INSERT INTO products (id, version, is_archival, created_by, created_at, name, price, quantity, image_url, category_id)
-     VALUES (nextval('products_seq'), 0, false, 'john123', now(), 'SAMSUNG QE65Q67C 65" QLED 4K Tizen TV', 999.99, 4, 'http://localhost', (SELECT id FROM categories WHERE name='Tv')),
-            (nextval('products_seq'), 0, false, 'john123', now(), 'Canarias', 30.00, 29, 'http://localhost', (SELECT id FROM categories WHERE name='Yerba')),
-            (nextval('products_seq'), 0, false, 'john123', now(), 'Pipore Hierbas', 25.00, 8, 'http://localhost', (SELECT id FROM categories WHERE name='Yerba')),
-            (nextval('products_seq'), 0, false, 'john123', now(), 'Pipore Sublime', 25.00, 12, 'http://localhost', (SELECT id FROM categories WHERE name='Yerba')),
-            (nextval('products_seq'), 0, true, 'john123', now(), 'Pajarito', 24.99, 3, 'http://localhost', (SELECT id FROM categories WHERE name='Yerba')),
-            (nextval('products_seq'), 0, false, 'john123', now(), 'PHILIPS 55PML9008 55" MINILED 4K 120Hz Ambilight 3 Dolby Atmos Dolby Vision HDMI 2.1', 777.05, 2, 'http://localhost', (SELECT id FROM categories WHERE name='Tv')),
-            (nextval('products_seq'), 0, false, 'john123', now(), 'The Witcher 3 Wild Hunt', 46.99, 20, 'http://localhost', (SELECT id FROM categories WHERE name='Game')),
-            (nextval('products_seq'), 0, false, 'john123', now(), 'Java Techniki zaawansowane', 258.99, 3, 'http://localhost', (SELECT id FROM categories WHERE name='Book')),
-            (nextval('products_seq'), 0, true, 'john123', now(), 'The Lord of the Rings: The Two Towers', 40.99, 1, 'http://localhost', (SELECT id FROM categories WHERE name='Book')),
-            (nextval('products_seq'), 0, false, 'john123', now(), 'Linux. Biblia', 99.99, 3, 'http://localhost', (SELECT id FROM categories WHERE name='Book')),
-            (nextval('products_seq'), 0, true, 'john123', now(), 'Spring w akcji', 110.99, 9, 'http://localhost', (SELECT id FROM categories WHERE name='Book'));
+     VALUES (nextval('products_seq'), 0, false, 'john123', now(), 'SAMSUNG QE65Q67C 65" QLED 4K Tizen TV', 999.99, 4, null, (SELECT id FROM categories WHERE name='Tv')),
+            (nextval('products_seq'), 0, false, 'john123', now(), 'Canarias', 30.00, 29, null, (SELECT id FROM categories WHERE name='Yerba')),
+            (nextval('products_seq'), 0, false, 'john123', now(), 'Pipore Hierbas', 25.00, 8, null, (SELECT id FROM categories WHERE name='Yerba')),
+            (nextval('products_seq'), 0, false, 'john123', now(), 'Pipore Sublime', 25.00, 12, null, (SELECT id FROM categories WHERE name='Yerba')),
+            (nextval('products_seq'), 0, true, 'john123', now(), 'Pajarito', 24.99, 3, null, (SELECT id FROM categories WHERE name='Yerba')),
+            (nextval('products_seq'), 0, false, 'john123', now(), 'PHILIPS 55PML9008 55" MINILED 4K 120Hz Ambilight 3 Dolby Atmos Dolby Vision HDMI 2.1', 777.05, 2, null, (SELECT id FROM categories WHERE name='Tv')),
+            (nextval('products_seq'), 0, false, 'john123', now(), 'The Witcher 3 Wild Hunt', 46.99, 20, null, (SELECT id FROM categories WHERE name='Game')),
+            (nextval('products_seq'), 0, false, 'john123', now(), 'Java Techniki zaawansowane', 258.99, 3, null, (SELECT id FROM categories WHERE name='Book')),
+            (nextval('products_seq'), 0, true, 'john123', now(), 'The Lord of the Rings: The Two Towers', 40.99, 1, null, (SELECT id FROM categories WHERE name='Book')),
+            (nextval('products_seq'), 0, false, 'john123', now(), 'Linux. Biblia', 99.99, 3, null, (SELECT id FROM categories WHERE name='Book')),
+            (nextval('products_seq'), 0, true, 'john123', now(), 'Spring w akcji', 110.99, 9, null, (SELECT id FROM categories WHERE name='Book'));
 
 INSERT INTO yerbas (net_mass_in_grams, power_level, dust_amount, bitterness_level, product_id)
     VALUES (1000, 4, 4, 4, (SELECT id FROM products WHERE name='Canarias')),
