@@ -29,12 +29,14 @@ public class ProductMapperImpl implements ProductMapper {
             .name(inputProductDto.categoryName())
             .build();
 
+        String imageUrl = inputProductDto.imageUrl().isBlank() ? null : inputProductDto.imageUrl();
+
         return Product.builder()
             .name(inputProductDto.name())
             .price(inputProductDto.price())
             .quantity(inputProductDto.quantity())
             .category(category)
-            .imageUrl(inputProductDto.imageUrl())
+            .imageUrl(imageUrl)
             .tableProperties(validProperties)
             .build();
     }
