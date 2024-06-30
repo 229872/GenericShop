@@ -11,6 +11,7 @@ import pl.lodz.p.edu.shop.logic.service.api.ProductService;
 import pl.lodz.p.edu.shop.presentation.adapter.api.ProductServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.product.UpdateProductDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.ProductMapper;
 
 import java.util.List;
@@ -50,6 +51,12 @@ public class ProductServiceAdapter implements ProductServiceOperations {
     }
 
     @Override
+    public ProductOutputDto findByIdShort(Long id) {
+        Product product = productService.findByIdShort(id);
+        return productMapper.mapToProductOutputDtoWithVersion(product);
+    }
+
+    @Override
     public ProductOutputDto create(InputProductDto product) {
         Product newProductData = productMapper.mapToProduct(product);
         Product newProduct = productService.create(newProductData);
@@ -57,10 +64,10 @@ public class ProductServiceAdapter implements ProductServiceOperations {
     }
 
     @Override
-    public ProductOutputDto update(Long id, InputProductDto newProduct) {
-        Product newProductData = productMapper.mapToProduct(newProduct);
-        Product product = productService.update(id, newProductData);
-        return productMapper.mapToProductOutputDtoWithoutVersion(product);
+    public ProductOutputDto update(Long id, UpdateProductDto productWithNewData) {
+        Product product = productService.update(id, productWithNewData.price(),
+            productWithNewData.quantity(), productWithNewData.imageUrl(), productWithNewData.version());
+        return productMapper.mapToProductOutputDtoWithVersion(product);
     }
 
     @Override

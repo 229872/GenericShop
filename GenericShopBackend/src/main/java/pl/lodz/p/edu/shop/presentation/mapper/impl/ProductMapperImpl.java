@@ -43,11 +43,8 @@ public class ProductMapperImpl implements ProductMapper {
 
     @Override
     public ProductOutputDto mapToProductOutputDtoWithoutVersion(Product product) {
-        String combinedVersion = SecurityUtil.signVersion(product.getVersion());
-
         return ProductOutputDto.builder()
             .id(product.getId())
-            .version(combinedVersion)
             .archival(product.isArchival())
             .name(product.getName())
             .price(product.getPrice())
@@ -58,6 +55,7 @@ public class ProductMapperImpl implements ProductMapper {
 
     @Override
     public ProductOutputDto mapToProductOutputDtoWithVersion(Product product) {
+        String combinedVersion = SecurityUtil.signVersion(product.getVersion());
         Map<String, Object> tableProperties = product.getTableProperties();
         Map<String, Object> mappedProperties = tableProperties.entrySet().stream()
             .collect(toMap(
@@ -67,6 +65,7 @@ public class ProductMapperImpl implements ProductMapper {
 
         return ProductOutputDto.builder()
             .id(product.getId())
+            .version(combinedVersion)
             .archival(product.isArchival())
             .name(product.getName())
             .price(product.getPrice())

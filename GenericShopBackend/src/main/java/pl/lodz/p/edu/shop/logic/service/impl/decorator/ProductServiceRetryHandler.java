@@ -11,6 +11,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 import pl.lodz.p.edu.shop.logic.service.api.ProductService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -42,13 +43,19 @@ public class ProductServiceRetryHandler extends AbstractRetryHandler implements 
     }
 
     @Override
+    public Product findByIdShort(Long id) {
+        return repeatTransactionWhenTimeoutOccurred(() -> productService.findByIdShort(id));
+    }
+
+    @Override
     public Product create(Product product) {
         return repeatTransactionWhenTimeoutOccurred(() -> productService.create(product));
     }
 
     @Override
-    public Product update(Long id, Product newProduct) {
-        return repeatTransactionWhenTimeoutOccurred(() -> productService.update(id, newProduct));
+    public Product update(Long id, BigDecimal newPrice, Integer newQuantity, String newImageUrl, String frontendVersion) {
+        return repeatTransactionWhenTimeoutOccurred(() -> productService.update(id, newPrice, newQuantity, newImageUrl,
+            frontendVersion));
     }
 
     @Override

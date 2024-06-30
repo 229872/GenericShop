@@ -18,7 +18,9 @@ import pl.lodz.p.edu.shop.exception.ApplicationExceptionFactory;
 import pl.lodz.p.edu.shop.exception.SystemExceptionFactory;
 import pl.lodz.p.edu.shop.logic.service.api.ProductService;
 import pl.lodz.p.edu.shop.util.ExceptionUtil;
+import pl.lodz.p.edu.shop.util.SecurityUtil;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -67,6 +69,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Product findByIdShort(Long id) {
+        return productRepository.findById(id)
+            .orElseThrow(ApplicationExceptionFactory::createProductNotFoundException);
+    }
+
+    @Override
     public Product create(Product product) {
         try {
             Category category = categoryRepository.findByName(product.getCategory().getName())
@@ -95,17 +103,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product update(Long id, Product newProduct) {
+    public Product update(Long id, BigDecimal newPrice, Integer newQuantity, String newImageUrl, String frontendVersion) {
         Product product = productRepository.findById(id)
             .orElseThrow(ApplicationExceptionFactory::createProductNotFoundException);
 
-        product.setPrice(newProduct.getPrice());
-        product.setName(newProduct.getName());
-        product.setQuantity(newProduct.getQuantity());
-        product.setImageUrl(newProduct.getImageUrl());
+        if (product.isArchival()) {
+            throw ApplicationExceptionFactory.createCantModifyArchivalProductException();
+        }
+
+        long version = product.getVersion();
+
+        if (!SecurityUtil.verifySignature(version, frontendVersion)) {
+            throw ApplicationExceptionFactory.createApplicationOptimisticLockException();
+        }
+
+        product.setPrice(newPrice);
+        product.setQuantity(newQuantity);
+        product.setImageUrl(newImageUrl);
 
         return save(product);
     }
+
 
     @Override
     public Product archive(Long id) {

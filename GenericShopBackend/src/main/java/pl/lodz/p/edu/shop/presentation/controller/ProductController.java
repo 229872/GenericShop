@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.shop.presentation.adapter.api.ProductServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.product.UpdateProductDto;
 
 import java.net.URI;
 
@@ -41,6 +42,15 @@ public class ProductController {
         return ResponseEntity.ok(responseBody);
     }
 
+    @GetMapping("/id/{id}/short")
+    @RolesAllowed({EMPLOYEE, GUEST, CLIENT})
+    public ResponseEntity<ProductOutputDto> findByIdShort(@PathVariable("id") Long id) {
+        ProductOutputDto responseBody = productService.findByIdShort(id);
+
+        return ResponseEntity.ok(responseBody);
+    }
+
+
     @PostMapping
     @RolesAllowed({EMPLOYEE})
     public ResponseEntity<ProductOutputDto> create(@RequestBody @Valid InputProductDto productDto) {
@@ -60,7 +70,7 @@ public class ProductController {
     @PutMapping("/id/{id}")
     @RolesAllowed({EMPLOYEE})
     public ResponseEntity<ProductOutputDto> update(@PathVariable("id") Long id,
-                                                   @RequestBody @Valid InputProductDto productDto) {
+                                                   @RequestBody @Valid UpdateProductDto productDto) {
         ProductOutputDto responseBody = productService.update(id, productDto);
 
         return ResponseEntity.ok(responseBody);

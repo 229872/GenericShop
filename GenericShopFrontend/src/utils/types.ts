@@ -62,6 +62,10 @@ export type BasicProduct = {
   imageUrl: string
 }
 
+export type BasicProductWithVersion = BasicProduct & {
+  version: string
+}
+
 export type BasicProductWithFixedPrice = {
   id: number
   archival: boolean

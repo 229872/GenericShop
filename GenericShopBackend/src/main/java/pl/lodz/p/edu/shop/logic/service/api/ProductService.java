@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductService {
@@ -14,10 +15,11 @@ public interface ProductService {
 
     Product findById(Long id);
 
+    Product findByIdShort(Long id);
+
     Product create(Product product);
 
-    Product update(Long id, Product newProduct);
+    Product update(Long id, BigDecimal newPrice, Integer newQuantity, String newImageUrl, String frontendVersion);
 
     Product archive(Long id);
-
 }

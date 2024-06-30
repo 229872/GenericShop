@@ -143,6 +143,13 @@ export default function ManageProductsPage({ setLoading, style } : ManageProduct
       price: product.price.toFixed(positiion)
     }
   }
+
+  const updateList = (productId: number, data: BasicProduct) => {
+    const updatedProducts: BasicProduct[] = products.map(product => 
+      product.id === productId ? data : product
+    )
+    setProducts(updatedProducts)
+  }
   
   return (
     <Stack sx={{...style}}>
@@ -192,6 +199,7 @@ export default function ManageProductsPage({ setLoading, style } : ManageProduct
           open={Boolean(visibleEditProductDialog)}
           onClose={() => setVisibleEditProductDialog(undefined)}
           setLoading={setLoading}
+          updateList={updateList}
         />
       }
 

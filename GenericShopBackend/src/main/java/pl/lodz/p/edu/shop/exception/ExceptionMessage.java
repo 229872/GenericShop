@@ -55,6 +55,7 @@ public final class ExceptionMessage {
 
     public static class Orders {
         public static final String PRODUCT_NOT_FOUND = "exception.orders.product.not_found";
+        public static final String PRODUCT_ARCHIVAL = "exception.orders.product.archival";
         public static final String SCHEMA_NOT_FOUND = "exception.orders.schema.not_found";
         public static final String CATEGORY_CONFLICT = "exception.orders.category.conflict";
         public static final String CATEGORY_NOT_FOUND = "exception.orders.category.not_found";

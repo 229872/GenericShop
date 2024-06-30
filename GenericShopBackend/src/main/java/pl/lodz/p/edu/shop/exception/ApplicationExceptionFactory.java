@@ -6,10 +6,7 @@ import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.shop.exception.account.*;
 import pl.lodz.p.edu.shop.exception.account.helper.AccountStateOperation;
 import pl.lodz.p.edu.shop.exception.auth.*;
-import pl.lodz.p.edu.shop.exception.order.CategoryConflictException;
-import pl.lodz.p.edu.shop.exception.order.CategoryNotFoundException;
-import pl.lodz.p.edu.shop.exception.order.ProductNotFoundException;
-import pl.lodz.p.edu.shop.exception.order.SchemaNotFoundException;
+import pl.lodz.p.edu.shop.exception.order.*;
 import pl.lodz.p.edu.shop.exception.other.ApplicationOptimisticLockException;
 import pl.lodz.p.edu.shop.exception.other.UnknownException;
 import pl.lodz.p.edu.shop.exception.transaction.TransactionTimeoutException;
@@ -125,5 +122,9 @@ public final class ApplicationExceptionFactory {
 
     public static ResponseStatusException createCategoryNotFoundException() {
         return new CategoryNotFoundException(NOT_FOUND, ExceptionMessage.Orders.CATEGORY_NOT_FOUND);
+    }
+
+    public static ResponseStatusException createCantModifyArchivalProductException() {
+        return new CantModifyArchivalProductException(BAD_REQUEST, ExceptionMessage.Orders.PRODUCT_ARCHIVAL);
     }
 }
