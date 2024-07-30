@@ -13,7 +13,7 @@ import pl.lodz.p.edu.shop.presentation.dto.product.ProductSchemaDTO;
 import java.util.List;
 import java.util.Map;
 
-import static pl.lodz.p.edu.shop.config.security.role.RoleName.EMPLOYEE;
+import static pl.lodz.p.edu.shop.config.security.role.RoleName.*;
 
 @RequiredArgsConstructor
 
@@ -25,7 +25,7 @@ public class CategoryController {
     private final CategoryServiceOperations categoryService;
 
     @GetMapping
-    @RolesAllowed({EMPLOYEE})
+    @RolesAllowed({EMPLOYEE, GUEST, CLIENT})
     public ResponseEntity<List<String>> findAll() {
         List<String> responseBody = categoryService.findAllCategories();
 

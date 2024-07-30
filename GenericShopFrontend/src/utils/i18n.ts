@@ -220,6 +220,10 @@ const resources = {
       'manage_products.edit_product.enter.price': 'Enter price',
       'manage_products.edit_product.enter.image_url': 'Image url',
       'manage_products.edit_product.success': 'Product has been updated successfully',
+      'manage_products.view_product.label.category': 'Filter by category',
+      'manage_products.view_product.enter.category': 'Select a category',
+      'manage_products.view_product.find': 'Find',
+      'manage_products.view_product.all': 'All',
 
       'nav.home': 'Home',
       'nav.login': 'Login',
@@ -578,6 +582,10 @@ const resources = {
       'manage_products.edit_product.enter.price': 'Wprowadź cenę',
       'manage_products.edit_product.enter.image_url': 'Podaj link do obrazu',
       'manage_products.edit_product.success': 'Produkt został zaaktualizowany pomyślnie',
+      'manage_products.view_product.label.category': 'Filtruj według kategorii',
+      'manage_products.view_product.enter.category': 'Wybierz kategorię',
+      'manage_products.view_product.find': 'Szukaj',
+      'manage_products.view_product.all': 'Wszystkie',
       
       'nav.home': 'Strona Główna',
       'nav.login': 'Zaloguj się',
