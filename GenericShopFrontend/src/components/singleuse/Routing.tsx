@@ -11,6 +11,7 @@ import ProtectedElement from "./ProtectedElement";
 import { Role } from "../../utils/types";
 import ManageAccountsPage from "../../pages/ManageAccountsPage";
 import ManageProductsPage from "../../pages/ManageProductsPage";
+import ProductsPage from "../../pages/ProductsPage";
 
 export const ROOT_PATH = '/'
 export const HOME_PATH = '/home'
@@ -45,6 +46,13 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
       <Route path={ROOT_PATH} element={<Navigate replace to={HOME_PATH} />} />
 
       <Route path={NOT_FOUND_PATH} element={<NotFoundPage style={routesStyle} />} />
+
+      <Route path={HOME_PATH} element={
+        <ProductsPage
+          setLoading={setLoading}
+          style={{ margin: '8vh 8vw' }}
+        />
+      } />
 
       <Route path={AUTH_PATH} element={
         <ProtectedElement
