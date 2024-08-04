@@ -61,7 +61,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<Product> findByCategory(Pageable pageable, String categoryName) {
-        return productRepository.findByCategory(Category.builder().name(categoryName).build(), pageable);
+        Category category = categoryRepository.findByName(categoryName)
+            .orElseThrow(ApplicationExceptionFactory::createCategoryNotFoundException);
+        
+        return productRepository.findByCategory(category, pageable);
     }
 
     @Override

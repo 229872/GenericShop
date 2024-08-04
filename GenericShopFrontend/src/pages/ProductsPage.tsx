@@ -21,7 +21,7 @@ type DefaultProductData = {
 }
 
 const schema = z.object({
-  category: z.string().min(1)
+  category: z.string().min(1).optional()
 });
 
 type Category = z.infer<typeof schema>;
@@ -51,10 +51,12 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
     fetchCategories()
   }, []);
 
-  const fetchProducts = async (pageNr: number, pageSize: number) => {
+  const fetchProducts = async (pageNr: number, pageSize: number, category: string | undefined = undefined) => {
     try {
       setLoading(true);
-      const { data } = await getProducts(pageNr, pageSize);
+      const { data } = category ?
+        await getProductsByCategory(pageNr, pageSize, category) :
+        await getProducts(pageNr, pageSize);
       const products: BasicProduct[] = data.content;
       setProducts(products)
       setTotalElements(data.totalElements)
@@ -93,6 +95,14 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
     });
   }
 
+  const getProductsByCategory = async (pageNr: number, pageSize: number, categoryName: string) => {
+    return axios.get<DefaultProductData>(`${environment.apiBaseUrl}/products/category/${categoryName}`, {
+      headers: {
+        Authorization: `Bearer ${getJwtToken()}`
+      }
+    })
+  }
+
   const onPageFromZeroChange = (event: any, pageNumber: number) => {
     setCurrentPage(pageNumber);
     fetchProducts(pageNumber, pageSize)
@@ -114,7 +124,9 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
   }
 
   const onValid = (data: Category) => {
-    setPickedCategory(data.category)
+    const category: string | undefined = data.category;
+    setPickedCategory(category)
+    fetchProducts(currentPage, pageSize, category)
   }
 
   const getStarArray = (averageRating: number) => {
@@ -145,8 +157,8 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
                   render={({ field }) => (
                     <Autocomplete
                       options={categories}
-                      onChange={(e, value) => field.onChange(value)}
-                      isOptionEqualToValue={(option: any, value: any) => option.value === value.value}
+                      onChange={(e, value) => field.onChange(value ? value : undefined)}
+                      isOptionEqualToValue={(option: any, value: any) => option.value === value?.value}
                       value={field.value || ''}
                       fullWidth
                       renderInput={(params) => (
@@ -162,7 +174,9 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
                   )}
                 />
 
-                <Button type='submit' variant='contained' disabled={!isValid || pickedCategory === watch('category') }>{t('manage_products.view_product.find')}</Button>
+                <Button type='submit' variant='contained' disabled={!isValid || pickedCategory === watch('category') }>
+                  { watch('category') === undefined && pickedCategory !== undefined ? t('clear') : t('manage_products.view_product.find') }
+                </Button>
               </Stack>
             </form>
           </Box>
