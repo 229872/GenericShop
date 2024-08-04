@@ -2,6 +2,7 @@ package pl.lodz.p.edu.shop.dataaccess.repository.api;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.Category;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 
 import java.util.List;
@@ -12,6 +13,8 @@ public interface ProductRepository {
     List<Product> findAll();
 
     Page<Product> findAll(Pageable pageable);
+
+    Page<Product> findByCategory(Category category, Pageable pageable);
 
     Optional<Product> findById(Long id);
 

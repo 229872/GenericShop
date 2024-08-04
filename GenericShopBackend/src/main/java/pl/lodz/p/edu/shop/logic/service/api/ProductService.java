@@ -13,6 +13,8 @@ public interface ProductService {
 
     Page<Product> findAll(Pageable pageable);
 
+    Page<Product> findByCategory(Pageable pageable, String categoryName);
+
     Product findById(Long id);
 
     Product findByIdShort(Long id);

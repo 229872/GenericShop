@@ -45,6 +45,13 @@ public class ProductServiceAdapter implements ProductServiceOperations {
     }
 
     @Override
+    public Page<ProductOutputDto> findByCategory(Pageable pageable, String categoryName) {
+        return productService.findByCategory(pageable, categoryName)
+            .map(productMapper::mapToProductOutputDtoWithoutVersion);
+
+    }
+
+    @Override
     public ProductOutputDto findById(Long id) {
         Product product = productService.findById(id);
         return productMapper.mapToProductOutputDtoWithVersion(product);

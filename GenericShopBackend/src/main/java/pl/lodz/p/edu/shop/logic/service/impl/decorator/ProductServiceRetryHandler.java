@@ -38,6 +38,11 @@ public class ProductServiceRetryHandler extends AbstractRetryHandler implements 
     }
 
     @Override
+    public Page<Product> findByCategory(Pageable pageable, String categoryName) {
+        return repeatTransactionWhenTimeoutOccurred(() -> productService.findByCategory(pageable, categoryName));
+    }
+
+    @Override
     public Product findById(Long id) {
         return repeatTransactionWhenTimeoutOccurred(() -> productService.findById(id));
     }

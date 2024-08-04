@@ -60,6 +60,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Page<Product> findByCategory(Pageable pageable, String categoryName) {
+        return productRepository.findByCategory(Category.builder().name(categoryName).build(), pageable);
+    }
+
+    @Override
     public Product findById(Long id) {
         Product product = productRepository.findById(id)
             .orElseThrow(ApplicationExceptionFactory::createProductNotFoundException);

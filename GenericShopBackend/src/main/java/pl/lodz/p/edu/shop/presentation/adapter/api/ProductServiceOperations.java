@@ -14,6 +14,8 @@ public interface ProductServiceOperations {
 
     Page<ProductOutputDto> findAll(Pageable pageable);
 
+    Page<ProductOutputDto> findByCategory(Pageable pageable, String category);
+
     ProductOutputDto findById(Long id);
 
     ProductOutputDto findByIdShort(Long id);

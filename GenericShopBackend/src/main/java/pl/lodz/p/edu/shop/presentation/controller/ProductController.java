@@ -34,6 +34,14 @@ public class ProductController {
         return ResponseEntity.ok(responseBody);
     }
 
+    @GetMapping("/category/{categoryName}")
+    @RolesAllowed({EMPLOYEE, GUEST, CLIENT})
+    public ResponseEntity<Page<ProductOutputDto>> findByCategory(Pageable pageable, @PathVariable String categoryName) {
+        Page<ProductOutputDto> responseBody = productService.findByCategory(pageable, categoryName);
+
+        return ResponseEntity.ok(responseBody);
+    }
+
     @GetMapping("/id/{id}")
     @RolesAllowed({EMPLOYEE, GUEST, CLIENT})
     public ResponseEntity<ProductOutputDto> findById(@PathVariable("id") Long id) {

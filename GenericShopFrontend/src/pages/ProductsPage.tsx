@@ -38,7 +38,7 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
   const [ pickedCategory, setPickedCategory ] = useState<string | undefined>(undefined)
   const [ totalElements, setTotalElements ] = useState<number>(0)
   const [ pageSize, setPageSize ] = useState<number>(10);
-  const [ currentPage, setCurrentPage ] = useState<number>(1);
+  const [ currentPage, setCurrentPage ] = useState<number>(0);
   const { t } = useTranslation();
 
   const { control, watch, formState, handleSubmit } = useForm<Category>({
@@ -54,7 +54,7 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
   const fetchProducts = async (pageNr: number, pageSize: number) => {
     try {
       setLoading(true);
-      const { data } = await getProducts(pageNr - 1, pageSize);
+      const { data } = await getProducts(pageNr, pageSize);
       const products: BasicProduct[] = data.content;
       setProducts(products)
       setTotalElements(data.totalElements)
@@ -93,9 +93,14 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
     });
   }
 
-  const onPageChange = (event: any, pageNumber: number) => {
+  const onPageFromZeroChange = (event: any, pageNumber: number) => {
     setCurrentPage(pageNumber);
     fetchProducts(pageNumber, pageSize)
+  };
+
+  const onPageFromOneChange = (event: any, pageNumber: number) => {
+    setCurrentPage(pageNumber - 1);
+    fetchProducts(pageNumber - 1, pageSize)
   };
 
   const onResetClicked = () => {
@@ -170,8 +175,8 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
           <Box flexGrow={1} display='flex' justifyContent='center'>
             <Pagination
               count={Math.ceil(totalElements / pageSize)}
-              page={currentPage}
-              onChange={onPageChange}
+              page={currentPage + 1}
+              onChange={onPageFromOneChange}
             />
           </Box>
         </Box>
@@ -225,7 +230,7 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
       <TablePagination
         component='div'
         page={currentPage}
-        onPageChange={onPageChange}
+        onPageChange={onPageFromZeroChange}
         count={totalElements}
         rowsPerPage={pageSize}
         rowsPerPageOptions={rowsPerPageOptions}
