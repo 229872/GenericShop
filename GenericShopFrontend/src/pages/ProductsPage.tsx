@@ -105,22 +105,22 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
 
   const onPageFromZeroChange = (event: any, pageNumber: number) => {
     setCurrentPage(pageNumber);
-    fetchProducts(pageNumber, pageSize)
+    fetchProducts(pageNumber, pageSize, pickedCategory)
   };
 
   const onPageFromOneChange = (event: any, pageNumber: number) => {
     setCurrentPage(pageNumber - 1);
-    fetchProducts(pageNumber - 1, pageSize)
+    fetchProducts(pageNumber - 1, pageSize, pickedCategory)
   };
 
   const onResetClicked = () => {
-    fetchProducts(currentPage, pageSize);
+    fetchProducts(currentPage, pageSize, pickedCategory);
   };
 
   const changeRowsPerPage = (event: any): void => {
     const newPageSize = event.target.value
     setPageSize(newPageSize)
-    fetchProducts(currentPage, newPageSize)
+    fetchProducts(currentPage, newPageSize, pickedCategory)
   }
 
   const onValid = (data: Category) => {
