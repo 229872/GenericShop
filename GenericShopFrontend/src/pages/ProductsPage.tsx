@@ -175,7 +175,7 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
                 />
 
                 <Button type='submit' variant='contained' disabled={!isValid || pickedCategory === watch('category') }>
-                  { watch('category') === undefined && pickedCategory !== undefined ? t('clear') : t('manage_products.view_product.find') }
+                  { watch('category') === undefined && pickedCategory !== undefined ? t('manage_products.view_product.clear') : t('manage_products.view_product.find') }
                 </Button>
               </Stack>
             </form>
@@ -221,12 +221,12 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
               />
               <CardContent className="content-left">
                 <Box className="card-title">{product.name}</Box>
-                <Box><strong>Price: {product.price},-</strong></Box>
+                <Box><strong>{t('manage_products.column.price')}: {product.price}</strong></Box>
                 <Box className="available-message">
                   {product.archival || product.quantity === 0 ? (
-                    <>Unavailable</>
+                    <>{t('manage_products.view_product.available')}</>
                   ) : (
-                    <>Available</>
+                    <>{t('manage_products.view_product.unavailable')}</>
                   )}
                 </Box>
                 {/* <Box className="star-rating">

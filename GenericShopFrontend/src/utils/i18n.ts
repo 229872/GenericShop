@@ -224,6 +224,9 @@ const resources = {
       'manage_products.view_product.enter.category': 'Select a category',
       'manage_products.view_product.find': 'Find',
       'manage_products.view_product.all': 'All',
+      'manage_products.view_product.clear': 'Clear',
+      'manage_products.view_product.available': 'Available',
+      'manage_products.view_product.unavailable': 'Unavailable',
 
       'nav.home': 'Home',
       'nav.login': 'Login',
@@ -586,6 +589,9 @@ const resources = {
       'manage_products.view_product.enter.category': 'Wybierz kategorię',
       'manage_products.view_product.find': 'Szukaj',
       'manage_products.view_product.all': 'Wszystkie',
+      'manage_products.view_product.clear': 'Wyczyść',
+      'manage_products.view_product.available': 'Dostępny',
+      'manage_products.view_product.unavailable': 'Niedostępny',
       
       'nav.home': 'Strona Główna',
       'nav.login': 'Zaloguj się',
