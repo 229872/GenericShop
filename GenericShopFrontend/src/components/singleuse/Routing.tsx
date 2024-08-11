@@ -24,6 +24,7 @@ export const SELF_ACCOUNT_PATH = '/self'
 export const NOT_FOUND_PATH = '/not-found'
 export const MANAGE_ACCOUNTS_PATH = '/manage/accounts'
 export const MANAGE_PRODUCTS_PATH = '/manage/products'
+export const CART_PATH = '/cart'
 
 type RoutingProps = {
   showTokenExpiredDialogAfterTimeout: () => void

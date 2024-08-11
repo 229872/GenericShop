@@ -63,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
     public Page<Product> findByCategory(Pageable pageable, String categoryName) {
         Category category = categoryRepository.findByName(categoryName)
             .orElseThrow(ApplicationExceptionFactory::createCategoryNotFoundException);
-        
+
         return productRepository.findByCategory(category, pageable);
     }
 

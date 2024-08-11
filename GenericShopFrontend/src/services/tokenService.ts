@@ -37,7 +37,9 @@ export const getActiveRole = (token: string | null): Role => {
   return decodeJwtToken(token)?.accountRoles[0] ?? Role.GUEST
 }
 
-
+export const getLogin = (token: string | null): string | null => {
+  return decodeJwtToken(token)?.sub ?? null
+}
 
 export const decodeJwtToken = (token: string | null): TokenData | null => {
   if (token === null) return null;

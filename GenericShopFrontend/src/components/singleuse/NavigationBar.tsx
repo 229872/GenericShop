@@ -1,17 +1,19 @@
-import { AppBar, Button, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Stack, Toolbar, Typography } from "@mui/material";
+import { AppBar, Badge, Button, Divider, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Stack, Toolbar, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { isTokenExpired, logout } from "../../services/sessionService";
-import { AUTH_PATH, HOME_PATH, MANAGE_ACCOUNTS_PATH, MANAGE_PRODUCTS_PATH, REGISTER_PATH, SELF_ACCOUNT_PATH } from "./Routing";
+import { AUTH_PATH, CART_PATH, HOME_PATH, MANAGE_ACCOUNTS_PATH, MANAGE_PRODUCTS_PATH, REGISTER_PATH, SELF_ACCOUNT_PATH } from "./Routing";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LanguageIcon from '@mui/icons-material/Language';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ChangeLanguageMenu from "../reusable/ChangeLanguageMenu";
 import { Role } from "../../utils/types";
+import { getTotalAmountOfProducts } from "../../services/cartService";
 
 type NavigationBarProps = {
   setIsAuthenticated: (state: boolean) => void
@@ -60,6 +62,11 @@ export default function NavigationBar({ setIsAuthenticated, setActiveRole, activ
             <>
               {activeRole === Role.ADMIN && <Button color='inherit' onClick={() => navigate(MANAGE_ACCOUNTS_PATH)}>{t('nav.manage.accounts')}</Button>}
               {activeRole === Role.EMPLOYEE && <Button color='inherit' onClick={() => navigate(MANAGE_PRODUCTS_PATH)}>{t('nav.manage.products')}</Button>}
+              <IconButton color='inherit' size='large' onClick={(e: any) => navigate(CART_PATH)}>
+                <Badge badgeContent={getTotalAmountOfProducts()} color='secondary' showZero>
+                  <ShoppingCartIcon fontSize='medium' />
+                </Badge>
+              </IconButton>
 
               <IconButton color='inherit' size='large' onClick={(e: any) => setAccountAnchorEl(e.currentTarget)}>
                 <AccountCircleIcon fontSize='large' />
