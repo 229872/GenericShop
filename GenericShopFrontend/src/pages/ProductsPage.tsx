@@ -1,9 +1,10 @@
 import React, { CSSProperties, useEffect, useState } from 'react';
-import { Autocomplete, Box, Button, Card, CardContent, CardHeader, Grid, IconButton, ImageList, ImageListItem, Pagination, Stack, TablePagination, TextField, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Card, CardContent, CardHeader, Grid, IconButton, ImageList, ImageListItem, Pagination, Stack, TablePagination, TextField, Tooltip, Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
+import AddIcon from '@mui/icons-material/Add';
 import axios from 'axios';
 import { environment } from '../utils/constants';
 import handleAxiosException from '../services/apiService';
@@ -14,6 +15,8 @@ import { Controller, useForm } from 'react-hook-form';
 import { getJwtToken } from '../services/tokenService';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { addToCart, getTotalAmountOfProducts } from '../services/cartService';
+import { isUserSignIn } from '../services/sessionService';
 
 type DefaultProductData = {
   content: BasicProduct[]
@@ -29,9 +32,10 @@ type Category = z.infer<typeof schema>;
 type ProductPageProps = {
   setLoading: (state: boolean) => void
   style: CSSProperties
+  setNumberOfProductsInCart: (value: number) => void
 }
 
-const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
+const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart } : ProductPageProps) => {
   const rowsPerPageOptions = [ 5, 10, 15, 20 ]
   const [ products, setProducts ] = useState<BasicProduct[]>([]);
   const [ categories, setCategories ] = useState<string[]>([]);
@@ -201,7 +205,12 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
       <ImageList cols={5} gap={15} sx={{ marginTop: '20px' }}>
         {products.map((product, index) => (
           <ImageListItem key={index}>
-            <Card>
+            <Card sx={{
+              width: 300,
+              height: 290,
+              display: 'flex',
+              flexDirection: 'column',
+            }}>
               <CardHeader
                 title={
                   <Box
@@ -219,16 +228,42 @@ const ProductsPage = ({ setLoading, style } : ProductPageProps) => {
                   />
                 }
               />
-              <CardContent className="content-left">
-                <Box className="card-title">{product.name}</Box>
-                <Box><strong>{t('manage_products.column.price')}: {product.price}</strong></Box>
-                <Box className="available-message">
-                  {product.archival || product.quantity === 0 ? (
-                    <>{t('manage_products.view_product.available')}</>
-                  ) : (
-                    <>{t('manage_products.view_product.unavailable')}</>
-                  )}
+              <CardContent>
+                <Box className="card-title">
+                  <Typography sx={{
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: '100%'
+                  }} fontWeight='fontWeightBold' variant='subtitle1'>{product.name}</Typography>
                 </Box>
+
+                <Grid container>
+                  <Grid item xs={6}>
+                    <Grid item>{t('manage_products.column.price')}: {product.price}</Grid>
+
+                    {product.archival || product.quantity === 0 ? (
+                      <Grid color='red'>{t('manage_products.view_product.unavailable')}</Grid>
+                    ) : (
+                      <Grid color='green'>{t('manage_products.view_product.available')}</Grid>
+                    )}
+                  </Grid>
+
+                  {!product.archival && product.quantity > 0 && isUserSignIn() && (
+                    <Grid item xs={4}>
+                      <Tooltip title={t('manage_products.view_product.add_to_cart')} placement='right' children={
+                        <IconButton onClick={() => {
+                          addToCart(product)
+                          setNumberOfProductsInCart(getTotalAmountOfProducts() + 1)
+                        }}>
+                          <AddIcon />
+                        </IconButton>
+                      } />
+                    </Grid>
+                  )} 
+                </Grid>
+
+
                 {/* <Box className="star-rating">
                   {getStarArray(product.averageRating)}
                 </Box> */}

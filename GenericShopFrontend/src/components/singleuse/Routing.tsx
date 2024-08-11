@@ -35,10 +35,11 @@ type RoutingProps = {
   setIsAuthenticated: (state: boolean) => void
   activeRole: Role
   setActiveRole: (role: Role) => void
+  setNumberOfProductsInCart: (value: number) => void
 }
 
 export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtendSessionDialogAfterTimeout, 
-  setLoading, isAuthenticated, setIsAuthenticated, setActiveRole, activeRole } : RoutingProps) {
+  setLoading, isAuthenticated, setIsAuthenticated, setActiveRole, activeRole, setNumberOfProductsInCart } : RoutingProps) {
 
   const routesStyle: CSSProperties = { margin: '12vh 25vw' }
 
@@ -51,6 +52,7 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
       <Route path={HOME_PATH} element={
         <ProductsPage
           setLoading={setLoading}
+          setNumberOfProductsInCart={setNumberOfProductsInCart}
           style={{ margin: '8vh 8vw' }}
         />
       } />

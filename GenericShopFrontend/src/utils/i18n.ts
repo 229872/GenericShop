@@ -227,6 +227,7 @@ const resources = {
       'manage_products.view_product.clear': 'Clear',
       'manage_products.view_product.available': 'Available',
       'manage_products.view_product.unavailable': 'Unavailable',
+      'manage_products.view_product.add_to_cart': 'Add to cart',
 
       'nav.home': 'Home',
       'nav.login': 'Login',
@@ -592,6 +593,7 @@ const resources = {
       'manage_products.view_product.clear': 'Wyczyść',
       'manage_products.view_product.available': 'Dostępny',
       'manage_products.view_product.unavailable': 'Niedostępny',
+      'manage_products.view_product.add_to_cart': 'Dodaj do koszyka',
       
       'nav.home': 'Strona Główna',
       'nav.login': 'Zaloguj się',

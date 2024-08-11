@@ -1,6 +1,6 @@
 import axios from "axios";
 import { BasicProduct } from "../utils/types";
-import { decodeJwtToken, getJwtToken, getLogin } from "./tokenService";
+import { getJwtToken, getLogin } from "./tokenService";
 import { environment } from "../utils/constants";
 
 const saveCart = (localStorageKey: string, products: BasicProduct[]): void => {
@@ -8,6 +8,7 @@ const saveCart = (localStorageKey: string, products: BasicProduct[]): void => {
 }
 
 export const addToCart = (productToAdd: BasicProduct): void => {
+  productToAdd.quantity = 1;
   const login = getLogin(getJwtToken());
   const localStorageKey = `${login}-cart`; 
   const cartProducts: BasicProduct[] = getCart(localStorageKey);
@@ -39,7 +40,7 @@ export const getTotalAmountOfProducts = (): number => {
 }
 
 const getCart = (localStorageKey: string): BasicProduct[] => {
-  const products: string | null = localStorage.getItem(`${localStorageKey}-cart`)
+  const products: string | null = localStorage.getItem(localStorageKey)
   return products ? JSON.parse(products) : [];
 }
 

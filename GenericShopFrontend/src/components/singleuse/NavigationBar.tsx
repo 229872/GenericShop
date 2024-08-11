@@ -13,15 +13,15 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ChangeLanguageMenu from "../reusable/ChangeLanguageMenu";
 import { Role } from "../../utils/types";
-import { getTotalAmountOfProducts } from "../../services/cartService";
 
 type NavigationBarProps = {
   setIsAuthenticated: (state: boolean) => void
   setActiveRole: (role: Role) => void
   activeRole: Role
+  numberOfProductsInCart: number
 }
 
-export default function NavigationBar({ setIsAuthenticated, setActiveRole, activeRole } : NavigationBarProps ) {
+export default function NavigationBar({ setIsAuthenticated, setActiveRole, activeRole, numberOfProductsInCart } : NavigationBarProps ) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [changeLanguageAnchorEl, setLanguageAnchorEl] = useState(null);
@@ -63,7 +63,7 @@ export default function NavigationBar({ setIsAuthenticated, setActiveRole, activ
               {activeRole === Role.ADMIN && <Button color='inherit' onClick={() => navigate(MANAGE_ACCOUNTS_PATH)}>{t('nav.manage.accounts')}</Button>}
               {activeRole === Role.EMPLOYEE && <Button color='inherit' onClick={() => navigate(MANAGE_PRODUCTS_PATH)}>{t('nav.manage.products')}</Button>}
               <IconButton color='inherit' size='large' onClick={(e: any) => navigate(CART_PATH)}>
-                <Badge badgeContent={getTotalAmountOfProducts()} color='secondary' showZero>
+                <Badge badgeContent={numberOfProductsInCart} color='secondary' showZero>
                   <ShoppingCartIcon fontSize='medium' />
                 </Badge>
               </IconButton>
