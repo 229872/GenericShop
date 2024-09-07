@@ -12,6 +12,7 @@ import { Role } from "../../utils/types";
 import ManageAccountsPage from "../../pages/ManageAccountsPage";
 import ManageProductsPage from "../../pages/ManageProductsPage";
 import ProductsPage from "../../pages/ProductsPage";
+import CartPage from "../../pages/CartPage";
 
 export const ROOT_PATH = '/'
 export const HOME_PATH = '/home'
@@ -54,6 +55,13 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
           setLoading={setLoading}
           setNumberOfProductsInCart={setNumberOfProductsInCart}
           style={{ margin: '8vh 8vw' }}
+        />
+      } />
+
+      <Route path={CART_PATH} element={
+        <CartPage
+          setLoading={setLoading}
+          style={{ margin: '12vh 10vw' }}
         />
       } />
 

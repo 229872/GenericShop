@@ -254,7 +254,7 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart } : Product
                       <Tooltip title={t('manage_products.view_product.add_to_cart')} placement='right' children={
                         <IconButton onClick={() => {
                           addToCart(product)
-                          setNumberOfProductsInCart(getTotalAmountOfProducts() + 1)
+                          setNumberOfProductsInCart(getTotalAmountOfProducts())
                         }}>
                           <AddIcon />
                         </IconButton>
