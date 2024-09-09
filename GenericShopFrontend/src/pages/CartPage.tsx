@@ -1,20 +1,38 @@
 import { useEffect, useState } from "react"
 import { BasicProduct } from "../utils/types"
-import { getProductsFromLocalStorage } from "../services/cartService"
-import { Box, Avatar, Typography, IconButton, Stack, Grid, Tooltip } from "@mui/material"
+import { getProductsFromLocalStorage, removeProductFromCart, addToCart, getTotalAmountOfProducts, clearCart } from "../services/cartService"
+import { Box, Avatar, Typography, IconButton, Stack, Grid, Tooltip, Button, Card, CardContent } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 import { t } from "i18next";
 
 type CartPageProps = {
   setLoading: (value: boolean) => void
   style?: React.CSSProperties
+  setNumberOfProductsInCart: (value: number) => void
 }
 
-export default function CartPage({ setLoading, style }: CartPageProps) {
+export default function CartPage({ setLoading, style, setNumberOfProductsInCart }: CartPageProps) {
   const [cartProducts, setCartProducts] = useState<BasicProduct[]>([]);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const iconButtonPxNumber = 20;
+  const changeQuantityButtonStyle = {
+    padding: 0,
+    minWidth: `${iconButtonPxNumber}px`,
+    maxWidth: `${iconButtonPxNumber}20px`,
+    minHeight: `${iconButtonPxNumber}px`,
+    maxHeight: `${iconButtonPxNumber}px`,
+  }
+  const gridItemStyle = {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'left',
+    height: '40px',
+    gap: 1,
+  }
 
   useEffect(() => {
     setLoading(true)
@@ -37,7 +55,6 @@ export default function CartPage({ setLoading, style }: CartPageProps) {
   const decreaseAmount = (orderedProduct: BasicProduct) => {
     const updatedProduct: BasicProduct = { ...orderedProduct, quantity: orderedProduct.quantity - 1 };
     if (updatedProduct.quantity < 1) {
-      // todo add toast with i18n that quantity must be at least 1
       updatedProduct.quantity = 1;
     }
     updateProductInCart(updatedProduct);
@@ -55,73 +72,186 @@ export default function CartPage({ setLoading, style }: CartPageProps) {
     );
     setCartProducts(updatedProducts)
     updateTotalPrice(updatedProducts);
+    addToCart(updatedProduct)
+    setNumberOfProductsInCart(getTotalAmountOfProducts())
   };
 
+  const removeProduct = (product: BasicProduct): void => {
+    const newProductList = cartProducts.filter(p => p.id !== product.id)
+    setCartProducts(newProductList)
+    removeProductFromCart(product)
+    setNumberOfProductsInCart(getTotalAmountOfProducts())
+  }
+
+  const emptyCart = (): void => {
+    // alert about submit
+    setCartProducts([])
+    clearCart()
+    setNumberOfProductsInCart(getTotalAmountOfProducts())
+  }
+
+  const getTotalPrice = (): number => {
+    return cartProducts.reduce((prev, cur) => prev + (cur.quantity * cur.price), 0)
+  }
+
+  const placeNewOrder = async (): Promise<void> => {
+    console.log(cartProducts)
+  } 
+
   return <>
-    <Stack spacing={4} direction='column' sx={{ ...style }}>
-      {
-        cartProducts.map(product => (<Box display='flex' alignItems='center' gap={2}>
-          <Box
-            marginTop='0px'
-            marginRight='0px'
-            component="img"
-            sx={{
-              height: 70,
-              width: 50,
-              maxHeight: { xs: 70, md: 50 },
-              maxWidth: { xs: 70, md: 50 },
-            }}
-            alt={t('manage_products.view_product.label.product_image')}
-            src={product.imageUrl}
-          />
+    <Stack spacing={8} direction='column' sx={{ ...style }}>
 
-          <Grid container width='70%'>
-            <Grid item xs={12}>
-              <Typography variant='h6'>{product.name}</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant='body1'>
-                {t('manage_products.edit_product.label.quantity')}:
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant='body1'>
-                {product.quantity}
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant='body1'>
-                {t('manage_products.edit_product.label.price')}:
-              </Typography>
-            </Grid>
-            <Grid item xs={6}>
-              <Typography variant='body1'>
-                {product.price}
-              </Typography>
-            </Grid>
-          </Grid>
+      <Grid container>
+        <Grid item xs={4} sx={{height: '80px'}}>
+          <Stack direction='row' spacing={16} width='100%'>
+            <Typography variant='h3'>{t('manage_products.view_product.cart')}</Typography>
 
-          <Stack direction='column' spacing={1}>
-            <Tooltip title={'Remove product from cart'} children={
-              <IconButton color="primary">
-                <CloseIcon />
-              </IconButton>
+            <Tooltip title={t('manage_products.view_product.clear_cart')} placement='right' children={
+              <Button variant='outlined' color='inherit' onClick={() => emptyCart()}>
+                <RemoveShoppingCartIcon fontSize='small' /><Typography variant='body1'> {t('manage_products.view_product.clear_cart')}</Typography>
+              </Button>
             } />
-
-            <Tooltip title={'Increase quantity'} children={
-              <IconButton color="primary">
-                <AddIcon />
-              </IconButton>
-            } />
-
-            <Tooltip title={'Decrease quantity'} children={
-              <IconButton color="primary">
-                <RemoveIcon />
-              </IconButton>
-            } />
-
           </Stack>
-        </Box>))
+        </Grid>
+
+        <Grid item xs={4} sx={{height: '80px'}} />
+        
+        <Grid item container xs={4} sx={{height: '80px'}}>
+          <Card elevation={5} sx={{width: '100%'}}>
+            <CardContent>
+              <Stack spacing={5}>
+                <Typography variant='h4'>{t('manage_products.view_product.summary')}</Typography>
+
+                  <Stack direction='row' spacing={4}>
+                    <Typography variant='h6'><b>{t('manage_products.edit_product.label.totalPrice')}:</b></Typography>
+                    <Typography variant='h6'><b>{getTotalPrice()}</b></Typography>
+                  </Stack>
+
+
+                <Button sx={{width: '60%'}} variant='contained' color='primary' onClick={() => placeNewOrder()}>
+                  {t('manage_products.view_product.placeOrder')}
+                </Button>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+
+
+      {
+        cartProducts.map((product) => (
+          <Grid key={product.id} container width='50%' height='200px'>
+            <Card elevation={2} sx={{ width: '100%', height: '100%', padding: '20px', paddingTop: '0px', display: 'flex' }}>
+              <CardContent sx={{width: '100%', height: '100%', display: 'flex'}}>
+                <Grid
+                  item
+                  xs={2}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'stretch',
+                    height: '100%',
+                  }}
+                >
+                  <img
+                    src={product.imageUrl}
+                    alt={t('manage_products.view_product.label.product_image')}
+                    style={{ height: '100%', width: '100%', objectFit: 'contain' }}
+                  />
+                </Grid>
+
+                <Grid item xs={1} />
+
+                <Grid item container xs={8}>
+                  <Grid item xs={12} sx={{ height: '35%' }}>
+                    <Typography variant="h6">{product.name}</Typography>
+                  </Grid>
+
+                  <Grid item container xs={12} sx={{ height: '65%' }}>
+                    <Grid item xs={3} sx={gridItemStyle}>
+                      <Typography variant='body1'>
+                        {t('manage_products.edit_product.label.quantity')}:
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={3} sx={gridItemStyle}>
+                      <Typography variant='body1'>
+                        {product.quantity}
+                      </Typography>
+
+                      <Stack direction='column' spacing={0} >
+                        <IconButton
+                          color="primary"
+                          size="small"
+                          onClick={() => increaseAmount(product)}
+                          sx={changeQuantityButtonStyle}
+                        >
+                          <ExpandLessIcon fontSize="small" />
+                        </IconButton>
+
+                        <IconButton
+                          disabled={product.quantity === 1}
+                          color="primary"
+                          size="small"
+                          onClick={() => decreaseAmount(product)}
+                          sx={changeQuantityButtonStyle}
+                        >
+                          <ExpandMoreIcon fontSize="small" />
+                        </IconButton>
+                      </Stack>
+                    </Grid>
+
+                    <Grid item xs={6} />
+
+                    <Grid item xs={3} sx={gridItemStyle}>
+                      <Typography variant='body1'>
+                        {t('manage_products.edit_product.label.price')}:
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={3} sx={gridItemStyle}>
+                      <Typography variant='body1'>
+                        {product.price}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={6} />
+
+                    <Grid item xs={3} sx={gridItemStyle}>
+                      <Typography variant='body1'>
+                        {t('manage_products.edit_product.label.totalPrice')}:
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={3} sx={gridItemStyle}>
+                      <Typography variant='body1'>
+                        {product.price * product.quantity}
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={6} />
+
+                  </Grid>
+                </Grid>
+
+                <Grid item
+                  xs={1}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                  }}>
+                  <Tooltip title={'Remove product from cart'}>
+                    <IconButton onClick={() => removeProduct(product)} size="large" color="primary">
+                      <CloseIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))
       }
     </Stack>
   </>

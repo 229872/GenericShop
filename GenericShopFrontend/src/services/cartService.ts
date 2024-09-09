@@ -3,20 +3,23 @@ import { BasicProduct } from "../utils/types";
 import { getJwtToken, getLogin } from "./tokenService";
 import { environment } from "../utils/constants";
 
-const saveCart = (localStorageKey: string, products: BasicProduct[]): void => {
-  localStorage.setItem(localStorageKey, JSON.stringify(products))
-}
-
 export const addToCart = (productToAdd: BasicProduct): void => {
+  productToAdd = {...productToAdd}
+  const productToAddQuantity = productToAdd.quantity;
   productToAdd.quantity = 1;
-  const login = getLogin(getJwtToken());
-  const localStorageKey = `${login}-cart`; 
-  const cartProducts: BasicProduct[] = getCart(localStorageKey);
+  const localStorageKey = getLocalStorageKey();
+  const cartProducts: BasicProduct[] = getCartFromLocalStorage(localStorageKey);
   let isNewProduct = true;
 
   const modifiedProducts: BasicProduct[] = cartProducts.map(product => {
     if (product.id === productToAdd.id) {
-      ++product.quantity
+      if (productToAddQuantity > product.quantity) {
+        ++product.quantity
+      }
+
+      if (productToAddQuantity < product.quantity) {
+        --product.quantity
+      }
       isNewProduct = false;
     }
     return product;
@@ -26,12 +29,13 @@ export const addToCart = (productToAdd: BasicProduct): void => {
     modifiedProducts.push(productToAdd)
   }
 
-  saveCart(localStorageKey, modifiedProducts)
+  saveCartInLocalStorage(localStorageKey, modifiedProducts)
 }
 
-export const clearCart = (localStorageKey: string): void => {
+export const clearCart = (): void => {
+  const localStorageKey = getLocalStorageKey();
   localStorage.removeItem(localStorageKey)
-  saveCart(localStorageKey, []);
+  saveCartInLocalStorage(localStorageKey, []);
 }
 
 export const getTotalAmountOfProducts = (): number => {
@@ -39,34 +43,49 @@ export const getTotalAmountOfProducts = (): number => {
   return products.reduce((prev, cur) => prev + cur.quantity, 0)
 }
 
-const getCart = (localStorageKey: string): BasicProduct[] => {
-  const products: string | null = localStorage.getItem(localStorageKey)
-  return products ? JSON.parse(products) : [];
-}
-
 export const getProductsFromLocalStorage = (): BasicProduct[] => {
-  const login = getLogin(getJwtToken());
-  const localStorageKey = `${login}-cart`;
+  const localStorageKey = getLocalStorageKey();
 
-  const products: BasicProduct[] = getCart(localStorageKey);
+  const products: BasicProduct[] = getCartFromLocalStorage(localStorageKey);
   return products;
 
   // Powinienem odczytać jeszcze raz każdy produkt z koszyka, żeby porównać dane z api z danymi z koszyka,
   // które mogą być już nieaktualne, jeżeli cena lub ilość jest zmieniona powinno być to uaktualnione
 }
 
-export const removeProduct = (products: BasicProduct[], orderedProduct: BasicProduct, localStorageKey: string): void => {
+export const removeProductFromCart = (product: BasicProduct) => {
+  const localStorageKey = getLocalStorageKey()
+  const products: BasicProduct[] = getCartFromLocalStorage(localStorageKey)
+  removeProductFromLocalStorage(products, product, localStorageKey);
+} 
+
+export const isAnyProductArchival = (products: BasicProduct[]): boolean => {
+  return products.some(product => product.archival)
+}
+
+const removeProductFromLocalStorage = (products: BasicProduct[], orderedProduct: BasicProduct, localStorageKey: string): void => {
   products.forEach((product, index) => {
     if (orderedProduct.id === product.id) {
       products.splice(index, 1);
     }
   })
-  saveCart(localStorageKey, products);
+  saveCartInLocalStorage(localStorageKey, products);
 }
 
-export const isAnyProductArchival = (products: BasicProduct[]): boolean => {
-  return products.some(product => product.archival)
+const saveCartInLocalStorage = (localStorageKey: string, products: BasicProduct[]): void => {
+  localStorage.setItem(localStorageKey, JSON.stringify(products))
 }
+
+const getCartFromLocalStorage = (localStorageKey: string): BasicProduct[] => {
+  const products: string | null = localStorage.getItem(localStorageKey)
+  return products ? JSON.parse(products) : [];
+}
+
+const getLocalStorageKey = (): string => {
+  const login = getLogin(getJwtToken());
+  return `${login}-cart`;
+}
+
 
 const getSingleProduct = async (id: number) => {
   return axios.get(`${environment.apiBaseUrl}/products/id/${id}/short`, {
