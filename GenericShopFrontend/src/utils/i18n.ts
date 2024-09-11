@@ -233,6 +233,8 @@ const resources = {
       'manage_products.view_product.cart': 'Cart',
       'manage_products.view_product.summary': 'Summary',
       'manage_products.view_product.placeOrder': 'Place an order',
+      'manage_products.view_product.order.success': 'Your order has been successfully placed',
+      'manage_products.view_product.order.fail': 'This order can\'t be placed, probably one of your products isn\'t available right now',
 
       'nav.home': 'Home',
       'nav.login': 'Login',
@@ -374,6 +376,7 @@ const resources = {
       // todo, change this message cause it can be caused by different use cases
       'exception.auth.token.expired': `Your account could not be confirmed because the time for this operation has most likely expired.
                                        Don't worry, try creating an account again`,
+      'exception.orders.wrong': 'This order can\'t be placed, probably one of your products isn\'t available right now'
     }
   },
   pl: {
@@ -604,6 +607,8 @@ const resources = {
       'manage_products.view_product.cart': 'Koszyk',
       'manage_products.view_product.summary': 'Podsumowanie',
       'manage_products.view_product.placeOrder': 'Złóż zamówienie',
+      'manage_products.view_product.order.success': 'Twoje zamówienie zostało pomyślnie złożone',
+      'manage_products.view_product.order.fail': 'Twoje zamówienie nie zostało złożone, prawdopodobnie jeden z produktów na twojej liście przestał być dostępny',
       
       'nav.home': 'Strona Główna',
       'nav.login': 'Zaloguj się',
@@ -745,6 +750,7 @@ const resources = {
       'exception.auth.credentials': 'Nieprawidłowe dane logowania',
       'exception.auth.token.expired': `Nie udało się potwierdzić twojego konta, ponieważ najprawdopodobniej czas na tę operację dobiegł końca.
                                        Nie martw się, spróbój założyć konto jeszcze raz`,
+      'exception.orders.wrong': 'Twoje zamówienie nie zostało złożone, prawdopodobnie jeden z produktów na twojej liście przestał być dostępny'
     }
   }
 };

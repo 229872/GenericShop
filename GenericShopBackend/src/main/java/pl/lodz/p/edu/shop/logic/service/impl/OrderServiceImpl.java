@@ -48,18 +48,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order placeAndOrder(String login, Map<Long, Integer> requestedProductsForOrder) {
-
-        Account account = accountRepository.findByLogin(login)
-            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
-
-        List<Product> products = productRepository.findAll();
-
+        // HELPERS
         Set<Long> productsId = requestedProductsForOrder.keySet();
-
         Predicate<Product> isProductAvailableForBeingOrdered = product -> {
             Integer quantity = product.getQuantity();
             return !product.isArchival() && productsId.contains(product.getId()) && quantity > 0;
         };
+
+
+        // LOGIC
+        Account account = accountRepository.findByLogin(login)
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
+
+        List<Product> products = productRepository.findAll();
 
         Map<Product, Integer> productsForNewOrder = products.stream()
             .filter(isProductAvailableForBeingOrdered)
@@ -77,6 +78,15 @@ public class OrderServiceImpl implements OrderService {
                 .getPrice()
                 .multiply(BigDecimal.valueOf(entry.getValue())))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        productsForNewOrder.forEach(
+            (product, takenQuantity) -> product.setQuantity(product.getQuantity() - takenQuantity)
+        );
+
+        if (!productsForNewOrder.entrySet().stream()
+            .allMatch(entry -> entry.getKey().getQuantity() >= 0)) {
+            throw ApplicationExceptionFactory.createCantFinishOrderException();
+        }
 
         Order order = Order.builder()
             .account(account)

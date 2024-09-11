@@ -10,6 +10,8 @@ import { t } from "i18next";
 import axios from "axios";
 import { environment } from "../utils/constants";
 import { getJwtToken } from "../services/tokenService";
+import handleAxiosException from "../services/apiService";
+import { toast } from "sonner";
 
 type CartPageProps = {
   setLoading: (value: boolean) => void
@@ -93,22 +95,30 @@ export default function CartPage({ setLoading, style, setNumberOfProductsInCart 
     setNumberOfProductsInCart(getTotalAmountOfProducts())
   }
 
-  const getTotalPrice = (): number => {
-    return cartProducts.reduce((prev, cur) => prev + (cur.quantity * cur.price), 0)
-  }
-
   const placeNewOrder = async (): Promise<void> => {
+    setLoading(true)
     const requestData = cartProducts.map(product => ({
        id: product.id,
        quantity: product.quantity 
       })
     )
 
-    const { data } = await axios.post(`${environment.apiBaseUrl}/orders`, { productsRequest: requestData }, {
-      headers: {
-        Authorization: `Bearer ${getJwtToken()}`
-      }
-    })
+    try {
+      const { data } = await axios.post(`${environment.apiBaseUrl}/orders`, { productsRequest: requestData }, {
+        headers: {
+          Authorization: `Bearer ${getJwtToken()}`
+        }
+      })
+      toast.success(t('manage_products.view_product.order.success'))
+      emptyCart()
+
+    } catch (e) {
+      handleAxiosException(e)
+
+    } finally {
+      setLoading(false)
+    }
+
 
   } 
 
@@ -138,11 +148,11 @@ export default function CartPage({ setLoading, style, setNumberOfProductsInCart 
 
                   <Stack direction='row' spacing={4}>
                     <Typography variant='h6'><b>{t('manage_products.edit_product.label.totalPrice')}:</b></Typography>
-                    <Typography variant='h6'><b>{getTotalPrice()}</b></Typography>
+                    <Typography variant='h6'><b>{totalPrice}</b></Typography>
                   </Stack>
 
 
-                <Button sx={{width: '60%'}} variant='contained' color='primary' onClick={() => placeNewOrder()}>
+                <Button sx={{width: '60%'}} variant='contained' color='primary' disabled={cartProducts.length === 0} onClick={() => placeNewOrder()}>
                   {t('manage_products.view_product.placeOrder')}
                 </Button>
               </Stack>
