@@ -13,6 +13,7 @@ import pl.lodz.p.edu.shop.util.ExceptionUtil;
 
 import java.util.Objects;
 
+import static java.util.Objects.nonNull;
 import static pl.lodz.p.edu.shop.util.UpdatableUtil.setNullableValue;
 
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ abstract class AccountService {
         } catch (DataAccessException e) {
             var violationException = ExceptionUtil.findCause(e, ConstraintViolationException.class);
 
-            if (Objects.nonNull(violationException) && Objects.nonNull(violationException.getConstraintName())) {
+            if (nonNull(violationException) && nonNull(violationException.getConstraintName())) {
                 return handleConstraintViolationException(violationException);
             }
 

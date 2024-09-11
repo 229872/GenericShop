@@ -127,4 +127,8 @@ public final class ApplicationExceptionFactory {
     public static ResponseStatusException createCantModifyArchivalProductException() {
         return new CantModifyArchivalProductException(BAD_REQUEST, ExceptionMessage.Orders.PRODUCT_ARCHIVAL);
     }
+
+    public static ResponseStatusException createCantFinishOrderException() {
+        return new CantFinishOrderException(CONFLICT, ExceptionMessage.Orders.ORDER_CANT_FINISH);
+    }
 }

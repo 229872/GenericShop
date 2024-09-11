@@ -7,6 +7,9 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 import { t } from "i18next";
+import axios from "axios";
+import { environment } from "../utils/constants";
+import { getJwtToken } from "../services/tokenService";
 
 type CartPageProps = {
   setLoading: (value: boolean) => void
@@ -95,7 +98,18 @@ export default function CartPage({ setLoading, style, setNumberOfProductsInCart 
   }
 
   const placeNewOrder = async (): Promise<void> => {
-    console.log(cartProducts)
+    const requestData = cartProducts.map(product => ({
+       id: product.id,
+       quantity: product.quantity 
+      })
+    )
+
+    const { data } = await axios.post(`${environment.apiBaseUrl}/orders`, { productsRequest: requestData }, {
+      headers: {
+        Authorization: `Bearer ${getJwtToken()}`
+      }
+    })
+
   } 
 
   return <>

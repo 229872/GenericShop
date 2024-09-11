@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 
 @Slf4j
@@ -102,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
             log.warn("DataAccessExceptions occurred: ", e);
             var violationException = ExceptionUtil.findCause(e, ConstraintViolationException.class);
 
-            if (Objects.nonNull(violationException) && Objects.nonNull(violationException.getConstraintName())) {
+            if (nonNull(violationException) && nonNull(violationException.getConstraintName())) {
                 return handleConstraintViolationException(violationException);
             }
 
@@ -151,7 +152,7 @@ public class ProductServiceImpl implements ProductService {
         } catch (DataAccessException e) {
             var violationException = ExceptionUtil.findCause(e, ConstraintViolationException.class);
 
-            if (Objects.nonNull(violationException) && Objects.nonNull(violationException.getConstraintName())) {
+            if (nonNull(violationException) && nonNull(violationException.getConstraintName())) {
                 return handleConstraintViolationException(violationException);
             }
 
