@@ -51,18 +51,30 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
       <Route path={NOT_FOUND_PATH} element={<NotFoundPage style={routesStyle} />} />
 
       <Route path={HOME_PATH} element={
-        <ProductsPage
-          setLoading={setLoading}
-          setNumberOfProductsInCart={setNumberOfProductsInCart}
-          style={{ margin: '8vh 6vw 0vh 6vw' }}
+        <ProtectedElement
+          element={
+            <ProductsPage
+              setLoading={setLoading}
+              setNumberOfProductsInCart={setNumberOfProductsInCart}
+              style={{ margin: '8vh 6vw 0vh 6vw' }}
+            />
+          }
+          shouldRender={activeRole !== Role.ADMIN}
+          redirect={NOT_FOUND_PATH}
         />
       } />
 
       <Route path={CART_PATH} element={
-        <CartPage
-          setLoading={setLoading}
-          setNumberOfProductsInCart={setNumberOfProductsInCart}
-          style={{ margin: '12vh 10vw' }}
+        <ProtectedElement
+          element={
+            <CartPage
+              setLoading={setLoading}
+              setNumberOfProductsInCart={setNumberOfProductsInCart}
+              style={{ margin: '12vh 10vw' }}
+            />
+          }
+          shouldRender={activeRole === Role.CLIENT}
+          redirect={NOT_FOUND_PATH}
         />
       } />
 

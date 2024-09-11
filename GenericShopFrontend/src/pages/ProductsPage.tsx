@@ -8,11 +8,11 @@ import AddIcon from '@mui/icons-material/Add';
 import axios from 'axios';
 import { environment } from '../utils/constants';
 import handleAxiosException from '../services/apiService';
-import { BasicProduct } from '../utils/types';
+import { BasicProduct, Role } from '../utils/types';
 import productNotFound from '/src/assets/no-product-picture.png'
 import { useTranslation } from 'react-i18next';
 import { Controller, useForm } from 'react-hook-form';
-import { getJwtToken } from '../services/tokenService';
+import { getActiveRole, getJwtToken } from '../services/tokenService';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addToCart, getTotalAmountOfProducts } from '../services/cartService';
@@ -251,7 +251,7 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart } : Product
                     )}
                   </Grid>
 
-                  {!product.archival && product.quantity > 0 && isUserSignIn() && (
+                  {!product.archival && product.quantity > 0 && isUserSignIn() && getActiveRole(getJwtToken()) === Role.CLIENT && (
                     <Grid item xs={4}>
                       <Tooltip title={t('manage_products.view_product.add_to_cart')} placement='right' children={
                         <IconButton onClick={() => {

@@ -51,7 +51,7 @@ export default function NavigationBar({ setIsAuthenticated, setActiveRole, activ
       <Toolbar sx={{justifyContent: 'space-between'}}>
         <Typography variant='h5'>{t('app.name')}</Typography>
         <Stack direction='row' spacing={2}>
-          <Button color='inherit' onClick={() => navigate(HOME_PATH)}>{t('nav.home')}</Button>
+          { activeRole !== Role.ADMIN && <Button color='inherit' onClick={() => navigate(HOME_PATH)}>{t('nav.home')}</Button> }
           {isTokenExpired() ? (
             <>
               <Button color='inherit' onClick={() => navigate(AUTH_PATH)}>{t('nav.login')}</Button>
@@ -62,11 +62,11 @@ export default function NavigationBar({ setIsAuthenticated, setActiveRole, activ
             <>
               {activeRole === Role.ADMIN && <Button color='inherit' onClick={() => navigate(MANAGE_ACCOUNTS_PATH)}>{t('nav.manage.accounts')}</Button>}
               {activeRole === Role.EMPLOYEE && <Button color='inherit' onClick={() => navigate(MANAGE_PRODUCTS_PATH)}>{t('nav.manage.products')}</Button>}
-              <IconButton color='inherit' size='large' onClick={(e: any) => navigate(CART_PATH)}>
+              {activeRole === Role.CLIENT && <IconButton color='inherit' size='large' onClick={(e: any) => navigate(CART_PATH)}>
                 <Badge badgeContent={numberOfProductsInCart} color='secondary' showZero>
                   <ShoppingCartIcon fontSize='medium' />
                 </Badge>
-              </IconButton>
+              </IconButton>}
 
               <IconButton color='inherit' size='large' onClick={(e: any) => setAccountAnchorEl(e.currentTarget)}>
                 <AccountCircleIcon fontSize='large' />
