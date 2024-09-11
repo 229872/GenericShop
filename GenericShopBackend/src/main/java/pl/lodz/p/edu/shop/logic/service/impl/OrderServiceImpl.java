@@ -14,14 +14,13 @@ import pl.lodz.p.edu.shop.dataaccess.repository.api.ProductRepository;
 import pl.lodz.p.edu.shop.dataaccess.repository.api.ReadOnlyAccountRepository;
 import pl.lodz.p.edu.shop.exception.ApplicationExceptionFactory;
 import pl.lodz.p.edu.shop.exception.SystemExceptionFactory;
-import pl.lodz.p.edu.shop.logic.model.ProductForOrder;
 import pl.lodz.p.edu.shop.logic.service.api.OrderService;
 import pl.lodz.p.edu.shop.util.ExceptionUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -48,33 +47,25 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order placeAndOrder(String login, List<ProductForOrder> requestedProductsForOrder) {
+    public Order placeAndOrder(String login, Map<Long, Integer> requestedProductsForOrder) {
 
         Account account = accountRepository.findByLogin(login)
             .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
+
         List<Product> products = productRepository.findAll();
 
-        List<Long> productsId = requestedProductsForOrder.stream()
-            .map(ProductForOrder::id)
-            .toList();
+        Set<Long> productsId = requestedProductsForOrder.keySet();
 
         Predicate<Product> isProductAvailableForBeingOrdered = product -> {
             Integer quantity = product.getQuantity();
             return !product.isArchival() && productsId.contains(product.getId()) && quantity > 0;
-        };
-        Function<Product, Integer> bindProductWithQuantity = product -> {
-            return requestedProductsForOrder.stream()
-                .filter(productForOrder -> productForOrder.id().equals(product.getId()))
-                .map(ProductForOrder::quantity)
-                .findAny()
-                .orElseThrow(ApplicationExceptionFactory::createCantFinishOrderException);
         };
 
         Map<Product, Integer> productsForNewOrder = products.stream()
             .filter(isProductAvailableForBeingOrdered)
             .collect(Collectors.toMap(
                 product -> product,
-                bindProductWithQuantity
+                product -> requestedProductsForOrder.get(product.getId())
             ));
 
         if (productsForNewOrder.size() != requestedProductsForOrder.size()) {
@@ -86,7 +77,6 @@ public class OrderServiceImpl implements OrderService {
                 .getPrice()
                 .multiply(BigDecimal.valueOf(entry.getValue())))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
-
 
         Order order = Order.builder()
             .account(account)
