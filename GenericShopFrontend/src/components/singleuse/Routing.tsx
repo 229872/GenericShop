@@ -54,7 +54,7 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
         <ProductsPage
           setLoading={setLoading}
           setNumberOfProductsInCart={setNumberOfProductsInCart}
-          style={{ margin: '8vh 8vw' }}
+          style={{ margin: '8vh 6vw 0vh 6vw' }}
         />
       } />
 

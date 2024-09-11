@@ -235,6 +235,7 @@ const resources = {
       'manage_products.view_product.placeOrder': 'Place an order',
       'manage_products.view_product.order.success': 'Your order has been successfully placed',
       'manage_products.view_product.order.fail': 'This order can\'t be placed, probably one of your products isn\'t available right now',
+      'manage_products.view_product.add_to_cart.success' : 'Product has been added to the cart',
 
       'nav.home': 'Home',
       'nav.login': 'Login',
@@ -609,6 +610,7 @@ const resources = {
       'manage_products.view_product.placeOrder': 'Złóż zamówienie',
       'manage_products.view_product.order.success': 'Twoje zamówienie zostało pomyślnie złożone',
       'manage_products.view_product.order.fail': 'Twoje zamówienie nie zostało złożone, prawdopodobnie jeden z produktów na twojej liście przestał być dostępny',
+      'manage_products.view_product.add_to_cart.success' : 'Produkt został dodany do koszyka',
       
       'nav.home': 'Strona Główna',
       'nav.login': 'Zaloguj się',

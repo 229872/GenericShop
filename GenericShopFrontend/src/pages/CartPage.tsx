@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { BasicProduct } from "../utils/types"
 import { getProductsFromLocalStorage, removeProductFromCart, addToCart, getTotalAmountOfProducts, clearCart } from "../services/cartService"
-import { Box, Avatar, Typography, IconButton, Stack, Grid, Tooltip, Button, Card, CardContent } from "@mui/material"
+import { Typography, IconButton, Stack, Grid, Tooltip, Button, Card, CardContent } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -12,6 +12,7 @@ import { environment } from "../utils/constants";
 import { getJwtToken } from "../services/tokenService";
 import handleAxiosException from "../services/apiService";
 import { toast } from "sonner";
+import productNotFound from '/src/assets/no-product-picture.png'
 
 type CartPageProps = {
   setLoading: (value: boolean) => void
@@ -178,7 +179,7 @@ export default function CartPage({ setLoading, style, setNumberOfProductsInCart 
                   }}
                 >
                   <img
-                    src={product.imageUrl}
+                    src={product.imageUrl || productNotFound}
                     alt={t('manage_products.view_product.label.product_image')}
                     style={{ height: '100%', width: '100%', objectFit: 'contain' }}
                   />

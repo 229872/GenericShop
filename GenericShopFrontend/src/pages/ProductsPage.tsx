@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addToCart, getTotalAmountOfProducts } from '../services/cartService';
 import { isUserSignIn } from '../services/sessionService';
+import { toast } from 'sonner';
 
 type DefaultProductData = {
   content: BasicProduct[]
@@ -205,11 +206,12 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart } : Product
       <ImageList cols={5} gap={15} sx={{ marginTop: '20px' }}>
         {products.map((product, index) => (
           <ImageListItem key={index}>
-            <Card sx={{
+            <Card elevation={3} sx={{
               width: 300,
               height: 290,
               display: 'flex',
               flexDirection: 'column',
+              margin: '2px'
             }}>
               <CardHeader
                 title={
@@ -255,6 +257,7 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart } : Product
                         <IconButton onClick={() => {
                           addToCart(product)
                           setNumberOfProductsInCart(getTotalAmountOfProducts())
+                          toast.success(t('manage_products.view_product.add_to_cart.success'))
                         }}>
                           <AddIcon />
                         </IconButton>
