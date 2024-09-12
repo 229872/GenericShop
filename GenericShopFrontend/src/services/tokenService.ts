@@ -4,7 +4,7 @@ import { Role, TokenData } from "../utils/types";
 
 
 export const saveJwtToken = (token: string): void => {
-  localStorage.setItem(environment.jwtTokenKey, token)
+localStorage.setItem(environment.jwtTokenKey, token)
 }
 
 export const saveRefreshToken = (token: string): void => {
@@ -35,6 +35,10 @@ export const getExpirationTime = (token: string | null): number | null => {
 
 export const getActiveRole = (token: string | null): Role => {
   return decodeJwtToken(token)?.accountRoles[0] ?? Role.GUEST
+}
+
+export const getRoles = (token: string | null): Role[] => {
+  return decodeJwtToken(token)?.accountRoles ?? []
 }
 
 export const getLogin = (token: string | null): string | null => {

@@ -3,11 +3,10 @@ package pl.lodz.p.edu.shop.presentation.controller;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.shop.presentation.adapter.api.OrderServiceOperations;
 import pl.lodz.p.edu.shop.presentation.dto.order.CreateOrderDTO;
 import pl.lodz.p.edu.shop.presentation.dto.order.OrderOutputDto;
@@ -33,5 +32,23 @@ public class OrderController {
 
         URI resourceUri = URI.create("/id/%d".formatted(responseBody.id()));
         return ResponseEntity.created(resourceUri).body(responseBody);
+    }
+
+    @GetMapping
+    @RolesAllowed({CLIENT})
+    public ResponseEntity<Page<OrderOutputDto>> findAll(Pageable pageable) {
+        String login = getLoginFromSecurityContext();
+
+        Page<OrderOutputDto> responseBody = orderService.findAll(login, pageable);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @GetMapping("/id/{id}")
+    @RolesAllowed({CLIENT})
+    public ResponseEntity<OrderOutputDto> findById(Long id) {
+        String login = getLoginFromSecurityContext();
+
+        OrderOutputDto responseBody = orderService.findById(login, id);
+        return ResponseEntity.ok(responseBody);
     }
 }

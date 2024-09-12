@@ -247,6 +247,7 @@ const resources = {
       'nav.logout': 'Logout',
       'nav.manage.accounts': 'Manage accounts',
       'nav.manage.products': 'Manage products',
+      'nav.change_role': 'Change active role',
 
       'authentication.please.login': 'Log In to continue',
       'authentication.login.not_valid': 'Login must starts with letter and then contains only letters and digits',
@@ -622,6 +623,7 @@ const resources = {
       'nav.logout': 'Wyloguj się',
       'nav.manage.accounts': 'Zarządzaj kontami',
       'nav.manage.products': 'Zarządzaj produktami',
+      'nav.change_role': 'Zmień aktywną rolę',
 
       'authentication.please.login': 'Zaloguj się aby kontynuować',
       'authentication.login.not_valid': 'Login musi zaczynać się literą i dalej zawierać tylko litery i cyfry',

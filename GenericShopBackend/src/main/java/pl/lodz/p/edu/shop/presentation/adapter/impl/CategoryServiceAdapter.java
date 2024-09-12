@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toMap;
 @RequiredArgsConstructor
 
 @Component
-public class CategoryServiceAdapter implements CategoryServiceOperations {
+class CategoryServiceAdapter implements CategoryServiceOperations {
 
     private final CategoryService categoryService;
     private final SchemaMapper schemaMapper;

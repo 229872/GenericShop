@@ -131,4 +131,8 @@ public final class ApplicationExceptionFactory {
     public static ResponseStatusException createCantFinishOrderException() {
         return new CantFinishOrderException(CONFLICT, ExceptionMessage.Orders.ORDER_CANT_FINISH);
     }
+
+    public static ResponseStatusException createOrderNotFoundException() {
+        return new OrderNotFoundException(NOT_FOUND, ExceptionMessage.Orders.ORDER_NOT_FOUND);
+    }
 }

@@ -66,8 +66,8 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
 
       <Route path={CART_PATH} element={
         <ProtectedElement
-          element={
-            <CartPage
+        element={
+        <CartPage
               setLoading={setLoading}
               setNumberOfProductsInCart={setNumberOfProductsInCart}
               style={{ margin: '12vh 10vw' }}

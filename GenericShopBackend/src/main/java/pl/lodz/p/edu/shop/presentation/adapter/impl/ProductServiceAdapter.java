@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 
 @Component
-public class ProductServiceAdapter implements ProductServiceOperations {
+class ProductServiceAdapter implements ProductServiceOperations {
 
     private final ProductService productService;
     private final ProductMapper productMapper;

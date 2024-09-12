@@ -61,5 +61,6 @@ public final class ExceptionMessage {
         public static final String CATEGORY_CONFLICT = "exception.orders.category.conflict";
         public static final String CATEGORY_NOT_FOUND = "exception.orders.category.not_found";
         public static final String ORDER_CANT_FINISH = "exception.orders.wrong";
+        public static final String ORDER_NOT_FOUND = "exception.orders.not_found";
     }
 }

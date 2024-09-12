@@ -13,6 +13,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ChangeLanguageMenu from "../reusable/ChangeLanguageMenu";
 import { Role } from "../../utils/types";
+import { getJwtToken, getRoles } from "../../services/tokenService";
+import ChangeActiveRoleMenu from "../reusable/ChangeActiveRoleMenu";
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 
 type NavigationBarProps = {
   setIsAuthenticated: (state: boolean) => void
@@ -26,6 +29,7 @@ export default function NavigationBar({ setIsAuthenticated, setActiveRole, activ
   const { t } = useTranslation();
   const [changeLanguageAnchorEl, setLanguageAnchorEl] = useState(null);
   const [accountAnchorEl, setAccountAnchorEl] = useState(null);
+  const [isActiveRoleMenuVisible, setActiveRoleMenuVisible] = useState(false);
   const [localeOptionsVisible, setLocaleOptionsVisible] = useState(false)
   const menuStyle = { width: '250px' }
   const [reload, setReload] = useState<boolean>(false)
@@ -101,6 +105,25 @@ export default function NavigationBar({ setIsAuthenticated, setActiveRole, activ
 
         {localeOptionsVisible && (
           <ChangeLanguageMenu menuStyle={menuStyle} setLanguageAnchorEl={setLanguageAnchorEl} />
+        )}
+        {getRoles(getJwtToken()).length > 1 && <Divider />}
+        {getRoles(getJwtToken()).length > 1 && (
+          <MenuItem sx={menuStyle} onClick={() => setActiveRoleMenuVisible(!isActiveRoleMenuVisible)}>
+            <ListItemIcon><SupervisorAccountIcon /></ListItemIcon>
+            <ListItemText>{t('nav.change_role')}</ListItemText>
+            {isActiveRoleMenuVisible ? (
+              <ListItemIcon><ExpandLessIcon /></ListItemIcon>
+            ) : (
+              <ListItemIcon><ExpandMoreIcon /></ListItemIcon>
+            )}
+          </MenuItem>
+        )}
+
+        {getRoles(getJwtToken()).length > 1 && isActiveRoleMenuVisible && (
+          <div>
+            <Divider />
+            <ChangeActiveRoleMenu menuStyle={menuStyle} activeRole={activeRole} roles={getRoles(getJwtToken())} setActiveRole={setActiveRole} />
+          </div>
         )}
 
         <Divider />

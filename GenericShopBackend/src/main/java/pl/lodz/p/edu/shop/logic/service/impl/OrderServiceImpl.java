@@ -3,6 +3,8 @@ package pl.lodz.p.edu.shop.logic.service.impl;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,6 +97,24 @@ public class OrderServiceImpl implements OrderService {
             .build();
 
         return save(order);
+    }
+
+    @Override
+    public Page<Order> findAll(String login, Pageable pageable) {
+
+        accountRepository.findByLogin(login)
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
+        return orderRepository.findAll(pageable);
+    }
+
+    @Override
+    public Order findOrderById(String login, Long id) {
+
+        accountRepository.findByLogin(login)
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
+
+        return orderRepository.findById(id)
+            .orElseThrow(ApplicationExceptionFactory::createOrderNotFoundException);
     }
 
     private Order save(Order order) {
