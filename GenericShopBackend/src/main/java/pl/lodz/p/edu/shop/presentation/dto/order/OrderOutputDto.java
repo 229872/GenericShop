@@ -4,7 +4,6 @@ import lombok.Builder;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
@@ -14,7 +13,7 @@ public record OrderOutputDto(
     BigDecimal totalPrice,
     List<ProductOutputDto> products,
     Long accountId,
-    LocalDateTime creationDate,
+    String creationDate,
     Integer productQuantity
 ) {
 }

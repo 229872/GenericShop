@@ -78,13 +78,13 @@ export type BasicProductWithFixedPrice = {
 export type BasicOrder = {
   id: number
   totalPrice: number
-  creationDate: Date
+  creationDate: string
 }
 
 export type BasicOrderWithFixedPrice = {
   id: number
   totalPrice: string
-  creationDate: Date
+  creationDate: string
 }
 
 export type FullOrder = BasicOrder & {
