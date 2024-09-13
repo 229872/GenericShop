@@ -12,12 +12,14 @@ import { BasicProduct, Role } from '../utils/types';
 import productNotFound from '/src/assets/no-product-picture.png'
 import { useTranslation } from 'react-i18next';
 import { Controller, useForm } from 'react-hook-form';
-import { getActiveRole, getJwtToken } from '../services/tokenService';
+import { getJwtToken } from '../services/tokenService';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addToCart, getTotalAmountOfProducts } from '../services/cartService';
 import { isUserSignIn } from '../services/sessionService';
 import { toast } from 'sonner';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import ViewProductDetailsDialog from '../components/singleuse/ViewProductDetailsDialog';
 
 type DefaultProductData = {
   content: BasicProduct[]
@@ -46,6 +48,7 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart, activeRole
   const [ pageSize, setPageSize ] = useState<number>(10);
   const [ currentPage, setCurrentPage ] = useState<number>(0);
   const { t } = useTranslation();
+  const [ visibleViewProductDetailsDialog, setVisibleViewProductDetailsDialog ] = useState<number | undefined>(undefined)
 
   const { control, watch, formState, handleSubmit } = useForm<Category>({
     resolver: zodResolver(schema)
@@ -242,29 +245,44 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart, activeRole
                 </Box>
 
                 <Grid container>
-                  <Grid item xs={6}>
-                    <Grid item>{t('manage_products.column.price')}: {product.price}</Grid>
+                  <Grid container item xs={8}>
+                    <Grid item xs={6}>{t('manage_products.column.price')}: {product.price}</Grid>
+
+                    <Grid item xs={6} />
 
                     {product.archival || product.quantity === 0 ? (
-                      <Grid color='red'>{t('manage_products.view_product.unavailable')}</Grid>
+                      <Grid item xs={8} color='red'>{t('manage_products.view_product.unavailable')}</Grid>
                     ) : (
-                      <Grid color='green'>{t('manage_products.view_product.available')}</Grid>
+                      <Grid item xs={8} color='green'>{t('manage_products.view_product.available')}</Grid>
                     )}
+
                   </Grid>
 
-                  {!product.archival && product.quantity > 0 && isUserSignIn() && activeRole === Role.CLIENT && (
+                  <Grid container item xs={4}>
                     <Grid item xs={4}>
-                      <Tooltip title={t('manage_products.view_product.add_to_cart')} placement='right' children={
+                      <Tooltip title={t('manage_prodcuts.view_product.show_details')} placement='right' children={
                         <IconButton onClick={() => {
-                          addToCart(product)
-                          setNumberOfProductsInCart(getTotalAmountOfProducts())
-                          toast.success(t('manage_products.view_product.add_to_cart.success'))
+                          setVisibleViewProductDetailsDialog(product.id)
                         }}>
-                          <AddIcon />
+                          <VisibilityIcon />
                         </IconButton>
                       } />
                     </Grid>
-                  )} 
+
+                    {!product.archival && product.quantity > 0 && isUserSignIn() && activeRole === Role.CLIENT && (
+                      <Grid item xs={4}>
+                        <Tooltip title={t('manage_products.view_product.add_to_cart')} placement='right' children={
+                          <IconButton onClick={() => {
+                            addToCart(product)
+                            setNumberOfProductsInCart(getTotalAmountOfProducts())
+                            toast.success(t('manage_products.view_product.add_to_cart.success'))
+                          }}>
+                            <AddIcon />
+                          </IconButton>
+                        } />
+                      </Grid>
+                    )}
+                  </Grid>
                 </Grid>
 
 
@@ -279,6 +297,16 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart, activeRole
           </ImageListItem>
         ))}
       </ImageList>
+
+      {
+        visibleViewProductDetailsDialog &&
+        <ViewProductDetailsDialog
+          productId={visibleViewProductDetailsDialog}
+          open={Boolean(setVisibleViewProductDetailsDialog)}
+          onClose={() => setVisibleViewProductDetailsDialog(undefined)}
+          setLoading={setLoading}
+        />
+      }
 
       <TablePagination
         component='div'

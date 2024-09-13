@@ -236,6 +236,7 @@ const resources = {
       'manage_products.view_product.order.success': 'Your order has been successfully placed',
       'manage_products.view_product.order.fail': 'This order can\'t be placed, probably one of your products isn\'t available right now',
       'manage_products.view_product.add_to_cart.success' : 'Product has been added to the cart',
+      'manage_prodcuts.view_product.show_details': 'Show details',
 
       'nav.home': 'Home',
       'nav.login': 'Login',
@@ -371,7 +372,9 @@ const resources = {
       'self_orders.column.creation_date': 'Order creation date',
       'self_orders.column.actions': 'Actions',
       'self_orders.tooltip.show_more': 'Show more',
+      'self_orders.tooltip.rate_product': 'Rate product',
       'self_orders.title': 'Your orders',
+      'self_orders.detail.order_products': 'Your products for this order',
       'self_orders.button.refresh': 'Refresh',
 
       'table.no_content': 'No records found',
@@ -622,6 +625,7 @@ const resources = {
       'manage_products.view_product.order.success': 'Twoje zamówienie zostało pomyślnie złożone',
       'manage_products.view_product.order.fail': 'Twoje zamówienie nie zostało złożone, prawdopodobnie jeden z produktów na twojej liście przestał być dostępny',
       'manage_products.view_product.add_to_cart.success' : 'Produkt został dodany do koszyka',
+      'manage_prodcuts.view_product.show_details': 'Pokaż szczegóły',
       
       'nav.home': 'Strona Główna',
       'nav.login': 'Zaloguj się',
@@ -757,7 +761,9 @@ const resources = {
       'self_orders.column.creation_date': 'Data złożenia zamówienia',
       'self_orders.column.actions': 'Akcje',
       'self_orders.tooltip.show_more': 'Pokaż więcej',
+      'self_orders.tooltip.rate_product': 'Oceń produkt',
       'self_orders.title': 'Twoje zamówienia',
+      'self_orders.detail.order_products': 'Twoje produkty dla tego zamówienia',
       'self_orders.button.refresh': 'Odśwież',
 
       'table.no_content': 'Nie ma szukanych rekordów',

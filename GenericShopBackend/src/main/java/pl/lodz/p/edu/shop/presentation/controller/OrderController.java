@@ -1,5 +1,6 @@
 package pl.lodz.p.edu.shop.presentation.controller;
 
+import jakarta.annotation.security.DenyAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import static pl.lodz.p.edu.shop.util.SecurityUtil.getLoginFromSecurityContext;
 
 @RestController
 @RequestMapping(ApiRoot.API_ROOT + "/orders")
+@DenyAll
 public class OrderController {
 
     private final OrderServiceOperations orderService;

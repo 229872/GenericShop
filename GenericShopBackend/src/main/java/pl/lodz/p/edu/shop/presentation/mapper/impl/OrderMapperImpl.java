@@ -45,6 +45,6 @@ class OrderMapperImpl implements OrderMapper {
     }
 
     private String formatDate(LocalDateTime notParsedCreationDate) {
-        return notParsedCreationDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm"));
+        return notParsedCreationDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 }

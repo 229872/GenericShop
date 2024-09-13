@@ -9,6 +9,7 @@ import { Button, IconButton, Stack, Tooltip, Typography } from "@mui/material"
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import TableWithPagination from "../components/reusable/TableWithPagination"
+import ViewOrderDetailsDialog from "../components/singleuse/ViewOrderDetailsDialog"
 
 type OrdersResponse = {
   content: BasicOrder[]
@@ -121,15 +122,15 @@ export default function SelfOrdersPage({ setLoading, style } : SelfOrdersPagePro
         tableStyle={{ width: '100%', maxHeight: '60vh'}}
       />
 
-      {/* {
+      {
         visibleViewOrderDetailsDialog &&
-        <ViewProductDetailsDialog
-          productId={visibleViewOrderDetailsDialog}
+        <ViewOrderDetailsDialog
+          orderId={visibleViewOrderDetailsDialog}
           open={Boolean(setVisibleViewOrderDetailsDialog)}
           onClose={() => setVisibleViewOrderDetailsDialog(undefined)}
           setLoading={setLoading}
         />
-      } */}
+      }
 
     </Stack>
   )
