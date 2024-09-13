@@ -34,9 +34,10 @@ type ProductPageProps = {
   setLoading: (state: boolean) => void
   style: CSSProperties
   setNumberOfProductsInCart: (value: number) => void
+  activeRole: Role
 }
 
-const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart } : ProductPageProps) => {
+const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart, activeRole } : ProductPageProps) => {
   const rowsPerPageOptions = [ 5, 10, 15, 20 ]
   const [ products, setProducts ] = useState<BasicProduct[]>([]);
   const [ categories, setCategories ] = useState<string[]>([]);
@@ -251,7 +252,7 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart } : Product
                     )}
                   </Grid>
 
-                  {!product.archival && product.quantity > 0 && isUserSignIn() && getActiveRole(getJwtToken()) === Role.CLIENT && (
+                  {!product.archival && product.quantity > 0 && isUserSignIn() && activeRole === Role.CLIENT && (
                     <Grid item xs={4}>
                       <Tooltip title={t('manage_products.view_product.add_to_cart')} placement='right' children={
                         <IconButton onClick={() => {

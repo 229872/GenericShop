@@ -19,6 +19,7 @@ class OrderMapperImpl implements OrderMapper {
             .version(SecurityUtil.signVersion(order.getVersion()))
             .totalPrice(order.getTotalPrice())
             .accountId(order.getAccount().getId())
+            .creationDate(order.getCreatedAt())
             .build();
     }
 
@@ -30,6 +31,8 @@ class OrderMapperImpl implements OrderMapper {
             .products(mappedProducts)
             .totalPrice(order.getTotalPrice())
             .accountId(order.getAccount().getId())
+            .creationDate(order.getCreatedAt())
+            .productQuantity(order.getOrderedProducts().size())
             .build();
     }
 }

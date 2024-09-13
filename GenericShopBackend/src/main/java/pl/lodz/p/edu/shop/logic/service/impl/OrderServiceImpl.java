@@ -113,7 +113,7 @@ public class OrderServiceImpl implements OrderService {
         accountRepository.findByLogin(login)
             .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
 
-        return orderRepository.findById(id)
+        return orderRepository.findByIdWithOrderedProducts(id)
             .orElseThrow(ApplicationExceptionFactory::createOrderNotFoundException);
     }
 

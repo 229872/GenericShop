@@ -13,6 +13,8 @@ import { getJwtToken } from "../services/tokenService";
 import handleAxiosException from "../services/apiService";
 import { toast } from "sonner";
 import productNotFound from '/src/assets/no-product-picture.png'
+import { useNavigate } from "react-router-dom";
+import { SELF_ORDERS_PATH } from "../components/singleuse/Routing";
 
 type CartPageProps = {
   setLoading: (value: boolean) => void
@@ -22,12 +24,13 @@ type CartPageProps = {
 
 export default function CartPage({ setLoading, style, setNumberOfProductsInCart }: CartPageProps) {
   const [cartProducts, setCartProducts] = useState<BasicProduct[]>([]);
+  const navigate = useNavigate();
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const iconButtonPxNumber = 20;
   const changeQuantityButtonStyle = {
     padding: 0,
     minWidth: `${iconButtonPxNumber}px`,
-    maxWidth: `${iconButtonPxNumber}20px`,
+    maxWidth: `${iconButtonPxNumber}px`,
     minHeight: `${iconButtonPxNumber}px`,
     maxHeight: `${iconButtonPxNumber}px`,
   }
@@ -105,13 +108,14 @@ export default function CartPage({ setLoading, style, setNumberOfProductsInCart 
     )
 
     try {
-      const { data } = await axios.post(`${environment.apiBaseUrl}/orders`, { productsRequest: requestData }, {
+      await axios.post(`${environment.apiBaseUrl}/orders`, { productsRequest: requestData }, {
         headers: {
           Authorization: `Bearer ${getJwtToken()}`
         }
       })
-      toast.success(t('manage_products.view_product.order.success'))
       emptyCart()
+      navigate(SELF_ORDERS_PATH)
+      toast.success(t('manage_products.view_product.order.success'))
 
     } catch (e) {
       handleAxiosException(e)

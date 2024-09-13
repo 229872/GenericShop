@@ -248,6 +248,7 @@ const resources = {
       'nav.manage.accounts': 'Manage accounts',
       'nav.manage.products': 'Manage products',
       'nav.change_role': 'Change active role',
+      'nav.orders': 'Orders',
 
       'authentication.please.login': 'Log In to continue',
       'authentication.login.not_valid': 'Login must starts with letter and then contains only letters and digits',
@@ -363,6 +364,15 @@ const resources = {
       'self.button.change_email': 'Change email',
       'self.button.change_password': 'Change password',
       'self.tooltip.refresh': 'Refresh data',
+
+      'self_orders.column.id': 'ID',
+      'self_orders.column.total_price': 'Total price',
+      'self_orders.column.quantity': 'Product quantity in order',
+      'self_orders.column.creation_date': 'Order creation date',
+      'self_orders.column.actions': 'Actions',
+      'self_orders.tooltip.show_more': 'Show more',
+      'self_orders.title': 'Your orders',
+      'self_orders.button.refresh': 'Refresh',
 
       'table.no_content': 'No records found',
       'table.yes': 'Yes',
@@ -624,6 +634,7 @@ const resources = {
       'nav.manage.accounts': 'Zarządzaj kontami',
       'nav.manage.products': 'Zarządzaj produktami',
       'nav.change_role': 'Zmień aktywną rolę',
+      'nav.orders': 'Zamówienia',
 
       'authentication.please.login': 'Zaloguj się aby kontynuować',
       'authentication.login.not_valid': 'Login musi zaczynać się literą i dalej zawierać tylko litery i cyfry',
@@ -739,6 +750,15 @@ const resources = {
       'self.button.change_email': 'Zmień adres email',
       'self.button.change_password': 'Zmień hasło',
       'self.tooltip.refresh': 'Odśwież dane',
+
+      'self_orders.column.id': 'ID',
+      'self_orders.column.total_price': 'Całkowita cena',
+      'self_orders.column.quantity': 'Liczba produktów w zamówieniu',
+      'self_orders.column.creation_date': 'Data złożenia zamówienia',
+      'self_orders.column.actions': 'Akcje',
+      'self_orders.tooltip.show_more': 'Pokaż więcej',
+      'self_orders.title': 'Twoje zamówienia',
+      'self_orders.button.refresh': 'Odśwież',
 
       'table.no_content': 'Nie ma szukanych rekordów',
       'table.yes': 'Tak',

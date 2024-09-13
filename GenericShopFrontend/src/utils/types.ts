@@ -75,6 +75,24 @@ export type BasicProductWithFixedPrice = {
   imageUrl: string
 }
 
+export type BasicOrder = {
+  id: number
+  totalPrice: number
+  creationDate: Date
+}
+
+export type BasicOrderWithFixedPrice = {
+  id: number
+  totalPrice: string
+  creationDate: Date
+}
+
+export type FullOrder = BasicOrder & {
+  accountId: number
+  version: string
+  products: BasicProduct[]
+}
+
 export type GridItemData = {
   label: string
   content: string | number

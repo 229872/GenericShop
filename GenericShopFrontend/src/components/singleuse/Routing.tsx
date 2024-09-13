@@ -13,6 +13,7 @@ import ManageAccountsPage from "../../pages/ManageAccountsPage";
 import ManageProductsPage from "../../pages/ManageProductsPage";
 import ProductsPage from "../../pages/ProductsPage";
 import CartPage from "../../pages/CartPage";
+import SelfOrdersPage from "../../pages/SelfOrdersPage";
 
 export const ROOT_PATH = '/'
 export const HOME_PATH = '/home'
@@ -21,7 +22,8 @@ export const FORGOT_PASSWORD_PATH = '/auth/forgot-password'
 export const REGISTER_PATH = '/register'
 export const REGISTER_CONFIRM_PATH = '/register/confirm'
 export const RESET_PASSWORD_PATH = '/auth/reset-password'
-export const SELF_ACCOUNT_PATH = '/self'
+export const SELF_ACCOUNT_PATH = '/self/account'
+export const SELF_ORDERS_PATH = "/self/orders"
 export const NOT_FOUND_PATH = '/not-found'
 export const MANAGE_ACCOUNTS_PATH = '/manage/accounts'
 export const MANAGE_PRODUCTS_PATH = '/manage/products'
@@ -56,6 +58,7 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
             <ProductsPage
               setLoading={setLoading}
               setNumberOfProductsInCart={setNumberOfProductsInCart}
+              activeRole={activeRole}
               style={{ margin: '8vh 6vw 0vh 6vw' }}
             />
           }
@@ -154,6 +157,19 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
           } 
           shouldRender={isAuthenticated}
           redirect={AUTH_PATH}
+        />
+      } />
+
+      <Route path={SELF_ORDERS_PATH} element={
+        <ProtectedElement
+          element={
+            <SelfOrdersPage
+              setLoading={setLoading}
+              style={{ margin: '10vh 20vw' }}
+            />
+          }
+          shouldRender={isAuthenticated && (activeRole === Role.CLIENT)}
+          redirect={NOT_FOUND_PATH}
         />
       } />
 

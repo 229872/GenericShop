@@ -45,7 +45,7 @@ public class OrderController {
 
     @GetMapping("/id/{id}")
     @RolesAllowed({CLIENT})
-    public ResponseEntity<OrderOutputDto> findById(Long id) {
+    public ResponseEntity<OrderOutputDto> findById(@PathVariable("id") Long id) {
         String login = getLoginFromSecurityContext();
 
         OrderOutputDto responseBody = orderService.findById(login, id);

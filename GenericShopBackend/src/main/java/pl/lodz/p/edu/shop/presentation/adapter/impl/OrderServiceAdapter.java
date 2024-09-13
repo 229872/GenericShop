@@ -2,7 +2,9 @@ package pl.lodz.p.edu.shop.presentation.adapter.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Order;
 import pl.lodz.p.edu.shop.logic.service.api.OrderService;
@@ -41,7 +43,15 @@ class OrderServiceAdapter implements OrderServiceOperations {
 
     @Override
     public Page<OrderOutputDto> findAll(String login, Pageable pageable) {
-        return orderService.findAll(login, pageable)
+        List<Sort.Order> orders = pageable.getSort().stream()
+            .map(order -> order.getProperty().equals("creationDate") ?
+                new Sort.Order(order.getDirection(), "createdAt") :
+                order)
+            .toList();
+        Sort sort = Sort.by(orders);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
+
+        return orderService.findAll(login, pageRequest)
             .map(orderMapper::mapToMinimalOrderOutputDTO);
     }
 
