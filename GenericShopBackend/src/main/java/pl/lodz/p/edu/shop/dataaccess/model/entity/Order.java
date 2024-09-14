@@ -13,7 +13,7 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @SuperBuilder
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @ToString(callSuper = true)
 
 @Entity
@@ -26,10 +26,11 @@ public class Order extends AbstractEntity {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
+        name = "orders_ordered_products",
         joinColumns = @JoinColumn(name = "order_id"),
         inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    private Set<Product> orderedProducts = new HashSet<>();
+    private Set<OrderedProduct> orderedProducts = new HashSet<>();
 
     @Column(name = "total_price", nullable = false, updatable = false)
     private BigDecimal totalPrice;

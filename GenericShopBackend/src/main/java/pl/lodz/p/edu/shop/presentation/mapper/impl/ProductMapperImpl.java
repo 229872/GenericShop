@@ -2,6 +2,7 @@ package pl.lodz.p.edu.shop.presentation.mapper.impl;
 
 import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Category;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.OrderedProduct;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
@@ -50,6 +51,16 @@ public class ProductMapperImpl implements ProductMapper {
             .price(product.getPrice())
             .quantity(product.getQuantity())
             .imageUrl(product.getImageUrl())
+            .build();
+    }
+
+    @Override
+    public ProductOutputDto mapToProductOutputDtoWithoutVersion(OrderedProduct product) {
+        return ProductOutputDto.builder()
+            .id(product.getId())
+            .name(product.getName())
+            .price(product.getPrice())
+            .quantity(product.getQuantity())
             .build();
     }
 

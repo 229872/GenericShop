@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Order;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.OrderedProduct;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 import pl.lodz.p.edu.shop.dataaccess.repository.api.OrderRepository;
 import pl.lodz.p.edu.shop.dataaccess.repository.api.ProductRepository;
@@ -90,9 +91,23 @@ public class OrderServiceImpl implements OrderService {
             throw ApplicationExceptionFactory.createCantFinishOrderException();
         }
 
+        Set<OrderedProduct> orderedProducts = productsForNewOrder.entrySet().stream()
+            .map(productQuantityEntry -> {
+                Product product = productQuantityEntry.getKey();
+                Integer takenQuantity = productQuantityEntry.getValue();
+
+                return OrderedProduct.builder()
+                    .name(product.getName())
+                    .quantity(takenQuantity)
+                    .price(product.getPrice())
+                    .account(account)
+                    .product(product)
+                    .build();
+            }).collect(Collectors.toUnmodifiableSet());
+
         Order order = Order.builder()
             .account(account)
-            .orderedProducts(productsForNewOrder.keySet())
+            .orderedProducts(orderedProducts)
             .totalPrice(totalPrice)
             .build();
 

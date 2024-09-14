@@ -259,7 +259,7 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart, activeRole
                   </Grid>
 
                   <Grid container item xs={4}>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                       <Tooltip title={t('manage_prodcuts.view_product.show_details')} placement='right' children={
                         <IconButton onClick={() => {
                           setVisibleViewProductDetailsDialog(product.id)
@@ -269,8 +269,10 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart, activeRole
                       } />
                     </Grid>
 
+                    <Grid item xs={2} />
+
                     {!product.archival && product.quantity > 0 && isUserSignIn() && activeRole === Role.CLIENT && (
-                      <Grid item xs={4}>
+                      <Grid item xs={3}>
                         <Tooltip title={t('manage_products.view_product.add_to_cart')} placement='right' children={
                           <IconButton onClick={() => {
                             addToCart(product)

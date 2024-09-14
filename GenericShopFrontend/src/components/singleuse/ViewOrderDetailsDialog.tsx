@@ -87,7 +87,7 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
       <Dialog open={open} onClose={onClose} sx={{ marginTop: '4vh' }} maxWidth={false} PaperProps={{sx: { width: '60vw' }}}>
         <DialogTitle align='center' fontSize='35px'>{t('self_orders.detail.order_products')}</DialogTitle>
         <DialogContent>
-          <Grid container xs={12} marginTop='15px'>
+          <Grid container marginTop='15px'>
             <Grid container item xs={5}>
               <Grid item xs={8}>
                 <Typography variant='h5'>{t('self_orders.column.quantity')}:</Typography>
