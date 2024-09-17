@@ -6,7 +6,7 @@ import pl.lodz.p.edu.shop.presentation.validation.annotation.CategoryName;
 import java.util.List;
 import java.util.Map;
 
-public record ProductSchemaDTO(
+public record ProductSchemaDto(
     @CategoryName
     String categoryName,
     @Schema

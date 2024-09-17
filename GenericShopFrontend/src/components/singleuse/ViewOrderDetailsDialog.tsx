@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, IconButton, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Rating, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import { CSSProperties, useEffect, useState } from "react";
 import { environment } from "../../utils/constants";
@@ -11,6 +11,8 @@ import { getJwtToken } from "../../services/tokenService";
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import ViewProductDetailsDialog from "./ViewProductDetailsDialog";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { toast } from "sonner";
 
 type OrderData = {
   id: number
@@ -27,6 +29,11 @@ type GridItemDataWithProductData = {
   gridItemData: GridItemData[]
 }
 
+type RateItem = {
+  rateValue: number | null
+  isSubmitted: boolean
+}
+
 type ViewOrderDetailsDialogProps = {
   orderId: number
   open: boolean
@@ -40,6 +47,7 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
   const [ productListData, setProductListData ] = useState<GridItemDataWithProductData[]>([])
   const [ visibleViewProductDetailsDialog, setVisibleViewProductDetailsDialog ] = useState<number | undefined>(undefined)
   const [ order, setOrder ] = useState<OrderData | undefined>(undefined)
+  const [ rates, setRates ] = useState<Map<number, RateItem>>(new Map<number, RateItem>())
 
   useEffect(() => {
     sendGetOrderRequest(orderId)
@@ -59,6 +67,17 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
       const { data } = await getOrder(orderId)
       const order: OrderData = data;
       setOrder(order)
+      
+      const ratesData: Map<number, RateItem> = new Map();
+      order.products.forEach(product => {
+        const productRate = product.rate ?? 0;
+        ratesData.set(product.id, {
+          rateValue: productRate,
+          isSubmitted: productRate !== 0
+        })
+      })
+
+      setRates(ratesData)
 
       const productsData: GridItemDataWithProductData[] = order.products.map(product => (
         {
@@ -80,6 +99,80 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
     } finally {
       setLoading(false)
     }
+  }
+
+  const applyNewRate = async (productId: number, rate: RateItem | undefined): Promise<void> => {
+    try {
+      setLoading(true)
+      if (rate === undefined) return
+      const newRateValue = rate.rateValue;
+      const payload = { 
+        rateValue: newRateValue
+      }
+
+      if (!rate.isSubmitted) {
+        await axios.post(`${environment.apiBaseUrl}/orders/orderedProducts/${productId}/rate`, payload, {
+          headers: {
+            Authorization: `Bearer ${getJwtToken()}`
+          }
+        })
+        handleRatingChange(productId, payload.rateValue, true)
+        toast.success(t('self_orders.button.rate.add_success'))
+
+      } else {
+        await axios.put(`${environment.apiBaseUrl}/orders/orderedProducts/${productId}/rate`, payload, {
+          headers: {
+            Authorization: `Bearer ${getJwtToken()}`
+          }
+        })
+        handleRatingChange(productId, payload.rateValue, true)
+        toast.success(t('self_orders.button.rate.update_success'))
+      }
+
+    } catch (e) {
+      handleAxiosException(e)
+
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const removeRole = async (productId: number): Promise<void> => {
+    try {
+      setLoading(true)
+      await axios.delete(`${environment.apiBaseUrl}/orders/orderedProducts/${productId}/rate`, {
+        headers: {
+          Authorization: `Bearer ${getJwtToken()}`
+        }
+      })
+      handleRatingChange(productId, 0, false)
+      toast.success(t('self_orders.button.rate.delete_success'))
+
+    } catch (e) {
+      handleAxiosException(e)
+
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleRatingChange = (productId: number, newValue: number | null, isSubmitted: boolean) => {
+    const updatedRates = new Map(rates);
+
+    updatedRates.set(productId, {
+      rateValue: newValue,
+      isSubmitted: isSubmitted
+    });
+
+    setRates(updatedRates);
+  };
+
+  const getRateValue = (productId: number): number | null => {
+    return rates.get(productId)?.rateValue ?? null
+  }
+
+  const isRateSubmitted = (productId: number): boolean => {
+    return rates.get(productId)?.isSubmitted ?? false;
   }
 
   return (
@@ -118,23 +211,43 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
                   <GridCard data={productData.gridItemData} rowSpacing={2} />
                 </Grid>
 
-                <Grid item xs={2}>
-                  <Stack justifyContent='center' spacing={1} sx={{ height: '100%' }}>
-                    <Tooltip title={t('self_orders.tooltip.show_more')} children={
-                      <IconButton onClick={() => setVisibleViewProductDetailsDialog(productData.productId)}>
-                        <VisibilityIcon />
-                      </IconButton>
-                    } />
+                <Grid item xs={3}>
+                  <Stack spacing={1} sx={{ height: '100%' }}>
+                    <Button endIcon={<VisibilityIcon />} color='inherit' onClick={() => setVisibleViewProductDetailsDialog(productData.productId)}>
+                      {t('self_orders.tooltip.show_more')}
+                    </Button>
 
-                    <Tooltip title={t('self_orders.tooltip.rate_product')} children={
-                      <IconButton>
-                        <RateReviewIcon />
-                      </IconButton>
-                    } />
+                    <Stack direction='row' justifyContent='center'>
+                      <Rating
+                        name="rate-product"
+                        value={rates.get(productData.productId)?.rateValue}
+                        onChange={(event, newValue) => {
+                          handleRatingChange(productData.productId, newValue, rates.get(productData.productId)?.isSubmitted ?? false);
+                        }}
+                        precision={1}
+                        max={5}
+                      />
+                    </Stack>
+                    
+                    <Button 
+                      disabled={getRateValue(productData.productId) === 0}
+                      endIcon={<RateReviewIcon />}
+                      color='inherit'
+                      onClick={() => applyNewRate(productData.productId, rates.get(productData.productId))}
+                    >
+                      {t('self_orders.tooltip.rate_product')}
+                    </Button>
+                    {getRateValue(productData.productId) !== null && isRateSubmitted(productData.productId) && (
+                      <Button endIcon={<DeleteOutlineIcon />} color='inherit' onClick={() => removeRole(productData.productId)}>
+                        {t('self_orders.tooltip.delete_rate')}
+                      </Button>
+                    )}
+
                   </Stack>
                 </Grid>
 
-                <Grid item xs={4} maxHeight='500px'>
+                  
+                <Grid item xs={3} maxHeight='500px'>
                   <Box
                     component="img"
                     sx={{

@@ -9,8 +9,9 @@ GRANT USAGE, SELECT ON SEQUENCE contacts_seq TO shop_accounts;
 GRANT USAGE, SELECT ON SEQUENCE addresses_seq TO shop_accounts;
 
 GRANT SELECT, INSERT, UPDATE, REFERENCES ON products TO shop_orders;
-GRANT SELECT, INSERT, UPDATE ON categories TO shop_orders;
-GRANT SELECT, INSERT ON orders, orders_ordered_products, ordered_products TO shop_orders;
+GRANT SELECT, INSERT, UPDATE ON categories, ordered_products TO shop_orders;
+GRANT SELECT, INSERT ON orders TO shop_orders;
+GRANT SELECT, INSERT, UPDATE, DELETE ON rates TO shop_orders;
 GRANT SELECT ON accounts TO shop_orders;
 GRANT CREATE ON DATABASE shop TO shop_orders;
 GRANT CREATE ON SCHEMA public TO shop_orders;

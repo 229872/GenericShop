@@ -60,6 +60,8 @@ export type BasicProduct = {
   price: number
   quantity: number
   imageUrl: string
+  averageRating: number
+  rate?: number
 }
 
 export type BasicProductWithVersion = BasicProduct & {
@@ -73,6 +75,7 @@ export type BasicProductWithFixedPrice = {
   price: string
   quantity: number
   imageUrl: string
+  averageRating: number
 }
 
 export type BasicOrder = {

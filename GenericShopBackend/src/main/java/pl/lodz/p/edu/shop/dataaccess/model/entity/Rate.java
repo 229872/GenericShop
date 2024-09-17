@@ -1,7 +1,6 @@
 package pl.lodz.p.edu.shop.dataaccess.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import pl.lodz.p.edu.shop.dataaccess.model.superclass.AbstractEntity;
@@ -17,5 +16,16 @@ import pl.lodz.p.edu.shop.dataaccess.model.superclass.AbstractEntity;
 @Table(name = "rates")
 public class Rate extends AbstractEntity {
 
+    @Column(nullable = false)
     private Integer value;
+
+    @ToString.Exclude
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private Account account;
+
+    @ToString.Exclude
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private Product product;
 }

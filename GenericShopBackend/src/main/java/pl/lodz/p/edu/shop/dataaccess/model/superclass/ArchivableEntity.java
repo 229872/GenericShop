@@ -27,7 +27,7 @@ public abstract class ArchivableEntity extends AbstractEntity {
     }
 
     @Override
-    void prePersist() {
+    protected void prePersist() {
         super.prePersist();
         isArchival = false;
     }

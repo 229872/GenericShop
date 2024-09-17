@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.shop.presentation.adapter.api.CategoryServiceOperations;
-import pl.lodz.p.edu.shop.presentation.dto.product.ProductSchemaDTO;
+import pl.lodz.p.edu.shop.presentation.dto.product.ProductSchemaDto;
 
 import java.util.List;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class CategoryController {
 
     @PostMapping
     @RolesAllowed({EMPLOYEE})
-    public ResponseEntity<Void> createNewCategory(@RequestBody @Valid @NotNull ProductSchemaDTO productSchemaDTO) {
+    public ResponseEntity<Void> createNewCategory(@RequestBody @Valid @NotNull ProductSchemaDto productSchemaDTO) {
         categoryService.createCategory(productSchemaDTO);
 
         return ResponseEntity.ok().build();

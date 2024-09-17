@@ -34,8 +34,12 @@ public class Product extends ArchivableEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "average_rating", nullable = false, columnDefinition = "numeric(3,2) default 0.0")
+    private Double averageRating;
+
     @Builder.Default
-    @OneToMany
+    @ToString.Exclude
+    @OneToMany(mappedBy = "product")
     private Set<Rate> rates = new HashSet<>();
 
     @ManyToOne
@@ -43,4 +47,10 @@ public class Product extends ArchivableEntity {
 
     @Transient
     private Map<String, Object> tableProperties = new HashMap<>();
+
+    @Override
+    protected void prePersist() {
+        super.prePersist();
+        averageRating = 0.0;
+    }
 }

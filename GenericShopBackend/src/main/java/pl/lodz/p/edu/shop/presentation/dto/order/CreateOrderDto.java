@@ -5,7 +5,7 @@ import pl.lodz.p.edu.shop.presentation.validation.annotation.ProductForOrderList
 
 import java.util.List;
 
-public record CreateOrderDTO(
+public record CreateOrderDto(
     @ProductForOrderList
     List<ProductRequest> productsRequest
 ) {

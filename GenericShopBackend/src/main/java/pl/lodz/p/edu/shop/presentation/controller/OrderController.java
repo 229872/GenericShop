@@ -9,8 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.shop.presentation.adapter.api.OrderServiceOperations;
-import pl.lodz.p.edu.shop.presentation.dto.order.CreateOrderDTO;
+import pl.lodz.p.edu.shop.presentation.dto.order.CreateOrderDto;
 import pl.lodz.p.edu.shop.presentation.dto.order.OrderOutputDto;
+import pl.lodz.p.edu.shop.presentation.dto.order.RateInputDto;
+import pl.lodz.p.edu.shop.presentation.dto.order.RateOutputDto;
 
 import java.net.URI;
 
@@ -28,7 +30,7 @@ public class OrderController {
 
     @PostMapping
     @RolesAllowed({CLIENT})
-    public ResponseEntity<OrderOutputDto> placeAnOrder(@Valid @RequestBody CreateOrderDTO newOrder) {
+    public ResponseEntity<OrderOutputDto> placeAnOrder(@Valid @RequestBody CreateOrderDto newOrder) {
         String login = getLoginFromSecurityContext();
         OrderOutputDto responseBody = orderService.placeAnOrder(login, newOrder);
 
@@ -52,5 +54,36 @@ public class OrderController {
 
         OrderOutputDto responseBody = orderService.findById(login, id);
         return ResponseEntity.ok(responseBody);
+    }
+
+    @PostMapping("/orderedProducts/{id}/rate")
+    @RolesAllowed(CLIENT)
+    public ResponseEntity<RateOutputDto> rateOrderedProduct(
+        @PathVariable("id") Long productId, @Valid @RequestBody RateInputDto rate
+    ) {
+        String login = getLoginFromSecurityContext();
+
+        RateOutputDto responseBody = orderService.rateOrderedProduct(login, productId, rate);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @PutMapping("/orderedProducts/{id}/rate")
+    @RolesAllowed(CLIENT)
+    public ResponseEntity<RateOutputDto> reRateOrderedProduct(
+        @PathVariable("id") Long productId, @Valid @RequestBody RateInputDto rate
+    ) {
+        String login = getLoginFromSecurityContext();
+
+        RateOutputDto responseBody = orderService.reRateOrderedProduct(login, productId, rate);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @DeleteMapping("/orderedProducts/{id}/rate")
+    @RolesAllowed(CLIENT)
+    public ResponseEntity<Void> delete(@PathVariable("id") Long productId) {
+        String login = getLoginFromSecurityContext();
+
+        orderService.removeRate(login, productId);
+        return ResponseEntity.noContent().build();
     }
 }

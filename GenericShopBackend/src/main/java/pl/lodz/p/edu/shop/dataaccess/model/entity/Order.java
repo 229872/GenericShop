@@ -24,12 +24,7 @@ public class Order extends AbstractEntity {
     @JoinColumn(name = "account_id", nullable = false, updatable = false)
     private Account account;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-        name = "orders_ordered_products",
-        joinColumns = @JoinColumn(name = "order_id"),
-        inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
+    @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<OrderedProduct> orderedProducts = new HashSet<>();
 
     @Column(name = "total_price", nullable = false, updatable = false)

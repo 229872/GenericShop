@@ -3,6 +3,7 @@ package pl.lodz.p.edu.shop.logic.service.api;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Order;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.Rate;
 
 import java.util.Map;
 
@@ -13,4 +14,10 @@ public interface OrderService {
     Page<Order> findAll(String login, Pageable pageable);
 
     Order findOrderById(String login, Long id);
+
+    Rate rateOrderedProduct(String login, Long productId, Integer rateValue);
+
+    Rate reRateOrderedProduct(String login, Long productId, Integer rateValue);
+
+    void removeRate(String login, Long productId);
 }

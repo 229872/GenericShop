@@ -62,5 +62,7 @@ public final class ExceptionMessage {
         public static final String CATEGORY_NOT_FOUND = "exception.orders.category.not_found";
         public static final String ORDER_CANT_FINISH = "exception.orders.wrong";
         public static final String ORDER_NOT_FOUND = "exception.orders.not_found";
+        public static final String ORDER_PRODUCT_ALREADY_RATED = "exception.orders.product_already_rated";
+        public static final String RATE_NOT_FOUND = "exception.orders.rateValue.not_found";
     }
 }

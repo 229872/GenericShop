@@ -1,6 +1,6 @@
 package pl.lodz.p.edu.shop.presentation.adapter.api;
 
-import pl.lodz.p.edu.shop.presentation.dto.product.ProductSchemaDTO;
+import pl.lodz.p.edu.shop.presentation.dto.product.ProductSchemaDto;
 
 import java.util.List;
 import java.util.Map;
@@ -11,5 +11,5 @@ public interface CategoryServiceOperations {
 
     List<Map<String, Object>> findSchemaByCategoryName(String name);
 
-    void createCategory(ProductSchemaDTO productSchemaDTO);
+    void createCategory(ProductSchemaDto productSchemaDTO);
 }

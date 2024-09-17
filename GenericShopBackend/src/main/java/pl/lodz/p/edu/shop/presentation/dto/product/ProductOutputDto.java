@@ -4,7 +4,6 @@ import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.util.Map;
-import java.util.Set;
 
 @Builder
 public record ProductOutputDto(
@@ -15,7 +14,8 @@ public record ProductOutputDto(
     BigDecimal price,
     Integer quantity,
     String imageUrl,
-    Set<Integer> rates,
+    Double averageRating,
+    Integer rate,
     Map<String, Object> categoryProperties
 ) {
 }

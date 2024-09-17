@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Category;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.OrderedProduct;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
+import pl.lodz.p.edu.shop.dataaccess.model.entity.Rate;
 import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.ProductMapper;
@@ -50,6 +51,7 @@ public class ProductMapperImpl implements ProductMapper {
             .name(product.getName())
             .price(product.getPrice())
             .quantity(product.getQuantity())
+            .averageRating(product.getAverageRating())
             .imageUrl(product.getImageUrl())
             .build();
     }
@@ -57,9 +59,10 @@ public class ProductMapperImpl implements ProductMapper {
     @Override
     public ProductOutputDto mapToProductOutputDtoWithoutVersion(OrderedProduct product) {
         return ProductOutputDto.builder()
-            .id(product.getId())
+            .id(product.getProduct().getId())
             .name(product.getName())
             .price(product.getPrice())
+            .rate(product.getRate().map(Rate::getValue).orElse(0))
             .quantity(product.getQuantity())
             .build();
     }
@@ -81,6 +84,7 @@ public class ProductMapperImpl implements ProductMapper {
             .name(product.getName())
             .price(product.getPrice())
             .quantity(product.getQuantity())
+            .averageRating(product.getAverageRating())
             .imageUrl(product.getImageUrl())
             .categoryProperties(mappedProperties)
             .build();

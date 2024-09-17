@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Order;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository {
@@ -16,6 +17,9 @@ public interface OrderRepository {
 
     @Query("SELECT o FROM Order o JOIN FETCH o.orderedProducts WHERE o.id = :id")
     Optional<Order> findByIdWithOrderedProducts(@Param("id") Long id);
+
+    @Query("SELECT o FROM Order o JOIN FETCH o.orderedProducts WHERE o.account.id = :id")
+    List<Order> findAllByAccountId(@Param("id") Long accountId);
 
     Order save(Order order);
 

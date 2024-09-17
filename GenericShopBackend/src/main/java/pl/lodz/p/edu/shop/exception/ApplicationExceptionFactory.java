@@ -135,4 +135,12 @@ public final class ApplicationExceptionFactory {
     public static ResponseStatusException createOrderNotFoundException() {
         return new OrderNotFoundException(NOT_FOUND, ExceptionMessage.Orders.ORDER_NOT_FOUND);
     }
+
+    public static ResponseStatusException createProductAlreadyRatedException() {
+        return new ProductAlreadyRatedException(CONFLICT, ExceptionMessage.Orders.ORDER_PRODUCT_ALREADY_RATED);
+    }
+
+    public static ResponseStatusException createRateNotFoundException() {
+        return new RateNotFoundException(NOT_FOUND, ExceptionMessage.Orders.RATE_NOT_FOUND);
+    }
 }

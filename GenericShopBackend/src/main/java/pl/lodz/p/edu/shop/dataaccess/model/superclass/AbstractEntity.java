@@ -38,13 +38,13 @@ public abstract class AbstractEntity {
     private LocalDateTime modifiedAt;
 
     @PrePersist
-    void prePersist() {
+    protected void prePersist() {
         createdAt = LocalDateTime.now();
         createdBy = SecurityUtil.getLoginFromSecurityContext();
     }
 
     @PreUpdate
-    void preUpdate() {
+    protected void preUpdate() {
         modifiedAt = LocalDateTime.now();
         modifiedBy = SecurityUtil.getLoginFromSecurityContext();
     }
