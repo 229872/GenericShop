@@ -15,6 +15,10 @@ export const saveLocale = (lang: string): void => {
   localStorage.setItem(environment.localeKey, lang)
 }
 
+export const saveActiveRole = (activeRole: Role): void => {
+  localStorage.setItem(environment.activeRole, activeRole)
+}
+
 
 
 export const getJwtToken = (): string | null => {
@@ -34,7 +38,8 @@ export const getExpirationTime = (token: string | null): number | null => {
 }
 
 export const getActiveRole = (token: string | null): Role => {
-  return decodeJwtToken(token)?.accountRoles[0] ?? Role.GUEST
+  const activeRole: string | null = localStorage.getItem(environment.activeRole)
+  return activeRole === null || activeRole as Role === Role.GUEST ? decodeJwtToken(token)?.accountRoles[0] ?? Role.GUEST : activeRole as Role
 }
 
 export const getRoles = (token: string | null): Role[] => {

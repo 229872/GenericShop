@@ -3,6 +3,7 @@ export const environment = {
   apiBaseUrl: "http://localhost:8080/api/v1",
   jwtTokenKey: "jwtToken",
   localeKey: "locale",
+  activeRole: "activeRole",
   refreshTokenKey: "refreshToken",
   supportedLanguages: ['pl', 'en'] as readonly string[],
   defaultLanguage: 'en'
