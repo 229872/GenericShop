@@ -212,7 +212,7 @@ public class OrderServiceImpl implements OrderService {
 
         Account account = accountRepository.findByLogin(login)
             .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
-        
+
         OrderedProduct orderedProduct = productRepository.findOrderedProductById(orderedProductId)
             .filter(product -> product.getAccount().equals(account))
             .orElseThrow(ApplicationExceptionFactory::createProductNotFoundException);

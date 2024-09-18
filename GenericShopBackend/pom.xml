@@ -11,7 +11,7 @@
 
 	<groupId>pl.lodz.p.edu</groupId>
 	<artifactId>GenericShopBackend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>GenericShopBackend</name>
 
 	<description>An online store with dynamic product data model with a product recommendation mechanism based on its features.</description>

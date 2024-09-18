@@ -45,6 +45,7 @@ public class Product extends ArchivableEntity {
     @ManyToOne
     private Category category;
 
+    @Builder.Default
     @Transient
     private Map<String, Object> tableProperties = new HashMap<>();
 

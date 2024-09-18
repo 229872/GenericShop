@@ -24,6 +24,7 @@ public class Order extends AbstractEntity {
     @JoinColumn(name = "account_id", nullable = false, updatable = false)
     private Account account;
 
+    @Builder.Default
     @OneToMany(mappedBy = "order", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<OrderedProduct> orderedProducts = new HashSet<>();
 
