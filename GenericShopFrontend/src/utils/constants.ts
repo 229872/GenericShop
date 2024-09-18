@@ -4,6 +4,7 @@ export const environment = {
   jwtTokenKey: "jwtToken",
   localeKey: "locale",
   activeRole: "activeRole",
+  lastActiveRole: "lastActiveRole",
   refreshTokenKey: "refreshToken",
   supportedLanguages: ['pl', 'en'] as readonly string[],
   defaultLanguage: 'en'

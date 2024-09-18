@@ -1,5 +1,5 @@
 import React, { CSSProperties, useEffect, useState } from 'react';
-import { Autocomplete, Box, Button, Card, CardContent, CardHeader, Grid, IconButton, ImageList, ImageListItem, Pagination, Stack, TablePagination, TextField, Tooltip, Typography } from '@mui/material';
+import { Autocomplete, Box, Button, Card, CardContent, CardHeader, Grid, IconButton, ImageList, ImageListItem, Pagination, Rating, Stack, TablePagination, TextField, Tooltip, Typography } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import StarIcon from '@mui/icons-material/Star';
 import StarHalfIcon from '@mui/icons-material/StarHalf';
@@ -143,9 +143,15 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart, activeRole
     const halfStars = Math.ceil(averageRating - fullStars);
     const emptyStars = 5 - fullStars - halfStars;
     return [
-      ...Array(fullStars).fill(<StarIcon />),
-      ...Array(halfStars).fill(<StarHalfIcon />),
-      ...Array(emptyStars).fill(<StarBorderIcon />)
+      ...Array(fullStars).fill(null).map((_, index) => (
+        <StarIcon key={`full-${index}`} />
+      )),
+      ...Array(halfStars).fill(null).map((_, index) => (
+        <StarHalfIcon key={`half-${index}`} />
+      )),
+      ...Array(emptyStars).fill(null).map((_, index) => (
+        <StarBorderIcon key={`empty-${index}`} />
+      ))
     ];
   };
 
@@ -220,13 +226,14 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart, activeRole
               <CardHeader
                 title={
                   <Box
-                    marginTop='30px'
+                    marginTop='10px'
                     marginRight='10px'
+                    marginLeft='10px'
                     component="img"
                     sx={{
-                      height: 120,
-                      width: '50%',
-                      maxHeight: { xs: 150, md: 150 },
+                      height: 90,
+                      width: '35%',
+                      maxHeight: { xs: 90, md: 90 },
                       maxWidth: { xs: '100%', md: '100%' },
                     }}
                     alt={t('manage_products.view_product.label.product_image')}
@@ -245,20 +252,19 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart, activeRole
                 </Box>
 
                 <Grid container>
-                  <Grid container item xs={8}>
-                    <Grid item xs={6}>{t('manage_products.column.price')}: {product.price}</Grid>
-
-                    <Grid item xs={6} />
+                  <Grid container item xs={6} marginTop='20px' rowSpacing={1}>
+                    <Grid item xs={8}>{t('manage_products.column.price')}: {product.price}</Grid>
+                    <Grid item xs={6}>{t('manage_products.column.rate')}:</Grid>
 
                     {product.archival || product.quantity === 0 ? (
                       <Grid item xs={8} color='red'>{t('manage_products.view_product.unavailable')}</Grid>
                     ) : (
                       <Grid item xs={8} color='green'>{t('manage_products.view_product.available')}</Grid>
                     )}
-
                   </Grid>
 
-                  <Grid container item xs={4}>
+                  <Grid container item xs={6}>
+                    <Grid item xs={5} />
                     <Grid item xs={3}>
                       <Tooltip title={t('manage_prodcuts.view_product.show_details')} placement='right' children={
                         <IconButton onClick={() => {
@@ -269,9 +275,7 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart, activeRole
                       } />
                     </Grid>
 
-                    <Grid item xs={2} />
-
-                    {!product.archival && product.quantity > 0 && isUserSignIn() && activeRole === Role.CLIENT && (
+                    {!product.archival && product.quantity > 0 && isUserSignIn() && activeRole === Role.CLIENT ? (
                       <Grid item xs={3}>
                         <Tooltip title={t('manage_products.view_product.add_to_cart')} placement='right' children={
                           <IconButton onClick={() => {
@@ -283,17 +287,13 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart, activeRole
                           </IconButton>
                         } />
                       </Grid>
-                    )}
+                    ) : <Grid item xs={3} />}
+                    <Grid item xs={1} />
+
+                    {getStarArray(product.averageRating)}
                   </Grid>
                 </Grid>
 
-
-                {/* <Box className="star-rating">
-                  {getStarArray(product.averageRating)}
-                </Box> */}
-                {/* <Box className="d-inline-block g-color-primary rating">
-                  Rating {product.averageRating}
-                </Box> */}
               </CardContent>
             </Card>
           </ImageListItem>

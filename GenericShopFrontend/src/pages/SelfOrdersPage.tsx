@@ -64,7 +64,7 @@ export default function SelfOrdersPage({ setLoading, style } : SelfOrdersPagePro
   }
 
   const getOrders = async (pageNr: number, pageSize: number, sortBy: keyof BasicOrderWithActions, direction: 'asc' | 'desc') => {
-    return axios.get<OrdersResponse>(`${environment.apiBaseUrl}/orders?page=${pageNr}&size=${pageSize}&sort=${sortBy},${direction}`, {
+    return axios.get<OrdersResponse>(`${environment.apiBaseUrl}/orders/self?page=${pageNr}&size=${pageSize}&sort=${sortBy},${direction}`, {
       headers: {
         Authorization: `Bearer ${getJwtToken()}`
       }

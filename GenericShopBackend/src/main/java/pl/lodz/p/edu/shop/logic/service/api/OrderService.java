@@ -13,11 +13,13 @@ public interface OrderService {
 
     Page<Order> findAll(String login, Pageable pageable);
 
+    Page<Order> findAllByUserLogin(String login, Pageable pageable);
+
     Order findOrderById(String login, Long id);
 
-    Rate rateOrderedProduct(String login, Long productId, Integer rateValue);
+    Rate rateOrderedProduct(String login, Long orderedProductId, Integer rateValue);
 
-    Rate reRateOrderedProduct(String login, Long productId, Integer rateValue);
+    Rate reRateOrderedProduct(String login, Long orderedProductId, Integer rateValue);
 
-    void removeRate(String login, Long productId);
+    void removeRate(String login, Long orderedProductId);
 }

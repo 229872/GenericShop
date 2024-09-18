@@ -47,6 +47,15 @@ public class OrderController {
         return ResponseEntity.ok(responseBody);
     }
 
+    @GetMapping("/self")
+    @RolesAllowed({CLIENT})
+    public ResponseEntity<Page<OrderOutputDto>> findAllByUserLogin(Pageable pageable) {
+        String login = getLoginFromSecurityContext();
+
+        Page<OrderOutputDto> responseBody = orderService.findAllByAccountLogin(login, pageable);
+        return ResponseEntity.ok(responseBody);
+    }
+
     @GetMapping("/id/{id}")
     @RolesAllowed({CLIENT})
     public ResponseEntity<OrderOutputDto> findById(@PathVariable("id") Long id) {
@@ -59,11 +68,11 @@ public class OrderController {
     @PostMapping("/orderedProducts/{id}/rate")
     @RolesAllowed(CLIENT)
     public ResponseEntity<RateOutputDto> rateOrderedProduct(
-        @PathVariable("id") Long productId, @Valid @RequestBody RateInputDto rate
+        @PathVariable("id") Long orderedProductId, @Valid @RequestBody RateInputDto rate
     ) {
         String login = getLoginFromSecurityContext();
 
-        RateOutputDto responseBody = orderService.rateOrderedProduct(login, productId, rate);
+        RateOutputDto responseBody = orderService.rateOrderedProduct(login, orderedProductId, rate);
         return ResponseEntity.ok(responseBody);
     }
 

@@ -46,15 +46,15 @@ class OrderServiceAdapter implements OrderServiceOperations {
 
     @Override
     public Page<OrderOutputDto> findAll(String login, Pageable pageable) {
-        List<Sort.Order> orders = pageable.getSort().stream()
-            .map(order -> order.getProperty().equals("creationDate") ?
-                new Sort.Order(order.getDirection(), "createdAt") :
-                order)
-            .toList();
-        Sort sort = Sort.by(orders);
-        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
-
+        Pageable pageRequest = adjustPageableForOrder(pageable);
         return orderService.findAll(login, pageRequest)
+            .map(orderMapper::mapToMinimalOrderOutputDTO);
+    }
+
+    @Override
+    public Page<OrderOutputDto> findAllByAccountLogin(String login, Pageable pageable) {
+        Pageable pageRequest = adjustPageableForOrder(pageable);
+        return orderService.findAllByUserLogin(login, pageRequest)
             .map(orderMapper::mapToMinimalOrderOutputDTO);
     }
 
@@ -69,8 +69,8 @@ class OrderServiceAdapter implements OrderServiceOperations {
     }
 
     @Override
-    public RateOutputDto rateOrderedProduct(String login, Long productId, RateInputDto rate) {
-        Rate newRate = orderService.rateOrderedProduct(login, productId, rate.rateValue());
+    public RateOutputDto rateOrderedProduct(String login, Long orderedProductId, RateInputDto rate) {
+        Rate newRate = orderService.rateOrderedProduct(login, orderedProductId, rate.rateValue());
         return new RateOutputDto(newRate.getValue());
     }
 
@@ -83,5 +83,15 @@ class OrderServiceAdapter implements OrderServiceOperations {
     @Override
     public void removeRate(String login, Long productGroupId) {
         orderService.removeRate(login, productGroupId);
+    }
+
+    private Pageable adjustPageableForOrder(Pageable pageable) {
+        List<Sort.Order> orders = pageable.getSort().stream()
+            .map(order -> order.getProperty().equals("creationDate") ?
+                new Sort.Order(order.getDirection(), "createdAt") :
+                order)
+            .toList();
+        Sort sort = Sort.by(orders);
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
     }
 }

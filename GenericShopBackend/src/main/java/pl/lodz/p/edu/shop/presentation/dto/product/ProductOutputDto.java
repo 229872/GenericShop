@@ -8,6 +8,7 @@ import java.util.Map;
 @Builder
 public record ProductOutputDto(
     Long id,
+    Long orderedProductId,
     String version,
     Boolean archival,
     String name,

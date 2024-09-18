@@ -13,9 +13,11 @@ public interface OrderServiceOperations {
 
     Page<OrderOutputDto> findAll(String login, Pageable pageable);
 
+    Page<OrderOutputDto> findAllByAccountLogin(String login, Pageable pageable);
+
     OrderOutputDto findById(String login, Long id);
 
-    RateOutputDto rateOrderedProduct(String login, Long productId, RateInputDto rate);
+    RateOutputDto rateOrderedProduct(String login, Long orderedProductId, RateInputDto rate);
 
     RateOutputDto reRateOrderedProduct(String login, Long productId, RateInputDto rate);
 

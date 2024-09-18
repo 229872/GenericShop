@@ -55,6 +55,7 @@ export type BasicAccount = {
 
 export type BasicProduct = {
   id: number
+  orderedProductId?: number
   archival: boolean
   name: string
   price: number

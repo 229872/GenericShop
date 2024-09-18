@@ -19,6 +19,9 @@ export const saveActiveRole = (activeRole: Role): void => {
   localStorage.setItem(environment.activeRole, activeRole)
 }
 
+export const saveLastActiveRole = (lastActiveRole: Role): void => {
+  localStorage.setItem(environment.lastActiveRole, lastActiveRole)
+}
 
 
 export const getJwtToken = (): string | null => {
@@ -38,8 +41,12 @@ export const getExpirationTime = (token: string | null): number | null => {
 }
 
 export const getActiveRole = (token: string | null): Role => {
-  const activeRole: string | null = localStorage.getItem(environment.activeRole)
-  return activeRole === null || activeRole as Role === Role.GUEST ? decodeJwtToken(token)?.accountRoles[0] ?? Role.GUEST : activeRole as Role
+  const lastActiveRole: string | null = localStorage.getItem(environment.lastActiveRole)
+  const roles: Role[] = getRoles(getJwtToken())
+
+  return lastActiveRole === null || roles.length <= 1 || !roles.includes(lastActiveRole as Role)
+    ? (decodeJwtToken(token)?.accountRoles[0] ?? Role.GUEST) 
+    : lastActiveRole as Role;
 }
 
 export const getRoles = (token: string | null): Role[] => {

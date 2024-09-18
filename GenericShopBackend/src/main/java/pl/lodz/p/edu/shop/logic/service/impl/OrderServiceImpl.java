@@ -130,6 +130,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Page<Order> findAllByUserLogin(String login, Pageable pageable) {
+
+        accountRepository.findByLogin(login)
+            .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
+        return orderRepository.findAllByAccountLogin(login, pageable);
+    }
+
+    @Override
     public Order findOrderById(String login, Long id) {
 
         accountRepository.findByLogin(login)
@@ -140,17 +148,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Rate rateOrderedProduct(String login, Long productId, Integer rateValue) {
+    public Rate rateOrderedProduct(String login, Long orderedProductId, Integer rateValue) {
         Account account = accountRepository.findByLogin(login)
             .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
 
-        OrderedProduct orderedProduct = productRepository.findOrderedProductByProductId(productId)
+        OrderedProduct orderedProduct = productRepository.findOrderedProductById(orderedProductId)
+            .filter(prod -> prod.getAccount().equals(account))
             .orElseThrow(ApplicationExceptionFactory::createProductNotFoundException);
         Product product = orderedProduct.getProduct();
-
-        if (!isProductOrderedByUserWithGivenAccount(product, account)) {
-            throw ApplicationExceptionFactory.createProductNotFoundException();
-        }
 
         if (isProductAlreadyRatedByUserWithGivenAccount(product, account)) {
             throw ApplicationExceptionFactory.createProductAlreadyRatedException();
@@ -166,7 +171,7 @@ public class OrderServiceImpl implements OrderService {
             product.getRates().add(rate);
             orderedProduct.setRate(rate);
             rateRepository.save(rate);
-            Double newAverageRating = rateRepository.findAverageRatingForProduct(productId);
+            Double newAverageRating = rateRepository.findAverageRatingForProduct(product.getId());
             product.setAverageRating(newAverageRating);
             return rate;
 
@@ -176,12 +181,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Rate reRateOrderedProduct(String login, Long productId, Integer rateValue) {
+    public Rate reRateOrderedProduct(String login, Long orderedProductId, Integer rateValue) {
         Account account = accountRepository.findByLogin(login)
             .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
 
-        Product product = productRepository.findById(productId)
+        OrderedProduct orderedProduct = productRepository.findOrderedProductById(orderedProductId)
+            .filter(product -> product.getAccount().equals(account))
             .orElseThrow(ApplicationExceptionFactory::createProductNotFoundException);
+        Product product = orderedProduct.getProduct();
 
         Rate userRate = product.getRates().stream()
             .filter(rate -> rate.getAccount().equals(account))
@@ -191,7 +198,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             userRate.setValue(rateValue);
             rateRepository.save(userRate);
-            Double newAverageRating = rateRepository.findAverageRatingForProduct(productId);
+            Double newAverageRating = rateRepository.findAverageRatingForProduct(product.getId());
             product.setAverageRating(newAverageRating);
             return userRate;
 
@@ -201,11 +208,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void removeRate(String login, Long productId) {
+    public void removeRate(String login, Long orderedProductId) {
 
         Account account = accountRepository.findByLogin(login)
             .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
-        OrderedProduct orderedProduct = productRepository.findOrderedProductByProductId(productId)
+        
+        OrderedProduct orderedProduct = productRepository.findOrderedProductById(orderedProductId)
+            .filter(product -> product.getAccount().equals(account))
             .orElseThrow(ApplicationExceptionFactory::createProductNotFoundException);
         Product product = orderedProduct.getProduct();
 
@@ -218,18 +227,12 @@ public class OrderServiceImpl implements OrderService {
             rateRepository.delete(clientRate);
             product.getRates().remove(clientRate);
             orderedProduct.setRate(null);
-            Double newAverageRating = rateRepository.findAverageRatingForProduct(productId);
+            Double newAverageRating = rateRepository.findAverageRatingForProduct(product.getId());
             product.setAverageRating(newAverageRating);
 
         } catch (DataAccessException e) {
             handleDataAccessException(e);
         }
-    }
-
-    private boolean isProductOrderedByUserWithGivenAccount(Product product, Account userAccount) {
-        return orderRepository.findAllByAccountId(userAccount.getId()).stream()
-            .flatMap(order -> order.getOrderedProducts().stream())
-            .anyMatch(orderedProduct -> orderedProduct.getProduct().equals(product));
     }
 
     private boolean isProductAlreadyRatedByUserWithGivenAccount(Product product, Account userAccount) {

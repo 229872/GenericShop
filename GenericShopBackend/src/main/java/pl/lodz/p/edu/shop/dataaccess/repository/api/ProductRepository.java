@@ -21,8 +21,8 @@ public interface ProductRepository {
 
     Optional<Product> findById(Long id);
 
-    @Query("SELECT p FROM OrderedProduct p WHERE p.product.id = :id")
-    Optional<OrderedProduct> findOrderedProductByProductId(@Param("id") Long id);
+    @Query("SELECT p FROM OrderedProduct p WHERE p.id = :id")
+    Optional<OrderedProduct> findOrderedProductById(@Param("id") Long id);
 
     Product save(Product product);
 

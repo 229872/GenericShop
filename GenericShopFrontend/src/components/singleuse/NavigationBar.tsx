@@ -13,7 +13,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ChangeLanguageMenu from "../reusable/ChangeLanguageMenu";
 import { Role } from "../../utils/types";
-import { getJwtToken, getRoles } from "../../services/tokenService";
+import { getJwtToken, getRoles, saveLastActiveRole } from "../../services/tokenService";
 import ChangeActiveRoleMenu from "../reusable/ChangeActiveRoleMenu";
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 
@@ -35,6 +35,9 @@ export default function NavigationBar({ setIsAuthenticated, setActiveRole, activ
   const [reload, setReload] = useState<boolean>(false)
 
   const logoutFromApp = () => {
+    if (getRoles(getJwtToken()).length > 1) {
+      saveLastActiveRole(activeRole)
+    }
     logout();
     setIsAuthenticated(false)
     setActiveRole(Role.GUEST)

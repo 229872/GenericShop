@@ -25,6 +25,7 @@ type OrderData = {
 
 type GridItemDataWithProductData = {
   productId: number
+  orderedProductId?: number
   imageUrl: string
   gridItemData: GridItemData[]
 }
@@ -82,6 +83,7 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
       const productsData: GridItemDataWithProductData[] = order.products.map(product => (
         {
           productId: product.id,
+          orderedProductId: product.orderedProductId,
           imageUrl: product.imageUrl,
           gridItemData: [
             { label: 'manage_products.view_product.label.name', content: product?.name ?? '-' },
@@ -101,7 +103,7 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
     }
   }
 
-  const applyNewRate = async (productId: number, rate: RateItem | undefined): Promise<void> => {
+  const applyNewRate = async (orderedProductId: number, rate: RateItem | undefined): Promise<void> => {
     try {
       setLoading(true)
       if (rate === undefined) return
@@ -111,21 +113,21 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
       }
 
       if (!rate.isSubmitted) {
-        await axios.post(`${environment.apiBaseUrl}/orders/orderedProducts/${productId}/rate`, payload, {
+        await axios.post(`${environment.apiBaseUrl}/orders/orderedProducts/${orderedProductId}/rate`, payload, {
           headers: {
             Authorization: `Bearer ${getJwtToken()}`
           }
         })
-        handleRatingChange(productId, payload.rateValue, true)
+        handleRatingChange(orderedProductId, payload.rateValue, true)
         toast.success(t('self_orders.button.rate.add_success'))
 
       } else {
-        await axios.put(`${environment.apiBaseUrl}/orders/orderedProducts/${productId}/rate`, payload, {
+        await axios.put(`${environment.apiBaseUrl}/orders/orderedProducts/${orderedProductId}/rate`, payload, {
           headers: {
             Authorization: `Bearer ${getJwtToken()}`
           }
         })
-        handleRatingChange(productId, payload.rateValue, true)
+        handleRatingChange(orderedProductId, payload.rateValue, true)
         toast.success(t('self_orders.button.rate.update_success'))
       }
 
@@ -233,7 +235,7 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
                       disabled={getRateValue(productData.productId) === 0}
                       endIcon={<RateReviewIcon />}
                       color='inherit'
-                      onClick={() => applyNewRate(productData.productId, rates.get(productData.productId))}
+                      onClick={() => applyNewRate(productData.orderedProductId?? 0, rates.get(productData.productId))}
                     >
                       {t('self_orders.tooltip.rate_product')}
                     </Button>

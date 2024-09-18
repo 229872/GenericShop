@@ -60,6 +60,7 @@ public class ProductMapperImpl implements ProductMapper {
     public ProductOutputDto mapToProductOutputDtoWithoutVersion(OrderedProduct product) {
         return ProductOutputDto.builder()
             .id(product.getProduct().getId())
+            .orderedProductId(product.getId())
             .name(product.getName())
             .price(product.getPrice())
             .rate(product.getRate().map(Rate::getValue).orElse(0))

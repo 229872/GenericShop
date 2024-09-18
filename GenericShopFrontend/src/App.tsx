@@ -20,9 +20,7 @@ function App() {
 
   const setActiveRole = (role: Role): void => {
     setCurrentRole(role)
-    if (getRoles(getJwtToken()).length !> 1) {
-      saveActiveRole(role)
-    }
+    saveActiveRole(role)
   }
 
   return <>
