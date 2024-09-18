@@ -3,7 +3,7 @@ package pl.lodz.p.edu.shop.dataaccess.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import pl.lodz.p.edu.shop.dataaccess.model.superclass.AbstractEntity;
+import pl.lodz.p.edu.shop.dataaccess.model.superclass.ArchivableEntity;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -14,7 +14,7 @@ import pl.lodz.p.edu.shop.dataaccess.model.superclass.AbstractEntity;
 
 @Entity
 @Table(name = "contacts")
-public class Contact extends AbstractEntity {
+public class Contact extends ArchivableEntity {
 
     @Column(nullable = false, name = "first_name")
     private String firstName;

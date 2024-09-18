@@ -29,9 +29,20 @@ app:
             hibernate.format_sql: true
             hibernate.use_sql_comments: true
 
+      orders-module:
+        persistence-unit-name: ordersPU
+        url: jdbc:postgresql://localhost:5432/shop
+        username: shop_orders
+        password: dborders
+        jpa:
+          properties:
+            hibernate.show_sql: true
+            hibernate.format_sql: true
+            hibernate.use_sql_comments: true
+
   security:
     auth-token:
-      timeout_in_minutes: 10
+      timeout_in_minutes: 60
       key: "r7sHH+ErDOdwvIWmE6OxD/PRXcJmicWSRnX1seiFV61wuV62CSR/L/HYPlED8GlC6e559dQv7a/jUmD6oC/FbwhmHeqqX9IvFv0WsWygpKA="
     refresh-token:
       timeout_in_minutes: 1140

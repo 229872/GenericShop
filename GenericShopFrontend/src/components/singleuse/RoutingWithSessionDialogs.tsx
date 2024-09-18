@@ -16,9 +16,11 @@ type RoutingWithSessionDialogsParams = {
   setIsAuthenticated: (state: boolean) => void
   activeRole: Role
   setActiveRole: (role: Role) => void
+  setNumberOfProductsInCart: (value: number) => void
 }
 
-export default function RoutingWithSessionDialogs({ setLoading, isAuthenticated, setIsAuthenticated, activeRole, setActiveRole }: RoutingWithSessionDialogsParams) {
+export default function RoutingWithSessionDialogs({ setLoading, isAuthenticated, setIsAuthenticated, activeRole, setActiveRole, 
+  setNumberOfProductsInCart } : RoutingWithSessionDialogsParams) {
   const navigate = useNavigate();
   const {t} = useTranslation()
   const [showTokenExpiredDialog, setShowTokenExpiredDialog] = useState(false);
@@ -94,6 +96,7 @@ export default function RoutingWithSessionDialogs({ setLoading, isAuthenticated,
         setIsAuthenticated={setIsAuthenticated}
         activeRole={activeRole}
         setActiveRole={setActiveRole}
+        setNumberOfProductsInCart={setNumberOfProductsInCart}
       />
 
       <MuiDialog

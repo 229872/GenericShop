@@ -48,5 +48,21 @@ public final class ExceptionMessage {
         public static final String ACCOUNT_STATE_NOT_SUPPORTED = "exception.validation.account.accountState.not_supported";
         public static final String ACCOUNT_POSTAL_CODE_WRONG = "exception.validation.account.address.postal_code.wrong";
         public static final String LOGIN_WRONG = "exception.validation.login.wrong";
+        public static final String SCHEMA_NOT_VALID = "exception.validation.product_schema.wrong";
+        public static final String TABLE_NAME_NOT_VALID = "exception.validation.table_name.wrong";
+        public static final String CATEGORY_PROPERTIES_NOT_VALID = "exception.validation.category.properties.wrong";
+        public static final String LIST_PRODUCT_NOT_VALID = "exception.validation.product.list.not_valid";
+    }
+
+    public static class Orders {
+        public static final String PRODUCT_NOT_FOUND = "exception.orders.product.not_found";
+        public static final String PRODUCT_ARCHIVAL = "exception.orders.product.archival";
+        public static final String SCHEMA_NOT_FOUND = "exception.orders.schema.not_found";
+        public static final String CATEGORY_CONFLICT = "exception.orders.category.conflict";
+        public static final String CATEGORY_NOT_FOUND = "exception.orders.category.not_found";
+        public static final String ORDER_CANT_FINISH = "exception.orders.wrong";
+        public static final String ORDER_NOT_FOUND = "exception.orders.not_found";
+        public static final String ORDER_PRODUCT_ALREADY_RATED = "exception.orders.product_already_rated";
+        public static final String RATE_NOT_FOUND = "exception.orders.rateValue.not_found";
     }
 }

@@ -53,6 +53,50 @@ export type BasicAccount = {
   accountRoles: Role[]
 }
 
+export type BasicProduct = {
+  id: number
+  orderedProductId?: number
+  archival: boolean
+  name: string
+  price: number
+  quantity: number
+  imageUrl: string
+  averageRating: number
+  rate?: number
+}
+
+export type BasicProductWithVersion = BasicProduct & {
+  version: string
+}
+
+export type BasicProductWithFixedPrice = {
+  id: number
+  archival: boolean
+  name: string
+  price: string
+  quantity: number
+  imageUrl: string
+  averageRating: number
+}
+
+export type BasicOrder = {
+  id: number
+  totalPrice: number
+  creationDate: string
+}
+
+export type BasicOrderWithFixedPrice = {
+  id: number
+  totalPrice: string
+  creationDate: string
+}
+
+export type FullOrder = BasicOrder & {
+  accountId: number
+  version: string
+  products: BasicProduct[]
+}
+
 export type GridItemData = {
   label: string
   content: string | number

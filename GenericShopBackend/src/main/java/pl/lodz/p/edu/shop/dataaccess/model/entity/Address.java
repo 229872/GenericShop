@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import pl.lodz.p.edu.shop.dataaccess.model.superclass.AbstractEntity;
+import pl.lodz.p.edu.shop.dataaccess.model.superclass.ArchivableEntity;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -16,7 +16,7 @@ import pl.lodz.p.edu.shop.dataaccess.model.superclass.AbstractEntity;
 
 @Entity
 @Table(name = "addresses")
-public class Address extends AbstractEntity {
+public class Address extends ArchivableEntity {
 
     @Column(nullable = false, name = "postal_code")
     private String postalCode;

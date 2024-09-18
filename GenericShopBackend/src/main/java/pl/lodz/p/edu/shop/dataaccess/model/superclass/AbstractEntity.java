@@ -3,6 +3,7 @@ package pl.lodz.p.edu.shop.dataaccess.model.superclass;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import pl.lodz.p.edu.shop.util.SecurityUtil;
 
 import java.time.LocalDateTime;
 
@@ -24,10 +25,6 @@ public abstract class AbstractEntity {
     @Version
     private Long version;
 
-    @Getter(value = AccessLevel.NONE)
-    @Column(nullable = false, name = "is_archival")
-    private Boolean isArchival;
-
     @Column(nullable = false, updatable = false, name = "created_by")
     private String createdBy;
 
@@ -41,23 +38,14 @@ public abstract class AbstractEntity {
     private LocalDateTime modifiedAt;
 
     @PrePersist
-    void prePersist() {
-        isArchival = false;
+    protected void prePersist() {
         createdAt = LocalDateTime.now();
-        //fixme After adding security implement mechanism
-        createdBy = "test";
+        createdBy = SecurityUtil.getLoginFromSecurityContext();
     }
 
     @PreUpdate
-    void preUpdate() {
+    protected void preUpdate() {
         modifiedAt = LocalDateTime.now();
-    }
-
-    public Boolean isArchival() {
-        return isArchival;
-    }
-
-    public void setArchival(Boolean archival) {
-        isArchival = archival;
+        modifiedBy = SecurityUtil.getLoginFromSecurityContext();
     }
 }

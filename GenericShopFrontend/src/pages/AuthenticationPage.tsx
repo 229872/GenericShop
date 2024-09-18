@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from "react-i18next";
 import axios from 'axios';
 import { environment, regex } from "../utils/constants";
-import { decodeJwtToken, getActiveRole, getJwtToken, saveJwtToken, saveLocale, saveRefreshToken } from "../services/tokenService";
+import { decodeJwtToken, getActiveRole, getJwtToken, getRoles, saveJwtToken, saveLocale, saveRefreshToken } from "../services/tokenService";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'sonner'
 import { Role, Tokens } from "../utils/types";

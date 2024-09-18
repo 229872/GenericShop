@@ -99,8 +99,8 @@ export default function TableWithPagination<T>({ columns, data, getData, totalEl
     return <Typography variant='h6'>{t('table.no_content')}</Typography>
   } else {
     return (
-      <Card elevation={10} sx={{...tableStyle}}>
-        <TableContainer>
+      <Card elevation={10}>
+        <TableContainer sx={{...tableStyle}}>
           <Table stickyHeader>
             <TableHead>
               <TableRow>

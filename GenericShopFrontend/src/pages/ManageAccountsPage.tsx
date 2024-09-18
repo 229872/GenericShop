@@ -242,7 +242,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
       ...account,
       actions: <Stack direction='row' spacing={2}>
         {
-          <Tooltip title={t('manage_account.tooltip.show_more')} placement='top'>
+          <Tooltip title={t('manage_accounts.tooltip.show_more')} placement='top'>
             <IconButton onClick={() => setVisibleAccountId(account.id)}>
               <VisibilityIcon />
             </IconButton>
@@ -250,7 +250,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
         }
         {
           !account.archival && (
-            <Tooltip title={t('manage_account.tooltip.edit')} placement='top'>
+            <Tooltip title={t('manage_accounts.tooltip.edit')} placement='top'>
               <IconButton onClick={(e: any) => {
                 setEditAccountData(account)
                 setEditAccountAnchorEl(e.currentTarget)
@@ -297,7 +297,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
         setPageSize={setPageSize}
         direction={direction}
         setDirection={setDirection}
-        tableStyle={{ width: '100%' }}
+        tableStyle={{ width: '100%', maxHeight: '60vh'}}
       />
       
       <AccountViewDialog
@@ -349,7 +349,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
                     <ListItemIcon>
                       <ClearIcon />
                     </ListItemIcon>
-                    <ListItemText>{t('manage_account.remove_role')} {t(`manage_accounts.value.${role}`)}</ListItemText>
+                    <ListItemText>{t('manage_accounts.remove_role')} {t(`manage_accounts.value.${role}`)}</ListItemText>
                   </MenuItem>
                 )
               } else if (editAccountData.accountRoles.length === 1 && editAccountData.accountRoles[0] !== Role.GUEST) {
@@ -361,7 +361,7 @@ export default function ManageAccountsPage({ setLoading, style } : ManageAccount
                     <ListItemIcon onClick={() => setVisibleChangeRoleDialog(role as unknown as AuthenticatedAccountRole)}>
                       <ForwardIcon />
                     </ListItemIcon>
-                    <ListItemText>{t('manage_account.change_role')} {t(`manage_accounts.value.${role}`)}</ListItemText>
+                    <ListItemText>{t('manage_accounts.change_role')} {t(`manage_accounts.value.${role}`)}</ListItemText>
                   </MenuItem>
                 )
               }

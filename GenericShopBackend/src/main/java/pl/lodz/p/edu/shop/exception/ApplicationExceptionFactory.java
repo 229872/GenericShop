@@ -6,6 +6,7 @@ import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.edu.shop.exception.account.*;
 import pl.lodz.p.edu.shop.exception.account.helper.AccountStateOperation;
 import pl.lodz.p.edu.shop.exception.auth.*;
+import pl.lodz.p.edu.shop.exception.order.*;
 import pl.lodz.p.edu.shop.exception.other.ApplicationOptimisticLockException;
 import pl.lodz.p.edu.shop.exception.other.UnknownException;
 import pl.lodz.p.edu.shop.exception.transaction.TransactionTimeoutException;
@@ -105,5 +106,41 @@ public final class ApplicationExceptionFactory {
 
     public static ResponseStatusException createApplicationOptimisticLockException() {
         return new ApplicationOptimisticLockException(CONFLICT, ExceptionMessage.TRANSACTION_OPTIMISTIC_LOCK);
+    }
+
+    public static ResponseStatusException createProductNotFoundException() {
+        return new ProductNotFoundException(NOT_FOUND, ExceptionMessage.Orders.PRODUCT_NOT_FOUND);
+    }
+
+    public static ResponseStatusException createSchemaNotFoundException() {
+        return new SchemaNotFoundException(NOT_FOUND, ExceptionMessage.Orders.SCHEMA_NOT_FOUND);
+    }
+
+    public static ResponseStatusException createCategoryConflictException() {
+        return new CategoryConflictException(CONFLICT, ExceptionMessage.Orders.CATEGORY_CONFLICT);
+    }
+
+    public static ResponseStatusException createCategoryNotFoundException() {
+        return new CategoryNotFoundException(NOT_FOUND, ExceptionMessage.Orders.CATEGORY_NOT_FOUND);
+    }
+
+    public static ResponseStatusException createCantModifyArchivalProductException() {
+        return new CantModifyArchivalProductException(BAD_REQUEST, ExceptionMessage.Orders.PRODUCT_ARCHIVAL);
+    }
+
+    public static ResponseStatusException createCantFinishOrderException() {
+        return new CantFinishOrderException(CONFLICT, ExceptionMessage.Orders.ORDER_CANT_FINISH);
+    }
+
+    public static ResponseStatusException createOrderNotFoundException() {
+        return new OrderNotFoundException(NOT_FOUND, ExceptionMessage.Orders.ORDER_NOT_FOUND);
+    }
+
+    public static ResponseStatusException createProductAlreadyRatedException() {
+        return new ProductAlreadyRatedException(CONFLICT, ExceptionMessage.Orders.ORDER_PRODUCT_ALREADY_RATED);
+    }
+
+    public static ResponseStatusException createRateNotFoundException() {
+        return new RateNotFoundException(NOT_FOUND, ExceptionMessage.Orders.RATE_NOT_FOUND);
     }
 }

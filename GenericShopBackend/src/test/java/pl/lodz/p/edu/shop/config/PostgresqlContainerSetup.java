@@ -27,6 +27,7 @@ public abstract class PostgresqlContainerSetup {
         registry.add("app.db.datasource.init-module.username", database::getUsername);
         registry.add("app.db.datasource.init-module.password", database::getPassword);
         registry.add("app.db.datasource.accounts-module.url", database::getJdbcUrl);
+        registry.add("app.db.datasource.orders-module.url", database::getJdbcUrl);
     }
 
 }
