@@ -7,7 +7,7 @@ import { useState } from 'react';
 import Progress from './components/singleuse/Progress';
 import { isUserSignIn } from './services/sessionService';
 import { Role } from './utils/types';
-import { getActiveRole, getJwtToken, getRoles, saveActiveRole } from './services/tokenService';
+import { getActiveRole, getJwtToken, getRoles, saveActiveRole, saveLastActiveRole } from './services/tokenService';
 import { getTotalAmountOfProducts } from './services/cartService';
 
 
@@ -21,6 +21,10 @@ function App() {
   const setActiveRole = (role: Role): void => {
     setCurrentRole(role)
     saveActiveRole(role)
+    const roles: Role[] = getRoles(getJwtToken())
+    if (roles.length > 1 && roles.includes(role)) {
+      saveLastActiveRole(role)
+    }
   }
 
   return <>

@@ -24,10 +24,11 @@ type BasicOrderWithActions = BasicOrderWithFixedPrice & OrderActions;
 
 type SelfOrdersPageProps = {
   setLoading: (value: boolean) => void
+  setNumberOfProductsInCart: (value: number) => void
   style?: React.CSSProperties
 }
 
-export default function SelfOrdersPage({ setLoading, style } : SelfOrdersPageProps) {
+export default function SelfOrdersPage({ setLoading, style, setNumberOfProductsInCart } : SelfOrdersPageProps) {
   const { t } = useTranslation()
   const [ orders, setOrders ] = useState<BasicOrder[]>([])
   const [ sortBy, setSortBy ] = useState<keyof BasicOrderWithActions>('id')
@@ -128,6 +129,7 @@ export default function SelfOrdersPage({ setLoading, style } : SelfOrdersPagePro
           orderId={visibleViewOrderDetailsDialog}
           open={Boolean(setVisibleViewOrderDetailsDialog)}
           onClose={() => setVisibleViewOrderDetailsDialog(undefined)}
+          setNumberOfProductsInCart={setNumberOfProductsInCart}
           setLoading={setLoading}
         />
       }

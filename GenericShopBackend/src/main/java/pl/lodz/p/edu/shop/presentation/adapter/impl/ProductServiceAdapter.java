@@ -7,8 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
+import pl.lodz.p.edu.shop.logic.model.UserPreferences;
 import pl.lodz.p.edu.shop.logic.service.api.ProductService;
+import pl.lodz.p.edu.shop.logic.service.api.RecommendationService;
 import pl.lodz.p.edu.shop.presentation.adapter.api.ProductServiceOperations;
+import pl.lodz.p.edu.shop.presentation.dto.preference.UserPreferencesDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.UpdateProductDto;
@@ -22,6 +25,7 @@ import java.util.List;
 class ProductServiceAdapter implements ProductServiceOperations {
 
     private final ProductService productService;
+    private final RecommendationService recommendationService;
     private final ProductMapper productMapper;
 
     @Override
@@ -42,6 +46,14 @@ class ProductServiceAdapter implements ProductServiceOperations {
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
         return productService.findAll(pageRequest)
             .map(productMapper::mapToProductOutputDtoWithoutVersion);
+    }
+
+    @Override
+    public List<ProductOutputDto> getRecommendations(String login, UserPreferencesDto userPreferencesDto) {
+        var userPreferences = new UserPreferences(userPreferencesDto.categoryPreferences(), userPreferencesDto.productPreferences());
+        return recommendationService.findByRecommendation(login, userPreferences).stream()
+            .map(productMapper::mapToProductOutputDtoWithoutVersion)
+            .toList();
     }
 
     @Override

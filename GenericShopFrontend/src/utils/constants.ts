@@ -7,6 +7,7 @@ export const environment = {
   lastActiveRole: "lastActiveRole",
   refreshTokenKey: "refreshToken",
   supportedLanguages: ['pl', 'en'] as readonly string[],
+  preferences: "preferences",
   defaultLanguage: 'en'
 }
 

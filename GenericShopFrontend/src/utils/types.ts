@@ -79,6 +79,18 @@ export type BasicProductWithFixedPrice = {
   averageRating: number
 }
 
+export type ProductData = {
+  id: number
+  version: string
+  archival: boolean
+  name: string
+  price: number
+  quantity: number
+  imageUrl: string
+  rates: 0 | 1 | 2 | 3 | 4 | 5[]
+  categoryProperties: Object
+}
+
 export type BasicOrder = {
   id: number
   totalPrice: number

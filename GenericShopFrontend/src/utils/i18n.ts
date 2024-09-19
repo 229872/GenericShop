@@ -382,6 +382,8 @@ const resources = {
       'self_orders.button.rate.update_success': 'Success! You have just updated your rate to the product',
       'self_orders.button.rate.delete_success': 'You have just removed your rate to the product',
 
+      'recommendation': 'Recommendations',
+
       'table.no_content': 'No records found',
       'table.yes': 'Yes',
       'table.no': 'No',
@@ -775,6 +777,8 @@ const resources = {
       'self_orders.button.rate.add_success': 'Gratulację! Właśnie wystawiłeś ocenę produktowi',
       'self_orders.button.rate.update_success': 'Gratulację! Właśnie zmieniłeś twoją ocenę produktowi',
       'self_orders.button.rate.delete_success': 'Właśnie usunąłeś twoją ocenę dla produktu',
+
+      'recommendation': 'Polecamy',
 
       'table.no_content': 'Nie ma szukanych rekordów',
       'table.yes': 'Tak',

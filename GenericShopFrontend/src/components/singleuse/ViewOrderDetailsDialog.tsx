@@ -7,10 +7,10 @@ import handleAxiosException from "../../services/apiService";
 import GridCard from "../reusable/GridCard";
 import { BasicProduct, GridItemData } from "../../utils/types";
 import productNotFound from '/src/assets/no-product-picture.png'
-import { getJwtToken } from "../../services/tokenService";
+import { getActiveRole, getJwtToken } from "../../services/tokenService";
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import ViewProductDetailsDialog from "./ViewProductDetailsDialog";
+import ViewProductDetailsDialog from "../reusable/ViewProductDetailsDialog";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { toast } from "sonner";
 
@@ -40,10 +40,12 @@ type ViewOrderDetailsDialogProps = {
   open: boolean
   onClose: () => void
   setLoading: (loading: boolean) => void
+  setNumberOfProductsInCart: (value: number) => void
   style?: CSSProperties
 }
 
-export default function ViewOrderDetailsDialog({ open, onClose, setLoading, style, orderId } : ViewOrderDetailsDialogProps) {
+export default function ViewOrderDetailsDialog({ open, onClose, setLoading, style, orderId, 
+  setNumberOfProductsInCart } : ViewOrderDetailsDialogProps) {
   const { t } = useTranslation();
   const [ productListData, setProductListData ] = useState<GridItemDataWithProductData[]>([])
   const [ visibleViewProductDetailsDialog, setVisibleViewProductDetailsDialog ] = useState<number | undefined>(undefined)
@@ -278,6 +280,9 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
             productId={visibleViewProductDetailsDialog}
             open={Boolean(setVisibleViewProductDetailsDialog)}
             onClose={() => setVisibleViewProductDetailsDialog(undefined)}
+            activeRole={getActiveRole(getJwtToken())}
+            setVisibleViewProductDetailsDialog={setVisibleViewProductDetailsDialog}
+            setNumberOfProductsInCart={setNumberOfProductsInCart}
             setLoading={setLoading}
           />
       }

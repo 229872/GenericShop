@@ -19,10 +19,16 @@ public interface ProductRepository {
 
     Page<Product> findByCategory(Category category, Pageable pageable);
 
-    Optional<Product> findById(Long id);
+    @Query("SELECT p FROM Product p WHERE p.isArchival = false AND p.id IN :ids")
+    List<Product> findProductsByIds(@Param("ids") List<Long> productIds);
+
+    @Query("SELECT p FROM Product p WHERE p.isArchival = false AND p.category.name IN :categoryNames")
+    List<Product> findProductsByCategories(@Param("categoryNames") List<String> categoryNames);
 
     @Query("SELECT p FROM OrderedProduct p WHERE p.id = :id")
     Optional<OrderedProduct> findOrderedProductById(@Param("id") Long id);
+
+    Optional<Product> findById(Long id);
 
     Product save(Product product);
 

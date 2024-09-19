@@ -14,7 +14,7 @@ import TableWithPagination from "../components/reusable/TableWithPagination"
 import CreateProductDialog from "../components/singleuse/CreateProductDialog"
 import EditProductDialog from "../components/singleuse/EditProductDialog"
 import CreateCategoryDialog from "../components/singleuse/CreateCategoryDialog"
-import ViewProductDetailsDialog from "../components/singleuse/ViewProductDetailsDialog"
+import ViewProductDetailsDialog from "../components/reusable/ViewProductDetailsDialog"
 
 type ProductsResponse = {
   content: BasicProduct[]

@@ -19,7 +19,8 @@ import { addToCart, getTotalAmountOfProducts } from '../services/cartService';
 import { isUserSignIn } from '../services/sessionService';
 import { toast } from 'sonner';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import ViewProductDetailsDialog from '../components/singleuse/ViewProductDetailsDialog';
+import ViewProductDetailsDialog from '../components/reusable/ViewProductDetailsDialog';
+import { updatePreference } from '../services/preferencesService';
 
 type DefaultProductData = {
   content: BasicProduct[]
@@ -134,6 +135,9 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart, activeRole
 
   const onValid = (data: Category) => {
     const category: string | undefined = data.category;
+    if (category !== undefined) {
+      updatePreference("category", category, 1.5)
+    }
     setPickedCategory(category)
     fetchProducts(currentPage, pageSize, category)
   }
@@ -306,6 +310,9 @@ const ProductsPage = ({ setLoading, style, setNumberOfProductsInCart, activeRole
           productId={visibleViewProductDetailsDialog}
           open={Boolean(setVisibleViewProductDetailsDialog)}
           onClose={() => setVisibleViewProductDetailsDialog(undefined)}
+          activeRole={activeRole}
+          setNumberOfProductsInCart={setNumberOfProductsInCart}
+          setVisibleViewProductDetailsDialog={setVisibleViewProductDetailsDialog}
           setLoading={setLoading}
         />
       }

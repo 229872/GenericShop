@@ -164,6 +164,7 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
         <ProtectedElement
           element={
             <SelfOrdersPage
+              setNumberOfProductsInCart={setNumberOfProductsInCart}
               setLoading={setLoading}
               style={{ margin: '10vh 20vw' }}
             />

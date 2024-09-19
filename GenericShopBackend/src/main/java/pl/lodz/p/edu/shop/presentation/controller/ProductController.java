@@ -9,11 +9,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.edu.shop.presentation.adapter.api.ProductServiceOperations;
+import pl.lodz.p.edu.shop.presentation.dto.preference.UserPreferencesDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.UpdateProductDto;
+import pl.lodz.p.edu.shop.util.SecurityUtil;
 
 import java.net.URI;
+import java.util.List;
 
 import static pl.lodz.p.edu.shop.config.security.role.RoleName.*;
 
@@ -31,6 +34,15 @@ public class ProductController {
     public ResponseEntity<Page<ProductOutputDto>> findAll(Pageable pageable) {
         Page<ProductOutputDto> responseBody = productService.findAll(pageable);
 
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @PostMapping("/recommended")
+    @RolesAllowed({CLIENT})
+    public ResponseEntity<List<ProductOutputDto>> getRecommendations(@RequestBody UserPreferencesDto userPreferencesDto) {
+        String login = SecurityUtil.getLoginFromSecurityContext();
+
+        List<ProductOutputDto> responseBody = productService.getRecommendations(login, userPreferencesDto);
         return ResponseEntity.ok(responseBody);
     }
 
