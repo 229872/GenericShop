@@ -79,20 +79,20 @@ public class OrderController {
     @PutMapping("/orderedProducts/{id}/rate")
     @RolesAllowed(CLIENT)
     public ResponseEntity<RateOutputDto> reRateOrderedProduct(
-        @PathVariable("id") Long productId, @Valid @RequestBody RateInputDto rate
+        @PathVariable("id") Long orderedProductId, @Valid @RequestBody RateInputDto rate
     ) {
         String login = getLoginFromSecurityContext();
 
-        RateOutputDto responseBody = orderService.reRateOrderedProduct(login, productId, rate);
+        RateOutputDto responseBody = orderService.reRateOrderedProduct(login, orderedProductId, rate);
         return ResponseEntity.ok(responseBody);
     }
 
     @DeleteMapping("/orderedProducts/{id}/rate")
     @RolesAllowed(CLIENT)
-    public ResponseEntity<Void> delete(@PathVariable("id") Long productId) {
+    public ResponseEntity<Void> delete(@PathVariable("id") Long orderedProductId) {
         String login = getLoginFromSecurityContext();
 
-        orderService.removeRate(login, productId);
+        orderService.removeRate(login, orderedProductId);
         return ResponseEntity.noContent().build();
     }
 }

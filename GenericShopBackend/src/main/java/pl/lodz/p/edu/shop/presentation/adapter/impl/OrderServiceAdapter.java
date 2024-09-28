@@ -75,14 +75,14 @@ class OrderServiceAdapter implements OrderServiceOperations {
     }
 
     @Override
-    public RateOutputDto reRateOrderedProduct(String login, Long productId, RateInputDto rate) {
-        Rate newRate = orderService.reRateOrderedProduct(login, productId, rate.rateValue());
+    public RateOutputDto reRateOrderedProduct(String login, Long orderedProductId, RateInputDto rate) {
+        Rate newRate = orderService.reRateOrderedProduct(login, orderedProductId, rate.rateValue());
         return new RateOutputDto(newRate.getValue());
     }
 
     @Override
-    public void removeRate(String login, Long productGroupId) {
-        orderService.removeRate(login, productGroupId);
+    public void removeRate(String login, Long orderedProductId) {
+        orderService.removeRate(login, orderedProductId);
     }
 
     private Pageable adjustPageableForOrder(Pageable pageable) {

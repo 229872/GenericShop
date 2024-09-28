@@ -25,7 +25,7 @@ type OrderData = {
 
 type GridItemDataWithProductData = {
   productId: number
-  orderedProductId?: number
+  orderedProductId: number
   imageUrl: string
   gridItemData: GridItemData[]
 }
@@ -73,11 +73,13 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
       
       const ratesData: Map<number, RateItem> = new Map();
       order.products.forEach(product => {
-        const productRate = product.rate ?? 0;
-        ratesData.set(product.id, {
-          rateValue: productRate,
-          isSubmitted: productRate !== 0
-        })
+        if (product.orderedProductId) {
+          const productRate = product.rate ?? 0;
+          ratesData.set(product.orderedProductId, {
+            rateValue: productRate,
+            isSubmitted: productRate !== 0
+          })
+        }
       })
 
       setRates(ratesData)
@@ -85,7 +87,7 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
       const productsData: GridItemDataWithProductData[] = order.products.map(product => (
         {
           productId: product.id,
-          orderedProductId: product.orderedProductId,
+          orderedProductId: product.orderedProductId?? 0,
           imageUrl: product.imageUrl,
           gridItemData: [
             { label: 'manage_products.view_product.label.name', content: product?.name ?? '-' },
@@ -141,15 +143,15 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
     }
   }
 
-  const removeRole = async (productId: number): Promise<void> => {
+  const removeRole = async (orderedProductId: number): Promise<void> => {
     try {
       setLoading(true)
-      await axios.delete(`${environment.apiBaseUrl}/orders/orderedProducts/${productId}/rate`, {
+      await axios.delete(`${environment.apiBaseUrl}/orders/orderedProducts/${orderedProductId}/rate`, {
         headers: {
           Authorization: `Bearer ${getJwtToken()}`
         }
       })
-      handleRatingChange(productId, 0, false)
+      handleRatingChange(orderedProductId, 0, false)
       toast.success(t('self_orders.button.rate.delete_success'))
 
     } catch (e) {
@@ -160,10 +162,10 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
     }
   }
 
-  const handleRatingChange = (productId: number, newValue: number | null, isSubmitted: boolean) => {
+  const handleRatingChange = (orderedProductId: number, newValue: number | null, isSubmitted: boolean) => {
     const updatedRates = new Map(rates);
 
-    updatedRates.set(productId, {
+    updatedRates.set(orderedProductId, {
       rateValue: newValue,
       isSubmitted: isSubmitted
     });
@@ -171,12 +173,12 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
     setRates(updatedRates);
   };
 
-  const getRateValue = (productId: number): number | null => {
-    return rates.get(productId)?.rateValue ?? null
+  const getRateValue = (orderedProductId: number): number | null => {
+    return rates.get(orderedProductId)?.rateValue ?? null
   }
 
-  const isRateSubmitted = (productId: number): boolean => {
-    return rates.get(productId)?.isSubmitted ?? false;
+  const isRateSubmitted = (orderedProductId: number): boolean => {
+    return rates.get(orderedProductId)?.isSubmitted ?? false;
   }
 
   return (
@@ -224,9 +226,9 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
                     <Stack direction='row' justifyContent='center'>
                       <Rating
                         name="rate-product"
-                        value={rates.get(productData.productId)?.rateValue}
+                        value={rates.get(productData.orderedProductId)?.rateValue}
                         onChange={(event, newValue) => {
-                          handleRatingChange(productData.productId, newValue, rates.get(productData.productId)?.isSubmitted ?? false);
+                          handleRatingChange(productData.orderedProductId, newValue, rates.get(productData.orderedProductId)?.isSubmitted ?? false);
                         }}
                         precision={1}
                         max={5}
@@ -234,15 +236,15 @@ export default function ViewOrderDetailsDialog({ open, onClose, setLoading, styl
                     </Stack>
                     
                     <Button 
-                      disabled={getRateValue(productData.productId) === 0}
+                      disabled={getRateValue(productData.orderedProductId) === 0}
                       endIcon={<RateReviewIcon />}
                       color='inherit'
-                      onClick={() => applyNewRate(productData.orderedProductId?? 0, rates.get(productData.productId))}
+                      onClick={() => applyNewRate(productData.orderedProductId, rates.get(productData.orderedProductId))}
                     >
                       {t('self_orders.tooltip.rate_product')}
                     </Button>
-                    {getRateValue(productData.productId) !== null && isRateSubmitted(productData.productId) && (
-                      <Button endIcon={<DeleteOutlineIcon />} color='inherit' onClick={() => removeRole(productData.productId)}>
+                    {getRateValue(productData.orderedProductId) !== null && isRateSubmitted(productData.orderedProductId) && (
+                      <Button endIcon={<DeleteOutlineIcon />} color='inherit' onClick={() => removeRole(productData.orderedProductId)}>
                         {t('self_orders.tooltip.delete_rate')}
                       </Button>
                     )}

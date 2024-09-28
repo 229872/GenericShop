@@ -19,7 +19,7 @@ public interface OrderServiceOperations {
 
     RateOutputDto rateOrderedProduct(String login, Long orderedProductId, RateInputDto rate);
 
-    RateOutputDto reRateOrderedProduct(String login, Long productId, RateInputDto rate);
+    RateOutputDto reRateOrderedProduct(String login, Long orderedProductId, RateInputDto rate);
 
-    void removeRate(String login, Long productId);
+    void removeRate(String login, Long orderedProductId);
 }
