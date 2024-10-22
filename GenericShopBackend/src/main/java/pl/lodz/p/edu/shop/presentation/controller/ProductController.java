@@ -39,10 +39,12 @@ public class ProductController {
 
     @PostMapping("/recommended")
     @RolesAllowed({CLIENT})
-    public ResponseEntity<List<ProductOutputDto>> getRecommendations(@RequestBody UserPreferencesDto userPreferencesDto) {
+    public ResponseEntity<List<ProductOutputDto>> getRecommendations(
+        @RequestBody UserPreferencesDto userPreferencesDto, @RequestParam("size") Integer numberOfRecords
+    ) {
         String login = SecurityUtil.getLoginFromSecurityContext();
 
-        List<ProductOutputDto> responseBody = productService.getRecommendations(login, userPreferencesDto);
+        List<ProductOutputDto> responseBody = productService.getRecommendations(login, userPreferencesDto, numberOfRecords);
         return ResponseEntity.ok(responseBody);
     }
 

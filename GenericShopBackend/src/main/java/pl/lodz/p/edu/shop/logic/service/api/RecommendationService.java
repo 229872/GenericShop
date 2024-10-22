@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface RecommendationService {
 
-    List<Product> findByRecommendation(String login, UserPreferences userPreferences);
+    List<Product> findByRecommendation(String login, UserPreferences userPreferences, Integer numberOfRecords);
 }

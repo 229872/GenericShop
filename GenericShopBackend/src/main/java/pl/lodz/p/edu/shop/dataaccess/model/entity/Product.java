@@ -54,4 +54,8 @@ public class Product extends ArchivableEntity {
         super.prePersist();
         averageRating = 0.0;
     }
+
+    public boolean isAvailable() {
+        return quantity > 0 && !isArchival();
+    }
 }

@@ -24,6 +24,7 @@ abstract class AccountService {
     protected Account save(Account account) {
         try {
             accountRepository.save(account);
+            //Flush to get exception and handle it in logic layer
             accountRepository.flush();
             return account;
 

@@ -14,7 +14,7 @@ import pl.lodz.p.edu.shop.dataaccess.model.superclass.AbstractEntity;
 
 @Entity
 @Table(name = "rates")
-public class Rate extends AbstractEntity {
+public class Rate extends AbstractEntity implements Comparable<Rate> {
 
     @Column(nullable = false)
     private Integer value;
@@ -28,4 +28,10 @@ public class Rate extends AbstractEntity {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Product product;
+
+    @Override
+    public int compareTo(Rate o) {
+        if (o == null) return 0;
+        return value.compareTo(o.value);
+    }
 }

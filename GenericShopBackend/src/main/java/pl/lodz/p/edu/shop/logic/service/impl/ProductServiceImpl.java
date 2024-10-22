@@ -146,6 +146,7 @@ public class ProductServiceImpl implements ProductService {
 
     private Product save(Product product) {
         try {
+            //Flush to get exception and handle it in logic layer
             productRepository.saveAndFlush(product);
             return product;
 

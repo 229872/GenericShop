@@ -64,7 +64,6 @@ public class OrderServiceImpl implements OrderService {
             return !product.isArchival() && productsId.contains(product.getId()) && quantity > 0;
         };
 
-
         // LOGIC
         Account account = accountRepository.findByLogin(login)
             .orElseThrow(ApplicationExceptionFactory::createAccountNotFoundException);
@@ -242,6 +241,7 @@ public class OrderServiceImpl implements OrderService {
 
     private Order save(Order order) {
         try {
+            //Flush to get exception and handle it in logic layer
             orderRepository.saveAndFlush(order);
             return order;
 

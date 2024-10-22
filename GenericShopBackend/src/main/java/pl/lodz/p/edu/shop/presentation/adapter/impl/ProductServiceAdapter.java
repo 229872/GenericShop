@@ -49,9 +49,9 @@ class ProductServiceAdapter implements ProductServiceOperations {
     }
 
     @Override
-    public List<ProductOutputDto> getRecommendations(String login, UserPreferencesDto userPreferencesDto) {
+    public List<ProductOutputDto> getRecommendations(String login, UserPreferencesDto userPreferencesDto, Integer numberOfRecords) {
         var userPreferences = new UserPreferences(userPreferencesDto.categoryPreferences(), userPreferencesDto.productPreferences());
-        return recommendationService.findByRecommendation(login, userPreferences).stream()
+        return recommendationService.findByRecommendation(login, userPreferences, numberOfRecords).stream()
             .map(productMapper::mapToProductOutputDtoWithoutVersion)
             .toList();
     }

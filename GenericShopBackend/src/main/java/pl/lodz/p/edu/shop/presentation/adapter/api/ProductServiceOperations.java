@@ -17,7 +17,7 @@ public interface ProductServiceOperations {
 
     Page<ProductOutputDto> findByCategory(Pageable pageable, String category);
 
-    List<ProductOutputDto> getRecommendations(String login, UserPreferencesDto userPreferencesDto);
+    List<ProductOutputDto> getRecommendations(String login, UserPreferencesDto userPreferencesDto, Integer numberOfRecords);
 
     ProductOutputDto findById(Long id);
 

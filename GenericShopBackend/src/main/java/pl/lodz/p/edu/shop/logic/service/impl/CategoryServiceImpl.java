@@ -72,6 +72,7 @@ class CategoryServiceImpl implements CategoryService {
                 ));
 
             Category result = categoryRepository.save(category);
+            //Flush to get exception and handle it in logic layer
             categoryRepository.flush();
             categoryDAO.createTable(tableName, dbSchema);
             return result;
