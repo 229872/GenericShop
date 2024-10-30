@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
-import pl.lodz.p.edu.shop.TestData;
+import pl.lodz.p.edu.shop.AccountsModuleTestData;
 import pl.lodz.p.edu.shop.config.PostgresqlContainerSetup;
 import pl.lodz.p.edu.shop.config.security.property.JwtProperties;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
@@ -68,7 +68,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should generate jwt auth token with login in subject, accountRoles in claims and duration provided in property")
     void generateAuthToken_positive_1() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         String givenLogin = givenAccount.getLogin();
         Set<AccountRole> givenAccountRoles = givenAccount.getAccountRoles();
 
@@ -110,7 +110,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should generate jwt refresh token with login in subject and duration provided in property")
     void generateRefreshToken_positive_1() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         String givenLogin = givenAccount.getLogin();
 
         //when
@@ -142,7 +142,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should generate jwt verification token with login in subject and duration provided in property")
     void generateVerificationToken_positive_1(String givenEmail) {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .email(givenEmail)
             .build();
         String givenLogin = givenAccount.getLogin();
@@ -178,7 +178,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     void validateAndExtractClaimsFromAuthToken_positive_1() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
         String givenLogin = givenAccount.getLogin();
@@ -206,7 +206,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     void validateAndExtractClaimsFromAuthToken_negative_1() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
         String givenAuthToken = underTest.generateAuthToken(givenAccount);
@@ -228,7 +228,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw ExpiredTokenException when auth token is expired")
     void validateAndExtractClaimsFromAuthToken_negative_2() {
         //given
-        String givenSubject = TestData.defaultLogin;
+        String givenSubject = AccountsModuleTestData.defaultLogin;
         HashMap<String, Object> givenClaims = new HashMap<>();
         Date givenIas = Date.from(Instant.now().minusMillis(TimeUnit.MINUTES.toMillis(60)));
         Date givenExpiration = Date.from(Instant.now().minusMillis(TimeUnit.MINUTES.toMillis(30)));
@@ -252,7 +252,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw InvalidTokenException when auth token was modified")
     void validateAndExtractClaimsFromAuthToken_negative_3() {
         //given
-        String givenSubject = TestData.defaultLogin;
+        String givenSubject = AccountsModuleTestData.defaultLogin;
         Date givenIas = Date.from(Instant.now());
         Date givenExpiration = Date.from(Instant.now().plusMillis(authTokenProperties.getTimeoutInMillis()));
         Key givenKey = getSigningKeyFromBase64EncodedSecret(authTokenProperties.getKey());
@@ -284,7 +284,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should validate and extract claims with login from valid refresh token")
     void validateAndExtractClaimsFromRefreshToken_positive_1() {
         //given
-        String givenLogin = TestData.defaultLogin;
+        String givenLogin = AccountsModuleTestData.defaultLogin;
         String givenRefreshToken = underTest.generateRefreshToken(givenLogin);
 
         //when
@@ -299,7 +299,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw InvalidTokenException when signature of refresh token isn't valid")
     void validateAndExtractClaimsFromRefreshToken_negative_1() {
         //given
-        String givenLogin = TestData.defaultLogin;
+        String givenLogin = AccountsModuleTestData.defaultLogin;
         String givenRefreshToken = underTest.generateRefreshToken(givenLogin);
         String[] splitToken = givenRefreshToken.split("\\.");
         String wrongSignatureToken = splitToken[0].concat(splitToken[1]);
@@ -319,7 +319,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw ExpiredTokenException when refresh token is expired")
     void validateAndExtractClaimsFromRefreshToken_negative_2() {
         //given
-        String givenSubject = TestData.defaultLogin;
+        String givenSubject = AccountsModuleTestData.defaultLogin;
         HashMap<String, Object> givenClaims = new HashMap<>();
         Date givenIas = Date.from(Instant.now().minusMillis(TimeUnit.MINUTES.toMillis(60)));
         Date givenExpiration = Date.from(Instant.now().minusMillis(TimeUnit.MINUTES.toMillis(30)));
@@ -343,7 +343,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw InvalidTokenException when refresh token was modified")
     void validateAndExtractClaimsFromRefreshToken_negative_3() {
         //given
-        String givenSubject = TestData.defaultLogin;
+        String givenSubject = AccountsModuleTestData.defaultLogin;
         Date givenIas = Date.from(Instant.now());
         Date givenExpiration = Date.from(Instant.now().plusMillis(refreshTokenProperties.getTimeoutInMillis()));
         Key givenKey = getSigningKeyFromBase64EncodedSecret(authTokenProperties.getKey());
@@ -375,7 +375,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should validate and extract claims with login from valid verification token")
     void validateVerificationToken_positive_1() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         String givenLogin = givenAccount.getLogin();
         String givenEmail = givenAccount.getEmail();
 
@@ -393,7 +393,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw InvalidTokenException when signature of verification token isn't valid")
     void validateVerificationToken_negative_1() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         String givenLogin = givenAccount.getLogin();
         String givenEmail = givenAccount.getEmail();
         String givenVerificationToken = underTest.generateVerificationToken(givenLogin, givenEmail);
@@ -415,12 +415,12 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw ExpiredTokenException when verification token is expired")
     void validateVerificationToken_negative_2() {
         //given
-        String givenSubject = TestData.defaultLogin;
+        String givenSubject = AccountsModuleTestData.defaultLogin;
         HashMap<String, Object> givenClaims = new HashMap<>();
         Date givenIas = Date.from(Instant.now().minusMillis(TimeUnit.MINUTES.toMillis(60)));
         Date givenExpiration = Date.from(Instant.now().minusMillis(TimeUnit.MINUTES.toMillis(30)));
 
-        String givenEmail = TestData.defaultEmail;
+        String givenEmail = AccountsModuleTestData.defaultEmail;
         Key givenKey = getSigningKeyFromNotEncodedSecret(givenEmail);
         SignatureAlgorithm givenAlg = SignatureAlgorithm.HS256;
 
@@ -441,8 +441,8 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw InvalidTokenException when verification token was modified")
     void validateVerificationToken_negative_3() {
         //given
-        String givenSubject = TestData.defaultLogin;
-        String givenEmail = TestData.defaultEmail;
+        String givenSubject = AccountsModuleTestData.defaultLogin;
+        String givenEmail = AccountsModuleTestData.defaultEmail;
 
         Date givenIas = Date.from(Instant.now());
         Date givenExpiration = Date.from(Instant.now().plusMillis(verificationTokenProperties.getTimeoutInMillis()));
@@ -475,7 +475,7 @@ public class JwtServiceImplIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw InvalidTokenException when for validation is provided another newEmail")
     void validateVerificationToken_negative_4() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         String givenLogin = givenAccount.getLogin();
         String givenEmail = givenAccount.getEmail();
         String givenAnotherEmail = "example2@example.com";

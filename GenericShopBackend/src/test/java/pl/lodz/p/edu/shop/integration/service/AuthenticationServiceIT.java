@@ -13,7 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.server.ResponseStatusException;
-import pl.lodz.p.edu.shop.TestData;
+import pl.lodz.p.edu.shop.AccountsModuleTestData;
 import pl.lodz.p.edu.shop.config.PostgresqlContainerSetup;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
@@ -69,7 +69,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
             return status;
         });
 
-        TestData.resetCounter();
+        AccountsModuleTestData.resetCounter();
     }
 
     @Test
@@ -78,7 +78,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
     void authenticate_positive_1() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -88,7 +88,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
         });
 
         //when
-        JwtTokens result = underTest.authenticate(givenAccount.getLogin(), TestData.defaultPassword);
+        JwtTokens result = underTest.authenticate(givenAccount.getLogin(), AccountsModuleTestData.defaultPassword);
 
         //then
         assertThat(result)
@@ -111,7 +111,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
     void authenticate_negative_1() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -122,7 +122,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
         });
 
         //when
-        Exception exception = catchException(() -> underTest.authenticate(givenWrongLogin, TestData.defaultPassword));
+        Exception exception = catchException(() -> underTest.authenticate(givenWrongLogin, AccountsModuleTestData.defaultPassword));
 
         //then
         assertThat(exception)
@@ -137,7 +137,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
     void authenticate_negative_2() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -163,7 +163,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
     void authenticate_negative_3() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -174,7 +174,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
         });
 
         //when
-        Exception exception = catchException(() -> underTest.authenticate(givenAccount.getLogin(), TestData.defaultPassword));
+        Exception exception = catchException(() -> underTest.authenticate(givenAccount.getLogin(), AccountsModuleTestData.defaultPassword));
 
         //then
         assertThat(exception)
@@ -189,7 +189,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
     void authenticate_negative_4() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .accountState(AccountState.NOT_VERIFIED)
             .build();
@@ -200,7 +200,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
         });
 
         //when
-        Exception exception = catchException(() -> underTest.authenticate(givenAccount.getLogin(), TestData.defaultPassword));
+        Exception exception = catchException(() -> underTest.authenticate(givenAccount.getLogin(), AccountsModuleTestData.defaultPassword));
 
         //then
         assertThat(exception)
@@ -215,7 +215,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
     void authenticate_negative_5() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .accountState(AccountState.BLOCKED)
             .build();
@@ -226,7 +226,7 @@ public class AuthenticationServiceIT extends PostgresqlContainerSetup {
         });
 
         //when
-        Exception exception = catchException(() -> underTest.authenticate(givenAccount.getLogin(), TestData.defaultPassword));
+        Exception exception = catchException(() -> underTest.authenticate(givenAccount.getLogin(), AccountsModuleTestData.defaultPassword));
 
         //then
         assertThat(exception)

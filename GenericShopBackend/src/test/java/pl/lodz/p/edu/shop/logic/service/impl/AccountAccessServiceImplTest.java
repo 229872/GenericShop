@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
-import pl.lodz.p.edu.shop.TestData;
+import pl.lodz.p.edu.shop.AccountsModuleTestData;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
@@ -55,7 +55,7 @@ class AccountAccessServiceImplTest {
 
     @AfterEach
     void tearDown() {
-        TestData.resetCounter();
+        AccountsModuleTestData.resetCounter();
     }
 
 
@@ -64,7 +64,7 @@ class AccountAccessServiceImplTest {
     void findByLogin_positive_1() {
         //given
         String givenLogin = "login";
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         given(accountRepository.findByLogin(givenLogin)).willReturn(Optional.of(givenAccount));
 
         //when
@@ -100,7 +100,7 @@ class AccountAccessServiceImplTest {
     void updateOwnLocale_positive_1() {
         //given
         String givenLanguage = "pl";
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .locale(givenLanguage)
             .build();
         String givenLogin = givenAccount.getLogin();
@@ -148,22 +148,22 @@ class AccountAccessServiceImplTest {
     @DisplayName("Should change password if account can be found and current password matches")
     void changePassword_positive_1() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         String givenLogin = givenAccount.getLogin();
         String givenPassword = givenAccount.getPassword();
         String newPassword = "newPassword123";
 
         given(accountRepository.findByLogin(givenLogin)).willReturn(Optional.of(givenAccount));
-        given(passwordEncoder.matches(TestData.defaultPassword, givenPassword)).willReturn(true);
+        given(passwordEncoder.matches(AccountsModuleTestData.defaultPassword, givenPassword)).willReturn(true);
         given(passwordEncoder.encode(newPassword)).willReturn(newPassword);
         given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         //when
-        Account result = underTest.changePassword(givenLogin, TestData.defaultPassword, newPassword);
+        Account result = underTest.changePassword(givenLogin, AccountsModuleTestData.defaultPassword, newPassword);
 
         //then
         then(accountRepository).should().findByLogin(givenLogin);
-        then(passwordEncoder).should().matches(TestData.defaultPassword, givenPassword);
+        then(passwordEncoder).should().matches(AccountsModuleTestData.defaultPassword, givenPassword);
         then(passwordEncoder).should().encode(newPassword);
         then(accountRepository).should().save(givenAccount);
 
@@ -198,20 +198,20 @@ class AccountAccessServiceImplTest {
     @DisplayName("Should throw InvalidCredentialsException when credentials mismatch")
     void changePassword_negative_2() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         String givenLogin = givenAccount.getLogin();
         String givenPassword = givenAccount.getPassword();
         String newPassword = "newPassword123";
 
         given(accountRepository.findByLogin(givenLogin)).willReturn(Optional.of(givenAccount));
-        given(passwordEncoder.matches(TestData.defaultPassword, givenPassword)).willReturn(false);
+        given(passwordEncoder.matches(AccountsModuleTestData.defaultPassword, givenPassword)).willReturn(false);
 
         //when
-        Exception exception = catchException(() -> underTest.changePassword(givenLogin, TestData.defaultPassword, newPassword));
+        Exception exception = catchException(() -> underTest.changePassword(givenLogin, AccountsModuleTestData.defaultPassword, newPassword));
 
         //then
         then(accountRepository).should().findByLogin(givenLogin);
-        then(passwordEncoder).should().matches(TestData.defaultPassword, givenPassword);
+        then(passwordEncoder).should().matches(AccountsModuleTestData.defaultPassword, givenPassword);
         then(passwordEncoder).shouldHaveNoMoreInteractions();
 
         assertThat(exception)
@@ -226,7 +226,7 @@ class AccountAccessServiceImplTest {
     void register_positive_1() {
         //given
         HashSet<AccountRole> givenAccountRoles = new HashSet<>(Set.of(AccountRole.GUEST));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(null)
             .accountRoles(givenAccountRoles)
             .build();
@@ -257,7 +257,7 @@ class AccountAccessServiceImplTest {
     @DisplayName("Should throw AccountLoginConflictException when creating account with already used login")
     void register_negative_2() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         String givenLogin = givenAccount.getLogin();
         String givenEmail = givenAccount.getEmail();
         String givenToken = "token";
@@ -287,7 +287,7 @@ class AccountAccessServiceImplTest {
     @DisplayName("Should throw AccountEmailConflictException when creating account with already used newEmail")
     void register_negative_3() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         String givenLogin = givenAccount.getLogin();
         String givenEmail = givenAccount.getEmail();
         String givenToken = "token";

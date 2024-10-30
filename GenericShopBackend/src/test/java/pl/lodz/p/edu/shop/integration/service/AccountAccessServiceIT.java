@@ -10,7 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.server.ResponseStatusException;
-import pl.lodz.p.edu.shop.TestData;
+import pl.lodz.p.edu.shop.AccountsModuleTestData;
 import pl.lodz.p.edu.shop.config.PostgresqlContainerSetup;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.exception.ExceptionMessage;
@@ -58,14 +58,14 @@ public class AccountAccessServiceIT extends PostgresqlContainerSetup {
             return status;
         });
 
-        TestData.resetCounter();
+        AccountsModuleTestData.resetCounter();
     }
 
     @Test
     @DisplayName("Should return account if account with login is found")
     void findByLogin_positive_1() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         txTemplate.execute(status -> {
             em.persist(givenAccount);
             return status;
@@ -102,7 +102,7 @@ public class AccountAccessServiceIT extends PostgresqlContainerSetup {
     void updateOwnLocale_positive_1() {
         //given
         String givenLanguage = "pl";
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .locale(givenLanguage)
             .build();
         String givenLogin = givenAccount.getLogin();
@@ -144,7 +144,7 @@ public class AccountAccessServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should change password if account can be found and current password matches")
     void changePassword_positive_1() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         String givenLogin = givenAccount.getLogin();
         String givenPassword = givenAccount.getPassword();
         String newPassword = "newPassword123";
@@ -155,7 +155,7 @@ public class AccountAccessServiceIT extends PostgresqlContainerSetup {
         });
 
         //when
-        Account result = underTest.changePassword(givenLogin, TestData.defaultPassword, newPassword);
+        Account result = underTest.changePassword(givenLogin, AccountsModuleTestData.defaultPassword, newPassword);
 
         //then
         assertThat(result.getPassword())
@@ -172,7 +172,7 @@ public class AccountAccessServiceIT extends PostgresqlContainerSetup {
         String newPassword = "newPassword123";
 
         //when
-        Exception exception = catchException(() -> underTest.changePassword(givenLogin, TestData.defaultPassword, newPassword));
+        Exception exception = catchException(() -> underTest.changePassword(givenLogin, AccountsModuleTestData.defaultPassword, newPassword));
 
         //then
         assertThat(exception)
@@ -186,7 +186,7 @@ public class AccountAccessServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw InvalidCredentialsException when credentials missmatch")
     void changePassword_negative_2() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         String givenLogin = givenAccount.getLogin();
         String newPassword = "newPassword123";
         String wrongPassword = "wrongPassword";

@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class TestData {
+public class AccountsModuleTestData {
     static int counter = 1;
 
     public static final String defaultPostalCode = "11-111";

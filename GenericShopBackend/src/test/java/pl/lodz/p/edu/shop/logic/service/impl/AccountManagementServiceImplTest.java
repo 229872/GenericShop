@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.server.ResponseStatusException;
-import pl.lodz.p.edu.shop.TestData;
+import pl.lodz.p.edu.shop.AccountsModuleTestData;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
@@ -39,7 +39,7 @@ class AccountManagementServiceImplTest {
 
     @AfterEach
     void tearDown() {
-        TestData.resetCounter();
+        AccountsModuleTestData.resetCounter();
     }
 
     @Test
@@ -62,8 +62,8 @@ class AccountManagementServiceImplTest {
     void findAll_positive_2() {
         //given
         Account[] accounts = {
-            TestData.buildDefaultAccount(),
-            TestData.buildDefaultAccount()
+            AccountsModuleTestData.buildDefaultAccount(),
+            AccountsModuleTestData.buildDefaultAccount()
         };
 
         given(accountRepository.findAll()).willReturn(Arrays.stream(accounts).toList());
@@ -84,7 +84,7 @@ class AccountManagementServiceImplTest {
     void findById_positive_1() {
         //given
         Long givenId = 1L;
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         given(accountRepository.findById(givenId)).willReturn(Optional.of(givenAccount));
 
         //when
@@ -119,7 +119,7 @@ class AccountManagementServiceImplTest {
     @DisplayName("Should create account")
     void create_positive_1() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         given(accountRepository.save(givenAccount)).willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         //when
@@ -135,7 +135,7 @@ class AccountManagementServiceImplTest {
     @DisplayName("Should throw CantCreateAccountWithManyRolesException when account has more than one role")
     void create_negative_1() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE)))
             .build();
 
@@ -156,7 +156,7 @@ class AccountManagementServiceImplTest {
     @DisplayName("Should throw CantAssignGuestRoleException when account has guest role")
     void create_negative_2() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(new HashSet<>(Set.of(AccountRole.GUEST)))
             .build();
 
@@ -177,7 +177,7 @@ class AccountManagementServiceImplTest {
     @DisplayName("Should throw CantCreateAccountWithNotVerifiedStatusException when account is not verified")
     void create_negative_3() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.NOT_VERIFIED)
             .build();
 
@@ -198,7 +198,7 @@ class AccountManagementServiceImplTest {
     @DisplayName("Should throw AccountLoginConflictException when new Account has same login")
     void create_negative_4() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .login("login")
             .build();
         var cause = new ConstraintViolationException("Database violation occurred", null, "accounts_login_key");
@@ -220,7 +220,7 @@ class AccountManagementServiceImplTest {
     @DisplayName("Should throw AccountEmailConflictException when new Account has same newEmail")
     void create_negative_5() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .email("newEmail@example.com")
             .build();
         var cause = new ConstraintViolationException("Database violation occurred", null, "accounts_email_key");
@@ -243,7 +243,7 @@ class AccountManagementServiceImplTest {
     void block_positive_1() {
         //given
         Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.ACTIVE)
             .build();
 
@@ -286,7 +286,7 @@ class AccountManagementServiceImplTest {
     void block_negative_2() {
         //given
         Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .isArchival(true)
             .build();
 
@@ -311,7 +311,7 @@ class AccountManagementServiceImplTest {
     void block_negative_3() {
         //given
         Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.NOT_VERIFIED)
             .build();
 
@@ -336,7 +336,7 @@ class AccountManagementServiceImplTest {
     void block_negative_4() {
         //given
         Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.BLOCKED)
             .build();
 
@@ -361,7 +361,7 @@ class AccountManagementServiceImplTest {
     void unblock_positive_1() {
         //given
         Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.BLOCKED)
             .build();
 
@@ -403,7 +403,7 @@ class AccountManagementServiceImplTest {
     void unblock_negative_3() {
         //given
         Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .isArchival(true)
             .build();
 
@@ -428,7 +428,7 @@ class AccountManagementServiceImplTest {
     void unblock_negative_4() {
         //given
         Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.NOT_VERIFIED)
             .build();
 
@@ -453,7 +453,7 @@ class AccountManagementServiceImplTest {
     void unblock_negative_5() {
         //given
         Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.ACTIVE)
             .build();
 
@@ -478,7 +478,7 @@ class AccountManagementServiceImplTest {
     void archive_positive_1() {
         //given
         Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .isArchival(false)
             .accountState(AccountState.ACTIVE)
             .build();
@@ -523,7 +523,7 @@ class AccountManagementServiceImplTest {
     void archive_negative_2() {
         //given
         Long givenId = 1L;
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .isArchival(true)
             .build();
 
@@ -549,7 +549,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account accoungivenAccount = TestData.getDefaultAccountBuilder()
+        Account accoungivenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -595,7 +595,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .isArchival(true)
             .accountRoles(givenRoles)
             .build();
@@ -622,7 +622,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -648,7 +648,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -674,7 +674,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.ADMIN));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -700,7 +700,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -726,7 +726,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -772,7 +772,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .isArchival(true)
             .accountRoles(givenRoles)
             .build();
@@ -799,7 +799,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -825,7 +825,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -851,7 +851,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -898,7 +898,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .isArchival(true)
             .accountRoles(givenRoles)
             .build();
@@ -925,7 +925,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -951,7 +951,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -977,7 +977,7 @@ class AccountManagementServiceImplTest {
         //given
         Long givenId = 1L;
         Set<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 

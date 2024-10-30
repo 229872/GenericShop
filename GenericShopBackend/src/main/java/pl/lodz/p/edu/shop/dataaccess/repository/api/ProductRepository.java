@@ -8,7 +8,6 @@ import pl.lodz.p.edu.shop.dataaccess.model.entity.Category;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.OrderedProduct;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -26,11 +25,20 @@ public interface ProductRepository {
     @Query("SELECT p FROM Product p WHERE p.isArchival = false AND p.id IN :ids")
     List<Product> findProductsByIds(@Param("ids") Set<Long> productIds);
 
-    @Query("SELECT p FROM Product p WHERE p.isArchival = false AND p.category.name IN :categoryNames")
-    List<Product> findProductsByCategories(@Param("categoryNames") Collection<String> categoryNames);
+    @Query("SELECT p FROM Product p WHERE p.price = (SELECT MIN(p2.price) FROM Product p2 WHERE NOT p2.isArchival) AND NOT p.isArchival")
+    List<Product> findCheapestProducts();
 
-    @Query("SELECT p FROM OrderedProduct p WHERE p.id = :id")
-    Optional<OrderedProduct> findOrderedProductById(@Param("id") Long id);
+    @Query("SELECT p FROM Product p WHERE p.createdAt = (SELECT MAX(p2.createdAt) FROM Product p2 WHERE NOT p2.isArchival) AND NOT p.isArchival")
+    List<Product> findNewestProducts();
+
+    @Query("SELECT p FROM Product p WHERE p.quantity IN (1, 2) AND NOT p.isArchival")
+    List<Product> findProductsThatAreRunningOut();
+
+    @Query("SELECT p FROM Product p WHERE p.averageRating = (SELECT MAX(p2.averageRating) FROM Product p2 WHERE NOT p.isArchival) AND NOT p.isArchival")
+    List<Product> findBestRatedProducts();
+
+    @Query("SELECT p FROM Product p WHERE p.quantity > 0 AND NOT p.isArchival")
+    List<Product> findAvailableProducts();
 
     @Query("WITH product_counts AS (" +
         "   SELECT p.product AS product, COUNT(p.product) AS productCount " +
@@ -51,8 +59,8 @@ public interface ProductRepository {
         ")")
     List<OrderedProduct> findTheMostFrequentlyPurchasedProducts(String login);
 
-    @Query("SELECT p.product FROM OrderedProduct p WHERE p.account.login = :login AND p.rate IS NOT NULL GROUP BY p.product ORDER BY MAX(p.rate.value)")
-    Page<Product> findBestRatedProductsByTheUser(String login, Pageable pageable);
+    @Query("SELECT p FROM OrderedProduct p WHERE p.id = :id")
+    Optional<OrderedProduct> findOrderedProductById(@Param("id") Long id);
 
     Optional<Product> findById(Long id);
 

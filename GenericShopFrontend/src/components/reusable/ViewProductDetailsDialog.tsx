@@ -82,7 +82,7 @@ export default function ViewProductDetailsDialog({ open, onClose, setLoading, st
   const sendRecommendationsRequest = async () => {
     try {
       setLoading(true)
-      const { data } = await getRecommendedProducts()
+      const { data } = await getRecommendedProducts(6)
       setRecommmendedProducts(data)
 
     } catch (e) {

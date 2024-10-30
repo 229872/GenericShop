@@ -51,9 +51,9 @@ export function updatePreference(type: 'category' | 'product', data: string | nu
   }
 }
 
-export const getRecommendedProducts = async () => {
+export const getRecommendedProducts = async (recordNumber: number) => {
   const preferences: UserPreferences = getUserPreferences(getLogin(getJwtToken()) ?? "")
-  return axios.post(`${environment.apiBaseUrl}/products/recommended`, preferences, {
+  return axios.post(`${environment.apiBaseUrl}/products/recommended?size=${recordNumber}`, preferences, {
     headers: {
       Authorization: `Bearer ${getJwtToken()}`
     }

@@ -12,7 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.server.ResponseStatusException;
-import pl.lodz.p.edu.shop.TestData;
+import pl.lodz.p.edu.shop.AccountsModuleTestData;
 import pl.lodz.p.edu.shop.config.PostgresqlContainerSetup;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Account;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
@@ -62,7 +62,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
             return status;
         });
 
-        TestData.resetCounter();
+        AccountsModuleTestData.resetCounter();
     }
 
     @Test
@@ -83,8 +83,8 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void findAll_positive_2() {
         //given
         Account[] givenAccounts = {
-            TestData.buildDefaultAccount(),
-            TestData.buildDefaultAccount()
+            AccountsModuleTestData.buildDefaultAccount(),
+            AccountsModuleTestData.buildDefaultAccount()
         };
         txTemplate.execute(status -> {
             Arrays.stream(givenAccounts).forEach(account -> em.persist(account));
@@ -105,7 +105,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should return account if account with id is found")
     void findById_positive_1() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         txTemplate.execute(status -> {
             em.persist(givenAccount);
             return status;
@@ -142,7 +142,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should create account")
     void create_positive_1() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
 
         //when
         Account result = underTest.create(givenAccount);
@@ -166,7 +166,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void create_negative_1() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
                 .accountRoles(givenRoles)
                 .build();
 
@@ -191,7 +191,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void create_negative_2() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.GUEST));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
                 .accountRoles(givenRoles)
                 .build();
 
@@ -210,7 +210,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantCreateAccountWithNotVerifiedStatusException when account is not verified")
     void create_negative_3() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
                 .accountState(AccountState.NOT_VERIFIED)
                     .build();
 
@@ -229,13 +229,13 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw AccountLoginConflictException when new Account has same login")
     void create_negative_4() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         txTemplate.execute(status -> {
             em.persist(givenAccount);
             return status;
         });
 
-        Account accountWithConflictLogin = TestData.getDefaultAccountBuilder()
+        Account accountWithConflictLogin = AccountsModuleTestData.getDefaultAccountBuilder()
             .login(givenAccount.getLogin())
             .build();
 
@@ -253,13 +253,13 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw AccountEmailConflictException when new Account has same newEmail")
     void create_negative_5() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
         txTemplate.execute(status -> {
             em.persist(givenAccount);
             return status;
         });
 
-        Account accountWithConflictEmail = TestData.getDefaultAccountBuilder()
+        Account accountWithConflictEmail = AccountsModuleTestData.getDefaultAccountBuilder()
             .email(givenAccount.getEmail())
             .build();
 
@@ -277,7 +277,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should block active account")
     void block_positive_1() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.ACTIVE)
             .build();
 
@@ -315,7 +315,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
     void block_negative_2() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
 
         txTemplate.execute(status -> {
             em.persist(givenAccount);
@@ -340,7 +340,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is not verified")
     void block_negative_3() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.NOT_VERIFIED)
             .build();
 
@@ -365,7 +365,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is blocked")
     void block_negative_4() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.BLOCKED)
             .build();
 
@@ -390,7 +390,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should unblock blocked account")
     void unblock_positive_1() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.BLOCKED)
             .build();
 
@@ -429,7 +429,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantModifyArchivalAccountException when account is archival")
     void unblock_negative_2() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
 
         txTemplate.execute(status -> {
             em.persist(givenAccount);
@@ -453,7 +453,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is not verified")
     void unblock_negative_3() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.NOT_VERIFIED)
             .build();
 
@@ -478,7 +478,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw OperationNotAllowedWithActualAccountStateException when account is active")
     void unblock_negative_4() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.ACTIVE)
             .build();
 
@@ -503,7 +503,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should archive active account")
     void archive_positive_1() {
         //given
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountState(AccountState.ACTIVE)
             .build();
 
@@ -541,7 +541,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     @DisplayName("Should throw CantModifyArchivalAccountException when account is already archival")
     void archive_negative_2() {
         //given
-        Account givenAccount = TestData.buildDefaultAccount();
+        Account givenAccount = AccountsModuleTestData.buildDefaultAccount();
 
         txTemplate.execute(status -> {
             em.persist(givenAccount);
@@ -566,7 +566,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void addRole_positive_1() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -607,7 +607,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void addRole_negative_2() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -634,7 +634,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void addRole_negative_3() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -660,7 +660,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void addRole_negative_4() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -686,7 +686,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void addRole_negative_5() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.ADMIN));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -712,7 +712,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void addRole_negative_6() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -738,7 +738,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void removeRole_positive_1() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -779,7 +779,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void removeRole_negative_2() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -806,7 +806,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void removeRole_negative_3() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -832,7 +832,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void removeRole_negative_4() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -858,7 +858,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void changeRole_positive_1() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -899,7 +899,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void changeRole_negative_2() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -926,7 +926,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void changeRole_negative_3() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.CLIENT, AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -952,7 +952,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void changeRole_negative_4() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
@@ -978,7 +978,7 @@ class AccountManagementServiceIT extends PostgresqlContainerSetup {
     void changeRole_negative_5() {
         //given
         HashSet<AccountRole> givenRoles = new HashSet<>(Set.of(AccountRole.EMPLOYEE));
-        Account givenAccount = TestData.getDefaultAccountBuilder()
+        Account givenAccount = AccountsModuleTestData.getDefaultAccountBuilder()
             .accountRoles(givenRoles)
             .build();
 
