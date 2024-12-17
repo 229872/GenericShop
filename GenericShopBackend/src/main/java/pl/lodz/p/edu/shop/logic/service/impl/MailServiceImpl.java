@@ -17,7 +17,6 @@ import pl.lodz.p.edu.shop.logic.service.api.MailService;
 import pl.lodz.p.edu.shop.util.I18nUtil;
 import pl.lodz.p.edu.shop.util.I18nUtil.MessageKey;
 
-import java.text.MessageFormat;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -110,7 +109,7 @@ class MailServiceImpl implements MailService {
         String content2Template = resetPasswordTimeoutInHours == 1
             ? I18nUtil.getMessage(MessageKey.MAIL_RESET_PASSWORD_CONTENT2_SINGULAR, locale)
             : I18nUtil.getMessage(MessageKey.MAIL_RESET_PASSWORD_CONTENT2_PLURAL, locale);
-        String content2 = MessageFormat.format(content2Template, resetPasswordTimeoutInHours);
+        String content2 = String.format(content2Template, resetPasswordTimeoutInHours);
         String footer = I18nUtil.getMessage(MessageKey.MAIL_RESET_PASSWORD_FOOTER, locale);
 
         Map<String, Object> variables = Map.of(

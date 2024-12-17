@@ -3,6 +3,7 @@ package pl.lodz.p.edu.shop.dataaccess.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Check;
 import pl.lodz.p.edu.shop.dataaccess.model.superclass.ArchivableEntity;
 
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "products")
+@Check(constraints = "quantity >= 0")
 public class Product extends ArchivableEntity {
 
     @Column(nullable = false, unique = true)

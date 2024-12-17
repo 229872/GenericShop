@@ -38,6 +38,7 @@ public class OrderController {
         return ResponseEntity.created(resourceUri).body(responseBody);
     }
 
+    //todo check if it is used
     @GetMapping
     @RolesAllowed({CLIENT})
     public ResponseEntity<Page<OrderOutputDto>> findAll(Pageable pageable) {

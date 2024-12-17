@@ -1,0 +1,82 @@
+app:
+  auth:
+    unsuccessful_attempts: 3
+    blockade_time_in_minutes: 5
+
+  db:
+    datasource:
+      init-module:
+        persistence-unit-name: initPU
+        url: jdbc:postgresql://localhost:5432/shop
+        username: shop_admin
+        password: dbadmin
+        jpa:
+          database-action: drop_and_create
+        sql:
+          enable: true
+          data-locations:
+            - script/data.sql
+            - script/permissions.sql
+
+      accounts-module:
+        persistence-unit-name: accountsPU
+        url: jdbc:postgresql://localhost:5432/shop
+        username: shop_accounts
+        password: dbaccounts
+        jpa:
+          properties:
+            hibernate.show_sql: true
+            hibernate.format_sql: true
+            hibernate.use_sql_comments: true
+
+      orders-module:
+        persistence-unit-name: ordersPU
+        url: jdbc:postgresql://localhost:5432/shop
+        username: shop_orders
+        password: dborders
+        jpa:
+          properties:
+            hibernate.show_sql: true
+            hibernate.format_sql: true
+            hibernate.use_sql_comments: true
+
+  security:
+    auth-token:
+      timeout_in_minutes: 60
+      key: "r7sHH+ErDOdwvIWmE6OxD/PRXcJmicWSRnX1seiFV61wuV62CSR/L/HYPlED8GlC6e559dQv7a/jUmD6oC/FbwhmHeqqX9IvFv0WsWygpKA="
+    refresh-token:
+      timeout_in_minutes: 1140
+      key: "lPe/UW3XpvXCA8QZihq1Izy0Xhiz9YG7ZQkjFxgBIoWOooX8YBdHqvVFhL5CLhK/bm++L27Hyc7fzemv6vA1KQ0dFgd58c756ehFQBfg8SE="
+    verification-token:
+      timeout_in_minutes: 600
+    reset-password:
+      timeout-in-minutes: 600
+    version:
+      key: "kWnJGuwYniUE4ylpCuKZ7cL3Y7C6AClc2FQSoI2rSKE="
+
+  frontend:
+    frontend-app-url: https://localhost:5173
+    frontend-account-verification-url: ${app.frontend.frontend-app-url}/register/confirm
+    frontend-account-reset-password-url: ${app.frontend.frontend-app-url}/auth/reset-password
+
+
+spring:
+  docker:
+    compose:
+      enabled: true
+      file: "./docker/docker-compose.yml"
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password:
+    properties:
+      mail.smtp.starttls.enable: true
+
+server:
+  port: 8080
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: classpath:https_private_key.p12
+    key-store-password:

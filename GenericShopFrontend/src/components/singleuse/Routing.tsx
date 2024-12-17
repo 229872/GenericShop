@@ -62,8 +62,8 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
               style={{ margin: '8vh 6vw 0vh 6vw' }}
             />
           }
-          shouldRender={activeRole !== Role.ADMIN}
-          redirect={NOT_FOUND_PATH}
+          shouldRender={activeRole == Role.GUEST || activeRole == Role.CLIENT || !isAuthenticated}
+          redirect={getHomeByActiveRole(activeRole)}
         />
       } />
 
@@ -203,4 +203,8 @@ export default function Routing({ showTokenExpiredDialogAfterTimeout, showExtend
       <Route path='*' element={<NotFoundPage style={{ margin: '12vh 15vw' }} />} />
     </Routes>
   )
+}
+
+function getHomeByActiveRole(activeRole: Role) {
+  return activeRole == Role.ADMIN ? MANAGE_ACCOUNTS_PATH : MANAGE_PRODUCTS_PATH;
 }
