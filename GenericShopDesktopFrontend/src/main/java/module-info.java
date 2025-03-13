@@ -6,6 +6,7 @@ module pl.lodz.p.edu.genericshopdesktopfrontend {
     requires java.net.http;
     requires com.fasterxml.jackson.databind;
     requires com.nimbusds.jose.jwt;
+    requires de.jensd.fx.glyphs.fontawesome;
 
     opens pl.lodz.p.edu.genericshopdesktopfrontend.controller to javafx.fxml;
 

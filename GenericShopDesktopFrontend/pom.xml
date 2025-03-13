@@ -16,6 +16,7 @@
         <junit.version>5.10.0</junit.version>
         <assertj.version>3.26.3</assertj.version>
         <mockito.version>5.14.2</mockito.version>
+        <fontawesome.version>4.7.0-9.1.2</fontawesome.version>
     </properties>
 
     <dependencies>
@@ -40,6 +41,11 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>de.jensd</groupId>
+            <artifactId>fontawesomefx-fontawesome</artifactId>
+            <version>${fontawesome.version}</version>
         </dependency>
 
         <!--  Other dependencies    -->
