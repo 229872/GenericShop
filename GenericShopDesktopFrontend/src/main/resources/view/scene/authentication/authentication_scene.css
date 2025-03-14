@@ -47,6 +47,12 @@
     -fx-font-size: 20;
 }
 
+.text_error {
+    -fx-alignment: left;
+    -fx-font-size: 12;
+    -fx-fill: #000;
+}
+
 .form_field_cover {
     -fx-alignment: center-left;
     -fx-spacing: 15;
@@ -79,8 +85,10 @@
     -fx-background-color: #333;
 }
 
-.text_error {
-    -fx-alignment: left;
-    -fx-font-size: 12;
-    -fx-fill: #000;
+#button_close_app {
+    -fx-background-color: transparent;
+}
+
+#button_close_app :hover {
+    -fx-fill: #555;
 }

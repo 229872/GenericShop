@@ -5,6 +5,7 @@
 
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.text.Text?>
+<?import javafx.geometry.Insets?>
 <StackPane xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml"
            prefHeight="700.0" prefWidth="1000.0">
@@ -41,10 +42,18 @@
                     </VBox>
                 </HBox>
 
-                <Hyperlink id="form_hyperlink"  text="Forgot password?" />
+                <Hyperlink id="form_hyperlink" text="Forgot password?" />
                 <Button fx:id="buttonSignIn" text="Sign in" />
             </VBox>
         </center>
     </BorderPane>
 
+    <Button id="button_close_app" fx:id="buttonCloseApp" StackPane.alignment="TOP_RIGHT">
+        <StackPane.margin>
+            <Insets top="10" right="10" />
+        </StackPane.margin>
+        <graphic>
+            <FontAwesomeIconView glyphName="CLOSE" size="22" />
+        </graphic>
+    </Button>
 </StackPane>

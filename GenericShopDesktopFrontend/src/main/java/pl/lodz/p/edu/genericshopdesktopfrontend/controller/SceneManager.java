@@ -1,8 +1,11 @@
 package pl.lodz.p.edu.genericshopdesktopfrontend.controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
@@ -18,12 +21,19 @@ public class SceneManager {
 
     private final Stage primaryStage;
 
+    private double xOffset, yOffset;
+
     public SceneManager(Stage primaryStage) {
         this.primaryStage = requireNonNull(primaryStage);
+        primaryStage.setOnCloseRequest(windowEvent -> {
+            windowEvent.consume();
+            closeApp();
+        });
     }
 
     public void switchToAuthenticationScene() throws ApplicationException {
-        loadScene(AUTHENTICATION_SCENE, new AuthenticationController(AnimationService.getInstance()));
+        Controller controller = new AuthenticationController(AnimationService.getInstance(), this);
+        loadScene(AUTHENTICATION_SCENE, controller);
     }
 
     private void loadScene(String sceneStem, Controller controller) throws ApplicationException {
@@ -39,10 +49,35 @@ public class SceneManager {
 
             Scene scene = new Scene(parent);
             scene.getStylesheets().add(cssURL.toExternalForm());
+            setUpWindowDragging(scene);
+
             primaryStage.setScene(scene);
 
         } catch (IOException | NullPointerException e) {
             throw new ApplicationException("Can't switch to Authentication scene", e);
         }
+    }
+
+    private void setUpWindowDragging(Scene scene) {
+        scene.setOnMousePressed(mouseEvent -> {
+            xOffset = mouseEvent.getX();
+            yOffset = mouseEvent.getY();
+        });
+
+        scene.setOnMouseDragged(mouseEvent -> {
+            primaryStage.setX(mouseEvent.getScreenX() - xOffset);
+            primaryStage.setY(mouseEvent.getScreenY() - yOffset);
+        });
+    }
+
+    public void closeApp() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm operation.");
+        alert.setHeaderText("You are about to close the app.");
+        alert.setContentText("Are you sure you want close app?");
+
+        alert.showAndWait()
+            .filter(buttonType -> buttonType.equals(ButtonType.OK))
+            .ifPresent(none -> Platform.exit());
     }
 }

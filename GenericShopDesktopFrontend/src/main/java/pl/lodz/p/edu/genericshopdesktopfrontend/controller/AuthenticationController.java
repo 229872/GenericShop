@@ -24,6 +24,13 @@ class AuthenticationController implements Controller, Initializable {
 
     private final AnimationService animationService;
 
+    private final SceneManager sceneManager;
+
+    AuthenticationController(AnimationService animationService, SceneManager sceneManager) {
+        this.animationService = requireNonNull(animationService);
+        this.sceneManager = requireNonNull(sceneManager);
+    }
+
     @FXML
     private TextField textFieldLogin;
 
@@ -34,20 +41,16 @@ class AuthenticationController implements Controller, Initializable {
     private Text textLoginError, textPasswordError;
 
     @FXML
-    private Button buttonSignIn;
-
-    AuthenticationController(AnimationService animationService) {
-        this.animationService = requireNonNull(animationService);
-    }
+    private Button buttonSignIn, buttonCloseApp;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        setUpButtonBindings();
+        setUpButtons();
         setUpInputs();
     }
 
-    private void setUpButtonBindings() {
+    private void setUpButtons() {
         BooleanBinding isFormValidBinding = Bindings.createBooleanBinding(
             this::isFormValid, textFieldLogin.textProperty(), passwordFieldPassword.textProperty());
 
@@ -57,6 +60,8 @@ class AuthenticationController implements Controller, Initializable {
 
         buttonSignIn.disableProperty().bind(isFormValidBinding.not());
         buttonSignIn.effectProperty().bind(blurEffectButtonBinding);
+
+        buttonCloseApp.setOnAction(actionEvent -> sceneManager.closeApp());
     }
 
     private void setUpInputs() {
@@ -92,6 +97,5 @@ class AuthenticationController implements Controller, Initializable {
     private boolean isFieldValid(Pattern pattern, TextInputControl control) {
         return pattern.matcher(control.getText()).matches();
     }
-
 
 }
