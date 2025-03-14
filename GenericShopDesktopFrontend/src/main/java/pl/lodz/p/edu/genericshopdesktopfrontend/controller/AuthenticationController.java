@@ -1,5 +1,6 @@
 package pl.lodz.p.edu.genericshopdesktopfrontend.controller;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.fxml.FXML;
@@ -9,6 +10,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
 
@@ -32,6 +34,9 @@ class AuthenticationController implements Controller, Initializable {
     }
 
     @FXML
+    private BorderPane root;
+
+    @FXML
     private TextField textFieldLogin;
 
     @FXML
@@ -41,13 +46,15 @@ class AuthenticationController implements Controller, Initializable {
     private Text textLoginError, textPasswordError;
 
     @FXML
-    private Button buttonSignIn, buttonCloseApp;
+    private Button buttonSignIn, buttonCloseApp, buttonMinimize;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         setUpButtons();
         setUpInputs();
+        Platform.runLater(() -> root.requestFocus());
     }
 
     private void setUpButtons() {
@@ -61,6 +68,7 @@ class AuthenticationController implements Controller, Initializable {
         buttonSignIn.disableProperty().bind(isFormValidBinding.not());
         buttonSignIn.effectProperty().bind(blurEffectButtonBinding);
 
+        buttonMinimize.setOnAction(actionEvent -> sceneManager.minimise());
         buttonCloseApp.setOnAction(actionEvent -> sceneManager.closeApp());
     }
 

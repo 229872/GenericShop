@@ -85,10 +85,16 @@
     -fx-background-color: #333;
 }
 
-#button_close_app {
+.menu_button {
     -fx-background-color: transparent;
 }
 
-#button_close_app :hover {
+.menu_button :hover {
     -fx-fill: #555;
+}
+
+#menu {
+    -fx-alignment: top-right;
+    -fx-spacing: 5;
+    -fx-max-height: 50px;
 }

@@ -80,4 +80,8 @@ public class SceneManager {
             .filter(buttonType -> buttonType.equals(ButtonType.OK))
             .ifPresent(none -> Platform.exit());
     }
+
+    public void minimise() {
+        primaryStage.setIconified(true);
+    }
 }
