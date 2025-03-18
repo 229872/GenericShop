@@ -42,7 +42,7 @@ public class SceneManager {
     }
 
     public void switchToAuthenticationScene() throws ApplicationException {
-        Controller controller = new AuthenticationController(AnimationService.getInstance());
+        Controller controller = new AuthenticationController(AnimationService.getInstance(), this);
         loadScene(AUTHENTICATION_SCENE, controller);
     }
 
@@ -76,7 +76,9 @@ public class SceneManager {
         }
     }
 
-
+    public void setApplicationLanguage(Locale newApplicationLanguage) {
+        this.applicationLanguage = newApplicationLanguage;
+    }
 
 
 

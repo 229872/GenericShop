@@ -19,6 +19,17 @@
     -fx-font-weight: bold;
 }
 
+#language_label {
+    -fx-text-fill: #FFF;
+    -fx-font-size: 25;
+    -fx-translate-y: 100;
+}
+
+#language_select {
+    -fx-translate-y: 100;
+    -fx-min-width: 100;
+}
+
 #form_container {
     -fx-alignment: CENTER;
     -fx-spacing: 30;

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.*?>
 
 <StackPane xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml"
@@ -14,6 +13,9 @@
             <VBox id="logo_container">
                 <FontAwesomeIconView id="logo" glyphName="SHOPPING_BAG" size="120" />
                 <Text id="logo_title" text="%title" />
+
+                <Label id="language_label" text="%language" />
+                <ComboBox id="language_select" fx:id="comboBoxLanguage" />
             </VBox>
         </left>
         <center>
@@ -43,6 +45,7 @@
                 </HBox>
 
                 <Hyperlink id="form_hyperlink" text="%password.forgot" />
+
                 <Button fx:id="buttonSignIn" text="%sign_in" />
             </VBox>
         </center>
