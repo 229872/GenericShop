@@ -26,11 +26,8 @@ class AuthenticationController implements Controller, Initializable {
 
     private final AnimationService animationService;
 
-    private final SceneManager sceneManager;
-
-    AuthenticationController(AnimationService animationService, SceneManager sceneManager) {
+    AuthenticationController(AnimationService animationService) {
         this.animationService = requireNonNull(animationService);
-        this.sceneManager = requireNonNull(sceneManager);
     }
 
     @FXML
@@ -46,7 +43,7 @@ class AuthenticationController implements Controller, Initializable {
     private Text textLoginError, textPasswordError;
 
     @FXML
-    private Button buttonSignIn, buttonCloseApp, buttonMinimize;
+    private Button buttonSignIn;
 
 
     @Override
@@ -67,9 +64,6 @@ class AuthenticationController implements Controller, Initializable {
 
         buttonSignIn.disableProperty().bind(isFormValidBinding.not());
         buttonSignIn.effectProperty().bind(blurEffectButtonBinding);
-
-        buttonMinimize.setOnAction(actionEvent -> sceneManager.minimise());
-        buttonCloseApp.setOnAction(actionEvent -> sceneManager.closeApp());
     }
 
     private void setUpInputs() {

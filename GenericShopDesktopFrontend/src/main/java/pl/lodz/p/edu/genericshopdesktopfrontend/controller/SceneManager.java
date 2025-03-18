@@ -7,11 +7,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.SubmitDialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 
 import static java.util.Objects.requireNonNull;
 
@@ -21,10 +23,16 @@ public class SceneManager {
 
     private final Stage primaryStage;
 
+    private Locale locale;
+
     private double xOffset, yOffset;
 
-    public SceneManager(Stage primaryStage) {
+    public SceneManager(Stage primaryStage, Locale locale) {
+
         this.primaryStage = requireNonNull(primaryStage);
+        this.locale = requireNonNull(locale);
+
+        primaryStage.setOnHiding(windowEvent -> minimise());
         primaryStage.setOnCloseRequest(windowEvent -> {
             windowEvent.consume();
             closeApp();
@@ -32,7 +40,7 @@ public class SceneManager {
     }
 
     public void switchToAuthenticationScene() throws ApplicationException {
-        Controller controller = new AuthenticationController(AnimationService.getInstance(), this);
+        Controller controller = new AuthenticationController(AnimationService.getInstance());
         loadScene(AUTHENTICATION_SCENE, controller);
     }
 
@@ -71,10 +79,7 @@ public class SceneManager {
     }
 
     public void closeApp() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirm operation.");
-        alert.setHeaderText("You are about to close the app.");
-        alert.setContentText("Are you sure you want close app?");
+        Alert alert = new SubmitDialog("You are about to close the app.", "Are you sure you want close app?");
 
         alert.showAndWait()
             .filter(buttonType -> buttonType.equals(ButtonType.OK))
@@ -82,6 +87,8 @@ public class SceneManager {
     }
 
     public void minimise() {
-        primaryStage.setIconified(true);
+        if (primaryStage.isShowing()) {
+            primaryStage.setIconified(true);
+        }
     }
 }

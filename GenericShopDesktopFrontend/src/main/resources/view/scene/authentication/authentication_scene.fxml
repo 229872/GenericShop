@@ -48,22 +48,6 @@
         </center>
     </BorderPane>
 
-    <HBox id="menu" StackPane.alignment="TOP_RIGHT">
-        <StackPane.margin>
-            <Insets top="10" right="10" />
-        </StackPane.margin>
-
-        <Button styleClass="menu_button" fx:id="buttonMinimize">
-            <graphic>
-                <FontAwesomeIconView glyphName="MINUS" size="22" />
-            </graphic>
-        </Button>
-
-        <Button styleClass="menu_button" fx:id="buttonCloseApp">
-            <graphic>
-                <FontAwesomeIconView glyphName="CLOSE" size="22" />
-            </graphic>
-        </Button>
-    </HBox>
+    <fx:include source="title_bar.fxml" StackPane.alignment="TOP_RIGHT" />
 
 </StackPane>

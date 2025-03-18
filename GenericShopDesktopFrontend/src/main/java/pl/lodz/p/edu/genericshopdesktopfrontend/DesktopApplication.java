@@ -9,6 +9,8 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.ErrorDialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.controller.SceneManager;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.image.ImageService;
 
+import java.util.Locale;
+
 public class DesktopApplication extends Application {
 
     private SceneManager sceneManager;
@@ -21,7 +23,7 @@ public class DesktopApplication extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            sceneManager = new SceneManager(primaryStage);
+            sceneManager = new SceneManager(primaryStage, Locale.forLanguageTag("pl"));
             sceneManager.switchToAuthenticationScene();
 
             primaryStage.initStyle(StageStyle.UNDECORATED);
@@ -33,6 +35,7 @@ public class DesktopApplication extends Application {
 
         } catch (Exception e) {
 
+            e.printStackTrace();
             Alert alert = new ErrorDialog("Critical error occurred.", "App can't start.");
             alert.show();
         }
