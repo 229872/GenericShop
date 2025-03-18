@@ -48,6 +48,6 @@
         </center>
     </BorderPane>
 
-    <fx:include source="title_bar.fxml" StackPane.alignment="TOP_RIGHT" />
+    <fx:include source="../../component/title_bar.fxml" StackPane.alignment="TOP_RIGHT" />
 
 </StackPane>

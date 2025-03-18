@@ -9,6 +9,7 @@
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="pl.lodz.p.edu.genericshopdesktopfrontend.controller.TitleBarController"
       id="menu"
+      stylesheets="@title_bar.css"
 >
     <StackPane.margin>
         <Insets top="10" right="10" />
