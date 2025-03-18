@@ -1,11 +1,9 @@
 package pl.lodz.p.edu.genericshopdesktopfrontend;
 
 import javafx.application.Application;
-import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.ErrorDialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.controller.SceneManager;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.image.ImageService;
 
@@ -36,8 +34,6 @@ public class DesktopApplication extends Application {
         } catch (Exception e) {
 
             e.printStackTrace();
-            Alert alert = new ErrorDialog("Critical error occurred.", "App can't start.");
-            alert.show();
         }
     }
 

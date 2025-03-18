@@ -11,7 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
-import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.ErrorDialog;
+import org.controlsfx.control.Notifications;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
 
@@ -59,7 +59,7 @@ class AuthenticationController implements Controller, Initializable {
 
         setUpButtons();
         setUpInputs();
-        setUpLanguageChoiceBox();
+        setUpLanguageChoiceBox(resourceBundle);
         Platform.runLater(() -> root.requestFocus());
     }
 
@@ -98,13 +98,13 @@ class AuthenticationController implements Controller, Initializable {
         });
     }
 
-    private void setUpLanguageChoiceBox() {
+    private void setUpLanguageChoiceBox(ResourceBundle languageBundle) {
         ObservableList<Locale> languages = FXCollections.observableArrayList(
             Locale.forLanguageTag("en"),
             Locale.forLanguageTag("pl")
         );
         comboBoxLanguage.setItems(languages);
-        comboBoxLanguage.setValue(Locale.forLanguageTag(Locale.getDefault().getLanguage()));
+        comboBoxLanguage.setValue(Locale.forLanguageTag(languageBundle.getLocale().getLanguage()));
         comboBoxLanguage.getSelectionModel()
             .selectedItemProperty()
             .addListener((observableValue, oldLocale, newLocale) -> {
@@ -116,8 +116,10 @@ class AuthenticationController implements Controller, Initializable {
                 } catch (ApplicationException e) {
                     e.printStackTrace();
 
-                    Alert alert = new ErrorDialog("Couldn't change language.", "");
-                    alert.show();
+                    Notifications.create()
+                        .title(languageBundle.getString("language.change.error.title"))
+                        .text(languageBundle.getString("language.change.error.content"))
+                        .showError();
                 }
             });
     }
