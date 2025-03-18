@@ -23,7 +23,7 @@ public class DesktopApplication extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            sceneManager = new SceneManager(primaryStage, Locale.getDefault());
+            sceneManager = new SceneManager(primaryStage, Locale.forLanguageTag("pl"));
             sceneManager.switchToAuthenticationScene();
 
             primaryStage.initStyle(StageStyle.UNDECORATED);

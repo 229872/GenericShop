@@ -14,6 +14,7 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationServi
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
 
@@ -24,12 +25,12 @@ public class SceneManager {
     private final Stage primaryStage;
     private final WindowManager windowManager;
 
-    private Locale locale;
+    private Locale applicationLanguage;
 
-    public SceneManager(Stage primaryStage, Locale locale) {
+    public SceneManager(Stage primaryStage, Locale applicationLanguage) {
 
         this.primaryStage = requireNonNull(primaryStage);
-        this.locale = requireNonNull(locale);
+        this.applicationLanguage = requireNonNull(applicationLanguage);
         this.windowManager = new WindowManager(primaryStage);
 
         primaryStage.setOnHiding(windowEvent -> windowManager.minimise());
@@ -45,15 +46,23 @@ public class SceneManager {
         loadScene(AUTHENTICATION_SCENE, controller);
     }
 
-    private void loadScene(String sceneStem, Controller controller) throws ApplicationException {
+    private void loadScene(String scenePathWithoutExtension, Controller controller) throws ApplicationException {
         try {
-            String fxmlPath = "%s.fxml".formatted(sceneStem);
-            String cssPath = "%s.css".formatted(sceneStem);
+            String fxmlPath = "%s.fxml".formatted(scenePathWithoutExtension);
+            String cssPath = "%s.css".formatted(scenePathWithoutExtension);
+
+            String i18nBundlePath = scenePathWithoutExtension
+                .substring(1)
+                .replace("/", ".")
+                .concat("_i18n");
+
             URL fxmlURL = requireNonNull(getClass().getResource(fxmlPath));
             URL cssURL = requireNonNull(getClass().getResource(cssPath));
+            ResourceBundle i18nResource = ResourceBundle.getBundle(i18nBundlePath, applicationLanguage);
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
             fxmlLoader.setController(controller);
+            fxmlLoader.setResources(i18nResource);
             Parent parent = fxmlLoader.load();
 
             Scene scene = new Scene(parent);
