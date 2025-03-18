@@ -22,20 +22,21 @@ public class SceneManager {
     private final String AUTHENTICATION_SCENE = "/view/scene/authentication/authentication_scene";
 
     private final Stage primaryStage;
+    private final WindowManager windowManager;
 
     private Locale locale;
-
-    private double xOffset, yOffset;
 
     public SceneManager(Stage primaryStage, Locale locale) {
 
         this.primaryStage = requireNonNull(primaryStage);
         this.locale = requireNonNull(locale);
+        this.windowManager = new WindowManager(primaryStage);
 
-        primaryStage.setOnHiding(windowEvent -> minimise());
+        primaryStage.setOnHiding(windowEvent -> windowManager.minimise());
+
         primaryStage.setOnCloseRequest(windowEvent -> {
             windowEvent.consume();
-            closeApp();
+            windowManager.closeApp();
         });
     }
 
@@ -57,8 +58,8 @@ public class SceneManager {
 
             Scene scene = new Scene(parent);
             scene.getStylesheets().add(cssURL.toExternalForm());
-            setUpWindowDragging(scene);
 
+            windowManager.setUpWindowDragging(scene);
             primaryStage.setScene(scene);
 
         } catch (IOException | NullPointerException e) {
@@ -66,29 +67,43 @@ public class SceneManager {
         }
     }
 
-    private void setUpWindowDragging(Scene scene) {
-        scene.setOnMousePressed(mouseEvent -> {
-            xOffset = mouseEvent.getX();
-            yOffset = mouseEvent.getY();
-        });
 
-        scene.setOnMouseDragged(mouseEvent -> {
-            primaryStage.setX(mouseEvent.getScreenX() - xOffset);
-            primaryStage.setY(mouseEvent.getScreenY() - yOffset);
-        });
-    }
 
-    public void closeApp() {
-        Alert alert = new SubmitDialog("You are about to close the app.", "Are you sure you want close app?");
 
-        alert.showAndWait()
-            .filter(buttonType -> buttonType.equals(ButtonType.OK))
-            .ifPresent(none -> Platform.exit());
-    }
 
-    public void minimise() {
-        if (primaryStage.isShowing()) {
-            primaryStage.setIconified(true);
+    private static class WindowManager {
+
+        private double xOffset, yOffset;
+        private final Stage primaryStage;
+
+        private WindowManager(Stage primaryStage) {
+            this.primaryStage = primaryStage;
+        }
+
+        private void setUpWindowDragging(Scene scene) {
+            scene.setOnMousePressed(mouseEvent -> {
+                xOffset = mouseEvent.getX();
+                yOffset = mouseEvent.getY();
+            });
+
+            scene.setOnMouseDragged(mouseEvent -> {
+                primaryStage.setX(mouseEvent.getScreenX() - xOffset);
+                primaryStage.setY(mouseEvent.getScreenY() - yOffset);
+            });
+        }
+
+        private void closeApp() {
+            Alert alert = new SubmitDialog("You are about to close the app.", "Are you sure you want close app?");
+
+            alert.showAndWait()
+                .filter(buttonType -> buttonType.equals(ButtonType.OK))
+                .ifPresent(none -> Platform.exit());
+        }
+
+        private void minimise() {
+            if (primaryStage.isShowing()) {
+                primaryStage.setIconified(true);
+            }
         }
     }
 }
