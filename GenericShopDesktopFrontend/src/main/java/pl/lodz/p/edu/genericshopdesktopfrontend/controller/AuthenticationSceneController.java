@@ -28,7 +28,7 @@ import static java.util.Objects.requireNonNull;
 import static pl.lodz.p.edu.genericshopdesktopfrontend.model.pattern.DataPatterns.LOGIN_PATTERN;
 import static pl.lodz.p.edu.genericshopdesktopfrontend.model.pattern.DataPatterns.PASSWORD_PATTERN;
 
-class AuthenticationController implements Controller, Initializable {
+class AuthenticationSceneController implements Controller, Initializable {
 
     private final AnimationService animationService;
 
@@ -38,8 +38,8 @@ class AuthenticationController implements Controller, Initializable {
 
     private final AuthenticationService authenticationService;
 
-    AuthenticationController(AnimationService animationService, SceneManager sceneManager,
-                             HttpService httpService, AuthenticationService authenticationService) {
+    AuthenticationSceneController(AnimationService animationService, SceneManager sceneManager,
+                                  HttpService httpService, AuthenticationService authenticationService) {
         this.animationService = requireNonNull(animationService);
         this.sceneManager = requireNonNull(sceneManager);
         this.httpService = requireNonNull(httpService);
@@ -109,6 +109,8 @@ class AuthenticationController implements Controller, Initializable {
                 textPasswordError.setVisible(false);
             }
         });
+
+        passwordFieldPassword.setOnAction(actionEvent -> buttonSignIn.fire());
     }
 
     private void setUpLanguageChoiceBox(ResourceBundle languageBundle) {
@@ -157,9 +159,9 @@ class AuthenticationController implements Controller, Initializable {
             Tokens tokens = httpService.sendAuthenticationRequest(login, password);
             authenticationService.authenticate(tokens);
 
-            // redirect to new stage and close current
-
             clearForm();
+
+            sceneManager.switchToMainScene();
 
             Notifications.create()
                 .position(Pos.TOP_RIGHT)

@@ -17,6 +17,7 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
@@ -24,6 +25,7 @@ import static java.util.Objects.requireNonNull;
 public class SceneManager {
 
     private final String AUTHENTICATION_SCENE = "/view/scene/authentication/authentication_scene";
+    private final String MAIN_SCENE = "/view/scene/main/main_scene";
 
     private final Stage primaryStage;
     private final WindowManager windowManager;
@@ -52,11 +54,16 @@ public class SceneManager {
     public void switchToAuthenticationScene() throws ApplicationException {
         AuthenticationService authService = AuthenticationService.getInstance();
         HttpService httpService = HttpService.getInstance();
-        Controller controller = new AuthenticationController(
+        Controller controller = new AuthenticationSceneController(
             AnimationService.getInstance(), this, httpService, authService
         );
 
         loadScene(AUTHENTICATION_SCENE, controller);
+    }
+
+    public void switchToMainScene() throws ApplicationException {
+
+        loadScene(MAIN_SCENE, new MainSceneController(this));
     }
 
     private void loadScene(String scenePathWithoutExtension, Controller controller) throws ApplicationException {
@@ -70,7 +77,6 @@ public class SceneManager {
                 .concat("_i18n");
 
             URL fxmlURL = requireNonNull(getClass().getResource(fxmlPath));
-            URL cssURL = requireNonNull(getClass().getResource(cssPath));
             ResourceBundle i18nResource = ResourceBundle.getBundle(i18nBundlePath, applicationLanguage);
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
@@ -79,7 +85,9 @@ public class SceneManager {
             Parent parent = fxmlLoader.load();
 
             Scene scene = new Scene(parent);
-            scene.getStylesheets().add(cssURL.toExternalForm());
+
+            Optional.ofNullable(getClass().getResource(cssPath))
+                .ifPresent(cssURL -> scene.getStylesheets().add(cssURL.toExternalForm()));
 
             windowManager.setUpWindowDragging(scene);
             primaryStage.setScene(scene);

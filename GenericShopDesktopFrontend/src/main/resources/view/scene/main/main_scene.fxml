@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Pane?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           prefHeight="850" prefWidth="1300">
+
+    <BorderPane fx:id="borderPane">
+        <left>
+            <VBox id="nav_bar">
+                <Button fx:id="buttonMenu" styleClass="nav_button">
+                    <graphic>
+                        <FontAwesomeIconView styleClass="nav_button_icon" glyphName="REORDER" size="35" />
+                    </graphic>
+                </Button>
+                <Button fx:id="buttonAccount" styleClass="nav_button">
+                    <graphic>
+                        <FontAwesomeIconView styleClass="nav_button_icon" glyphName="USER" size="35" />
+                    </graphic>
+                </Button>
+                <Button fx:id="buttonCart" styleClass="nav_button">
+                    <graphic>
+                        <FontAwesomeIconView styleClass="nav_button_icon" glyphName="SHOPPING_CART" size="35" />
+                    </graphic>
+                </Button>
+                <Button fx:id="buttonHome" styleClass="nav_button">
+                    <graphic>
+                        <FontAwesomeIconView styleClass="nav_button_icon" glyphName="HOME" size="35" />
+                    </graphic>
+                </Button>
+                <Button fx:id="buttonOrders" styleClass="nav_button">
+                    <graphic>
+                        <FontAwesomeIconView styleClass="nav_button_icon" glyphName="SHOPPING_BAG" size="35" />
+                    </graphic>
+                </Button>
+
+                <Pane VBox.vgrow="ALWAYS" />
+
+                <VBox id="language_container" fx:id="vboxLanguage" />
+
+                <VBox id="active_role_container" fx:id="vboxActiveRole" />
+
+                <Button fx:id="buttonSignOut" styleClass="nav_button">
+                    <graphic>
+                        <FontAwesomeIconView styleClass="nav_button_icon" glyphName="SIGN_OUT" size="35" />
+                    </graphic>
+                </Button>
+            </VBox>
+        </left>
+    </BorderPane>
+
+    <fx:include source="../../component/title_bar.fxml" StackPane.alignment="TOP_RIGHT" />
+</StackPane>

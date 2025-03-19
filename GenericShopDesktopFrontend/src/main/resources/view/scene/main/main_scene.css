@@ -1,0 +1,52 @@
+.root {
+    -fx-font-family: Chilanka;
+}
+
+#nav_bar {
+    -fx-background-color: #000;
+    -fx-min-width: 100;
+    -fx-alignment: TOP_LEFT;
+}
+
+.nav_button {
+    -fx-background-color: #000;
+    -fx-min-width: 95;
+
+    -fx-font-size: 35;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFF;
+
+    -fx-border-color: #FFF;
+    -fx-border-width: 0 0 2 0;
+}
+
+.nav_button:hover {
+    -fx-background-color: #333;
+    -fx-border-width: 0 2 2 0;
+}
+
+.nav_button_selected {
+    -fx-background-color: #555;
+    -fx-min-width: 95;
+
+    -fx-font-size: 35;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFF;
+
+    -fx-border-color: #FFF;
+    -fx-border-width: 2 2 2 2;
+}
+
+.nav_button_icon {
+    -fx-fill: #FFF;
+}
+
+#language_container {
+    -fx-alignment: CENTER_LEFT;
+    -fx-spacing: 5;
+}
+
+#active_role_container {
+    -fx-alignment: CENTER_LEFT;
+    -fx-spacing: 5;
+}

@@ -10,4 +10,6 @@
     -fx-alignment: top-right;
     -fx-spacing: 5;
     -fx-max-height: 50px;
+
+    -fx-max-width: 100px;
 }

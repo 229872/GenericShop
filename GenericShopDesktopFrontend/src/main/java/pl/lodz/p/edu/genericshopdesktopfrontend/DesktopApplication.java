@@ -32,7 +32,7 @@ public class DesktopApplication extends Application {
             rootLanguageBundle = ResourceBundle.getBundle(rootBundleName, applicationDefaultLanguage);
 
             sceneManager = new SceneManager(primaryStage, Locale.getDefault(), "bundles.i18n");
-            sceneManager.switchToAuthenticationScene();
+            sceneManager.switchToMainScene();
 
             primaryStage.initStyle(StageStyle.UNDECORATED);
             primaryStage.setTitle(rootLanguageBundle.getString("title"));
