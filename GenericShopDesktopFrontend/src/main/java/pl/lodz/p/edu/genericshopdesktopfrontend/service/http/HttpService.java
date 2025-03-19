@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
 
-import java.io.IOException;
 import java.net.http.HttpClient;
 
 public interface HttpService {
@@ -17,6 +16,5 @@ public interface HttpService {
         );
     }
 
-    Tokens sendAuthenticationRequest(String login, String password)
-        throws IOException, InterruptedException, ApplicationException;
+    Tokens sendAuthenticationRequest(String login, String password) throws ApplicationException;
 }

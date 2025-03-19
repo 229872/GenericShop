@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthenticationService;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 
 import java.io.IOException;
 import java.net.URL;
@@ -48,7 +50,12 @@ public class SceneManager {
     }
 
     public void switchToAuthenticationScene() throws ApplicationException {
-        Controller controller = new AuthenticationController(AnimationService.getInstance(), this);
+        AuthenticationService authService = AuthenticationService.getInstance();
+        HttpService httpService = HttpService.getInstance();
+        Controller controller = new AuthenticationController(
+            AnimationService.getInstance(), this, httpService, authService
+        );
+
         loadScene(AUTHENTICATION_SCENE, controller);
     }
 

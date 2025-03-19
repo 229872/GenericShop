@@ -7,13 +7,17 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import org.controlsfx.control.Notifications;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
+import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthenticationService;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 
 import java.net.URL;
 import java.util.Locale;
@@ -30,9 +34,16 @@ class AuthenticationController implements Controller, Initializable {
 
     private final SceneManager sceneManager;
 
-    AuthenticationController(AnimationService animationService, SceneManager sceneManager) {
+    private final HttpService httpService;
+
+    private final AuthenticationService authenticationService;
+
+    AuthenticationController(AnimationService animationService, SceneManager sceneManager,
+                             HttpService httpService, AuthenticationService authenticationService) {
         this.animationService = requireNonNull(animationService);
         this.sceneManager = requireNonNull(sceneManager);
+        this.httpService = requireNonNull(httpService);
+        this.authenticationService = requireNonNull(authenticationService);
     }
 
     @FXML
@@ -57,13 +68,13 @@ class AuthenticationController implements Controller, Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        setUpButtons();
+        setUpButtons(resourceBundle);
         setUpInputs();
         setUpLanguageChoiceBox(resourceBundle);
         Platform.runLater(() -> root.requestFocus());
     }
 
-    private void setUpButtons() {
+    private void setUpButtons(ResourceBundle bundle) {
         BooleanBinding isFormValidBinding = Bindings.createBooleanBinding(
             this::isFormValid, textFieldLogin.textProperty(), passwordFieldPassword.textProperty());
 
@@ -73,6 +84,8 @@ class AuthenticationController implements Controller, Initializable {
 
         buttonSignIn.disableProperty().bind(isFormValidBinding.not());
         buttonSignIn.effectProperty().bind(blurEffectButtonBinding);
+
+        buttonSignIn.setOnAction(actionEvent -> authenticate(bundle));
     }
 
     private void setUpInputs() {
@@ -117,6 +130,7 @@ class AuthenticationController implements Controller, Initializable {
                     e.printStackTrace();
 
                     Notifications.create()
+                        .position(Pos.TOP_RIGHT)
                         .title(languageBundle.getString("language.change.error.title"))
                         .text(languageBundle.getString("language.change.error.content"))
                         .showError();
@@ -135,4 +149,38 @@ class AuthenticationController implements Controller, Initializable {
         return pattern.matcher(control.getText()).matches();
     }
 
+    private void authenticate(ResourceBundle bundle) {
+        try {
+            String login = textFieldLogin.getText();
+            String password = passwordFieldPassword.getText();
+
+            Tokens tokens = httpService.sendAuthenticationRequest(login, password);
+            authenticationService.authenticate(tokens);
+
+            // redirect to new stage and close current
+
+            clearForm();
+
+            Notifications.create()
+                .position(Pos.TOP_RIGHT)
+                .title(bundle.getString("authentication.success.title"))
+                .text(bundle.getString("authentication.success.text"))
+                .showInformation();
+
+
+        } catch (ApplicationException e) {
+            e.printStackTrace();
+
+            Notifications.create()
+                .position(Pos.TOP_RIGHT)
+                .title(bundle.getString("authentication.error.title"))
+                .text(bundle.getString("authentication.error.text"))
+                .showError();
+        }
+    }
+
+    private void clearForm() {
+        textFieldLogin.clear();
+        passwordFieldPassword.clear();
+    }
 }

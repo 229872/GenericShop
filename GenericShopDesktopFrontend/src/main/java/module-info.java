@@ -11,4 +11,5 @@ module pl.lodz.p.edu.genericshopdesktopfrontend {
     opens pl.lodz.p.edu.genericshopdesktopfrontend.controller to javafx.fxml;
 
     exports pl.lodz.p.edu.genericshopdesktopfrontend;
+    exports pl.lodz.p.edu.genericshopdesktopfrontend.model to com.fasterxml.jackson.databind;
 }

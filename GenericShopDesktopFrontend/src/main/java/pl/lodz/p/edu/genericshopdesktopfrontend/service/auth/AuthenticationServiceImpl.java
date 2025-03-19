@@ -8,9 +8,11 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.model.Role;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 enum AuthenticationServiceImpl implements AuthenticationService {
 
@@ -42,8 +44,15 @@ enum AuthenticationServiceImpl implements AuthenticationService {
             JWT parsedToken = JWTParser.parse(tokens.authToken());
             JWTClaimsSet claims = parsedToken.getJWTClaimsSet();
 
-            String role = claims.getClaimAsString("activeRole");
-            this.activeRole = Role.valueOf(role);
+            String[] textRoles = claims.getStringArrayClaim("accountRoles");
+
+            roles = Arrays.stream(textRoles)
+                .map(Role::valueOf)
+                .collect(Collectors.toSet());
+
+            activeRole = roles.stream()
+                .findFirst()
+                .orElse(Role.GUEST);
 
         } catch (ParseException | IllegalArgumentException e) {
             throw new ApplicationException("Could not authenticate", e);

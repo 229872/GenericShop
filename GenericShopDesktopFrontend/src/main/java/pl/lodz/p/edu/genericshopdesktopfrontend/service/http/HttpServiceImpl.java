@@ -21,6 +21,9 @@ class HttpServiceImpl implements HttpService {
     private final String API_ROOT;
     private final JsonMapper jsonMapper;
 
+    private final String APPLICATION_JSON = "Application/json";
+    private final String CONTENT_TYPE = "Content-Type";
+
     HttpServiceImpl(HttpClient client, String apiRoot, JsonMapper jsonMapper) {
         this.client = requireNonNull(client);
         this.API_ROOT = requireNonNull(apiRoot);
@@ -38,6 +41,7 @@ class HttpServiceImpl implements HttpService {
             String json = jsonMapper.writeValueAsString(obj);
 
             HttpRequest request = HttpRequest.newBuilder(URI.create("%s/auth".formatted(API_ROOT)))
+                .header(CONTENT_TYPE, APPLICATION_JSON)
                 .POST(BodyPublishers.ofString(json))
                 .build();
 

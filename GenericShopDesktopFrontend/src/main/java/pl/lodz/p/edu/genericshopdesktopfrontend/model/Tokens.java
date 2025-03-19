@@ -1,4 +1,8 @@
 package pl.lodz.p.edu.genericshopdesktopfrontend.model;
 
-public record Tokens(String authToken, String refreshToken) {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record Tokens(
+    @JsonProperty("token") String authToken,
+    String refreshToken) {
 }
