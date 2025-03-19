@@ -4,13 +4,14 @@
 
 #nav_bar {
     -fx-background-color: #000;
-    -fx-min-width: 100;
+    -fx-min-width: 130;
+    -fx-max-width: 130;
     -fx-alignment: TOP_LEFT;
 }
 
 .nav_button {
     -fx-background-color: #000;
-    -fx-min-width: 95;
+    -fx-min-width: 125;
 
     -fx-font-size: 35;
     -fx-font-weight: bold;
@@ -41,12 +42,36 @@
     -fx-fill: #FFF;
 }
 
+.choices_button {
+    -fx-background-color: #000;
+    -fx-min-width: 125;
+
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFF;
+}
+
+.choices_button:hover {
+    -fx-background-color: #333;
+}
+
+#choices_container {
+    -fx-alignment: CENTER;
+    -fx-spacing: 10;
+}
+
+.choices_label {
+    -fx-fill: #FFF;
+}
+
 #language_container {
+    -fx-padding: 15;
     -fx-alignment: CENTER_LEFT;
-    -fx-spacing: 5;
+    -fx-spacing: 10;
 }
 
 #active_role_container {
+    -fx-padding: 15;
     -fx-alignment: CENTER_LEFT;
-    -fx-spacing: 5;
+    -fx-spacing: 10;
 }

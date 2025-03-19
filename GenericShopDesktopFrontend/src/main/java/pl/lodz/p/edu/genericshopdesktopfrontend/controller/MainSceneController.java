@@ -1,10 +1,12 @@
 package pl.lodz.p.edu.genericshopdesktopfrontend.controller;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -23,16 +25,23 @@ class MainSceneController implements Controller, Initializable {
     private BorderPane borderPane;
 
     @FXML
-    private Button buttonMenu, buttonAccount, buttonCart, buttonHome, buttonOrders, buttonSignOut;
+    private Button buttonMenu, buttonAccount, buttonCart, buttonHome, buttonOrders;
+
+    @FXML
+    private Button buttonLanguage, buttonActiveRole, buttonSignOut;
 
     @FXML
     private VBox vboxLanguage, vboxActiveRole;
+
+    @FXML
+    private FontAwesomeIconView iconLanguageArrow, iconActiveRoleArrow;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         setUpButtons();
+        setUpGroups();
     }
 
     private void setUpButtons() {
@@ -42,7 +51,30 @@ class MainSceneController implements Controller, Initializable {
         buttonCart.setOnAction(actionEvent -> showCart());
         buttonHome.setOnAction(actionEvent -> showHomePanel());
         buttonOrders.setOnAction(actionEvent -> showOrdersPanel());
+
+        buttonLanguage.setOnAction(actionEvent -> toggleLanguage());
+        buttonActiveRole.setOnAction(actionEvent -> toggleActiveRole());
         buttonSignOut.setOnAction(actionEvent -> signOut());
+    }
+
+    private void setUpGroups() {
+
+        Font buttonsFont = Font.font(15.0);
+
+    }
+
+    private void toggleLanguage() {
+        boolean isVisible = vboxLanguage.isVisible();
+        vboxLanguage.setVisible(!isVisible);
+        vboxLanguage.setManaged(!isVisible);
+        iconLanguageArrow.setGlyphName(isVisible ? "CARET_RIGHT" : "CARET_DOWN");
+    }
+
+    private void toggleActiveRole() {
+        boolean isVisible = vboxActiveRole.isVisible();
+        vboxActiveRole.setVisible(!isVisible);
+        vboxActiveRole.setManaged(!isVisible);
+        iconActiveRoleArrow.setGlyphName(isVisible ? "CARET_RIGHT" : "CARET_DOWN");
     }
 
     private void showMenuBar() {
