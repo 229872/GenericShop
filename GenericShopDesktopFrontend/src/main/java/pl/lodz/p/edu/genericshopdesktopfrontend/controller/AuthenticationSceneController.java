@@ -123,20 +123,9 @@ class AuthenticationSceneController implements Controller, Initializable {
         comboBoxLanguage.getSelectionModel()
             .selectedItemProperty()
             .addListener((observableValue, oldLocale, newLocale) -> {
-                try {
-                    Locale.setDefault(newLocale);
-                    sceneManager.setApplicationLanguage(newLocale);
-                    sceneManager.switchToAuthenticationScene();
-
-                } catch (ApplicationException e) {
-                    e.printStackTrace();
-
-                    Notifications.create()
-                        .position(Pos.TOP_RIGHT)
-                        .title(languageBundle.getString("language.change.error.title"))
-                        .text(languageBundle.getString("language.change.error.content"))
-                        .showError();
-                }
+                Locale.setDefault(newLocale);
+                sceneManager.setApplicationLanguage(newLocale);
+                sceneManager.switchToAuthenticationScene();
             });
     }
 

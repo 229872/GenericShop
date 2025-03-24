@@ -8,6 +8,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import org.controlsfx.control.Notifications;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
@@ -51,19 +52,37 @@ public class SceneManager {
         });
     }
 
-    public void switchToAuthenticationScene() throws ApplicationException {
-        AuthenticationService authService = AuthenticationService.getInstance();
-        HttpService httpService = HttpService.getInstance();
-        Controller controller = new AuthenticationSceneController(
-            AnimationService.getInstance(), this, httpService, authService
-        );
+    public void switchToAuthenticationScene() {
+        try {
+            AuthenticationService authService = AuthenticationService.getInstance();
+            HttpService httpService = HttpService.getInstance();
+            Controller controller = new AuthenticationSceneController(
+                AnimationService.getInstance(), this, httpService, authService
+            );
 
-        loadScene(AUTHENTICATION_SCENE, controller);
+            loadScene(AUTHENTICATION_SCENE, controller);
+
+        } catch (ApplicationException e) {
+            e.printStackTrace();
+            showErrorNotification();
+        }
     }
 
-    public void switchToMainScene() throws ApplicationException {
+    private void showErrorNotification() {
+        Notifications.create()
+            .title(rootLanguageBundle.getString("error.title"))
+            .text(rootLanguageBundle.getString("error.switchscene.content"))
+            .showError();
+    }
 
-        loadScene(MAIN_SCENE, new MainSceneController(this, AuthenticationService.getInstance()));
+    public void switchToMainScene() {
+        try {
+            loadScene(MAIN_SCENE, new MainSceneController(this, AuthenticationService.getInstance()));
+
+        } catch (ApplicationException e) {
+            e.printStackTrace();
+            showErrorNotification();
+        }
     }
 
     private void loadScene(String scenePathWithoutExtension, Controller controller) throws ApplicationException {

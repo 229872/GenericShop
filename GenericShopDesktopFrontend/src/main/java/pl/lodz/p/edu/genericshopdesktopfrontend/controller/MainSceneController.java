@@ -9,9 +9,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import org.controlsfx.control.Notifications;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.Dialog;
-import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthenticationService;
 
 import java.net.URL;
@@ -115,16 +113,8 @@ class MainSceneController implements Controller, Initializable {
             .showAndWait()
             .filter(buttonType -> buttonType.equals(ButtonType.OK))
             .ifPresent(none -> {
-                try {
-                    authenticationService.logout();
-                    sceneManager.switchToAuthenticationScene();
-
-                } catch (ApplicationException e) {
-
-                    e.printStackTrace();
-                    Notifications.create()
-                        .showError();
-                }
+                authenticationService.logout();
+                sceneManager.switchToAuthenticationScene();
             });
     }
 }
