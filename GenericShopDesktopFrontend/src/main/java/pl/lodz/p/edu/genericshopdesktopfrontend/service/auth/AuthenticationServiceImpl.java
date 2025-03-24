@@ -8,11 +8,10 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.model.Role;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Objects.nonNull;
 
 enum AuthenticationServiceImpl implements AuthenticationService {
 
@@ -65,5 +64,23 @@ enum AuthenticationServiceImpl implements AuthenticationService {
         refreshToken = "";
         roles.clear();
         activeRole = Role.GUEST;
+    }
+
+    @Override
+    public Set<Role> getAccountRoles() {
+        return Set.copyOf(roles);
+    }
+
+    @Override
+    public Role getActiveRole() {
+        return activeRole;
+    }
+
+    @Override
+    public Role setActiveRole(Role newActiveRole) {
+        if (nonNull(newActiveRole)) {
+            this.activeRole = newActiveRole;
+        }
+        return this.activeRole;
     }
 }
