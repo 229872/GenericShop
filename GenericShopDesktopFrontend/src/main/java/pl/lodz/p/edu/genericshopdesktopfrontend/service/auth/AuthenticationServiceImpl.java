@@ -58,4 +58,12 @@ enum AuthenticationServiceImpl implements AuthenticationService {
             throw new ApplicationException("Could not authenticate", e);
         }
     }
+
+    @Override
+    public void logout() {
+        authToken = "";
+        refreshToken = "";
+        roles.clear();
+        activeRole = Role.GUEST;
+    }
 }

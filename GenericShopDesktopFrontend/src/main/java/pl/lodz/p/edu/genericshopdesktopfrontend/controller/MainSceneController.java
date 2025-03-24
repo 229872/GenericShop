@@ -3,10 +3,16 @@ package pl.lodz.p.edu.genericshopdesktopfrontend.controller;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import org.controlsfx.control.Notifications;
+import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.Dialog;
+import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthenticationService;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -17,8 +23,11 @@ class MainSceneController implements Controller, Initializable {
 
     private final SceneManager sceneManager;
 
-    MainSceneController(SceneManager sceneManager) {
+    private final AuthenticationService authenticationService;
+
+    MainSceneController(SceneManager sceneManager, AuthenticationService authenticationService) {
         this.sceneManager = requireNonNull(sceneManager);
+        this.authenticationService = requireNonNull(authenticationService);
     }
 
     @FXML
@@ -40,11 +49,11 @@ class MainSceneController implements Controller, Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        setUpButtons();
+        setUpButtons(resourceBundle);
         setUpGroups();
     }
 
-    private void setUpButtons() {
+    private void setUpButtons(ResourceBundle bundle) {
 
         buttonMenu.setOnAction(actionEvent -> showMenuBar());
         buttonAccount.setOnAction(actionEvent -> showAccountPanel());
@@ -54,7 +63,7 @@ class MainSceneController implements Controller, Initializable {
 
         buttonLanguage.setOnAction(actionEvent -> toggleLanguage());
         buttonActiveRole.setOnAction(actionEvent -> toggleActiveRole());
-        buttonSignOut.setOnAction(actionEvent -> signOut());
+        buttonSignOut.setOnAction(actionEvent -> signOut(bundle));
     }
 
     private void setUpGroups() {
@@ -97,7 +106,25 @@ class MainSceneController implements Controller, Initializable {
 
     }
 
-    private void signOut() {
+    private void signOut(ResourceBundle bundle) {
 
+        new Dialog(Alert.AlertType.CONFIRMATION)
+            .title(bundle.getString("logout.dialog.title"))
+            .headerText(bundle.getString("logout.dialog.header"))
+            .contentText(bundle.getString("logout.dialog.content"))
+            .showAndWait()
+            .filter(buttonType -> buttonType.equals(ButtonType.OK))
+            .ifPresent(none -> {
+                try {
+                    authenticationService.logout();
+                    sceneManager.switchToAuthenticationScene();
+
+                } catch (ApplicationException e) {
+
+                    e.printStackTrace();
+                    Notifications.create()
+                        .showError();
+                }
+            });
     }
 }

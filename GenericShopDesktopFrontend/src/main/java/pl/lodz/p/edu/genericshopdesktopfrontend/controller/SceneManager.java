@@ -63,7 +63,7 @@ public class SceneManager {
 
     public void switchToMainScene() throws ApplicationException {
 
-        loadScene(MAIN_SCENE, new MainSceneController(this));
+        loadScene(MAIN_SCENE, new MainSceneController(this, AuthenticationService.getInstance()));
     }
 
     private void loadScene(String scenePathWithoutExtension, Controller controller) throws ApplicationException {

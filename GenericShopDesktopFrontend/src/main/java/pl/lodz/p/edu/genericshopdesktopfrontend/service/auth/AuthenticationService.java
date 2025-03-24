@@ -10,4 +10,6 @@ public sealed interface AuthenticationService permits AuthenticationServiceImpl 
     }
 
     void authenticate(Tokens tokens) throws ApplicationException;
+
+    void logout();
 }
