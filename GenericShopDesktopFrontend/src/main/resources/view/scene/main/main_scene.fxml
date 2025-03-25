@@ -3,6 +3,11 @@
 <?import de.jensd.fx.glyphs.fontawesome.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<?import javafx.scene.image.ImageView?>
+
+<?import javafx.geometry.Insets?>
 <StackPane xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml"
            prefHeight="850" prefWidth="1300">
@@ -10,62 +15,150 @@
     <BorderPane fx:id="borderPane">
         <left>
             <VBox id="nav_bar">
-                <Button fx:id="buttonMenu" styleClass="nav_button">
-                    <graphic>
-                        <FontAwesomeIconView styleClass="nav_button_icon" glyphName="REORDER" size="35" />
-                    </graphic>
-                </Button>
+                <ImageView fx:id="imageViewAvatar" id="nav_avatar" fitHeight="115" fitWidth="115" preserveRatio="true">
+                    <VBox.margin>
+                        <Insets top="50" />
+                    </VBox.margin>
+                </ImageView>
+
+                <Label fx:id="labelLogin" id="nav_avatar_label" />
+
                 <Button fx:id="buttonAccount" styleClass="nav_button">
                     <graphic>
-                        <FontAwesomeIconView styleClass="nav_button_icon" glyphName="USER" size="35" />
+                        <GridPane hgap="20">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="40" maxWidth="40"/>  <!-- Icon column -->
+                                <ColumnConstraints minWidth="100" hgrow="ALWAYS"/>  <!-- Text column -->
+                            </columnConstraints>
+                            <FontAwesomeIconView
+                                    styleClass="nav_button_icon"
+                                    glyphName="USER_PLUS"
+                                    size="40"
+                                    GridPane.columnIndex="0"
+                            />
+                            <Text
+                                    styleClass="nav_button_text"
+                                    text="%account"
+                                    GridPane.columnIndex="1"
+                            />
+                        </GridPane>
                     </graphic>
                 </Button>
+
                 <Button fx:id="buttonCart" styleClass="nav_button">
                     <graphic>
-                        <FontAwesomeIconView styleClass="nav_button_icon" glyphName="SHOPPING_CART" size="35" />
+                        <GridPane hgap="20">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="40" maxWidth="40"/>  <!-- Icon column -->
+                                <ColumnConstraints minWidth="100" hgrow="ALWAYS"/>  <!-- Text column -->
+                            </columnConstraints>
+                            <FontAwesomeIconView
+                                    styleClass="nav_button_icon"
+                                    glyphName="SHOPPING_CART"
+                                    size="40"
+                                    GridPane.columnIndex="0"
+                            />
+                            <Text
+                                    styleClass="nav_button_text"
+                                    text="%cart"
+                                    GridPane.columnIndex="1"
+                            />
+                        </GridPane>
                     </graphic>
                 </Button>
+
                 <Button fx:id="buttonHome" styleClass="nav_button">
                     <graphic>
-                        <FontAwesomeIconView styleClass="nav_button_icon" glyphName="HOME" size="35" />
+                        <GridPane hgap="20">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="40" maxWidth="40"/>  <!-- Icon column -->
+                                <ColumnConstraints minWidth="100" hgrow="ALWAYS"/>  <!-- Text column -->
+                            </columnConstraints>
+                            <FontAwesomeIconView
+                                    styleClass="nav_button_icon"
+                                    glyphName="TAGS"
+                                    size="40"
+                                    GridPane.columnIndex="0"
+                            />
+                            <Text
+                                    styleClass="nav_button_text"
+                                    text="%home"
+                                    GridPane.columnIndex="1"
+                            />
+                        </GridPane>
                     </graphic>
                 </Button>
+
                 <Button fx:id="buttonOrders" styleClass="nav_button">
                     <graphic>
-                        <FontAwesomeIconView styleClass="nav_button_icon" glyphName="SHOPPING_BAG" size="35" />
+                        <GridPane hgap="20">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="40" maxWidth="40"/>  <!-- Icon column -->
+                                <ColumnConstraints minWidth="100" hgrow="ALWAYS"/>  <!-- Text column -->
+                            </columnConstraints>
+                            <FontAwesomeIconView
+                                    styleClass="nav_button_icon"
+                                    glyphName="SHOPPING_BAG"
+                                    size="40"
+                                    GridPane.columnIndex="0"
+                            />
+                            <Text
+                                    styleClass="nav_button_text"
+                                    text="%orders"
+                                    GridPane.columnIndex="1"
+                            />
+                        </GridPane>
+                    </graphic>
+                </Button>
+
+                <Button fx:id="buttonSettings" styleClass="nav_button">
+                    <graphic>
+                        <GridPane hgap="20">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="40" maxWidth="40"/>  <!-- Icon column -->
+                                <ColumnConstraints minWidth="100" hgrow="ALWAYS"/>  <!-- Text column -->
+                            </columnConstraints>
+                            <FontAwesomeIconView
+                                    styleClass="nav_button_icon"
+                                    glyphName="GEAR"
+                                    size="40"
+                                    GridPane.columnIndex="0"
+                            />
+                            <Text
+                                    styleClass="nav_button_text"
+                                    text="%settings"
+                                    GridPane.columnIndex="1"
+                            />
+                        </GridPane>
                     </graphic>
                 </Button>
 
                 <Pane VBox.vgrow="ALWAYS" />
 
-                <VBox id="choices_container">
-                    <Button fx:id="buttonLanguage" styleClass="choices_button">
-                        <graphic>
-                            <HBox spacing="10" alignment="CENTER">
-                                <FontAwesomeIconView styleClass="choices_label" glyphName="LANGUAGE" size="25" />
-                                <FontAwesomeIconView fx:id="iconLanguageArrow" styleClass="choices_label" glyphName="CARET_RIGHT" size="20" />
-                            </HBox>
-                        </graphic>
-                    </Button>
-
-                    <VBox id="language_container" fx:id="vboxLanguage" visible="false" managed="false" />
-
-                    <Button fx:id="buttonActiveRole" styleClass="choices_button">
-                        <graphic>
-                            <HBox spacing="10" alignment="CENTER">
-                                <FontAwesomeIconView styleClass="choices_label" glyphName="SHIELD" size="25" />
-                                <FontAwesomeIconView fx:id="iconActiveRoleArrow" styleClass="choices_label" glyphName="CARET_RIGHT" size="20" />
-                            </HBox>
-                        </graphic>
-                    </Button>
-
-                    <VBox id="active_role_container" fx:id="vboxActiveRole" visible="false" managed="false" />
-
-                </VBox>
-
                 <Button fx:id="buttonSignOut" styleClass="nav_button">
+
+                    <VBox.margin>
+                        <Insets bottom="30" />
+                    </VBox.margin>
+
                     <graphic>
-                        <FontAwesomeIconView styleClass="nav_button_icon" glyphName="SIGN_OUT" size="35" />
+                        <GridPane hgap="20">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="40" maxWidth="40"/>  <!-- Icon column -->
+                                <ColumnConstraints minWidth="100" hgrow="ALWAYS"/>  <!-- Text column -->
+                            </columnConstraints>
+                            <FontAwesomeIconView
+                                    styleClass="nav_button_icon"
+                                    glyphName="SIGN_OUT"
+                                    size="40"
+                                    GridPane.columnIndex="0"
+                            />
+                            <Text
+                                    styleClass="nav_button_text"
+                                    text="%signout"
+                                    GridPane.columnIndex="1"
+                            />
+                        </GridPane>
                     </graphic>
                 </Button>
             </VBox>

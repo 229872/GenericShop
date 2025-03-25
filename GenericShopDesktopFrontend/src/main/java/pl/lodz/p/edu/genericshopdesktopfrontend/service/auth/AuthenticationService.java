@@ -4,6 +4,7 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Role;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
 
+import java.util.Optional;
 import java.util.Set;
 
 public sealed interface AuthenticationService permits AuthenticationServiceImpl {
@@ -21,4 +22,6 @@ public sealed interface AuthenticationService permits AuthenticationServiceImpl 
     Role getActiveRole();
 
     Role setActiveRole(Role newActiveRole);
+
+    Optional<String> getLogin();
 }

@@ -33,6 +33,8 @@ enum AuthenticationServiceImpl implements AuthenticationService {
         return Optional.ofNullable(refreshToken);
     }
 
+    private String login;
+
 
     @Override
     public void authenticate(Tokens tokens) throws ApplicationException {
@@ -44,6 +46,8 @@ enum AuthenticationServiceImpl implements AuthenticationService {
             JWTClaimsSet claims = parsedToken.getJWTClaimsSet();
 
             String[] textRoles = claims.getStringArrayClaim("accountRoles");
+
+            login = claims.getSubject();
 
             roles = Arrays.stream(textRoles)
                 .map(Role::valueOf)
@@ -62,6 +66,7 @@ enum AuthenticationServiceImpl implements AuthenticationService {
     public void logout() {
         authToken = "";
         refreshToken = "";
+        login = null;
         roles.clear();
         activeRole = Role.GUEST;
     }
@@ -82,5 +87,10 @@ enum AuthenticationServiceImpl implements AuthenticationService {
             this.activeRole = newActiveRole;
         }
         return this.activeRole;
+    }
+
+    @Override
+    public Optional<String> getLogin() {
+        return Optional.ofNullable(login);
     }
 }

@@ -4,74 +4,37 @@
 
 #nav_bar {
     -fx-background-color: #000;
-    -fx-min-width: 130;
-    -fx-max-width: 130;
-    -fx-alignment: TOP_LEFT;
+    -fx-min-width: 300;
+    -fx-max-width: 300;
+    -fx-alignment: TOP_CENTER;
+    -fx-spacing: 20;
 }
 
 .nav_button {
     -fx-background-color: #000;
-    -fx-min-width: 125;
-
-    -fx-font-size: 35;
-    -fx-font-weight: bold;
-    -fx-text-fill: #FFF;
-
-    -fx-border-color: #FFF;
-    -fx-border-width: 0 0 2 0;
-}
-
-.nav_button:hover {
-    -fx-background-color: #333;
-    -fx-border-width: 0 2 2 0;
-}
-
-.nav_button_selected {
-    -fx-background-color: #555;
-    -fx-min-width: 95;
-
-    -fx-font-size: 35;
-    -fx-font-weight: bold;
-    -fx-text-fill: #FFF;
-
-    -fx-border-color: #FFF;
-    -fx-border-width: 2 2 2 2;
-}
-
-.nav_button_icon {
-    -fx-fill: #FFF;
-}
-
-.choices_button {
-    -fx-background-color: #000;
-    -fx-min-width: 125;
+    -fx-min-width: 300;
+    -fx-padding: 10 10 10 50;
 
     -fx-font-size: 20;
     -fx-font-weight: bold;
     -fx-text-fill: #FFF;
 }
 
-.choices_button:hover {
-    -fx-background-color: #333;
+#nav_avatar_label {
+    -fx-padding: 0 0 30 0;
+    -fx-text-fill: #FFF;
+    -fx-font-size: 35;
+    -fx-font-weight: bold;
 }
 
-#choices_container {
-    -fx-alignment: CENTER;
-    -fx-spacing: 10;
-}
-
-.choices_label {
+.nav_button_text {
     -fx-fill: #FFF;
 }
 
-#language_container {
-    -fx-padding: 15;
-    -fx-alignment: CENTER_LEFT;
-    -fx-spacing: 10;
+.nav_button:hover {
+    -fx-background-color: #333;
 }
 
-#active_role_container {
-    -fx-padding: 15;
-    -fx-alignment: CENTER_LEFT;
-    -fx-spacing: 10;
+.nav_button_icon {
+    -fx-fill: #FFF;
 }

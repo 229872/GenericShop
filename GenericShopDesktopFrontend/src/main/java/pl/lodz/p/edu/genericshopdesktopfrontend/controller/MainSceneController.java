@@ -1,9 +1,10 @@
 package pl.lodz.p.edu.genericshopdesktopfrontend.controller;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -33,35 +34,38 @@ class MainSceneController implements Controller, Initializable {
     private BorderPane borderPane;
 
     @FXML
-    private Button buttonMenu, buttonAccount, buttonCart, buttonHome, buttonOrders;
+    private Button buttonAccount, buttonCart, buttonHome, buttonOrders;
 
     @FXML
-    private Button buttonLanguage, buttonActiveRole, buttonSignOut;
+    private Button buttonSettings, buttonSignOut;
 
     @FXML
     private VBox vboxLanguage, vboxActiveRole;
 
     @FXML
-    private FontAwesomeIconView iconLanguageArrow, iconActiveRoleArrow;
+    private ImageView imageViewAvatar;
+
+    @FXML
+    private Label labelLogin;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        Image image = new Image(getClass().getResource("/images/avatar.png").toExternalForm());
+        imageViewAvatar.setImage(image);
+
+        labelLogin.setText(authenticationService.getLogin().orElse(""));
+
         setUpButtons(resourceBundle);
-        setUpGroups();
     }
 
     private void setUpButtons(ResourceBundle bundle) {
 
-        buttonMenu.setOnAction(actionEvent -> showMenuBar());
         buttonAccount.setOnAction(actionEvent -> showAccountPanel());
         buttonCart.setOnAction(actionEvent -> showCart());
         buttonHome.setOnAction(actionEvent -> showHomePanel());
         buttonOrders.setOnAction(actionEvent -> showOrdersPanel());
-
-        buttonLanguage.setOnAction(actionEvent -> toggleLanguage());
-        buttonActiveRole.setOnAction(actionEvent -> toggleActiveRole());
         buttonSignOut.setOnAction(actionEvent -> signOut(bundle));
     }
 
@@ -97,19 +101,6 @@ class MainSceneController implements Controller, Initializable {
         vboxActiveRole.getChildren().addAll(radioButtons);
     }
 
-    private void toggleLanguage() {
-        boolean isVisible = vboxLanguage.isVisible();
-        vboxLanguage.setVisible(!isVisible);
-        vboxLanguage.setManaged(!isVisible);
-        iconLanguageArrow.setGlyphName(isVisible ? "CARET_RIGHT" : "CARET_DOWN");
-    }
-
-    private void toggleActiveRole() {
-        boolean isVisible = vboxActiveRole.isVisible();
-        vboxActiveRole.setVisible(!isVisible);
-        vboxActiveRole.setManaged(!isVisible);
-        iconActiveRoleArrow.setGlyphName(isVisible ? "CARET_RIGHT" : "CARET_DOWN");
-    }
 
     private void showMenuBar() {
 
