@@ -30,10 +30,9 @@ public class DesktopApplication extends Application {
         ResourceBundle rootLanguageBundle = null;
 
         try {
-            Locale applicationDefaultLanguage = Locale.getDefault();
-            rootLanguageBundle = ResourceBundle.getBundle(rootBundleName, applicationDefaultLanguage);
+            rootLanguageBundle = ResourceBundle.getBundle(rootBundleName, Locale.getDefault());
 
-            sceneManager = new SceneManager(primaryStage, Locale.getDefault(), "bundles.i18n");
+            sceneManager = new SceneManager(primaryStage,"bundles.i18n");
             sceneManager.switchToAuthenticationScene();
 
             primaryStage.initStyle(StageStyle.UNDECORATED);

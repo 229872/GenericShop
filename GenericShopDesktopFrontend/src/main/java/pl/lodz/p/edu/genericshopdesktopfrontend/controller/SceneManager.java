@@ -28,20 +28,16 @@ public class SceneManager {
     private final WindowManager windowManager;
     private final String rootBundleName;
     private final SceneLoader sceneLoader;
-
-
-    private Locale applicationLanguage;
     private ResourceBundle rootLanguageBundle;
 
 
-    public SceneManager(Stage primaryStage, Locale applicationLanguage, String rootBundleName) {
+    public SceneManager(Stage primaryStage, String rootBundleName) {
         this.primaryStage = requireNonNull(primaryStage);
-        this.applicationLanguage = requireNonNull(applicationLanguage);
 
         this.sceneLoader = new SceneLoader();
         this.rootBundleName = rootBundleName;
 
-        this.rootLanguageBundle = ResourceBundle.getBundle(rootBundleName, applicationLanguage);
+        this.rootLanguageBundle = ResourceBundle.getBundle(rootBundleName, Locale.getDefault());
         this.windowManager = new WindowManager(primaryStage, rootLanguageBundle);
 
         primaryStage.setOnHiding(windowEvent -> windowManager.minimise());
@@ -73,7 +69,7 @@ public class SceneManager {
 
     private void loadScene(String scenePathWithoutExtension, Controller controller) {
         try {
-            Scene scene = sceneLoader.loadScene(scenePathWithoutExtension, controller, applicationLanguage);
+            Scene scene = sceneLoader.loadScene(scenePathWithoutExtension, controller, Locale.getDefault());
             windowManager.setUpWindowDragging(scene);
             primaryStage.setScene(scene);
 
@@ -93,7 +89,7 @@ public class SceneManager {
 
 
     public void setApplicationLanguage(Locale newApplicationLanguage) {
-        this.applicationLanguage = newApplicationLanguage;
+        Locale.setDefault(newApplicationLanguage);
         this.rootLanguageBundle = ResourceBundle.getBundle(rootBundleName, newApplicationLanguage);
         windowManager.setBundle(rootLanguageBundle);
     }

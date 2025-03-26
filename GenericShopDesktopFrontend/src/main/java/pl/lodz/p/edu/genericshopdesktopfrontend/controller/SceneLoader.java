@@ -18,25 +18,17 @@ class SceneLoader {
      Scene loadScene(String scenePathWithoutExtension, Controller controller,
                      Locale applicationLanguage) throws ApplicationException {
         try {
-            String fxmlPath = "%s.fxml".formatted(scenePathWithoutExtension);
-            String cssPath = "%s.css".formatted(scenePathWithoutExtension);
-
-            String i18nBundlePath = scenePathWithoutExtension
-                .substring(1)
-                .replace("/", ".")
-                .concat("_i18n");
-
-            URL fxmlURL = requireNonNull(getClass().getResource(fxmlPath));
-            ResourceBundle i18nResource = ResourceBundle.getBundle(i18nBundlePath, applicationLanguage);
+            URL fxmlURL = loadFxml(scenePathWithoutExtension);
+            ResourceBundle i18nResource = loadBundle(scenePathWithoutExtension, applicationLanguage);
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
             fxmlLoader.setController(controller);
             fxmlLoader.setResources(i18nResource);
-            Parent parent = fxmlLoader.load();
 
+            Parent parent = fxmlLoader.load();
             Scene scene = new Scene(parent);
 
-            Optional.ofNullable(getClass().getResource(cssPath))
+            loadCss(scenePathWithoutExtension)
                 .ifPresent(cssURL -> scene.getStylesheets().add(cssURL.toExternalForm()));
 
             return scene;
@@ -44,5 +36,27 @@ class SceneLoader {
         } catch (IOException | NullPointerException e) {
             throw new ApplicationException("Can't switch to Authentication scene", e);
         }
+    }
+
+
+    private ResourceBundle loadBundle(String scenePathWithoutExtension, Locale applicationLanguage) {
+        String i18nBundlePath = scenePathWithoutExtension
+            .substring(1)
+            .replace("/", ".")
+            .concat("_i18n");
+
+        return ResourceBundle.getBundle(i18nBundlePath, applicationLanguage);
+    }
+
+
+    private URL loadFxml(String scenePathWithoutExtension) {
+        String fxmlPath = "%s.fxml".formatted(scenePathWithoutExtension);
+        return requireNonNull(getClass().getResource(fxmlPath), "Fxml required");
+    }
+
+
+    private Optional<URL> loadCss(String scenePathWithoutExtension) {
+        String cssPath = "%s.css".formatted(scenePathWithoutExtension);
+        return Optional.ofNullable(getClass().getResource(cssPath));
     }
 }
