@@ -16,6 +16,7 @@ class AnimationServiceImpl implements AnimationService {
         tt.play();
     }
 
+
     @Override
     public void shakeField(TextInputControl control) {
         shakeField(control, Duration.millis(100));

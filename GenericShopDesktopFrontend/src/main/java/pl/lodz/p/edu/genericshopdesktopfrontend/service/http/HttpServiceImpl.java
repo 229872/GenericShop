@@ -17,12 +17,13 @@ import static java.util.Objects.requireNonNull;
 
 class HttpServiceImpl implements HttpService {
 
+    private final String APPLICATION_JSON = "Application/json";
+    private final String CONTENT_TYPE = "Content-Type";
+
     private final HttpClient client;
     private final String API_ROOT;
     private final JsonMapper jsonMapper;
 
-    private final String APPLICATION_JSON = "Application/json";
-    private final String CONTENT_TYPE = "Content-Type";
 
     HttpServiceImpl(HttpClient client, String apiRoot, JsonMapper jsonMapper) {
         this.client = requireNonNull(client);
@@ -56,6 +57,5 @@ class HttpServiceImpl implements HttpService {
         } catch (IOException | InterruptedException e) {
             throw new ApplicationException("Authentication failed", e);
         }
-
     }
 }

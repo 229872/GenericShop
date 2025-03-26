@@ -18,9 +18,11 @@ public class DesktopApplication extends Application {
     private SceneManager sceneManager;
     private final ImageService imageService;
 
+
     public DesktopApplication() {
         this.imageService = ImageService.getInstance();
     }
+
 
     @Override
     public void start(Stage primaryStage) {
@@ -42,10 +44,8 @@ public class DesktopApplication extends Application {
             primaryStage.show();
 
         } catch (Exception e) {
-
             e.printStackTrace();
-
-            Optional<ResourceBundle> bundle = Optional.ofNullable(rootLanguageBundle);
+            var bundle = Optional.ofNullable(rootLanguageBundle);
 
             new Dialog(AlertType.ERROR)
                 .title(bundle
@@ -58,9 +58,8 @@ public class DesktopApplication extends Application {
         }
     }
 
+
     public static void main(String[] args) {
         launch(args);
     }
-
-
 }

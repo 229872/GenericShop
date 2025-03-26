@@ -17,23 +17,22 @@ enum AuthenticationServiceImpl implements AuthenticationService {
 
     INSTANCE;
 
+
     private Role activeRole = Role.GUEST;
-
     private Set<Role> roles = new HashSet<>();
-
     private String authToken;
+    private String refreshToken;
+    private String login;
+
 
     private Optional<String> authToken() {
         return Optional.ofNullable(authToken);
     }
 
-    private String refreshToken;
 
     private Optional<String> refreshToken() {
         return Optional.ofNullable(refreshToken);
     }
-
-    private String login;
 
 
     @Override
@@ -62,6 +61,7 @@ enum AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
+
     @Override
     public void logout() {
         authToken = "";
@@ -71,15 +71,18 @@ enum AuthenticationServiceImpl implements AuthenticationService {
         activeRole = Role.GUEST;
     }
 
+
     @Override
     public Set<Role> getAccountRoles() {
         return Set.copyOf(roles);
     }
 
+
     @Override
     public Role getActiveRole() {
         return activeRole;
     }
+
 
     @Override
     public Role setActiveRole(Role newActiveRole) {
@@ -88,6 +91,7 @@ enum AuthenticationServiceImpl implements AuthenticationService {
         }
         return this.activeRole;
     }
+
 
     @Override
     public Optional<String> getLogin() {

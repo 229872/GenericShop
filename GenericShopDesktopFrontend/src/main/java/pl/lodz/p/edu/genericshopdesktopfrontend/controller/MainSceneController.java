@@ -21,12 +21,17 @@ import static java.util.Objects.requireNonNull;
 
 class MainSceneController implements Controller, Initializable {
 
-    private final SceneManager sceneManager;
+    private final String SETTINGS_SCENE = "/view/scene/settings_scene";
 
+
+    private final SceneManager sceneManager;
+    private final SceneLoader sceneLoader;
     private final AuthenticationService authenticationService;
 
-    MainSceneController(SceneManager sceneManager, AuthenticationService authenticationService) {
+
+    MainSceneController(SceneManager sceneManager, SceneLoader sceneLoader, AuthenticationService authenticationService) {
         this.sceneManager = requireNonNull(sceneManager);
+        this.sceneLoader = requireNonNull(sceneLoader);
         this.authenticationService = requireNonNull(authenticationService);
     }
 
@@ -51,7 +56,6 @@ class MainSceneController implements Controller, Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
         Image image = new Image(getClass().getResource("/images/avatar.png").toExternalForm());
         imageViewAvatar.setImage(image);
 
@@ -61,7 +65,6 @@ class MainSceneController implements Controller, Initializable {
     }
 
     private void setUpButtons(ResourceBundle bundle) {
-
         buttonAccount.setOnAction(actionEvent -> showAccountPanel());
         buttonCart.setOnAction(actionEvent -> showCart());
         buttonHome.setOnAction(actionEvent -> showHomePanel());
@@ -70,7 +73,6 @@ class MainSceneController implements Controller, Initializable {
     }
 
     private void setUpGroups() {
-
         Font buttonsFont = Font.font(15.0);
         Color textColor = Color.WHITE;
         ToggleGroup roleGroup = new ToggleGroup();
@@ -123,7 +125,6 @@ class MainSceneController implements Controller, Initializable {
     }
 
     private void signOut(ResourceBundle bundle) {
-
         new Dialog(Alert.AlertType.CONFIRMATION)
             .title(bundle.getString("logout.dialog.title"))
             .headerText(bundle.getString("logout.dialog.header"))

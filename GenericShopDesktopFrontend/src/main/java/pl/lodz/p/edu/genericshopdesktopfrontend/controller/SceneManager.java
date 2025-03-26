@@ -1,8 +1,6 @@
 package pl.lodz.p.edu.genericshopdesktopfrontend.controller;
 
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -15,10 +13,7 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationServi
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthenticationService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
@@ -28,45 +23,66 @@ public class SceneManager {
     private final String AUTHENTICATION_SCENE = "/view/scene/authentication/authentication_scene";
     private final String MAIN_SCENE = "/view/scene/main/main_scene";
 
+
     private final Stage primaryStage;
     private final WindowManager windowManager;
     private final String rootBundleName;
+    private final SceneLoader sceneLoader;
+
 
     private Locale applicationLanguage;
     private ResourceBundle rootLanguageBundle;
 
-    public SceneManager(Stage primaryStage, Locale applicationLanguage, String rootBundleName) {
 
+    public SceneManager(Stage primaryStage, Locale applicationLanguage, String rootBundleName) {
         this.primaryStage = requireNonNull(primaryStage);
         this.applicationLanguage = requireNonNull(applicationLanguage);
+
+        this.sceneLoader = new SceneLoader();
         this.rootBundleName = rootBundleName;
 
         this.rootLanguageBundle = ResourceBundle.getBundle(rootBundleName, applicationLanguage);
         this.windowManager = new WindowManager(primaryStage, rootLanguageBundle);
 
         primaryStage.setOnHiding(windowEvent -> windowManager.minimise());
-
         primaryStage.setOnCloseRequest(windowEvent -> {
             windowEvent.consume();
             windowManager.closeApp();
         });
     }
 
-    public void switchToAuthenticationScene() {
-        try {
-            AuthenticationService authService = AuthenticationService.getInstance();
-            HttpService httpService = HttpService.getInstance();
-            Controller controller = new AuthenticationSceneController(
-                AnimationService.getInstance(), this, httpService, authService
-            );
 
-            loadScene(AUTHENTICATION_SCENE, controller);
+    public void switchToAuthenticationScene() {
+        AuthenticationService authService = AuthenticationService.getInstance();
+        HttpService httpService = HttpService.getInstance();
+
+        Controller controller = new AuthenticationSceneController(
+            AnimationService.getInstance(), this, httpService, authService);
+
+        loadScene(AUTHENTICATION_SCENE, controller);
+    }
+
+
+    public void switchToMainScene() {
+        var authService = AuthenticationService.getInstance();
+        var mainSceneController = new MainSceneController(this, sceneLoader, authService);
+
+        loadScene(MAIN_SCENE, mainSceneController);
+    }
+
+
+    private void loadScene(String scenePathWithoutExtension, Controller controller) {
+        try {
+            Scene scene = sceneLoader.loadScene(scenePathWithoutExtension, controller, applicationLanguage);
+            windowManager.setUpWindowDragging(scene);
+            primaryStage.setScene(scene);
 
         } catch (ApplicationException e) {
             e.printStackTrace();
             showErrorNotification();
         }
     }
+
 
     private void showErrorNotification() {
         Notifications.create()
@@ -75,46 +91,6 @@ public class SceneManager {
             .showError();
     }
 
-    public void switchToMainScene() {
-        try {
-            loadScene(MAIN_SCENE, new MainSceneController(this, AuthenticationService.getInstance()));
-
-        } catch (ApplicationException e) {
-            e.printStackTrace();
-            showErrorNotification();
-        }
-    }
-
-    private void loadScene(String scenePathWithoutExtension, Controller controller) throws ApplicationException {
-        try {
-            String fxmlPath = "%s.fxml".formatted(scenePathWithoutExtension);
-            String cssPath = "%s.css".formatted(scenePathWithoutExtension);
-
-            String i18nBundlePath = scenePathWithoutExtension
-                .substring(1)
-                .replace("/", ".")
-                .concat("_i18n");
-
-            URL fxmlURL = requireNonNull(getClass().getResource(fxmlPath));
-            ResourceBundle i18nResource = ResourceBundle.getBundle(i18nBundlePath, applicationLanguage);
-
-            FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
-            fxmlLoader.setController(controller);
-            fxmlLoader.setResources(i18nResource);
-            Parent parent = fxmlLoader.load();
-
-            Scene scene = new Scene(parent);
-
-            Optional.ofNullable(getClass().getResource(cssPath))
-                .ifPresent(cssURL -> scene.getStylesheets().add(cssURL.toExternalForm()));
-
-            windowManager.setUpWindowDragging(scene);
-            primaryStage.setScene(scene);
-
-        } catch (IOException | NullPointerException e) {
-            throw new ApplicationException("Can't switch to Authentication scene", e);
-        }
-    }
 
     public void setApplicationLanguage(Locale newApplicationLanguage) {
         this.applicationLanguage = newApplicationLanguage;

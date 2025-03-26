@@ -31,20 +31,20 @@ import static pl.lodz.p.edu.genericshopdesktopfrontend.model.pattern.DataPattern
 class AuthenticationSceneController implements Controller, Initializable {
 
     private final AnimationService animationService;
-
     private final SceneManager sceneManager;
-
     private final HttpService httpService;
-
     private final AuthenticationService authenticationService;
+
 
     AuthenticationSceneController(AnimationService animationService, SceneManager sceneManager,
                                   HttpService httpService, AuthenticationService authenticationService) {
+
         this.animationService = requireNonNull(animationService);
         this.sceneManager = requireNonNull(sceneManager);
         this.httpService = requireNonNull(httpService);
         this.authenticationService = requireNonNull(authenticationService);
     }
+
 
     @FXML
     private BorderPane root;
@@ -67,12 +67,12 @@ class AuthenticationSceneController implements Controller, Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
         setUpButtons(resourceBundle);
         setUpInputs();
         setUpLanguageChoiceBox(resourceBundle);
         Platform.runLater(() -> root.requestFocus());
     }
+
 
     private void setUpButtons(ResourceBundle bundle) {
         BooleanBinding isFormValidBinding = Bindings.createBooleanBinding(
@@ -84,40 +84,41 @@ class AuthenticationSceneController implements Controller, Initializable {
 
         buttonSignIn.disableProperty().bind(isFormValidBinding.not());
         buttonSignIn.effectProperty().bind(blurEffectButtonBinding);
-
         buttonSignIn.setOnAction(actionEvent -> authenticate(bundle));
     }
 
+
     private void setUpInputs() {
+        textFieldLogin.focusedProperty()
+            .addListener((observableValue, oldValue, newValue) -> {
+                if (!newValue && !isFieldValid(LOGIN_PATTERN, textFieldLogin)) {
+                    animationService.shakeField(textFieldLogin);
+                    textLoginError.setVisible(true);
+                } else {
+                    textLoginError.setVisible(false);
+                }
+            });
 
-        textFieldLogin.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
-
-            if (!newValue && !isFieldValid(LOGIN_PATTERN, textFieldLogin)) {
-                animationService.shakeField(textFieldLogin);
-                textLoginError.setVisible(true);
-            } else {
-                textLoginError.setVisible(false);
-            }
-        });
-
-        passwordFieldPassword.focusedProperty().addListener((observableValue, oldValue, newValue) -> {
-
-            if (!newValue && !isFieldValid(PASSWORD_PATTERN, passwordFieldPassword)) {
-                animationService.shakeField(passwordFieldPassword);
-                textPasswordError.setVisible(true);
-            } else {
-                textPasswordError.setVisible(false);
-            }
-        });
+        passwordFieldPassword.focusedProperty()
+            .addListener((observableValue, oldValue, newValue) -> {
+                if (!newValue && !isFieldValid(PASSWORD_PATTERN, passwordFieldPassword)) {
+                    animationService.shakeField(passwordFieldPassword);
+                    textPasswordError.setVisible(true);
+                } else {
+                    textPasswordError.setVisible(false);
+                }
+            });
 
         passwordFieldPassword.setOnAction(actionEvent -> buttonSignIn.fire());
     }
+
 
     private void setUpLanguageChoiceBox(ResourceBundle languageBundle) {
         ObservableList<Locale> languages = FXCollections.observableArrayList(
             Locale.forLanguageTag("en"),
             Locale.forLanguageTag("pl")
         );
+
         comboBoxLanguage.setItems(languages);
         comboBoxLanguage.setValue(Locale.forLanguageTag(languageBundle.getLocale().getLanguage()));
         comboBoxLanguage.getSelectionModel()
@@ -129,6 +130,7 @@ class AuthenticationSceneController implements Controller, Initializable {
             });
     }
 
+
     private boolean isFormValid() {
         boolean isLoginValid = LOGIN_PATTERN.matcher(textFieldLogin.getText()).matches();
         boolean isPasswordValid = PASSWORD_PATTERN.matcher(passwordFieldPassword.getText()).matches();
@@ -136,9 +138,11 @@ class AuthenticationSceneController implements Controller, Initializable {
         return isLoginValid && isPasswordValid;
     }
 
+
     private boolean isFieldValid(Pattern pattern, TextInputControl control) {
         return pattern.matcher(control.getText()).matches();
     }
+
 
     private void authenticate(ResourceBundle bundle) {
         try {
@@ -158,7 +162,6 @@ class AuthenticationSceneController implements Controller, Initializable {
                 .text(bundle.getString("authentication.success.text"))
                 .showInformation();
 
-
         } catch (ApplicationException e) {
             e.printStackTrace();
 
@@ -169,6 +172,7 @@ class AuthenticationSceneController implements Controller, Initializable {
                 .showError();
         }
     }
+
 
     private void clearForm() {
         textFieldLogin.clear();

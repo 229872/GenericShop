@@ -11,11 +11,9 @@ class ImageServiceImp implements ImageService {
 
     @Override
     public Image loadImage(String fileBaseNameWithExtension) throws ApplicationException {
-
         String fullPath = "/images/%s".formatted(fileBaseNameWithExtension);
 
         try (var imageStream = getClass().getResourceAsStream(fullPath)) {
-
             return new Image(requireNonNull(imageStream));
 
         } catch (IOException e) {

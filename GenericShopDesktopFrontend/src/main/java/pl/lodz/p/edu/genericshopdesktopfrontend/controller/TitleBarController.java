@@ -20,10 +20,10 @@ public class TitleBarController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
         buttonMinimize.setOnAction(actionEvent -> fireMinimizeEvent());
         buttonCloseApp.setOnAction(actionEvent -> fireCloseEvent());
     }
+
 
     private void fireMinimizeEvent() {
         window()
@@ -32,12 +32,14 @@ public class TitleBarController implements Initializable {
             });
     }
 
+
     private void fireCloseEvent() {
         window()
             .ifPresent(window -> {
                 Event.fireEvent(buttonCloseApp, new WindowEvent(window, WindowEvent.WINDOW_CLOSE_REQUEST));
             });
     }
+
 
     private Optional<Window> window() {
         return Optional
