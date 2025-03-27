@@ -1,8 +1,7 @@
-package pl.lodz.p.edu.genericshopdesktopfrontend.scene;
+package pl.lodz.p.edu.genericshopdesktopfrontend.service.fxml;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import pl.lodz.p.edu.genericshopdesktopfrontend.controller.Controller;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 
@@ -14,10 +13,11 @@ import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
 
-public class SceneLoader {
+class FXMLServiceImpl implements FXMLService {
 
-     public Scene loadScene(String scenePathWithoutExtension, Controller controller,
-                            Locale applicationLanguage) throws ApplicationException {
+    @Override
+    public Parent load(String scenePathWithoutExtension, Controller controller,
+                           Locale applicationLanguage) throws ApplicationException {
         try {
             URL fxmlURL = loadFxml(scenePathWithoutExtension);
             ResourceBundle i18nResource = loadBundle(scenePathWithoutExtension, applicationLanguage);
@@ -27,12 +27,11 @@ public class SceneLoader {
             fxmlLoader.setResources(i18nResource);
 
             Parent parent = fxmlLoader.load();
-            Scene scene = new Scene(parent);
 
             loadCss(scenePathWithoutExtension)
                 .ifPresent(cssURL -> parent.getStylesheets().add(cssURL.toExternalForm()));
 
-            return scene;
+            return parent;
 
         } catch (IOException | NullPointerException e) {
             throw new ApplicationException("Can't switch to Authentication scene", e);

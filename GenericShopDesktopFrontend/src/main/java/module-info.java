@@ -9,7 +9,7 @@ module pl.lodz.p.edu.genericshopdesktopfrontend {
     requires org.controlsfx.controls;
 
     opens pl.lodz.p.edu.genericshopdesktopfrontend.controller to javafx.fxml;
-    opens pl.lodz.p.edu.genericshopdesktopfrontend.scene to javafx.fxml;
+    opens pl.lodz.p.edu.genericshopdesktopfrontend to javafx.fxml;
 
     exports pl.lodz.p.edu.genericshopdesktopfrontend;
     exports pl.lodz.p.edu.genericshopdesktopfrontend.model to com.fasterxml.jackson.databind;

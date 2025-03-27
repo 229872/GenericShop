@@ -16,7 +16,8 @@ import javafx.util.Duration;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
-import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
+import pl.lodz.p.edu.genericshopdesktopfrontend.SceneManager;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.Services;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
@@ -41,12 +42,12 @@ class AuthSceneController implements Controller, Initializable {
     private final AuthService authService;
 
 
-    AuthSceneController(AnimationService animationService, SceneManager sceneManager, HttpService httpService) {
-
-        this.animationService = requireNonNull(animationService);
+    AuthSceneController(SceneManager sceneManager, Services services) {
+        requireNonNull(services);
         this.sceneManager = requireNonNull(sceneManager);
-        this.httpService = requireNonNull(httpService);
-        this.authService = requireNonNull(httpService.getAuthService());
+        this.animationService = requireNonNull(services.animation());
+        this.httpService = requireNonNull(services.http());
+        this.authService = requireNonNull(services.auth());
     }
 
 
@@ -158,9 +159,7 @@ class AuthSceneController implements Controller, Initializable {
 
             clearForm();
 
-            Consumer<Node> animation = node ->
-                animationService.fade(node, Duration.seconds(1), 0.1, 1);
-
+            Consumer<Node> animation = node -> animationService.fade(node, Duration.seconds(1), 0.3, 1);
             sceneManager.switchToMainScene(animation);
 
             Dialog.builder()

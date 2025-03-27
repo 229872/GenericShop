@@ -18,7 +18,6 @@ public interface HttpService {
         );
     }
 
-    AuthService getAuthService();
 
     Tokens sendAuthenticationRequest(String login, String password) throws ApplicationException;
 

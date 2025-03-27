@@ -37,12 +37,6 @@ class HttpServiceImpl implements HttpService {
 
 
     @Override
-    public AuthService getAuthService() {
-        return authService;
-    }
-
-
-    @Override
     public Tokens sendAuthenticationRequest(String login, String password) throws ApplicationException {
         try {
             Map<String, String> obj = Map.ofEntries(
