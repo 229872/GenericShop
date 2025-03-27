@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.image.ImageService;
 
 import java.util.Locale;
@@ -31,8 +33,10 @@ public class DesktopApplication extends Application {
 
         try {
             rootLanguageBundle = ResourceBundle.getBundle(rootBundleName, Locale.getDefault());
+            AuthService authService = AuthService.getInstance();
+            HttpService httpService = HttpService.getInstance(authService);
 
-            sceneManager = new SceneManager(primaryStage,"bundles.i18n");
+            sceneManager = new SceneManager(primaryStage, httpService,"bundles.i18n");
             sceneManager.switchToAuthenticationScene();
 
             primaryStage.initStyle(StageStyle.UNDECORATED);

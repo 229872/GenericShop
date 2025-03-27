@@ -7,10 +7,10 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
 import java.util.Optional;
 import java.util.Set;
 
-public sealed interface AuthenticationService permits AuthenticationServiceImpl {
+public sealed interface AuthService permits AuthServiceImpl {
 
-    static AuthenticationService getInstance() {
-        return AuthenticationServiceImpl.INSTANCE;
+    static AuthService getInstance() {
+        return AuthServiceImpl.INSTANCE;
     }
 
     void authenticate(Tokens tokens) throws ApplicationException;
@@ -24,4 +24,8 @@ public sealed interface AuthenticationService permits AuthenticationServiceImpl 
     Role setActiveRole(Role newActiveRole);
 
     Optional<String> getLogin();
+
+    Optional<String> getAuthToken();
+
+    Optional<String> getRefreshToken();
 }

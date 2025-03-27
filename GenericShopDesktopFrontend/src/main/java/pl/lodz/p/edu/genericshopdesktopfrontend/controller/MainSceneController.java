@@ -17,7 +17,8 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneLoader;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
-import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthenticationService;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 
 import java.net.URL;
 import java.util.Locale;
@@ -32,15 +33,19 @@ class MainSceneController implements Controller, Initializable {
 
     private final SceneManager sceneManager;
     private final SceneLoader sceneLoader;
-    private final AuthenticationService authenticationService;
-    private Runnable initActivePanel = () -> {};
+    private final AuthService authService;
+    private final HttpService httpService;
+
+    private Runnable initActivePanel = initEmptyPanel();
 
 
-    MainSceneController(SceneManager sceneManager, SceneLoader sceneLoader, AuthenticationService authenticationService) {
+    MainSceneController(SceneManager sceneManager, SceneLoader sceneLoader, HttpService httpService) {
         this.sceneManager = requireNonNull(sceneManager);
         this.sceneLoader = requireNonNull(sceneLoader);
-        this.authenticationService = requireNonNull(authenticationService);
+        this.httpService = requireNonNull(httpService);
+        this.authService = requireNonNull(httpService.getAuthService());
     }
+
 
     @FXML
     private BorderPane borderPane;
@@ -66,11 +71,12 @@ class MainSceneController implements Controller, Initializable {
         Image image = new Image(getClass().getResource("/images/avatar.png").toExternalForm());
         imageViewAvatar.setImage(image);
 
-        labelLogin.setText(authenticationService.getLogin().orElse(""));
+        labelLogin.setText(authService.getLogin().orElse(""));
 
         setUpButtons(resourceBundle);
         initActivePanel.run();
     }
+
 
     private void setUpButtons(ResourceBundle bundle) {
         buttonAccount.setOnAction(actionEvent -> showAccountPanel());
@@ -104,7 +110,9 @@ class MainSceneController implements Controller, Initializable {
 
     private void showSettingsPanel() {
         try {
-            var settingsSceneController = new SettingsSceneController(authenticationService, sceneManager);
+            SettingsSceneController settingsSceneController =
+                new SettingsSceneController(sceneManager, httpService);
+
             Scene scene = sceneLoader.loadScene(SETTINGS_SCENE, settingsSceneController, Locale.getDefault());
             Parent panel = scene.getRoot();
             borderPane.setCenter(panel);
@@ -125,9 +133,14 @@ class MainSceneController implements Controller, Initializable {
             .showAndWait()
             .filter(buttonType -> buttonType.equals(ButtonType.OK))
             .ifPresent(none -> {
-                authenticationService.logout();
-                initActivePanel = () -> {};
+                authService.logout();
+                initActivePanel = initEmptyPanel();
                 sceneManager.switchToAuthenticationScene();
             });
+    }
+
+
+    private static Runnable initEmptyPanel() {
+        return () -> {};
     }
 }

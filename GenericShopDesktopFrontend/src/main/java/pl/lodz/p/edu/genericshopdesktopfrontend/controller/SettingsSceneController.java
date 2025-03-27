@@ -9,9 +9,12 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import org.controlsfx.control.Notifications;
+import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Role;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
-import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthenticationService;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 
 import java.net.URL;
 import java.util.List;
@@ -23,12 +26,14 @@ import static java.util.Objects.requireNonNull;
 
 class SettingsSceneController implements Controller, Initializable {
 
-    private final AuthenticationService authenticationService;
+    private final AuthService authService;
     private final SceneManager sceneManager;
+    private final HttpService httpService;
 
 
-    SettingsSceneController(AuthenticationService authenticationService, SceneManager sceneManager) {
-        this.authenticationService = requireNonNull(authenticationService);
+    SettingsSceneController(SceneManager sceneManager, HttpService httpService) {
+        this.httpService = requireNonNull(httpService);
+        this.authService = requireNonNull(httpService.getAuthService());
         this.sceneManager = requireNonNull(sceneManager);
     }
 
@@ -43,7 +48,7 @@ class SettingsSceneController implements Controller, Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpRoleButtons(resourceBundle);
-        setUpLanguageButtons();
+        setUpLanguageButtons(resourceBundle);
         setUpDividers();
     }
 
@@ -68,9 +73,9 @@ class SettingsSceneController implements Controller, Initializable {
 
         ToggleGroup roleGroup = new ToggleGroup();
 
-        Role activeRole = authenticationService.getActiveRole();
+        Role activeRole = authService.getActiveRole();
 
-        List<RadioButton> radioButtons = authenticationService.getAccountRoles().stream()
+        List<RadioButton> radioButtons = authService.getAccountRoles().stream()
             .map(role -> {
                 String buttonName = bundle.getString(role.name().toLowerCase());
                 var button = new RadioButton(buttonName);
@@ -89,7 +94,7 @@ class SettingsSceneController implements Controller, Initializable {
         roleGroup.selectedToggleProperty()
             .addListener((observableValue, oldToggle, newToggle) -> {
                 if (newToggle.getUserData() instanceof Role newRole) {
-                    authenticationService.setActiveRole(newRole);
+                    authService.setActiveRole(newRole);
                 }
             });
 
@@ -97,7 +102,7 @@ class SettingsSceneController implements Controller, Initializable {
         vboxRoles.getChildren().addAll(radioButtons);
     }
 
-    private void setUpLanguageButtons() {
+    private void setUpLanguageButtons(ResourceBundle resourceBundle) {
         Font buttonsFont = Font.font(20);
         Color textColor = Color.BLACK;
 
@@ -124,6 +129,7 @@ class SettingsSceneController implements Controller, Initializable {
             .addListener((observableValue, oldToggle, newToggle) -> {
                 if (oldToggle != null && newToggle.getUserData() instanceof Locale newLanguage) {
                     Locale.setDefault(newLanguage);
+                    changeLanguageOnServer(newLanguage.getLanguage(), resourceBundle);
                     sceneManager.setApplicationLanguage(newLanguage);
                     sceneManager.switchToMainScene();
                 }
@@ -131,5 +137,20 @@ class SettingsSceneController implements Controller, Initializable {
 
         languageGroup.getToggles().addAll(radioButtons);
         vboxLanguages.getChildren().addAll(radioButtons);
+    }
+
+
+    private void changeLanguageOnServer(String language, ResourceBundle bundle) {
+        try {
+            httpService.sendChangeAccountLanguageRequest(language);
+
+        } catch (ApplicationException e) {
+            e.printStackTrace();
+
+            Notifications.create()
+                .title(bundle.getString("error.title"))
+                .text(bundle.getString("error.text"))
+                .showError();
+        }
     }
 }

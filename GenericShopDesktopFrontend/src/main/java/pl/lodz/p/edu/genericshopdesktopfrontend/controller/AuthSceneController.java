@@ -17,7 +17,7 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
-import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthenticationService;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 
 import java.net.URL;
@@ -29,21 +29,20 @@ import static java.util.Objects.requireNonNull;
 import static pl.lodz.p.edu.genericshopdesktopfrontend.model.pattern.DataPatterns.LOGIN_PATTERN;
 import static pl.lodz.p.edu.genericshopdesktopfrontend.model.pattern.DataPatterns.PASSWORD_PATTERN;
 
-class AuthenticationSceneController implements Controller, Initializable {
+class AuthSceneController implements Controller, Initializable {
 
     private final AnimationService animationService;
     private final SceneManager sceneManager;
     private final HttpService httpService;
-    private final AuthenticationService authenticationService;
+    private final AuthService authService;
 
 
-    AuthenticationSceneController(AnimationService animationService, SceneManager sceneManager,
-                                  HttpService httpService, AuthenticationService authenticationService) {
+    AuthSceneController(AnimationService animationService, SceneManager sceneManager, HttpService httpService) {
 
         this.animationService = requireNonNull(animationService);
         this.sceneManager = requireNonNull(sceneManager);
         this.httpService = requireNonNull(httpService);
-        this.authenticationService = requireNonNull(authenticationService);
+        this.authService = requireNonNull(httpService.getAuthService());
     }
 
 
@@ -151,7 +150,7 @@ class AuthenticationSceneController implements Controller, Initializable {
             String password = passwordFieldPassword.getText();
 
             Tokens tokens = httpService.sendAuthenticationRequest(login, password);
-            authenticationService.authenticate(tokens);
+            authService.authenticate(tokens);
 
             clearForm();
 

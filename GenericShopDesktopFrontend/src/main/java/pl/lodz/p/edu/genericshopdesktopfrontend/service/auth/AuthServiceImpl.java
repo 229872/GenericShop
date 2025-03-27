@@ -13,26 +13,16 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
-enum AuthenticationServiceImpl implements AuthenticationService {
+enum AuthServiceImpl implements AuthService {
 
     INSTANCE;
 
 
     private Role activeRole = Role.GUEST;
     private Set<Role> roles = new HashSet<>();
-    private String authToken;
-    private String refreshToken;
-    private String login;
-
-
-    private Optional<String> authToken() {
-        return Optional.ofNullable(authToken);
-    }
-
-
-    private Optional<String> refreshToken() {
-        return Optional.ofNullable(refreshToken);
-    }
+    private String authToken = null;
+    private String refreshToken = null;
+    private String login = null;
 
 
     @Override
@@ -64,8 +54,8 @@ enum AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public void logout() {
-        authToken = "";
-        refreshToken = "";
+        authToken = null;
+        refreshToken = null;
         login = null;
         roles.clear();
         activeRole = Role.GUEST;
@@ -96,5 +86,17 @@ enum AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public Optional<String> getLogin() {
         return Optional.ofNullable(login);
+    }
+
+
+    @Override
+    public Optional<String> getAuthToken() {
+        return Optional.ofNullable(authToken);
+    }
+
+
+    @Override
+    public Optional<String> getRefreshToken() {
+        return Optional.ofNullable(refreshToken);
     }
 }
