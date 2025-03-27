@@ -1,11 +1,10 @@
 package pl.lodz.p.edu.genericshopdesktopfrontend;
 
 import javafx.application.Application;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.Dialog;
+import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
@@ -14,6 +13,8 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.service.image.ImageService;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.DialogType.ERROR;
 
 public class DesktopApplication extends Application {
 
@@ -50,14 +51,15 @@ public class DesktopApplication extends Application {
             e.printStackTrace();
             var bundle = Optional.ofNullable(rootLanguageBundle);
 
-            new Dialog(AlertType.ERROR)
+            Dialog.builder()
+                .type(ERROR)
                 .title(bundle
                     .map(b -> b.getString("error.title"))
                     .orElse("Error"))
-                .contentText(bundle
+                .text(bundle
                     .map(b -> b.getString("error.content"))
                     .orElse("Couldn't start application"))
-                .show();
+                .display();
         }
     }
 

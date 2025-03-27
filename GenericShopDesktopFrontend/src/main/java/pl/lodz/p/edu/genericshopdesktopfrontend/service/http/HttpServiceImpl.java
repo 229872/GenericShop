@@ -16,15 +16,11 @@ import java.util.Map;
 import static java.lang.String.format;
 import static java.util.Map.entry;
 import static java.util.Objects.requireNonNull;
+import static pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpHelper.*;
 
 class HttpServiceImpl implements HttpService {
 
-    private final String ACCOUNT_SELF = "/account/self";
-
-    private final String APPLICATION_JSON = "Application/json";
-    private final String CONTENT_TYPE = "Content-Type";
-    private final String AUTHORIZATION_HEADER = "Authorization";
-    private final String BEARER_TOKEN_PARAM = "Bearer %s";
+    private final static String ACCOUNT_SELF = "/account/self";
 
     private final HttpClient client;
     private final String API_ROOT;

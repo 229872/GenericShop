@@ -7,12 +7,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
-import org.controlsfx.control.Notifications;
+import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
@@ -26,6 +25,8 @@ import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
+import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.DialogType.ERROR;
+import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.DialogType.INFO;
 import static pl.lodz.p.edu.genericshopdesktopfrontend.model.pattern.DataPatterns.LOGIN_PATTERN;
 import static pl.lodz.p.edu.genericshopdesktopfrontend.model.pattern.DataPatterns.PASSWORD_PATTERN;
 
@@ -156,20 +157,20 @@ class AuthSceneController implements Controller, Initializable {
 
             sceneManager.switchToMainScene();
 
-            Notifications.create()
-                .position(Pos.TOP_RIGHT)
+            Dialog.builder()
+                .type(INFO)
                 .title(bundle.getString("authentication.success.title"))
                 .text(bundle.getString("authentication.success.text"))
-                .showInformation();
+                .display();
 
         } catch (ApplicationException e) {
             e.printStackTrace();
 
-            Notifications.create()
-                .position(Pos.TOP_RIGHT)
+            Dialog.builder()
+                .type(ERROR)
                 .title(bundle.getString("authentication.error.title"))
                 .text(bundle.getString("authentication.error.text"))
-                .showError();
+                .display();
         }
     }
 

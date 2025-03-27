@@ -5,7 +5,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -13,7 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.Dialog;
+import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneLoader;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
@@ -25,6 +24,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
+import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.DialogType.CONFIRM;
 
 class MainSceneController implements Controller, Initializable {
 
@@ -126,10 +126,12 @@ class MainSceneController implements Controller, Initializable {
 
 
     private void signOut(ResourceBundle bundle) {
-        new Dialog(Alert.AlertType.CONFIRMATION)
+        Dialog.builder()
+            .type(CONFIRM)
             .title(bundle.getString("logout.dialog.title"))
-            .headerText(bundle.getString("logout.dialog.header"))
-            .contentText(bundle.getString("logout.dialog.content"))
+            .header(bundle.getString("logout.dialog.header"))
+            .text(bundle.getString("logout.dialog.content"))
+            .build()
             .showAndWait()
             .filter(buttonType -> buttonType.equals(ButtonType.OK))
             .ifPresent(none -> {

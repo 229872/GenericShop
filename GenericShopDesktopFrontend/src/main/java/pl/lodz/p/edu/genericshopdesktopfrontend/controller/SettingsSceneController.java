@@ -9,7 +9,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import org.controlsfx.control.Notifications;
+import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Role;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
+import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.DialogType.ERROR;
 
 class SettingsSceneController implements Controller, Initializable {
 
@@ -147,10 +148,11 @@ class SettingsSceneController implements Controller, Initializable {
         } catch (ApplicationException e) {
             e.printStackTrace();
 
-            Notifications.create()
+            Dialog.builder()
+                .type(ERROR)
                 .title(bundle.getString("error.title"))
                 .text(bundle.getString("error.text"))
-                .showError();
+                .display();
         }
     }
 }

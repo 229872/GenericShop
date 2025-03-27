@@ -2,23 +2,21 @@ package pl.lodz.p.edu.genericshopdesktopfrontend.scene;
 
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
-import org.controlsfx.control.Notifications;
-import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.Dialog;
+import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.controller.Controller;
 import pl.lodz.p.edu.genericshopdesktopfrontend.controller.ControllerFactory;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
-import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
+import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.DialogType.CONFIRM;
+import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.DialogType.ERROR;
 
 public class SceneManager {
 
@@ -30,7 +28,6 @@ public class SceneManager {
     private final WindowManager windowManager;
     private final SceneLoader sceneLoader;
     private final HttpService httpService;
-    private final AuthService authService;
 
     private final String rootBundleName;
     private ResourceBundle rootLanguageBundle;
@@ -39,7 +36,6 @@ public class SceneManager {
     public SceneManager(Stage primaryStage, HttpService httpService, String rootBundleName) {
         this.primaryStage = requireNonNull(primaryStage);
         this.httpService = requireNonNull(httpService);
-        this.authService = requireNonNull(httpService.getAuthService());
 
         this.sceneLoader = new SceneLoader();
         this.rootBundleName = rootBundleName;
@@ -88,10 +84,11 @@ public class SceneManager {
 
 
     private void showErrorNotification() {
-        Notifications.create()
+        Dialog.builder()
+            .type(ERROR)
             .title(rootLanguageBundle.getString("error.title"))
             .text(rootLanguageBundle.getString("error.switchscene.content"))
-            .showError();
+            .display();
     }
 
 
@@ -135,12 +132,13 @@ public class SceneManager {
 
 
         private void closeApp() {
-            Alert alert = new Dialog(AlertType.CONFIRMATION)
+            Dialog.builder()
+                .type(CONFIRM)
                 .title(bundle.getString("exit.title"))
-                .headerText(bundle.getString("exit.header"))
-                .contentText(bundle.getString("exit.content"));
-
-            alert.showAndWait()
+                .header(bundle.getString("exit.header"))
+                .text(bundle.getString("exit.content"))
+                .build()
+                .showAndWait()
                 .filter(buttonType -> buttonType.equals(ButtonType.OK))
                 .ifPresent(none -> Platform.exit());
         }
