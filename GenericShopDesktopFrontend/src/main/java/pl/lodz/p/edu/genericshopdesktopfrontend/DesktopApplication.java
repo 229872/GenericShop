@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.image.ImageService;
@@ -34,10 +35,12 @@ public class DesktopApplication extends Application {
 
         try {
             rootLanguageBundle = ResourceBundle.getBundle(rootBundleName, Locale.getDefault());
+
             AuthService authService = AuthService.getInstance();
             HttpService httpService = HttpService.getInstance(authService);
+            AnimationService animationService = AnimationService.getInstance();
 
-            sceneManager = new SceneManager(primaryStage, httpService,"bundles.i18n");
+            sceneManager = new SceneManager(primaryStage, httpService, animationService,"bundles.i18n");
             sceneManager.switchToAuthenticationScene();
 
             primaryStage.initStyle(StageStyle.UNDECORATED);

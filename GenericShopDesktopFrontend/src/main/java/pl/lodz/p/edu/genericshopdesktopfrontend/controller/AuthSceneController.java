@@ -7,10 +7,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
@@ -22,6 +24,7 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
@@ -93,7 +96,7 @@ class AuthSceneController implements Controller, Initializable {
         textFieldLogin.focusedProperty()
             .addListener((observableValue, oldValue, newValue) -> {
                 if (!newValue && !isFieldValid(LOGIN_PATTERN, textFieldLogin)) {
-                    animationService.shakeField(textFieldLogin);
+                    animationService.shake(textFieldLogin);
                     textLoginError.setVisible(true);
                 } else {
                     textLoginError.setVisible(false);
@@ -103,7 +106,7 @@ class AuthSceneController implements Controller, Initializable {
         passwordFieldPassword.focusedProperty()
             .addListener((observableValue, oldValue, newValue) -> {
                 if (!newValue && !isFieldValid(PASSWORD_PATTERN, passwordFieldPassword)) {
-                    animationService.shakeField(passwordFieldPassword);
+                    animationService.shake(passwordFieldPassword);
                     textPasswordError.setVisible(true);
                 } else {
                     textPasswordError.setVisible(false);
@@ -155,7 +158,10 @@ class AuthSceneController implements Controller, Initializable {
 
             clearForm();
 
-            sceneManager.switchToMainScene();
+            Consumer<Node> animation = node ->
+                animationService.fade(node, Duration.seconds(1), 0.1, 1);
+
+            sceneManager.switchToMainScene(animation);
 
             Dialog.builder()
                 .type(INFO)

@@ -18,11 +18,12 @@ public class ControllerFactory {
 
     public static Controller getMainSceneController(SceneManager sceneManager,
                                                     SceneLoader sceneLoader,
-                                                    HttpService httpService) {
+                                                    HttpService httpService,
+                                                    AnimationService animationService) {
         return Optional
             .ofNullable(mainScene)
             .orElseGet(() -> {
-                mainScene = new MainSceneController(sceneManager, sceneLoader, httpService);
+                mainScene = new MainSceneController(sceneManager, sceneLoader, httpService, animationService);
                 return mainScene;
             });
     }

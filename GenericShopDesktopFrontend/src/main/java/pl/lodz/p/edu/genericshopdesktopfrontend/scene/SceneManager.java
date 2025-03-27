@@ -1,9 +1,11 @@
 package pl.lodz.p.edu.genericshopdesktopfrontend.scene;
 
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.controller.Controller;
 import pl.lodz.p.edu.genericshopdesktopfrontend.controller.ControllerFactory;
@@ -13,6 +15,7 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 import static java.util.Objects.requireNonNull;
 import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.DialogType.CONFIRM;
@@ -27,15 +30,18 @@ public class SceneManager {
     private final Stage primaryStage;
     private final WindowManager windowManager;
     private final SceneLoader sceneLoader;
+
     private final HttpService httpService;
+    private final AnimationService animationService;
 
     private final String rootBundleName;
     private ResourceBundle rootLanguageBundle;
 
 
-    public SceneManager(Stage primaryStage, HttpService httpService, String rootBundleName) {
+    public SceneManager(Stage primaryStage, HttpService httpService, AnimationService animationService, String rootBundleName) {
         this.primaryStage = requireNonNull(primaryStage);
         this.httpService = requireNonNull(httpService);
+        this.animationService = requireNonNull(animationService);
 
         this.sceneLoader = new SceneLoader();
         this.rootBundleName = rootBundleName;
@@ -56,25 +62,35 @@ public class SceneManager {
             AnimationService.getInstance(), this, httpService
         );
 
-        loadScene(AUTHENTICATION_SCENE, controller);
+        Consumer<Node> animation = node -> animationService.fade(node, Duration.seconds(1.5));
+
+        loadScene(AUTHENTICATION_SCENE, controller, animation);
+    }
+
+
+    public void switchToMainScene(Consumer<Node> animation) {
+        Controller mainSceneController = ControllerFactory.getMainSceneController(
+            this, sceneLoader, httpService, animationService
+        );
+
+        loadScene(MAIN_SCENE, mainSceneController, animation);
     }
 
 
     public void switchToMainScene() {
+        Consumer<Node> animation = node ->
+            animationService.fade(node, Duration.millis(500), 0.3, 1);
 
-        Controller mainSceneController = ControllerFactory.getMainSceneController(
-            this, sceneLoader, httpService
-        );
-
-        loadScene(MAIN_SCENE, mainSceneController);
+        switchToMainScene(animation);
     }
 
 
-    private void loadScene(String scenePathWithoutExtension, Controller controller) {
+    private void loadScene(String scenePathWithoutExtension, Controller controller, Consumer<Node> animation) {
         try {
             Scene scene = sceneLoader.loadScene(scenePathWithoutExtension, controller, Locale.getDefault());
             windowManager.setUpWindowDragging(scene);
             primaryStage.setScene(scene);
+            animation.accept(scene.getRoot());
 
         } catch (ApplicationException e) {
             e.printStackTrace();

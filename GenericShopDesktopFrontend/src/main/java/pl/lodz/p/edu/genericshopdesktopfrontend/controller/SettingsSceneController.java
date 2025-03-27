@@ -3,16 +3,19 @@ package pl.lodz.p.edu.genericshopdesktopfrontend.controller;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Role;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 
@@ -20,6 +23,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
@@ -30,12 +34,14 @@ class SettingsSceneController implements Controller, Initializable {
     private final AuthService authService;
     private final SceneManager sceneManager;
     private final HttpService httpService;
+    private final AnimationService animationService;
 
 
-    SettingsSceneController(SceneManager sceneManager, HttpService httpService) {
+    SettingsSceneController(SceneManager sceneManager, HttpService httpService, AnimationService animationService) {
         this.httpService = requireNonNull(httpService);
         this.authService = requireNonNull(httpService.getAuthService());
         this.sceneManager = requireNonNull(sceneManager);
+        this.animationService = requireNonNull(animationService);
     }
 
 
@@ -106,6 +112,8 @@ class SettingsSceneController implements Controller, Initializable {
     private void setUpLanguageButtons(ResourceBundle resourceBundle) {
         Font buttonsFont = Font.font(20);
         Color textColor = Color.BLACK;
+        Consumer<Node> animation = node ->
+            animationService.fade(node, Duration.millis(75), 0.8, 1);
 
         ToggleGroup languageGroup = new ToggleGroup();
 
@@ -132,7 +140,8 @@ class SettingsSceneController implements Controller, Initializable {
                     Locale.setDefault(newLanguage);
                     changeLanguageOnServer(newLanguage.getLanguage(), resourceBundle);
                     sceneManager.setApplicationLanguage(newLanguage);
-                    sceneManager.switchToMainScene();
+
+                    sceneManager.switchToMainScene(animation);
                 }
             });
 

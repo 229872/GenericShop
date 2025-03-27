@@ -16,6 +16,7 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneLoader;
 import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
+import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 
@@ -35,15 +36,17 @@ class MainSceneController implements Controller, Initializable {
     private final SceneLoader sceneLoader;
     private final AuthService authService;
     private final HttpService httpService;
+    private final AnimationService animationService;
 
     private Runnable initActivePanel = initEmptyPanel();
 
 
-    MainSceneController(SceneManager sceneManager, SceneLoader sceneLoader, HttpService httpService) {
+    MainSceneController(SceneManager sceneManager, SceneLoader sceneLoader, HttpService httpService, AnimationService animationService) {
         this.sceneManager = requireNonNull(sceneManager);
         this.sceneLoader = requireNonNull(sceneLoader);
         this.httpService = requireNonNull(httpService);
         this.authService = requireNonNull(httpService.getAuthService());
+        this.animationService = requireNonNull(animationService);
     }
 
 
@@ -111,7 +114,7 @@ class MainSceneController implements Controller, Initializable {
     private void showSettingsPanel() {
         try {
             SettingsSceneController settingsSceneController =
-                new SettingsSceneController(sceneManager, httpService);
+                new SettingsSceneController(sceneManager, httpService, animationService);
 
             Scene scene = sceneLoader.loadScene(SETTINGS_SCENE, settingsSceneController, Locale.getDefault());
             Parent panel = scene.getRoot();
@@ -119,6 +122,7 @@ class MainSceneController implements Controller, Initializable {
             BorderPane.setMargin(panel, new Insets(100, 50, 100, 50));
 
             initActivePanel = () -> buttonSettings.fire();
+
         } catch (ApplicationException e) {
             e.printStackTrace();
         }
