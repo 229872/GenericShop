@@ -1,0 +1,20 @@
+.side_container {
+    -fx-padding: 30;
+    -fx-spacing: 150;
+    -fx-alignment: TOP_CENTER;
+}
+
+.items_container {
+    -fx-alignment: TOP_LEFT;
+    -fx-spacing: 30;
+}
+
+.title {
+    -fx-font-size: 40;
+    -fx-font-weight: bold;
+}
+
+.subtitle {
+    -fx-font-size: 30;
+    -fx-font-weight: bold;
+}

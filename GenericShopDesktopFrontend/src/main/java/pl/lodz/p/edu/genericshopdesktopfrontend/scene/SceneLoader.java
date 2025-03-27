@@ -1,8 +1,9 @@
-package pl.lodz.p.edu.genericshopdesktopfrontend.controller;
+package pl.lodz.p.edu.genericshopdesktopfrontend.scene;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import pl.lodz.p.edu.genericshopdesktopfrontend.controller.Controller;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 
 import java.io.IOException;
@@ -13,10 +14,10 @@ import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
 
-class SceneLoader {
+public class SceneLoader {
 
-     Scene loadScene(String scenePathWithoutExtension, Controller controller,
-                     Locale applicationLanguage) throws ApplicationException {
+     public Scene loadScene(String scenePathWithoutExtension, Controller controller,
+                            Locale applicationLanguage) throws ApplicationException {
         try {
             URL fxmlURL = loadFxml(scenePathWithoutExtension);
             ResourceBundle i18nResource = loadBundle(scenePathWithoutExtension, applicationLanguage);
@@ -29,7 +30,7 @@ class SceneLoader {
             Scene scene = new Scene(parent);
 
             loadCss(scenePathWithoutExtension)
-                .ifPresent(cssURL -> scene.getStylesheets().add(cssURL.toExternalForm()));
+                .ifPresent(cssURL -> parent.getStylesheets().add(cssURL.toExternalForm()));
 
             return scene;
 

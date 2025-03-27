@@ -1,4 +1,4 @@
-package pl.lodz.p.edu.genericshopdesktopfrontend.controller;
+package pl.lodz.p.edu.genericshopdesktopfrontend.scene;
 
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -8,6 +8,8 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.Dialog;
+import pl.lodz.p.edu.genericshopdesktopfrontend.controller.Controller;
+import pl.lodz.p.edu.genericshopdesktopfrontend.controller.ControllerFactory;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthenticationService;
@@ -52,8 +54,9 @@ public class SceneManager {
         AuthenticationService authService = AuthenticationService.getInstance();
         HttpService httpService = HttpService.getInstance();
 
-        Controller controller = new AuthenticationSceneController(
-            AnimationService.getInstance(), this, httpService, authService);
+        Controller controller = ControllerFactory.getAuthSceneController(
+            AnimationService.getInstance(), this, httpService, authService
+        );
 
         loadScene(AUTHENTICATION_SCENE, controller);
     }
@@ -61,7 +64,8 @@ public class SceneManager {
 
     public void switchToMainScene() {
         var authService = AuthenticationService.getInstance();
-        var mainSceneController = new MainSceneController(this, sceneLoader, authService);
+        var mainSceneController =
+            ControllerFactory.getMainSceneController(this, sceneLoader, authService);
 
         loadScene(MAIN_SCENE, mainSceneController);
     }

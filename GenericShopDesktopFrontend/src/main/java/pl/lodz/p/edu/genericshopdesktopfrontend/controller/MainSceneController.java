@@ -2,31 +2,38 @@ package pl.lodz.p.edu.genericshopdesktopfrontend.controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.Dialog;
-import pl.lodz.p.edu.genericshopdesktopfrontend.model.Role;
+import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
+import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneLoader;
+import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthenticationService;
 
 import java.net.URL;
-import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
 
 class MainSceneController implements Controller, Initializable {
 
-    private final String SETTINGS_SCENE = "/view/scene/settings_scene";
+    private final String SETTINGS_SCENE = "/view/scene/settings/settings_scene";
 
 
     private final SceneManager sceneManager;
     private final SceneLoader sceneLoader;
     private final AuthenticationService authenticationService;
+    private Runnable initActivePanel = () -> {};
 
 
     MainSceneController(SceneManager sceneManager, SceneLoader sceneLoader, AuthenticationService authenticationService) {
@@ -62,6 +69,7 @@ class MainSceneController implements Controller, Initializable {
         labelLogin.setText(authenticationService.getLogin().orElse(""));
 
         setUpButtons(resourceBundle);
+        initActivePanel.run();
     }
 
     private void setUpButtons(ResourceBundle bundle) {
@@ -69,60 +77,45 @@ class MainSceneController implements Controller, Initializable {
         buttonCart.setOnAction(actionEvent -> showCart());
         buttonHome.setOnAction(actionEvent -> showHomePanel());
         buttonOrders.setOnAction(actionEvent -> showOrdersPanel());
+        buttonSettings.setOnAction(actionEvent -> showSettingsPanel());
         buttonSignOut.setOnAction(actionEvent -> signOut(bundle));
     }
 
-    private void setUpGroups() {
-        Font buttonsFont = Font.font(15.0);
-        Color textColor = Color.WHITE;
-        ToggleGroup roleGroup = new ToggleGroup();
-        roleGroup.selectedToggleProperty().addListener((observableValue, oldToggle, newToggle) -> {
-            if (newToggle.getUserData() instanceof Role newRole) {
-                authenticationService.setActiveRole(newRole);
-            }
-        });
-
-        Role activeRole = authenticationService.getActiveRole();
-
-        List<RadioButton> radioButtons = authenticationService.getAccountRoles().stream()
-            .map(role -> {
-                var button = new RadioButton(role.name());
-                button.setTextFill(textColor);
-                button.setFont(buttonsFont);
-                button.setUserData(role);
-
-                if (role.equals(activeRole)) {
-                    button.setSelected(true);
-                }
-
-                return button;
-            })
-            .toList();
-
-        roleGroup.getToggles().addAll(radioButtons);
-        vboxActiveRole.getChildren().addAll(radioButtons);
-    }
-
-
-    private void showMenuBar() {
-
-    }
 
     private void showAccountPanel() {
 
     }
 
+
     private void showCart() {
 
     }
+
 
     private void showHomePanel() {
 
     }
 
+
     private void showOrdersPanel() {
 
     }
+
+
+    private void showSettingsPanel() {
+        try {
+            var settingsSceneController = new SettingsSceneController(authenticationService, sceneManager);
+            Scene scene = sceneLoader.loadScene(SETTINGS_SCENE, settingsSceneController, Locale.getDefault());
+            Parent panel = scene.getRoot();
+            borderPane.setCenter(panel);
+            BorderPane.setMargin(panel, new Insets(100, 50, 100, 50));
+
+            initActivePanel = () -> buttonSettings.fire();
+        } catch (ApplicationException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void signOut(ResourceBundle bundle) {
         new Dialog(Alert.AlertType.CONFIRMATION)
@@ -133,6 +126,7 @@ class MainSceneController implements Controller, Initializable {
             .filter(buttonType -> buttonType.equals(ButtonType.OK))
             .ifPresent(none -> {
                 authenticationService.logout();
+                initActivePanel = () -> {};
                 sceneManager.switchToAuthenticationScene();
             });
     }

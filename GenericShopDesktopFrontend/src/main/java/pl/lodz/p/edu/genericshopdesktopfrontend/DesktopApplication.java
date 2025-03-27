@@ -6,7 +6,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.alert.Dialog;
-import pl.lodz.p.edu.genericshopdesktopfrontend.controller.SceneManager;
+import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.image.ImageService;
 
 import java.util.Locale;

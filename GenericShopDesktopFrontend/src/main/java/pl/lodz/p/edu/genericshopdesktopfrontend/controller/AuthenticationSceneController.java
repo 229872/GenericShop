@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import org.controlsfx.control.Notifications;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
+import pl.lodz.p.edu.genericshopdesktopfrontend.scene.SceneManager;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthenticationService;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
