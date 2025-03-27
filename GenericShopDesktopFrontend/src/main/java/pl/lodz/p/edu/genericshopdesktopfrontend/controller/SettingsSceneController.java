@@ -1,6 +1,5 @@
 package pl.lodz.p.edu.genericshopdesktopfrontend.controller;
 
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -29,6 +28,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.DialogType.ERROR;
+import static pl.lodz.p.edu.genericshopdesktopfrontend.util.Utils.setUpDividers;
 
 class SettingsSceneController implements Controller, Initializable {
 
@@ -58,21 +58,7 @@ class SettingsSceneController implements Controller, Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setUpRoleButtons(resourceBundle);
         setUpLanguageButtons(resourceBundle);
-        setUpDividers();
-    }
-
-
-    private void setUpDividers() {
-        double[] dividerPositions = splitPane.getDividerPositions();
-        ObservableList<SplitPane.Divider> dividers = splitPane.getDividers();
-
-        if (dividers.isEmpty()) return;
-
-        dividers.get(0)
-            .positionProperty()
-            .addListener((observableValue, oldVal, newVal) -> {
-                splitPane.setDividerPositions(dividerPositions);
-            });
+        setUpDividers(splitPane);
     }
 
 

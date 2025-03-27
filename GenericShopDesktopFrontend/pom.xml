@@ -13,10 +13,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <javafx.version>17.0.6</javafx.version>
+        <fontawesome.version>4.7.0-9.1.2</fontawesome.version>
+        <controlsfx.version>11.1.2</controlsfx.version>
+        <jackson.version>2.18.2</jackson.version>
+        <nimbus.jose.jwt>10.0.2</nimbus.jose.jwt>
+
+        <!--  Test  -->
         <junit.version>5.10.0</junit.version>
         <assertj.version>3.26.3</assertj.version>
         <mockito.version>5.14.2</mockito.version>
-        <fontawesome.version>4.7.0-9.1.2</fontawesome.version>
     </properties>
 
     <dependencies>
@@ -41,17 +46,22 @@
         <dependency>
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
-            <version>11.1.2</version>
+            <version>${controlsfx.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.18.2</version>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
-            <version>10.0.2</version>
+            <version>${nimbus.jose.jwt}</version>
         </dependency>
 
         <!-- Test dependencies -->

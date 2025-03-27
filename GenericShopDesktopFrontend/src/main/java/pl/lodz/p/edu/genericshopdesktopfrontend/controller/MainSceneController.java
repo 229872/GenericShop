@@ -15,11 +15,6 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.SceneManager;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.Services;
-import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
-import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
-import pl.lodz.p.edu.genericshopdesktopfrontend.service.fxml.FXMLService;
-import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
-import pl.lodz.p.edu.genericshopdesktopfrontend.service.image.ImageService;
 
 import java.net.URL;
 import java.util.Locale;
@@ -31,13 +26,9 @@ import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.D
 class MainSceneController implements Controller, Initializable {
 
     private final String SETTINGS_SCENE = "/view/scene/settings/settings_scene";
+    private final String ACCOUNT_SCENE = "/view/scene/account/account_scene";
 
     private final SceneManager sceneManager;
-    private final FXMLService fxmlService;
-    private final AuthService authService;
-    private final HttpService httpService;
-    private final AnimationService animationService;
-    private final ImageService imageService;
     private final Services services;
 
     private Runnable initActivePanel = initEmptyPanel();
@@ -46,11 +37,12 @@ class MainSceneController implements Controller, Initializable {
     MainSceneController(SceneManager sceneManager, Services services) {
         this.services = requireNonNull(services);
         this.sceneManager = requireNonNull(sceneManager);
-        this.fxmlService = requireNonNull(services.fxml());
-        this.httpService = requireNonNull(services.http());
-        this.authService = requireNonNull(services.auth());
-        this.animationService = requireNonNull(services.animation());
-        this.imageService = requireNonNull(services.image());
+
+        requireNonNull(services.fxml());
+        requireNonNull(services.http());
+        requireNonNull(services.auth());
+        requireNonNull(services.animation());
+        requireNonNull(services.image());
     }
 
 
@@ -83,9 +75,9 @@ class MainSceneController implements Controller, Initializable {
 
     private void setUpAvatar() {
         try {
-            Image avatar = imageService.loadImage("avatar.png");
+            Image avatar = services.image().loadImage("avatar.png");
             imageViewAvatar.setImage(avatar);
-            labelLogin.setText(authService.getLogin().orElse(""));
+            labelLogin.setText(services.auth().getLogin().orElse(""));
 
         } catch (ApplicationException e) {
             e.printStackTrace();
@@ -104,7 +96,15 @@ class MainSceneController implements Controller, Initializable {
 
 
     private void showAccountPanel() {
+        try {
+            var controller = new AccountSceneController(services);
+            Parent panel = services.fxml().load(ACCOUNT_SCENE, controller, Locale.getDefault());
+            setUpCenterPanel(panel);
+            initActivePanel = () -> buttonAccount.fire();
 
+        } catch (ApplicationException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -125,11 +125,9 @@ class MainSceneController implements Controller, Initializable {
 
     private void showSettingsPanel() {
         try {
-            var settingsSceneController = new SettingsSceneController(sceneManager, services);
-
-            Parent panel = fxmlService.load(SETTINGS_SCENE, settingsSceneController, Locale.getDefault());
-            borderPane.setCenter(panel);
-            BorderPane.setMargin(panel, new Insets(100, 50, 100, 50));
+            var controller = new SettingsSceneController(sceneManager, services);
+            Parent panel = services.fxml().load(SETTINGS_SCENE, controller, Locale.getDefault());
+            setUpCenterPanel(panel);
             initActivePanel = () -> buttonSettings.fire();
 
         } catch (ApplicationException e) {
@@ -148,10 +146,16 @@ class MainSceneController implements Controller, Initializable {
             .showAndWait()
             .filter(buttonType -> buttonType.equals(ButtonType.OK))
             .ifPresent(none -> {
-                authService.logout();
+                services.auth().logout();
                 initActivePanel = initEmptyPanel();
                 sceneManager.switchToAuthenticationScene();
             });
+    }
+
+
+    private void setUpCenterPanel(Parent panel) {
+        borderPane.setCenter(panel);
+        BorderPane.setMargin(panel, new Insets(100, 50, 100, 50));
     }
 
 

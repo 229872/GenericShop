@@ -7,7 +7,9 @@ import java.util.Optional;
 
 public class ControllerFactory {
 
-    private ControllerFactory() {}
+    private ControllerFactory() {
+        throw new UnsupportedOperationException("Can't instantiate static class.");
+    }
 
 
     private static Controller mainScene;

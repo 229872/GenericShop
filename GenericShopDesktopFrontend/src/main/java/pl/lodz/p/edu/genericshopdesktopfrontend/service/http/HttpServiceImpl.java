@@ -2,6 +2,7 @@ package pl.lodz.p.edu.genericshopdesktopfrontend.service.http;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
+import pl.lodz.p.edu.genericshopdesktopfrontend.model.AccountOutputDto;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
 
@@ -60,6 +61,33 @@ class HttpServiceImpl implements HttpService {
 
         } catch (IOException | InterruptedException e) {
             throw new ApplicationException("Authentication failed", e);
+        }
+    }
+
+
+    @Override
+    public AccountOutputDto sendGetOwnAccountInformationRequest() throws ApplicationException {
+        try {
+            String authToken = authService.getAuthToken()
+                .orElseThrow(() -> new ApplicationException("Session expired"));
+
+            var request = HttpRequest.newBuilder(URI.create(format(API_ROOT, ACCOUNT_SELF)))
+                .header(CONTENT_TYPE, APPLICATION_JSON)
+                .header(AUTHORIZATION_HEADER, format(BEARER_TOKEN_PARAM, authToken))
+                .GET()
+                .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != 200) {
+                throw new ApplicationException("Couldn't fetch account data");
+            }
+
+            String json = response.body();
+            return jsonMapper.readValue(json, AccountOutputDto.class);
+
+        } catch (IOException | InterruptedException e) {
+            throw new ApplicationException("Couldn't change account language", e);
         }
     }
 

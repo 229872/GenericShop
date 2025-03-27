@@ -69,13 +69,6 @@ public class SceneManager {
     }
 
 
-    public void switchToMainScene() {
-        Consumer<Node> animation = node -> services.animation()
-            .fade(node, Duration.millis(500), 0.3, 1);
-        switchToMainScene(animation);
-    }
-
-
     private void loadScene(String scenePathWithoutExtension, Controller controller, Consumer<Node> animation) {
         try {
             Parent parent = services.fxml().load(scenePathWithoutExtension, controller, Locale.getDefault());

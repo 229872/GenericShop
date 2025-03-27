@@ -4,6 +4,7 @@ module pl.lodz.p.edu.genericshopdesktopfrontend {
 
     requires java.net.http;
     requires com.fasterxml.jackson.databind;
+    requires com.fasterxml.jackson.datatype.jsr310;
     requires com.nimbusds.jose.jwt;
     requires de.jensd.fx.glyphs.fontawesome;
     requires org.controlsfx.controls;
