@@ -11,7 +11,7 @@ public record AccountOutputDto(
     String locale,
     String firstName,
     String lastName,
-    AddressOutputDto address,
+    AddressDto address,
     String accountState,
     List<String> accountRoles,
     AuthLogOutputDto authLogs

@@ -22,7 +22,15 @@ public interface HttpService {
 
     Tokens sendAuthenticationRequest(String login, String password) throws ApplicationException;
 
+    AccountOutputDto sendGetOwnAccountInformationRequest() throws ApplicationException;
+
     void sendChangeAccountLanguageRequest(String locale) throws ApplicationException;
 
-    AccountOutputDto sendGetOwnAccountInformationRequest() throws ApplicationException;
+    AccountOutputDto sendChangeOwnPasswordRequest(String currentPassword, String newPassword) throws ApplicationException;
+
+    AccountOutputDto sendChangeOwnEmailRequest(String newEmail) throws ApplicationException;
+
+    AccountOutputDto sendUpdateContactInformationRequest() throws ApplicationException;
+
+
 }

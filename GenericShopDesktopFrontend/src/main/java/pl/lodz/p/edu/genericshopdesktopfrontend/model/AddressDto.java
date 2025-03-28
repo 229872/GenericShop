@@ -1,6 +1,6 @@
 package pl.lodz.p.edu.genericshopdesktopfrontend.model;
 
-public record AddressOutputDto(
+public record AddressDto(
     String postalCode,
     String country,
     String city,

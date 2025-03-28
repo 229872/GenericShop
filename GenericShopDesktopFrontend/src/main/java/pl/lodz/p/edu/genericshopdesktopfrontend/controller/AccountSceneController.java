@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.AccountOutputDto;
-import pl.lodz.p.edu.genericshopdesktopfrontend.model.AddressOutputDto;
+import pl.lodz.p.edu.genericshopdesktopfrontend.model.AddressDto;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.AuthLogOutputDto;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.Services;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.animation.AnimationService;
@@ -81,7 +81,7 @@ class AccountSceneController implements Controller, Initializable {
     }
 
 
-    private void setUpAddressLabels(AddressOutputDto address) {
+    private void setUpAddressLabels(AddressDto address) {
         labelStreet.setText(address.street());
         labelHouseNumber.setText(address.houseNumber().toString());
         labelCity.setText(address.city());

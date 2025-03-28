@@ -1,5 +1,6 @@
 package pl.lodz.p.edu.genericshopdesktopfrontend.service.http;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.AccountOutputDto;
@@ -18,6 +19,7 @@ import static java.lang.String.format;
 import static java.util.Map.entry;
 import static java.util.Objects.requireNonNull;
 import static pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpHelper.*;
+import static pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpHelper.Method.*;
 
 class HttpServiceImpl implements HttpService {
 
@@ -39,52 +41,39 @@ class HttpServiceImpl implements HttpService {
 
     @Override
     public Tokens sendAuthenticationRequest(String login, String password) throws ApplicationException {
+        String errorMessage = "Authentication failed";
         try {
-            Map<String, String> obj = Map.ofEntries(
+            Map<String, Object> obj = Map.ofEntries(
                 entry("login", login),
                 entry("password", password)
             );
-            String json = jsonMapper.writeValueAsString(obj);
 
-            var request = HttpRequest.newBuilder(URI.create(format(API_ROOT, "/auth")))
-                .header(CONTENT_TYPE, APPLICATION_JSON)
-                .POST(BodyPublishers.ofString(json))
-                .build();
+            var headers = headers(ENTRY_CONTENT_JSON);
+            var request = prepareRequest("/auth", POST, headers, obj);
+            var response = sendRequest(request);
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            handleResponse(response, errorMessage);
 
-            if (response.statusCode() != 200) {
-                throw new ApplicationException("Authentication failed");
-            }
-
-            return jsonMapper.readValue(response.body(), Tokens.class);
+            return deserializeResponse(response, Tokens.class);
 
         } catch (IOException | InterruptedException e) {
-            throw new ApplicationException("Authentication failed", e);
+            throw new ApplicationException(errorMessage, e);
         }
     }
 
 
     @Override
     public AccountOutputDto sendGetOwnAccountInformationRequest() throws ApplicationException {
+        String errorMessage = "Couldn't fetch account data";
         try {
-            String authToken = authService.getAuthToken()
-                .orElseThrow(() -> new ApplicationException("Session expired"));
+            String authToken = getAuthToken();
+            var headers = headers(ENTRY_CONTENT_JSON, entryBearerToken(authToken));
+            var request = prepareRequest(ACCOUNT_SELF, GET, headers);
+            var response = sendRequest(request);
 
-            var request = HttpRequest.newBuilder(URI.create(format(API_ROOT, ACCOUNT_SELF)))
-                .header(CONTENT_TYPE, APPLICATION_JSON)
-                .header(AUTHORIZATION_HEADER, format(BEARER_TOKEN_PARAM, authToken))
-                .GET()
-                .build();
+            handleResponse(response, errorMessage);
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() != 200) {
-                throw new ApplicationException("Couldn't fetch account data");
-            }
-
-            String json = response.body();
-            return jsonMapper.readValue(json, AccountOutputDto.class);
+            return deserializeResponse(response, AccountOutputDto.class);
 
         } catch (IOException | InterruptedException e) {
             throw new ApplicationException("Couldn't change account language", e);
@@ -94,27 +83,115 @@ class HttpServiceImpl implements HttpService {
 
     @Override
     public void sendChangeAccountLanguageRequest(String locale) throws ApplicationException {
+        String errorMessage = "Couldn't change account language";
         try {
-            String authToken = authService.getAuthToken()
-                .orElseThrow(() -> new ApplicationException("Session expired"));
+            String authToken = getAuthToken();
+            var headers = headers(ENTRY_CONTENT_JSON, entryBearerToken(authToken));
 
-            Map<String, String> obj = Map.ofEntries(entry("locale", locale));
-            String json = jsonMapper.writeValueAsString(obj);
+            Map<String, Object> obj = Map.ofEntries(
+                entry("locale", locale)
+            );
 
-            var request = HttpRequest.newBuilder(URI.create(format(API_ROOT, ACCOUNT_SELF + "/change-locale")))
-                .header(CONTENT_TYPE, APPLICATION_JSON)
-                .header(AUTHORIZATION_HEADER, format(BEARER_TOKEN_PARAM, authToken))
-                .PUT(BodyPublishers.ofString(json))
-                .build();
-
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() != 200) {
-                throw new ApplicationException("Couldn't change account language");
-            }
+            HttpRequest request = prepareRequest(ACCOUNT_SELF + "/change-locale", PUT, headers, obj);
+            HttpResponse<String> response = sendRequest(request);
+            handleResponse(response, errorMessage);
 
         } catch (IOException | InterruptedException e) {
-            throw new ApplicationException("Couldn't change account language", e);
+            throw new ApplicationException(errorMessage, e);
         }
+    }
+
+
+    @Override
+    public AccountOutputDto sendChangeOwnPasswordRequest(String currentPassword, String newPassword) throws ApplicationException {
+        String errorMessage = "Couldn't change password";
+        try {
+            Map<String, Object> obj = Map.ofEntries(
+                entry("currentPassword", currentPassword),
+                entry("newPassword", newPassword)
+            );
+
+            String authToken = getAuthToken();
+            var headers = headers(ENTRY_CONTENT_JSON, entryBearerToken(authToken));
+            var request = prepareRequest(ACCOUNT_SELF + "/change-password", PUT, headers, obj);
+            var response = sendRequest(request);
+
+            handleResponse(response, errorMessage);
+
+            return deserializeResponse(response, AccountOutputDto.class);
+
+        } catch (IOException | InterruptedException e) {
+            throw new ApplicationException(errorMessage, e);
+        }
+    }
+
+
+    @Override
+    public AccountOutputDto sendChangeOwnEmailRequest(String newEmail) throws ApplicationException {
+        return null;
+    }
+
+
+    @Override
+    public AccountOutputDto sendUpdateContactInformationRequest() throws ApplicationException {
+        return null;
+    }
+
+
+
+
+
+    private <T> T deserializeResponse(HttpResponse<String> response, Class<T> type) throws JsonProcessingException {
+        return jsonMapper.readValue(response.body(), type);
+    }
+
+
+    private HttpRequest prepareRequest(String endpointPath, Method method, Map<String, String> headers)
+        throws JsonProcessingException {
+
+        return prepareRequest(endpointPath, method, headers, Map.of());
+    }
+
+
+    private HttpRequest prepareRequest(String endpointPath, Method method, Map<String, String> headers,
+                                       Map<String, Object> obj) throws JsonProcessingException {
+
+        String json = jsonMapper.writeValueAsString(obj);
+
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(format(API_ROOT, endpointPath)));
+        headers.forEach(builder::header);
+
+        switch (method) {
+            case GET -> builder.GET();
+            case POST -> builder.POST(BodyPublishers.ofString(json));
+            case PUT, PATCH -> builder.PUT(BodyPublishers.ofString(json));
+            case DELETE -> builder.DELETE();
+        }
+
+        return builder.build();
+    }
+
+
+    private HttpResponse<String> sendRequest(HttpRequest request) throws IOException, InterruptedException {
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+
+    private void handleResponse(HttpResponse<String> response, String message) throws ApplicationException {
+        if (response.statusCode() != 200) {
+            throw new ApplicationException(message);
+        }
+    }
+
+
+    private String getAuthToken() throws ApplicationException {
+        return authService.getAuthToken()
+            .orElseThrow(() -> new ApplicationException("Session expired"));
+    }
+
+
+    @SafeVarargs
+    private Map<String, String> headers(Map.Entry<String, String> ... entries) {
+        return Map.ofEntries(entries);
     }
 }
