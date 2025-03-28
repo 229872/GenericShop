@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.AccountOutputDto;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
+import pl.lodz.p.edu.genericshopdesktopfrontend.model.UpdateContactDto;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
 
 import java.io.IOException;
@@ -49,7 +50,8 @@ class HttpServiceImpl implements HttpService {
             );
 
             var headers = headers(ENTRY_CONTENT_JSON);
-            var request = prepareRequest("/auth", POST, headers, obj);
+            var requestParams = new RequestParams("/auth", POST, headers);
+            var request = prepareRequest(requestParams, obj);
             var response = sendRequest(request);
 
             handleResponse(response, errorMessage);
@@ -68,7 +70,8 @@ class HttpServiceImpl implements HttpService {
         try {
             String authToken = getAuthToken();
             var headers = headers(ENTRY_CONTENT_JSON, entryBearerToken(authToken));
-            var request = prepareRequest(ACCOUNT_SELF, GET, headers);
+            var requestParams = new RequestParams(ACCOUNT_SELF, GET, headers);
+            var request = prepareRequest(requestParams);
             var response = sendRequest(request);
 
             handleResponse(response, errorMessage);
@@ -85,15 +88,16 @@ class HttpServiceImpl implements HttpService {
     public void sendChangeAccountLanguageRequest(String locale) throws ApplicationException {
         String errorMessage = "Couldn't change account language";
         try {
-            String authToken = getAuthToken();
-            var headers = headers(ENTRY_CONTENT_JSON, entryBearerToken(authToken));
-
             Map<String, Object> obj = Map.ofEntries(
                 entry("locale", locale)
             );
 
-            HttpRequest request = prepareRequest(ACCOUNT_SELF + "/change-locale", PUT, headers, obj);
-            HttpResponse<String> response = sendRequest(request);
+            String authToken = getAuthToken();
+            var headers = headers(ENTRY_CONTENT_JSON, entryBearerToken(authToken));
+            var requestParams = new RequestParams(ACCOUNT_SELF + "/change-locale", PUT, headers);
+            var request = prepareRequest(requestParams, obj);
+            var response = sendRequest(request);
+
             handleResponse(response, errorMessage);
 
         } catch (IOException | InterruptedException e) {
@@ -113,7 +117,8 @@ class HttpServiceImpl implements HttpService {
 
             String authToken = getAuthToken();
             var headers = headers(ENTRY_CONTENT_JSON, entryBearerToken(authToken));
-            var request = prepareRequest(ACCOUNT_SELF + "/change-password", PUT, headers, obj);
+            var requestParams = new RequestParams(ACCOUNT_SELF + "/change-password", PUT, headers);
+            var request = prepareRequest(requestParams, obj);
             var response = sendRequest(request);
 
             handleResponse(response, errorMessage);
@@ -128,17 +133,52 @@ class HttpServiceImpl implements HttpService {
 
     @Override
     public AccountOutputDto sendChangeOwnEmailRequest(String newEmail) throws ApplicationException {
-        return null;
+        String errorMessage = "Couldn't change email";
+        try {
+            Map<String, Object> obj = Map.ofEntries(
+                entry("newEmail", newEmail)
+            );
+
+            String authToken = getAuthToken();
+            var headers = headers(ENTRY_CONTENT_JSON, entryBearerToken(authToken));
+            var requestParams = new RequestParams(ACCOUNT_SELF + "/change-email", PUT, headers);
+            var request = prepareRequest(requestParams, obj);
+            var response = sendRequest(request);
+
+            handleResponse(response, errorMessage);
+
+            return deserializeResponse(response, AccountOutputDto.class);
+
+        } catch (IOException | InterruptedException e) {
+            throw new ApplicationException(errorMessage, e);
+        }
     }
 
 
     @Override
-    public AccountOutputDto sendUpdateContactInformationRequest() throws ApplicationException {
-        return null;
+    public AccountOutputDto sendUpdateContactInformationRequest(UpdateContactDto dto) throws ApplicationException {
+        String errorMessage = "Couldn't update contact information";
+        try {
+            String authToken = getAuthToken();
+            var headers = headers(ENTRY_CONTENT_JSON, entryBearerToken(authToken));
+            var requestParams = new RequestParams(ACCOUNT_SELF + "/edit", PUT, headers);
+            var request = prepareRequest(requestParams, dto);
+            var response = sendRequest(request);
+
+            handleResponse(response, errorMessage);
+
+            return deserializeResponse(response, AccountOutputDto.class);
+
+        } catch (IOException | InterruptedException e) {
+            throw new ApplicationException(errorMessage, e);
+        }
     }
 
 
 
+
+
+    record RequestParams(String endpointPath, Method method, Map<String, String> headers) {}
 
 
     private <T> T deserializeResponse(HttpResponse<String> response, Class<T> type) throws JsonProcessingException {
@@ -146,15 +186,17 @@ class HttpServiceImpl implements HttpService {
     }
 
 
-    private HttpRequest prepareRequest(String endpointPath, Method method, Map<String, String> headers)
-        throws JsonProcessingException {
-
-        return prepareRequest(endpointPath, method, headers, Map.of());
+    private HttpRequest prepareRequest(RequestParams params) throws JsonProcessingException {
+        return prepareRequest(params, Map.of());
     }
 
 
-    private HttpRequest prepareRequest(String endpointPath, Method method, Map<String, String> headers,
-                                       Map<String, Object> obj) throws JsonProcessingException {
+    private HttpRequest prepareRequest(RequestParams params, Object obj) throws JsonProcessingException {
+        requireNonNull(params);
+
+        String endpointPath = requireNonNull(params.endpointPath());
+        Map<String, String> headers = requireNonNull(params.headers());
+        Method method = requireNonNull(params.method());
 
         String json = jsonMapper.writeValueAsString(obj);
 

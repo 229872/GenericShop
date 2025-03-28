@@ -4,6 +4,7 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.config.JacksonConfig;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.AccountOutputDto;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
+import pl.lodz.p.edu.genericshopdesktopfrontend.model.UpdateContactDto;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
 
 import java.net.http.HttpClient;
@@ -30,7 +31,7 @@ public interface HttpService {
 
     AccountOutputDto sendChangeOwnEmailRequest(String newEmail) throws ApplicationException;
 
-    AccountOutputDto sendUpdateContactInformationRequest() throws ApplicationException;
+    AccountOutputDto sendUpdateContactInformationRequest(UpdateContactDto dto) throws ApplicationException;
 
 
 }
