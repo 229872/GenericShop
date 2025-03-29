@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.AccountOutputDto;
+import pl.lodz.p.edu.genericshopdesktopfrontend.model.ChangePasswordDto;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.UpdateContactDto;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
@@ -107,18 +108,13 @@ class HttpServiceImpl implements HttpService {
 
 
     @Override
-    public AccountOutputDto sendChangeOwnPasswordRequest(String currentPassword, String newPassword) throws ApplicationException {
+    public AccountOutputDto sendChangeOwnPasswordRequest(ChangePasswordDto dto) throws ApplicationException {
         String errorMessage = "Couldn't change password";
         try {
-            Map<String, Object> obj = Map.ofEntries(
-                entry("currentPassword", currentPassword),
-                entry("newPassword", newPassword)
-            );
-
             String authToken = getAuthToken();
             var headers = headers(ENTRY_CONTENT_JSON, entryBearerToken(authToken));
             var requestParams = new RequestParams(ACCOUNT_SELF + "/change-password", PUT, headers);
-            var request = prepareRequest(requestParams, obj);
+            var request = prepareRequest(requestParams, dto);
             var response = sendRequest(request);
 
             handleResponse(response, errorMessage);

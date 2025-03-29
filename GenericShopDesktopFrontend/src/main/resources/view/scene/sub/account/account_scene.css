@@ -26,3 +26,31 @@
 .container_text {
     -fx-font-size: 15;
 }
+
+#auth_logs_container {
+
+
+}
+
+#bottom_container {
+    -fx-spacing: 250;
+}
+
+#action_buttons_container {
+    -fx-spacing: 30;
+    -fx-alignment: CENTER;
+}
+
+.action_button {
+    -fx-background-color: #FFF;
+    -fx-border-color: #000;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-min-width: 225;
+    -fx-max-width: 225;
+    -fx-font-size: 17;
+}
+
+.action_button:hover {
+    -fx-background-color: #EEE;
+}

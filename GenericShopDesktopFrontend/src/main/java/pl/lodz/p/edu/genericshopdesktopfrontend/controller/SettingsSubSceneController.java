@@ -30,7 +30,7 @@ import static java.util.Objects.requireNonNull;
 import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.DialogType.ERROR;
 import static pl.lodz.p.edu.genericshopdesktopfrontend.util.Utils.setUpDividers;
 
-class SettingsSceneController implements Controller, Initializable {
+class SettingsSubSceneController implements Controller, Initializable {
 
     private final AuthService authService;
     private final SceneManager sceneManager;
@@ -38,7 +38,7 @@ class SettingsSceneController implements Controller, Initializable {
     private final AnimationService animationService;
 
 
-    SettingsSceneController(SceneManager sceneManager, Services services) {
+    SettingsSubSceneController(SceneManager sceneManager, Services services) {
         requireNonNull(services);
         this.sceneManager = requireNonNull(sceneManager);
         this.httpService = requireNonNull(services.http());

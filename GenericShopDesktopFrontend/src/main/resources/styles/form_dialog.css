@@ -1,0 +1,34 @@
+.form_container {
+    -fx-spacing: 30;
+    -fx-alignment: CENTER;
+    -fx-min-width: 600;
+    -fx-min-height: 400;
+}
+
+.field {
+    -fx-background-color: #FFF;
+    -fx-border-color: #000;
+    -fx-border-width: 0 0 1px 0;
+    -fx-max-width: 300;
+    -fx-min-width: 300;
+    -fx-min-height: 50;
+    -fx-font-size: 17;
+}
+
+.button {
+    -fx-background-color: #FFF;
+    -fx-text-fill: #000;
+    -fx-font-size: 20;
+    -fx-border-color: #000;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+}
+
+.button:hover {
+    -fx-background-color: #DDD;
+}
+
+.title {
+    -fx-font-size: 32;
+    -fx-font-weight: bold;
+}

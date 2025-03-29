@@ -34,7 +34,7 @@ class FXMLServiceImpl implements FXMLService {
             return parent;
 
         } catch (IOException | NullPointerException e) {
-            throw new ApplicationException("Can't switch to Authentication scene", e);
+            throw new ApplicationException("Can't load scene", e);
         }
     }
 

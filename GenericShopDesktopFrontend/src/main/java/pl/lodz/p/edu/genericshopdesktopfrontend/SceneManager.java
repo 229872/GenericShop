@@ -64,7 +64,7 @@ public class SceneManager {
 
 
     public void switchToMainScene(Consumer<Node> animation) {
-        var controller = ControllerFactory.getMainSceneController(this, services);
+        var controller = ControllerFactory.getMainSceneController(this, services, rootLanguageBundle);
         loadScene(MAIN_SCENE, controller, animation);
     }
 

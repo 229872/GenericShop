@@ -4,6 +4,7 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.SceneManager;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.Services;
 
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class ControllerFactory {
 
@@ -16,10 +17,10 @@ public class ControllerFactory {
     private static Controller authenticationScene;
 
 
-    public static Controller getMainSceneController(SceneManager sceneManager, Services services) {
+    public static Controller getMainSceneController(SceneManager sceneManager, Services services, ResourceBundle bundle) {
         return Optional.ofNullable(mainScene)
             .orElseGet(() -> {
-                return mainScene = new MainSceneController(sceneManager, services);
+                return mainScene = new MainSceneController(sceneManager, services, bundle);
             });
     }
 

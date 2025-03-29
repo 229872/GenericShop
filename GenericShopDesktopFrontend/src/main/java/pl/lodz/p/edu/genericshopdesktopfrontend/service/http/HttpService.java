@@ -3,6 +3,7 @@ package pl.lodz.p.edu.genericshopdesktopfrontend.service.http;
 import pl.lodz.p.edu.genericshopdesktopfrontend.config.JacksonConfig;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.AccountOutputDto;
+import pl.lodz.p.edu.genericshopdesktopfrontend.model.ChangePasswordDto;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.Tokens;
 import pl.lodz.p.edu.genericshopdesktopfrontend.model.UpdateContactDto;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.auth.AuthService;
@@ -27,7 +28,7 @@ public interface HttpService {
 
     void sendChangeAccountLanguageRequest(String locale) throws ApplicationException;
 
-    AccountOutputDto sendChangeOwnPasswordRequest(String currentPassword, String newPassword) throws ApplicationException;
+    AccountOutputDto sendChangeOwnPasswordRequest(ChangePasswordDto dto) throws ApplicationException;
 
     AccountOutputDto sendChangeOwnEmailRequest(String newEmail) throws ApplicationException;
 

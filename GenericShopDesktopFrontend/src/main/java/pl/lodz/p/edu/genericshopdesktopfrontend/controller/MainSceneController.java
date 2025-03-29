@@ -25,18 +25,20 @@ import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.D
 
 class MainSceneController implements Controller, Initializable {
 
-    private final String SETTINGS_SCENE = "/view/scene/settings/settings_scene";
-    private final String ACCOUNT_SCENE = "/view/scene/account/account_scene";
+    private final String SETTINGS_SCENE = "/view/scene/sub/settings/settings_scene";
+    private final String ACCOUNT_SCENE = "/view/scene/sub/account/account_scene";
 
     private final SceneManager sceneManager;
     private final Services services;
+    private final ResourceBundle bundle;
 
     private Runnable initActivePanel = initEmptyPanel();
 
 
-    MainSceneController(SceneManager sceneManager, Services services) {
+    MainSceneController(SceneManager sceneManager, Services services, ResourceBundle bundle) {
         this.services = requireNonNull(services);
         this.sceneManager = requireNonNull(sceneManager);
+        this.bundle = requireNonNull(bundle);
 
         requireNonNull(services.fxml());
         requireNonNull(services.http());
@@ -97,7 +99,7 @@ class MainSceneController implements Controller, Initializable {
 
     private void showAccountPanel() {
         try {
-            var controller = new AccountSceneController(services);
+            var controller = new AccountSubSceneController(services, bundle);
             Parent panel = services.fxml().load(ACCOUNT_SCENE, controller, Locale.getDefault());
             setUpCenterPanel(panel);
             initActivePanel = () -> buttonAccount.fire();
@@ -125,7 +127,7 @@ class MainSceneController implements Controller, Initializable {
 
     private void showSettingsPanel() {
         try {
-            var controller = new SettingsSceneController(sceneManager, services);
+            var controller = new SettingsSubSceneController(sceneManager, services);
             Parent panel = services.fxml().load(SETTINGS_SCENE, controller, Locale.getDefault());
             setUpCenterPanel(panel);
             initActivePanel = () -> buttonSettings.fire();
