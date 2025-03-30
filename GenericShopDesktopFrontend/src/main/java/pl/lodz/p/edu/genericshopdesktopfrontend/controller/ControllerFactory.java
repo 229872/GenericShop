@@ -13,14 +13,14 @@ public class ControllerFactory {
     }
 
 
-    private static Controller mainScene;
+    private static Controller dashboardScene;
     private static Controller authenticationScene;
 
 
-    public static Controller getMainSceneController(SceneManager sceneManager, Services services, ResourceBundle bundle) {
-        return Optional.ofNullable(mainScene)
+    public static Controller getDashboardScene(SceneManager sceneManager, Services services, ResourceBundle bundle) {
+        return Optional.ofNullable(dashboardScene)
             .orElseGet(() -> {
-                return mainScene = new MainSceneController(sceneManager, services, bundle);
+                return dashboardScene = new DashboardSceneController(sceneManager, services, bundle);
             });
     }
 

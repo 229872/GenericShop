@@ -12,7 +12,7 @@
         <left>
             <VBox id="logo_container">
                 <FontAwesomeIconView id="logo" glyphName="SHOPPING_BAG" size="120" />
-                <Text id="logo_title" text="%title" />
+                <Text id="logo_title" text="%shop" />
 
                 <Label id="language_label" text="%language" />
                 <ComboBox id="language_select" fx:id="comboBoxLanguage" />
@@ -20,8 +20,8 @@
         </left>
         <center>
             <VBox id="form_container">
-                <Text id="form_title" text="%title"/>
-                <Text id="form_subtitle" text="%subtitle" />
+                <Text id="form_title" text="%shop"/>
+                <Text id="form_subtitle" text="%sign.in.to.continue" />
 
                 <HBox styleClass="form_field_icon_cover">
                     <FontAwesomeIconView glyphName="USER" size="30" />
@@ -29,7 +29,7 @@
                     <VBox styleClass="form_field_cover">
                         <TextField fx:id="textFieldLogin" styleClass="form_field" promptText="%login" />
                         <Text fx:id="textLoginError" styleClass="text_error" visible="false"
-                              text="%login.wrong" />
+                              text="%login.must.start.with.letter.and.then" />
                     </VBox>
                 </HBox>
 
@@ -40,13 +40,13 @@
                     <VBox styleClass="form_field_cover">
                         <PasswordField fx:id="passwordFieldPassword" styleClass="form_field" promptText="%password" />
                         <Text fx:id="textPasswordError" styleClass="text_error" visible="false"
-                              text="%password.wrong" />
+                              text="%password.not.valid" />
                     </VBox>
                 </HBox>
 
-                <Hyperlink id="form_hyperlink" text="%password.forgot" />
+                <Hyperlink id="form_hyperlink" text="%forgot.password" />
 
-                <Button fx:id="buttonSignIn" text="%sign_in" />
+                <Button fx:id="buttonSignIn" text="%sign.in" />
             </VBox>
         </center>
     </BorderPane>

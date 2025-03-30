@@ -7,7 +7,6 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -16,11 +15,9 @@ import static java.util.Objects.requireNonNull;
 class FXMLServiceImpl implements FXMLService {
 
     @Override
-    public Parent load(String scenePathWithoutExtension, Controller controller,
-                           Locale applicationLanguage) throws ApplicationException {
+    public Parent load(String scenePathWithoutExtension, Controller controller, ResourceBundle i18nResource) throws ApplicationException {
         try {
             URL fxmlURL = loadFxml(scenePathWithoutExtension);
-            ResourceBundle i18nResource = loadBundle(scenePathWithoutExtension, applicationLanguage);
 
             FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
             fxmlLoader.setController(controller);
@@ -36,16 +33,6 @@ class FXMLServiceImpl implements FXMLService {
         } catch (IOException | NullPointerException e) {
             throw new ApplicationException("Can't load scene", e);
         }
-    }
-
-
-    private ResourceBundle loadBundle(String scenePathWithoutExtension, Locale applicationLanguage) {
-        String i18nBundlePath = scenePathWithoutExtension
-            .substring(1)
-            .replace("/", ".")
-            .concat("_i18n");
-
-        return ResourceBundle.getBundle(i18nBundlePath, applicationLanguage);
     }
 
 

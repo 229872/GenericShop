@@ -122,8 +122,8 @@ class SettingsSubSceneController implements Controller, Initializable {
 
             Dialog.builder()
                 .type(ERROR)
-                .title(bundle.getString("error.title"))
-                .text(bundle.getString("error.text"))
+                .title(bundle.getString("error"))
+                .text(bundle.getString("couldnt.change.accounts.language.on.server"))
                 .display();
         }
     }

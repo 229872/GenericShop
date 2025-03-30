@@ -82,7 +82,7 @@
                             />
                             <Text
                                     styleClass="nav_button_text"
-                                    text="%home"
+                                    text="%overview"
                                     GridPane.columnIndex="1"
                             />
                         </GridPane>
@@ -155,7 +155,7 @@
                             />
                             <Text
                                     styleClass="nav_button_text"
-                                    text="%signout"
+                                    text="%sign.out"
                                     GridPane.columnIndex="1"
                             />
                         </GridPane>

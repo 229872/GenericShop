@@ -51,7 +51,7 @@ public class DesktopApplication extends Application {
             Image appIcon = imageService.loadImage("app_icon.jpg");
 
             primaryStage.initStyle(StageStyle.UNDECORATED);
-            primaryStage.setTitle(rootLanguageBundle.getString("title"));
+            primaryStage.setTitle(rootLanguageBundle.getString("shop"));
             primaryStage.getIcons().add(appIcon);
             primaryStage.show();
 
@@ -62,10 +62,10 @@ public class DesktopApplication extends Application {
             Dialog.builder()
                 .type(ERROR)
                 .title(bundle
-                    .map(b -> b.getString("error.title"))
+                    .map(b -> b.getString("error"))
                     .orElse("Error"))
                 .text(bundle
-                    .map(b -> b.getString("error.content"))
+                    .map(b -> b.getString("couldnt.start.application"))
                     .orElse("Couldn't start application"))
                 .display();
         }

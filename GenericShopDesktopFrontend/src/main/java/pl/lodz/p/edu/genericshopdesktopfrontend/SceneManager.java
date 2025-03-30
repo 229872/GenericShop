@@ -8,6 +8,7 @@ import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
+import pl.lodz.p.edu.genericshopdesktopfrontend.config.Resources;
 import pl.lodz.p.edu.genericshopdesktopfrontend.controller.Controller;
 import pl.lodz.p.edu.genericshopdesktopfrontend.controller.ControllerFactory;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
@@ -23,11 +24,8 @@ import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.D
 
 public class SceneManager {
 
-    private final String AUTHENTICATION_SCENE = "/view/scene/authentication/authentication_scene";
-    private final String MAIN_SCENE = "/view/scene/main/main_scene";
-
     private final String rootBundleName;
-    private ResourceBundle rootLanguageBundle;
+    private ResourceBundle i18nResource;
 
     private final Stage primaryStage;
     private final WindowManager windowManager;
@@ -45,8 +43,8 @@ public class SceneManager {
         requireNonNull(services.image());
         requireNonNull(services.fxml());
 
-        this.rootLanguageBundle = ResourceBundle.getBundle(rootBundleName, Locale.getDefault());
-        this.windowManager = new WindowManager(primaryStage, rootLanguageBundle);
+        this.i18nResource = ResourceBundle.getBundle(rootBundleName, Locale.getDefault());
+        this.windowManager = new WindowManager(primaryStage, i18nResource);
 
         primaryStage.setOnHiding(windowEvent -> windowManager.minimise());
         primaryStage.setOnCloseRequest(windowEvent -> {
@@ -59,19 +57,19 @@ public class SceneManager {
     public void switchToAuthenticationScene() {
         var controller = ControllerFactory.getAuthSceneController(this, services);
         Consumer<Node> animation = node -> services.animation().fade(node, Duration.seconds(1.5));
-        loadScene(AUTHENTICATION_SCENE, controller, animation);
+        loadScene(Resources.Scene.AUTHENTICATION, controller, animation);
     }
 
 
     public void switchToMainScene(Consumer<Node> animation) {
-        var controller = ControllerFactory.getMainSceneController(this, services, rootLanguageBundle);
-        loadScene(MAIN_SCENE, controller, animation);
+        var controller = ControllerFactory.getDashboardScene(this, services, i18nResource);
+        loadScene(Resources.Scene.DASHBOARD, controller, animation);
     }
 
 
     private void loadScene(String scenePathWithoutExtension, Controller controller, Consumer<Node> animation) {
         try {
-            Parent parent = services.fxml().load(scenePathWithoutExtension, controller, Locale.getDefault());
+            Parent parent = services.fxml().load(scenePathWithoutExtension, controller, i18nResource);
             Scene scene = new Scene(parent);
             windowManager.setUpWindowDragging(scene);
             primaryStage.setScene(scene);
@@ -87,16 +85,16 @@ public class SceneManager {
     private void showErrorNotification() {
         Dialog.builder()
             .type(ERROR)
-            .title(rootLanguageBundle.getString("error.title"))
-            .text(rootLanguageBundle.getString("error.switchscene.content"))
+            .title(i18nResource.getString("error"))
+            .text(i18nResource.getString("couldnt.switch.to.requested.view"))
             .display();
     }
 
 
     public void setApplicationLanguage(Locale newApplicationLanguage) {
         Locale.setDefault(newApplicationLanguage);
-        this.rootLanguageBundle = ResourceBundle.getBundle(rootBundleName, newApplicationLanguage);
-        windowManager.setBundle(rootLanguageBundle);
+        this.i18nResource = ResourceBundle.getBundle(rootBundleName, newApplicationLanguage);
+        windowManager.setI18nResource(i18nResource);
     }
 
 
@@ -105,17 +103,17 @@ public class SceneManager {
 
         private double xOffset, yOffset;
         private final Stage primaryStage;
-        private ResourceBundle bundle;
+        private ResourceBundle i18nResource;
 
 
-        private WindowManager(Stage primaryStage, ResourceBundle bundle) {
+        private WindowManager(Stage primaryStage, ResourceBundle i18nResource) {
             this.primaryStage = primaryStage;
-            this.bundle = bundle;
+            this.i18nResource = i18nResource;
         }
 
 
-        private void setBundle(ResourceBundle bundle) {
-            this.bundle = bundle;
+        private void setI18nResource(ResourceBundle i18nResource) {
+            this.i18nResource = i18nResource;
         }
 
 
@@ -135,9 +133,9 @@ public class SceneManager {
         private void closeApp() {
             Dialog.builder()
                 .type(CONFIRM)
-                .title(bundle.getString("exit.title"))
-                .header(bundle.getString("exit.header"))
-                .text(bundle.getString("exit.content"))
+                .title(i18nResource.getString("confirm.operation"))
+                .header(i18nResource.getString("you.are.about.to.close.the.app"))
+                .text(i18nResource.getString("are.you.sure.you.want.close.app"))
                 .build()
                 .showAndWait()
                 .filter(buttonType -> buttonType.equals(ButtonType.OK))

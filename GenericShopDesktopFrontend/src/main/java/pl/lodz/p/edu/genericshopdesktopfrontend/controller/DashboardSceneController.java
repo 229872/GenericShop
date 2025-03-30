@@ -13,32 +13,29 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import pl.lodz.p.edu.genericshopdesktopfrontend.SceneManager;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog;
+import pl.lodz.p.edu.genericshopdesktopfrontend.config.Resources;
 import pl.lodz.p.edu.genericshopdesktopfrontend.exception.ApplicationException;
 import pl.lodz.p.edu.genericshopdesktopfrontend.service.Services;
 
 import java.net.URL;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static java.util.Objects.requireNonNull;
 import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.DialogType.CONFIRM;
 
-class MainSceneController implements Controller, Initializable {
-
-    private final String SETTINGS_SCENE = "/view/scene/sub/settings/settings_scene";
-    private final String ACCOUNT_SCENE = "/view/scene/sub/account/account_scene";
+class DashboardSceneController implements Controller, Initializable {
 
     private final SceneManager sceneManager;
     private final Services services;
-    private final ResourceBundle bundle;
+    private final ResourceBundle i18n;
 
     private Runnable initActivePanel = initEmptyPanel();
 
 
-    MainSceneController(SceneManager sceneManager, Services services, ResourceBundle bundle) {
+    DashboardSceneController(SceneManager sceneManager, Services services, ResourceBundle i18n) {
         this.services = requireNonNull(services);
         this.sceneManager = requireNonNull(sceneManager);
-        this.bundle = requireNonNull(bundle);
+        this.i18n = requireNonNull(i18n);
 
         requireNonNull(services.fxml());
         requireNonNull(services.http());
@@ -87,20 +84,20 @@ class MainSceneController implements Controller, Initializable {
     }
 
 
-    private void setUpButtons(ResourceBundle bundle) {
+    private void setUpButtons(ResourceBundle i18n) {
         buttonAccount.setOnAction(actionEvent -> showAccountPanel());
         buttonCart.setOnAction(actionEvent -> showCart());
         buttonHome.setOnAction(actionEvent -> showHomePanel());
         buttonOrders.setOnAction(actionEvent -> showOrdersPanel());
         buttonSettings.setOnAction(actionEvent -> showSettingsPanel());
-        buttonSignOut.setOnAction(actionEvent -> signOut(bundle));
+        buttonSignOut.setOnAction(actionEvent -> signOut(i18n));
     }
 
 
     private void showAccountPanel() {
         try {
-            var controller = new AccountSubSceneController(services, bundle);
-            Parent panel = services.fxml().load(ACCOUNT_SCENE, controller, Locale.getDefault());
+            var controller = new AccountSubSceneController(services, i18n);
+            Parent panel = services.fxml().load(Resources.Scene.SUB_ACCOUNT, controller, i18n);
             setUpCenterPanel(panel);
             initActivePanel = () -> buttonAccount.fire();
 
@@ -128,7 +125,7 @@ class MainSceneController implements Controller, Initializable {
     private void showSettingsPanel() {
         try {
             var controller = new SettingsSubSceneController(sceneManager, services);
-            Parent panel = services.fxml().load(SETTINGS_SCENE, controller, Locale.getDefault());
+            Parent panel = services.fxml().load(Resources.Scene.SUB_SETTINGS, controller, i18n);
             setUpCenterPanel(panel);
             initActivePanel = () -> buttonSettings.fire();
 
@@ -141,9 +138,9 @@ class MainSceneController implements Controller, Initializable {
     private void signOut(ResourceBundle bundle) {
         Dialog.builder()
             .type(CONFIRM)
-            .title(bundle.getString("logout.dialog.title"))
-            .header(bundle.getString("logout.dialog.header"))
-            .text(bundle.getString("logout.dialog.content"))
+            .title(bundle.getString("confirm.operation"))
+            .header(bundle.getString("confirm.operation"))
+            .text(bundle.getString("are.you.sure.you.want.to.log.out.from.this.account"))
             .build()
             .showAndWait()
             .filter(buttonType -> buttonType.equals(ButtonType.OK))

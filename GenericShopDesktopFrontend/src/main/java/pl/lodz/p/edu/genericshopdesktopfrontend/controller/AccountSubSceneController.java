@@ -23,6 +23,7 @@ import pl.lodz.p.edu.genericshopdesktopfrontend.service.http.HttpService;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 import static pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.Dialog.DialogType.ERROR;
@@ -79,21 +80,25 @@ class AccountSubSceneController implements Controller, Initializable {
 
             Dialog.builder()
                 .type(ERROR)
-                .title(bundle.getString("error.title"))
-                .text(bundle.getString("error.text"))
+                .title(bundle.getString("error"))
+                .text(bundle.getString("couldnt.change.accounts.language.on.server"))
                 .display();
         }
     }
 
 
     private void setUpAccountLabels(AccountOutputDto account) {
+        String roles = account.accountRoles().stream()
+            .map(role -> bundle.getString(role.toLowerCase()))
+            .collect(Collectors.joining(", "));
+
         labelLogin.setText(account.login());
         labelEmail.setText(account.email());
         labelLocale.setText(account.locale());
         labelFirstName.setText(account.firstName());
         labelLastName.setText(account.lastName());
-        labelAccountState.setText(account.accountState());
-        labelAccountRoles.setText(String.join(", ", account.accountRoles()));
+        labelAccountState.setText(bundle.getString(account.accountState().toLowerCase()));
+        labelAccountRoles.setText(roles);
     }
 
 

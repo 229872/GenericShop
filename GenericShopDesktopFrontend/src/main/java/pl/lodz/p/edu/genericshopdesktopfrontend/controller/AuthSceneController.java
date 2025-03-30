@@ -164,8 +164,8 @@ class AuthSceneController implements Controller, Initializable {
 
             Dialog.builder()
                 .type(INFO)
-                .title(bundle.getString("authentication.success.title"))
-                .text(bundle.getString("authentication.success.text"))
+                .title(bundle.getString("success"))
+                .text(bundle.getString("authentication.was.successful"))
                 .display();
 
         } catch (ApplicationException e) {
@@ -173,8 +173,8 @@ class AuthSceneController implements Controller, Initializable {
 
             Dialog.builder()
                 .type(ERROR)
-                .title(bundle.getString("authentication.error.title"))
-                .text(bundle.getString("authentication.error.text"))
+                .title(bundle.getString("error"))
+                .text(bundle.getString("authentication.failed"))
                 .display();
         }
     }
