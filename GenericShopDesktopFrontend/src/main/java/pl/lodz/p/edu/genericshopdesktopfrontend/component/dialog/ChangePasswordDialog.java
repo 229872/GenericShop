@@ -69,7 +69,7 @@ public class ChangePasswordDialog extends Stage {
 
     private void initStyleClasses() {
         root.getStyleClass().add("form_container");
-        this.labelTitle.getStyleClass().add("shop");
+        this.labelTitle.getStyleClass().add("title");
         this.passwordFieldCurrent.getStyleClass().add("field");
         this.passwordFieldNew.getStyleClass().add("field");
         this.buttonSubmit.getStyleClass().add("button");

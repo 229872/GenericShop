@@ -13,12 +13,13 @@ public class ControllerFactory {
     }
 
 
-    private static Controller dashboardScene;
+    private static DashboardSceneController dashboardScene;
     private static Controller authenticationScene;
 
 
     public static Controller getDashboardScene(SceneManager sceneManager, Services services, ResourceBundle bundle) {
         return Optional.ofNullable(dashboardScene)
+            .map(controller -> controller.setI18n(bundle))
             .orElseGet(() -> {
                 return dashboardScene = new DashboardSceneController(sceneManager, services, bundle);
             });

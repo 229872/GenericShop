@@ -68,7 +68,7 @@ public class ChangeEmailDialog extends Stage {
 
     private void initStyleClasses() {
         root.getStyleClass().add("form_container");
-        this.labelTitle.getStyleClass().add("shop");
+        this.labelTitle.getStyleClass().add("title");
         this.textFieldNewEmail.getStyleClass().add("field");
         this.buttonSubmit.getStyleClass().add("button");
     }

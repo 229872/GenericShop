@@ -27,7 +27,7 @@ class DashboardSceneController implements Controller, Initializable {
 
     private final SceneManager sceneManager;
     private final Services services;
-    private final ResourceBundle i18n;
+    private ResourceBundle i18n;
 
     private Runnable initActivePanel = initEmptyPanel();
 
@@ -44,6 +44,11 @@ class DashboardSceneController implements Controller, Initializable {
         requireNonNull(services.image());
     }
 
+
+    public DashboardSceneController setI18n(ResourceBundle i18n) {
+        this.i18n = requireNonNull(i18n);
+        return this;
+    }
 
     @FXML
     private BorderPane borderPane;
