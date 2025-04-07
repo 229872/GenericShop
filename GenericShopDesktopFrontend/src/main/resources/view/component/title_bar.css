@@ -1,0 +1,15 @@
+.menu_button {
+    -fx-background-color: transparent;
+}
+
+.menu_button :hover {
+    -fx-fill: #555;
+}
+
+#menu {
+    -fx-alignment: top-right;
+    -fx-spacing: 5;
+    -fx-max-height: 50px;
+
+    -fx-max-width: 100px;
+}

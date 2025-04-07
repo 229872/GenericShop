@@ -1,0 +1,56 @@
+.upper_container {
+    -fx-spacing: 25;
+    -fx-alignment: TOP_CENTER;
+}
+
+.data_container {
+    -fx-spacing: 20;
+    -fx-padding: 20;
+    -fx-alignment: TOP_CENTER;
+    -fx-background-color: #FFF;
+    -fx-border-color: #000;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+}
+
+.container_title {
+    -fx-font-weight: bold;
+    -fx-font-size: 28;
+}
+
+.container_label {
+    -fx-font-weight: bold;
+    -fx-font-size: 17;
+}
+
+.container_text {
+    -fx-font-size: 15;
+}
+
+#auth_logs_container {
+
+
+}
+
+#bottom_container {
+    -fx-spacing: 50;
+}
+
+#action_buttons_container {
+    -fx-spacing: 30;
+    -fx-alignment: CENTER;
+}
+
+.action_button {
+    -fx-background-color: #FFF;
+    -fx-border-color: #000;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-min-width: 225;
+    -fx-max-width: 225;
+    -fx-font-size: 17;
+}
+
+.action_button:hover {
+    -fx-background-color: #EEE;
+}

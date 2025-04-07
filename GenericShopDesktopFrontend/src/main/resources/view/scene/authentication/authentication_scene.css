@@ -1,0 +1,97 @@
+.root {
+    -fx-font-family: 'Chilanka';
+}
+
+#logo_container {
+    -fx-min-width: 350;
+    -fx-alignment: CENTER;
+    -fx-spacing: 25;
+    -fx-background-color: #000;
+}
+
+#logo {
+    -fx-fill: #FFF;
+}
+
+#logo_title {
+    -fx-fill: #FFF;
+    -fx-font-size: 80;
+    -fx-font-weight: bold;
+}
+
+#language_label {
+    -fx-text-fill: #FFF;
+    -fx-font-size: 25;
+    -fx-translate-y: 100;
+}
+
+#language_select {
+    -fx-translate-y: 100;
+    -fx-min-width: 100;
+}
+
+#form_container {
+    -fx-alignment: CENTER;
+    -fx-spacing: 30;
+}
+
+#form_title {
+    -fx-fill: #000;
+    -fx-font-size: 85;
+}
+
+#form_subtitle {
+    -fx-fill: #000;
+    -fx-font-size: 40;
+}
+
+.form_field {
+    -fx-background-color: transparent;
+    -fx-border-color: #000;
+    -fx-border-width: 0 0 2px 0;
+
+    -fx-pref-width: 375px;
+    -fx-pref-height: 75px;
+    -fx-max-width: 375px;
+    -fx-max-height: 75px;
+
+    -fx-font-size: 20;
+}
+
+.text_error {
+    -fx-alignment: left;
+    -fx-font-size: 12;
+    -fx-fill: #000;
+}
+
+.form_field_cover {
+    -fx-alignment: center-left;
+    -fx-spacing: 15;
+
+    -fx-pref-width: 415px;
+    -fx-pref-height: 100px;
+    -fx-max-width: 415px;
+    -fx-max-height: 100px;
+}
+
+.form_field_icon_cover {
+    -fx-alignment: center;
+    -fx-spacing: 20;
+}
+
+
+#form_hyperlink {
+    -fx-font-size: 18;
+    -fx-text-fill: #000;
+}
+
+#buttonSignIn {
+    -fx-font-size: 25;
+    -fx-text-fill: #FFF;
+    -fx-background-color: #000;
+    -fx-background-radius: 10px;
+}
+
+#buttonSignIn:hover {
+    -fx-background-color: #333;
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<SplitPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           dividerPositions="0.5" fx:id="splitPane">
+
+    <VBox styleClass="side_container">
+        <Label styleClass="title" text="%change.active.role" />
+
+        <VBox fx:id="vboxRoles" styleClass="items_container">
+            <Label styleClass="subtitle" text="%available.roles" />
+        </VBox>
+    </VBox>
+
+    <VBox styleClass="side_container">
+        <Label styleClass="title" text="%change.language" />
+
+        <VBox fx:id="vboxLanguages" styleClass="items_container">
+            <Label styleClass="subtitle" text="%available.languages" />
+        </VBox>
+    </VBox>
+</SplitPane>

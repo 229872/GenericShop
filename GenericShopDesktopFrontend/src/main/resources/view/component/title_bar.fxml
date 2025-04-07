@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<HBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pl.lodz.p.edu.genericshopdesktopfrontend.controller.TitleBarController"
+      id="menu"
+      stylesheets="@title_bar.css"
+>
+    <StackPane.margin>
+        <Insets top="10" right="10" />
+    </StackPane.margin>
+
+    <Button styleClass="menu_button" fx:id="buttonMinimize">
+        <graphic>
+            <FontAwesomeIconView glyphName="MINUS" size="22" />
+        </graphic>
+    </Button>
+
+    <Button styleClass="menu_button" fx:id="buttonCloseApp">
+        <graphic>
+            <FontAwesomeIconView glyphName="CLOSE" size="22" />
+        </graphic>
+    </Button>
+</HBox>

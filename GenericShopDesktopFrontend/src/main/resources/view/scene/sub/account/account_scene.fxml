@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      styleClass="upper_container">
+    <HBox styleClass="upper_container">
+        <!-- First section: General Account Info -->
+        <VBox styleClass="data_container">
+            <Label text="%account.info" styleClass="container_title"/>
+            <GridPane hgap="10" vgap="5">
+                <Label text="%login" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label fx:id="labelLogin" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <Label text="%email" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Label fx:id="labelEmail" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <Label text="%language" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Label fx:id="labelLocale" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                <Label text="%first.name" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <Label fx:id="labelFirstName" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                <Label text="%last.name" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <Label fx:id="labelLastName" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                <Label text="%account.status" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                <Label fx:id="labelAccountState" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+                <Label text="%roles" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="6"/>
+                <Label fx:id="labelAccountRoles" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+            </GridPane>
+        </VBox>
+
+        <!-- Second section: Address Info -->
+        <VBox styleClass="data_container">
+            <Label text="%address.info" styleClass="container_title"/>
+            <GridPane hgap="10" vgap="5">
+                <Label text="%street" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label fx:id="labelStreet" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <Label text="%house.number" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Label fx:id="labelHouseNumber" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <Label text="%city" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Label fx:id="labelCity" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                <Label text="%postal.code" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <Label fx:id="labelPostalCode" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                <Label text="%country" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <Label fx:id="labelCountry" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+            </GridPane>
+        </VBox>
+    </HBox>
+
+    <VBox styleClass="data_container">
+        <Label text="%authentication.logs" styleClass="container_title"/>
+        <HBox id="bottom_container">
+            <GridPane id="auth_logs_container" hgap="10" vgap="5">
+                <Label text="%ip.of.last.successful.authentication" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Label fx:id="labelLastSuccessIp" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <Label text="%ip.of.last.unsuccessful.authentication" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Label fx:id="labelLastUnsuccessIp" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <Label text="%date.and.time.of.last.successful.authentication" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Label fx:id="labelLastSuccessTime" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                <Label text="%date.and.time.of.last.unsuccessful.authentication" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <Label fx:id="labelLastUnsuccessTime" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                <Label text="%unsuccessful.authentication.attempts.in.row" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <Label fx:id="labelUnsuccessCounter" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                <Label text="%blockade.end.time" styleClass="container_label" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                <Label fx:id="labelBlockadeEnd" styleClass="container_text" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+            </GridPane>
+
+            <VBox id="action_buttons_container">
+                <Button fx:id="buttonEdit" styleClass="action_button" text="%edit.contact" />
+                <Button fx:id="buttonChangePassword" styleClass="action_button" text="%change.password" />
+                <Button fx:id="buttonChangeEmail" styleClass="action_button" text="%change.email" />
+            </VBox>
+        </HBox>
+    </VBox>
+</VBox>
