@@ -32,3 +32,24 @@
     -fx-font-size: 32;
     -fx-font-weight: bold;
 }
+
+.field_error {
+    -fx-alignment: left;
+    -fx-font-size: 12;
+    -fx-fill: #000;
+}
+
+.field_with_error_handling {
+    -fx-alignment: center;
+    -fx-spacing: 15;
+
+    -fx-pref-width: 325px;
+    -fx-pref-height: 100px;
+    -fx-max-width: 325px;
+    -fx-max-height: 100px;
+}
+
+.field_with_icon {
+    -fx-alignment: center;
+    -fx-spacing: 15;
+}

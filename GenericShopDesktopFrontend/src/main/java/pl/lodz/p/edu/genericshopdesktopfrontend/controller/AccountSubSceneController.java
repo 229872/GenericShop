@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.stage.Window;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.ChangeEmailDialog;
 import pl.lodz.p.edu.genericshopdesktopfrontend.component.dialog.ChangePasswordDialog;
@@ -169,7 +170,7 @@ class AccountSubSceneController implements Controller, Initializable {
 
     private void openEditPasswordDialog() {
         Window initialWindow = labelLogin.getScene().getWindow();
-        Consumer<TextField> fieldAnimation = animationService::shake;
+        Consumer<TextInputControl> fieldAnimation = animationService::shake;
 
         var dialog = new ChangePasswordDialog(initialWindow, bundle, this::changePassword, fieldAnimation);
         dialog.addStyleSheet(Resources.CSS.CHANGE_FORM_DIALOG);
