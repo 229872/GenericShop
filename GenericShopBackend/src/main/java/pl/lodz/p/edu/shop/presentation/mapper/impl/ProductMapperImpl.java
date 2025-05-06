@@ -5,18 +5,25 @@ import pl.lodz.p.edu.shop.dataaccess.model.entity.Category;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.OrderedProduct;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Product;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Rate;
+import pl.lodz.p.edu.shop.logic.service.api.VersionSignatureVerifier;
 import pl.lodz.p.edu.shop.presentation.dto.product.InputProductDto;
 import pl.lodz.p.edu.shop.presentation.dto.product.ProductOutputDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.ProductMapper;
-import pl.lodz.p.edu.shop.util.SecurityUtil;
 import pl.lodz.p.edu.shop.util.TextUtil;
 
 import java.util.Map;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 
 @Component
 public class ProductMapperImpl implements ProductMapper {
+
+    private final VersionSignatureVerifier verifier;
+
+    public ProductMapperImpl(VersionSignatureVerifier verifier) {
+        this.verifier = requireNonNull(verifier);
+    }
 
     @Override
     public Product mapToProduct(InputProductDto inputProductDto) {
@@ -70,7 +77,7 @@ public class ProductMapperImpl implements ProductMapper {
 
     @Override
     public ProductOutputDto mapToProductOutputDtoWithVersion(Product product) {
-        String combinedVersion = SecurityUtil.signVersion(product.getVersion());
+        String combinedVersion = verifier.signVersion(product.getVersion());
         Map<String, Object> tableProperties = product.getTableProperties();
         Map<String, Object> mappedProperties = tableProperties.entrySet().stream()
             .collect(toMap(

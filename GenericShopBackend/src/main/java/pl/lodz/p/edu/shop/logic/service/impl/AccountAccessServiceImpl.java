@@ -15,10 +15,12 @@ import pl.lodz.p.edu.shop.exception.account.helper.AccountStateOperation;
 import pl.lodz.p.edu.shop.logic.service.api.AccountAccessService;
 import pl.lodz.p.edu.shop.logic.service.api.JwtService;
 import pl.lodz.p.edu.shop.logic.service.api.MailService;
-import pl.lodz.p.edu.shop.util.SecurityUtil;
+import pl.lodz.p.edu.shop.logic.service.api.VersionSignatureVerifier;
 
 import java.util.Locale;
 import java.util.Set;
+
+import static java.util.Objects.requireNonNull;
 
 @Service
 @Transactional(transactionManager = "accountsModTxManager", propagation = Propagation.REQUIRES_NEW)
@@ -29,16 +31,18 @@ class AccountAccessServiceImpl extends AccountService implements AccountAccessSe
     private final MailService mailService;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final VersionSignatureVerifier versionSignatureVerifier;
 
     public AccountAccessServiceImpl(
-        AccountRepository accountRepository, PasswordEncoder passwordEncoder,
-        MailService mailService, JwtService jwtService
+            AccountRepository accountRepository, PasswordEncoder passwordEncoder,
+            MailService mailService, JwtService jwtService, VersionSignatureVerifier versionSignatureVerifier
     ) {
         super(accountRepository);
-        this.accountRepository = accountRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.mailService = mailService;
-        this.jwtService = jwtService;
+        this.accountRepository = requireNonNull(accountRepository);
+        this.passwordEncoder = requireNonNull(passwordEncoder);
+        this.mailService = requireNonNull(mailService);
+        this.jwtService = requireNonNull(jwtService);
+        this.versionSignatureVerifier = requireNonNull(versionSignatureVerifier);
     }
 
     @Override
@@ -98,7 +102,7 @@ class AccountAccessServiceImpl extends AccountService implements AccountAccessSe
 
         long version = contact.getVersion() + contact.getAddress().getVersion();
 
-        if (!SecurityUtil.verifySignature(version, frontendContactVersion)) {
+        if (!versionSignatureVerifier.verifySignature(version, frontendContactVersion)) {
             throw ApplicationExceptionFactory.createApplicationOptimisticLockException();
         }
 

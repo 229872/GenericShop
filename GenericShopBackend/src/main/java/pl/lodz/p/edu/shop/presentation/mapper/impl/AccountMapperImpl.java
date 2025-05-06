@@ -10,6 +10,7 @@ import pl.lodz.p.edu.shop.dataaccess.model.entity.Address;
 import pl.lodz.p.edu.shop.dataaccess.model.entity.Contact;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountRole;
 import pl.lodz.p.edu.shop.dataaccess.model.enumerated.AccountState;
+import pl.lodz.p.edu.shop.logic.service.api.VersionSignatureVerifier;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.AccountOutputDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.CreateAccountDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.account.RegisterDto;
@@ -18,7 +19,6 @@ import pl.lodz.p.edu.shop.presentation.dto.user.address.AddressOutputDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.address.InputAddressDto;
 import pl.lodz.p.edu.shop.presentation.dto.user.log.AuthLogOutputDto;
 import pl.lodz.p.edu.shop.presentation.mapper.api.AccountMapper;
-import pl.lodz.p.edu.shop.util.SecurityUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -30,6 +30,7 @@ import java.util.Set;
 class AccountMapperImpl implements AccountMapper {
 
     private final PasswordEncoder passwordEncoder;
+    private final VersionSignatureVerifier verifier;
 
     @Override
     public Account mapToAccount(CreateAccountDto createDto) {
@@ -87,7 +88,7 @@ class AccountMapperImpl implements AccountMapper {
         Contact contact = account.getContact();
         Address address = contact.getAddress();
 
-        String combinedVersion = SecurityUtil.signVersion(contact.getVersion() + contact.getAddress().getVersion());
+        String combinedVersion = verifier.signVersion(contact.getVersion() + contact.getAddress().getVersion());
         AddressOutputDto addressDto = mapToAddressOutputDto(address);
         AuthLogOutputDto logs = mapToAuthLogOutputDto(account.getAuthLogs());
 

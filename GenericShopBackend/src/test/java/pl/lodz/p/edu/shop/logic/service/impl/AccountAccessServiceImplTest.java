@@ -24,6 +24,7 @@ import pl.lodz.p.edu.shop.exception.account.AccountNotFoundException;
 import pl.lodz.p.edu.shop.exception.auth.InvalidCredentialsException;
 import pl.lodz.p.edu.shop.logic.service.api.JwtService;
 import pl.lodz.p.edu.shop.logic.service.api.MailService;
+import pl.lodz.p.edu.shop.logic.service.api.VersionSignatureVerifier;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -49,6 +50,9 @@ class AccountAccessServiceImplTest {
 
     @Mock
     private JwtService jwtService;
+
+    @Mock
+    private VersionSignatureVerifier verifier;
 
     @InjectMocks
     private AccountAccessServiceImpl underTest;

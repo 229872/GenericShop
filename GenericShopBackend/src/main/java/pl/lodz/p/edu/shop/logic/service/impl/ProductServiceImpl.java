@@ -17,8 +17,8 @@ import pl.lodz.p.edu.shop.dataaccess.repository.api.ProductRepository;
 import pl.lodz.p.edu.shop.exception.ApplicationExceptionFactory;
 import pl.lodz.p.edu.shop.exception.SystemExceptionFactory;
 import pl.lodz.p.edu.shop.logic.service.api.ProductService;
+import pl.lodz.p.edu.shop.logic.service.api.VersionSignatureVerifier;
 import pl.lodz.p.edu.shop.util.ExceptionUtil;
-import pl.lodz.p.edu.shop.util.SecurityUtil;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -38,16 +38,16 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductDAO productDAO;
     private final CategoryRepository categoryRepository;
+    private final VersionSignatureVerifier versionSignatureVerifier;
 
 
-    public ProductServiceImpl(ProductRepository productRepository, ProductDAO productDAO, CategoryRepository categoryRepository) {
-        requireNonNull(productRepository, "Product service requires non null product repository");
-        requireNonNull(productDAO, "Product service requires non null product DAO");
-        requireNonNull(categoryRepository, "Product service requires non null category repository");
+    public ProductServiceImpl(ProductRepository productRepository, ProductDAO productDAO,
+                              CategoryRepository categoryRepository, VersionSignatureVerifier versionSignatureVerifier) {
 
-        this.productRepository = productRepository;
-        this.productDAO = productDAO;
-        this.categoryRepository = categoryRepository;
+        this.productRepository = requireNonNull(productRepository);
+        this.productDAO = requireNonNull(productDAO);
+        this.categoryRepository = requireNonNull(categoryRepository);
+        this.versionSignatureVerifier = requireNonNull(versionSignatureVerifier);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class ProductServiceImpl implements ProductService {
 
         long version = product.getVersion();
 
-        if (!SecurityUtil.verifySignature(version, frontendVersion)) {
+        if (!versionSignatureVerifier.verifySignature(version, frontendVersion)) {
             throw ApplicationExceptionFactory.createApplicationOptimisticLockException();
         }
 
